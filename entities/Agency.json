@@ -1,0 +1,119 @@
+{
+    "name": "Agency",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Agency name"
+      },
+      "slug": {
+        "type": "string",
+        "description": "URL-friendly slug"
+      },
+      "description": {
+        "type": "string",
+        "description": "Agency overview"
+      },
+      "website": {
+        "type": "string",
+        "description": "Agency website URL"
+      },
+      "logo_url": {
+        "type": "string",
+        "description": "Agency logo"
+      },
+      "founded_year": {
+        "type": "number",
+        "description": "Year founded"
+      },
+      "team_size": {
+        "type": "string",
+        "enum": [
+          "1-10",
+          "11-50",
+          "51-200",
+          "201-500",
+          "500+"
+        ],
+        "description": "Company size"
+      },
+      "hq_country": {
+        "type": "string",
+        "description": "Headquarters country"
+      },
+      "hq_state": {
+        "type": "string",
+        "description": "Headquarters state/province"
+      },
+      "hq_city": {
+        "type": "string",
+        "description": "Headquarters city"
+      },
+      "pricing_model": {
+        "type": "string",
+        "enum": [
+          "Percentage of Salary",
+          "Fixed Fee",
+          "Hourly Rate",
+          "Retainer",
+          "Hybrid"
+        ],
+        "description": "Pricing model"
+      },
+      "min_project_size": {
+        "type": "string",
+        "description": "Minimum project size"
+      },
+      "remote_support": {
+        "type": "boolean",
+        "default": false,
+        "description": "Offers remote/offshore support"
+      },
+      "services_offered": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "List of services"
+      },
+      "industries_served": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Industries they serve"
+      },
+      "verified": {
+        "type": "boolean",
+        "default": false,
+        "description": "Verified badge status"
+      },
+      "featured": {
+        "type": "boolean",
+        "default": false,
+        "description": "Featured agency status"
+      },
+      "approved": {
+        "type": "boolean",
+        "default": false,
+        "description": "Admin approved"
+      },
+      "owner_user_id": {
+        "type": "string",
+        "description": "User ID of agency owner"
+      },
+      "avg_rating": {
+        "type": "number",
+        "description": "Average rating"
+      },
+      "review_count": {
+        "type": "number",
+        "default": 0,
+        "description": "Total reviews"
+      }
+    },
+    "required": [
+      "name",
+      "slug"
+    ]
+  }

@@ -1,0 +1,80 @@
+{
+    "name": "Review",
+    "type": "object",
+    "properties": {
+      "agency_id": {
+        "type": "string",
+        "description": "Agency being reviewed"
+      },
+      "user_id": {
+        "type": "string",
+        "description": "Reviewer user ID"
+      },
+      "rating_overall": {
+        "type": "number",
+        "description": "Overall rating 1-5"
+      },
+      "rating_quality": {
+        "type": "number",
+        "description": "Quality rating 1-5"
+      },
+      "rating_communication": {
+        "type": "number",
+        "description": "Communication rating 1-5"
+      },
+      "rating_value": {
+        "type": "number",
+        "description": "Value rating 1-5"
+      },
+      "rating_timeliness": {
+        "type": "number",
+        "description": "Timeliness rating 1-5"
+      },
+      "title": {
+        "type": "string",
+        "description": "Review title"
+      },
+      "body": {
+        "type": "string",
+        "description": "Review body"
+      },
+      "work_duration": {
+        "type": "string",
+        "description": "Duration of engagement"
+      },
+      "role_hired": {
+        "type": "string",
+        "description": "Role hired for"
+      },
+      "company_name": {
+        "type": "string",
+        "description": "Reviewer's company"
+      },
+      "verified": {
+        "type": "boolean",
+        "default": false,
+        "description": "Verified review status"
+      },
+      "approved": {
+        "type": "boolean",
+        "default": false,
+        "description": "Admin approved"
+      },
+      "agency_response": {
+        "type": "string",
+        "description": "Agency response to review"
+      },
+      "agency_response_date": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Date of agency response"
+      }
+    },
+    "required": [
+      "agency_id",
+      "user_id",
+      "rating_overall",
+      "title",
+      "body"
+    ]
+  }
