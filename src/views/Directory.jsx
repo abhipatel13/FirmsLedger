@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -32,19 +32,28 @@ export default function Directory() {
   const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const [debouncedSearch, setDebouncedSearch] = useState(searchFromUrl);
 
-  const { data: categories = [] } = useQuery({
+  const { data: categoriesRaw = [] } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => base44.entities.Category.list(),
+    queryFn: () => api.entities.Category.list(),
   });
+  // Dedupe by slug so filter dropdown has unique options and doesn't cause URL flip
+  const categories = React.useMemo(() => {
+    const seen = new Set();
+    return categoriesRaw.filter((c) => {
+      if (seen.has(c.slug)) return false;
+      seen.add(c.slug);
+      return true;
+    });
+  }, [categoriesRaw]);
 
   const { data: allAgencies = [], isLoading } = useQuery({
     queryKey: ['agencies'],
-    queryFn: () => base44.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
+    queryFn: () => api.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
   });
 
   const { data: agencyCategories = [] } = useQuery({
     queryKey: ['agency-categories'],
-    queryFn: () => base44.entities.AgencyCategory.list(),
+    queryFn: () => api.entities.AgencyCategory.list(),
   });
 
   // Debounce search input
@@ -60,7 +69,7 @@ export default function Directory() {
     };
   }, [searchQuery]);
 
-  // Update URL when filters change
+  // Update URL when filters change (do not depend on searchParams to avoid replace loop)
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedService) params.set('category', selectedService);
@@ -70,22 +79,22 @@ export default function Directory() {
     if (selectedTeamSize) params.set('teamSize', selectedTeamSize);
 
     const newSearch = params.toString() ? `?${params.toString()}` : '';
-    const currentSearch = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    const currentSearch = typeof window !== 'undefined' ? window.location.search : '';
     if (currentSearch !== newSearch) {
       router.replace(createPageUrl('Directory') + newSearch);
     }
-  }, [selectedService, selectedLocation, debouncedSearch, selectedRating, selectedTeamSize, router, searchParams]);
+  }, [selectedService, selectedLocation, debouncedSearch, selectedRating, selectedTeamSize, router]);
 
-  // Initialize filters from URL
+  // Initialize filters from URL (only when URL has a category and state is not already in sync)
   useEffect(() => {
-    if (categorySlugFromUrl && categories.length > 0) {
-      const category = categories.find(c => c.slug === categorySlugFromUrl);
-      if (category) {
-        setSelectedService(category.slug);
-      }
+    if (!categorySlugFromUrl || categories.length === 0) return;
+    const slugExists = categories.some((c) => c.slug === categorySlugFromUrl);
+    if (slugExists && selectedService !== categorySlugFromUrl) {
+      setSelectedService(categorySlugFromUrl);
     }
-  }, [categorySlugFromUrl, categories]);
+  }, [categorySlugFromUrl, categories, selectedService]);
 
+  // Sync other URL params to state (location, search, rating, teamSize)
   useEffect(() => {
     setSelectedLocation(locationFromUrl);
     setSearchQuery(searchFromUrl);

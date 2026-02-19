@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import Link from 'next/link';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -42,7 +42,7 @@ export default function Categories() {
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => base44.entities.Category.list(),
+    queryFn: () => api.entities.Category.list(),
   });
 
   // Filter categories by search term

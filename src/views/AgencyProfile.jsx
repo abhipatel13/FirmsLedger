@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ export default function AgencyProfile({ searchParams }) {
   const { data: agency, isLoading } = useQuery({
     queryKey: ['agency', agencyId],
     queryFn: async () => {
-      const agencies = await base44.entities.Agency.filter({ id: agencyId });
+      const agencies = await api.entities.Agency.filter({ id: agencyId });
       return agencies[0];
     },
     enabled: !!agencyId,
@@ -31,16 +31,16 @@ export default function AgencyProfile({ searchParams }) {
 
   const { data: reviews = [] } = useQuery({
     queryKey: ['agency-reviews', agencyId],
-    queryFn: () => base44.entities.Review.filter({ agency_id: agencyId, approved: true }, '-created_date', 50),
+    queryFn: () => api.entities.Review.filter({ agency_id: agencyId, approved: true }, '-created_date', 50),
     enabled: !!agencyId,
   });
 
   const { data: categories = [] } = useQuery({
     queryKey: ['agency-categories', agencyId],
     queryFn: async () => {
-      const agencyCats = await base44.entities.AgencyCategory.filter({ agency_id: agencyId });
+      const agencyCats = await api.entities.AgencyCategory.filter({ agency_id: agencyId });
       const catIds = agencyCats.map(ac => ac.category_id);
-      const allCats = await base44.entities.Category.list();
+      const allCats = await api.entities.Category.list();
       return allCats.filter(c => catIds.includes(c.id));
     },
     enabled: !!agencyId,

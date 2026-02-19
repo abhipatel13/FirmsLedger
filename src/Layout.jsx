@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import ListAgencyDialog from '@/components/ListAgencyDialog';
 
 export default function Layout({ children }) {
@@ -27,7 +27,7 @@ export default function Layout({ children }) {
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => base44.entities.Category.list(),
+    queryFn: () => api.entities.Category.list(),
   });
 
   const topLocations = ['Mumbai', 'Bangalore', 'Delhi', 'Pune', 'Hyderabad', 'Chennai'];
@@ -178,7 +178,7 @@ export default function Layout({ children }) {
 
                   <Button 
                     variant="outline"
-                    onClick={() => base44.auth.redirectToLogin()}
+                    onClick={() => api.auth.redirectToLogin()}
                     className="border-slate-300 text-slate-700 hover:text-blue-600 font-semibold"
                   >
                     Sign In

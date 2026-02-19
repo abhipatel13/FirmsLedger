@@ -1,5 +1,5 @@
 {
-    "name": "base44-app",
+    "name": "firms-ledger",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -10,10 +10,9 @@
       "lint": "eslint . --quiet",
       "lint:fix": "eslint . --fix",
       "typecheck": "tsc -p ./jsconfig.json",
-      "seed": "node scripts/seed-base44.mjs"
+      "seed": "echo 'No seed script; use your own backend or edit src/api/apiClient.js'"
     },
     "dependencies": {
-      "@base44/sdk": "^0.8.18",
       "@hello-pangea/dnd": "^17.0.0",
       "@hookform/resolvers": "^4.1.2",
       "@radix-ui/react-accordion": "^1.2.3",

@@ -1,0 +1,9 @@
+{
+  "name": "FirmsLedger",
+  "short_name": "FirmsLedger",
+  "description": "India's most trusted platform to discover and connect with verified business service providers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5"
+}

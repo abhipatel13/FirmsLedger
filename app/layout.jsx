@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" type="image/svg+xml" href="https://base44.com/logo_v2.svg" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body>

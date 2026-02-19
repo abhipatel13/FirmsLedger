@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 
 const AuthContext = createContext(null);
 
@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
     let mounted = true;
     const checkAuth = async () => {
       try {
-        await base44.auth.me();
+        await api.auth.me();
         if (mounted) setIsAuthenticated(true);
       } catch (err) {
         if (mounted) {
@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
 
   const navigateToLogin = useCallback(() => {
     if (typeof window !== 'undefined') {
-      base44.auth.redirectToLogin(window.location.pathname);
+      api.auth.redirectToLogin(window.location.pathname);
     }
   }, []);
 

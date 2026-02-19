@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,17 +18,17 @@ export default function CountryPage({ searchParams }) {
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => base44.entities.Category.list(),
+    queryFn: () => api.entities.Category.list(),
   });
 
   const { data: agencies = [], isLoading } = useQuery({
     queryKey: ['agencies', country],
-    queryFn: () => base44.entities.Agency.filter({ hq_country: country, approved: true }, '-avg_rating', 50),
+    queryFn: () => api.entities.Agency.filter({ hq_country: country, approved: true }, '-avg_rating', 50),
   });
 
   const { data: agencyCategories = [] } = useQuery({
     queryKey: ['agency-categories'],
-    queryFn: () => base44.entities.AgencyCategory.list(),
+    queryFn: () => api.entities.AgencyCategory.list(),
   });
 
   // Get popular cities

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,7 @@ export default function AdminDashboard() {
 
   const checkAuth = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await api.auth.me();
       if (currentUser.role !== 'admin') {
         toast.error('Access denied. Admin only.');
         window.location.href = '/';
@@ -35,7 +35,7 @@ export default function AdminDashboard() {
       }
       setUser(currentUser);
     } catch (error) {
-      base44.auth.redirectToLogin(window.location.pathname);
+      api.auth.redirectToLogin(window.location.pathname);
     } finally {
       setLoading(false);
     }
@@ -44,37 +44,37 @@ export default function AdminDashboard() {
   // Queries
   const { data: pendingAgencies = [] } = useQuery({
     queryKey: ['pending-agencies'],
-    queryFn: () => base44.entities.Agency.filter({ approved: false }, '-created_date'),
+    queryFn: () => api.entities.Agency.filter({ approved: false }, '-created_date'),
     enabled: !!user,
   });
 
   const { data: pendingReviews = [] } = useQuery({
     queryKey: ['pending-reviews'],
-    queryFn: () => base44.entities.Review.filter({ approved: false }, '-created_date'),
+    queryFn: () => api.entities.Review.filter({ approved: false }, '-created_date'),
     enabled: !!user,
   });
 
   const { data: allAgencies = [] } = useQuery({
     queryKey: ['all-agencies'],
-    queryFn: () => base44.entities.Agency.list('-created_date'),
+    queryFn: () => api.entities.Agency.list('-created_date'),
     enabled: !!user,
   });
 
   const { data: allReviews = [] } = useQuery({
     queryKey: ['all-reviews'],
-    queryFn: () => base44.entities.Review.list('-created_date'),
+    queryFn: () => api.entities.Review.list('-created_date'),
     enabled: !!user,
   });
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => base44.entities.Category.list(),
+    queryFn: () => api.entities.Category.list(),
     enabled: !!user,
   });
 
   // Mutations
   const approveAgencyMutation = useMutation({
-    mutationFn: (agencyId) => base44.entities.Agency.update(agencyId, { approved: true }),
+    mutationFn: (agencyId) => api.entities.Agency.update(agencyId, { approved: true }),
     onSuccess: () => {
       queryClient.invalidateQueries(['pending-agencies']);
       queryClient.invalidateQueries(['all-agencies']);
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
   });
 
   const rejectAgencyMutation = useMutation({
-    mutationFn: (agencyId) => base44.entities.Agency.delete(agencyId),
+    mutationFn: (agencyId) => api.entities.Agency.delete(agencyId),
     onSuccess: () => {
       queryClient.invalidateQueries(['pending-agencies']);
       toast.success('Agency rejected');
@@ -93,16 +93,16 @@ export default function AdminDashboard() {
   const approveReviewMutation = useMutation({
     mutationFn: ({ reviewId, agencyId }) => {
       // Update review approval
-      return base44.entities.Review.update(reviewId, { approved: true, verified: true });
+      return api.entities.Review.update(reviewId, { approved: true, verified: true });
     },
     onSuccess: async (_, { agencyId }) => {
       // Recalculate agency rating
-      const approvedReviews = await base44.entities.Review.filter({ 
+      const approvedReviews = await api.entities.Review.filter({ 
         agency_id: agencyId, 
         approved: true 
       });
       const avgRating = approvedReviews.reduce((sum, r) => sum + r.rating_overall, 0) / approvedReviews.length;
-      await base44.entities.Agency.update(agencyId, { 
+      await api.entities.Agency.update(agencyId, { 
         avg_rating: avgRating,
         review_count: approvedReviews.length
       });
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
   });
 
   const rejectReviewMutation = useMutation({
-    mutationFn: (reviewId) => base44.entities.Review.delete(reviewId),
+    mutationFn: (reviewId) => api.entities.Review.delete(reviewId),
     onSuccess: () => {
       queryClient.invalidateQueries(['pending-reviews']);
       toast.success('Review rejected');
@@ -124,7 +124,7 @@ export default function AdminDashboard() {
 
   const toggleVerifiedMutation = useMutation({
     mutationFn: ({ agencyId, verified }) => 
-      base44.entities.Agency.update(agencyId, { verified: !verified }),
+      api.entities.Agency.update(agencyId, { verified: !verified }),
     onSuccess: () => {
       queryClient.invalidateQueries(['all-agencies']);
       toast.success('Verified status updated');
@@ -133,7 +133,7 @@ export default function AdminDashboard() {
 
   const toggleFeaturedMutation = useMutation({
     mutationFn: ({ agencyId, featured }) => 
-      base44.entities.Agency.update(agencyId, { featured: !featured }),
+      api.entities.Agency.update(agencyId, { featured: !featured }),
     onSuccess: () => {
       queryClient.invalidateQueries(['all-agencies']);
       toast.success('Featured status updated');

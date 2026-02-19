@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import SearchBar from '@/components/SearchBar';
@@ -16,22 +16,22 @@ import { motion } from 'framer-motion';
 export default function Home() {
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => base44.entities.Category.list(),
+    queryFn: () => api.entities.Category.list(),
   });
 
   const { data: featuredAgencies = [] } = useQuery({
     queryKey: ['featured-agencies'],
-    queryFn: () => base44.entities.Agency.filter({ featured: true, approved: true }, '-avg_rating', 3),
+    queryFn: () => api.entities.Agency.filter({ featured: true, approved: true }, '-avg_rating', 3),
   });
 
   const { data: topRatedAgencies = [] } = useQuery({
     queryKey: ['top-rated-agencies'],
-    queryFn: () => base44.entities.Agency.filter({ approved: true }, '-avg_rating', 6),
+    queryFn: () => api.entities.Agency.filter({ approved: true }, '-avg_rating', 6),
   });
 
   const { data: recentReviews = [] } = useQuery({
     queryKey: ['recent-reviews'],
-    queryFn: () => base44.entities.Review.filter({ approved: true }, '-created_date', 3),
+    queryFn: () => api.entities.Review.filter({ approved: true }, '-created_date', 3),
   });
 
   return (

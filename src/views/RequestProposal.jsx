@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,7 @@ export default function RequestProposal() {
 
   const checkAuth = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await api.auth.me();
       setUser(currentUser);
     } catch (error) {
       // Allow visitors to fill form, prompt to login on submit
@@ -51,7 +51,7 @@ export default function RequestProposal() {
   });
 
   const createLeadMutation = useMutation({
-    mutationFn: (leadData) => base44.entities.Lead.create(leadData),
+    mutationFn: (leadData) => api.entities.Lead.create(leadData),
     onSuccess: () => {
       toast.success('Proposal request submitted successfully! Agencies will contact you soon.');
       router.push(createPageUrl('Home'));
@@ -67,7 +67,7 @@ export default function RequestProposal() {
     if (!user) {
       // Prompt to login
       toast.error('Please sign in to submit a proposal request');
-      base44.auth.redirectToLogin(window.location.pathname);
+      api.auth.redirectToLogin(window.location.pathname);
       return;
     }
 

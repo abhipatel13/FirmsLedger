@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +34,7 @@ export default function AgencyDashboard() {
 
   const checkAuth = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await api.auth.me();
       if (currentUser.role !== 'admin' && currentUser.user_type !== 'agency_owner') {
         toast.error('Access denied. This page is for agency owners only.');
         window.location.href = createPageUrl('Home');
@@ -42,7 +42,7 @@ export default function AgencyDashboard() {
       }
       setUser(currentUser);
     } catch (error) {
-      base44.auth.redirectToLogin(window.location.pathname);
+      api.auth.redirectToLogin(window.location.pathname);
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export default function AgencyDashboard() {
   const { data: myAgency, isLoading: agencyLoading } = useQuery({
     queryKey: ['my-agency', user?.id],
     queryFn: async () => {
-      const agencies = await base44.entities.Agency.filter({ owner_user_id: user.id });
+      const agencies = await api.entities.Agency.filter({ owner_user_id: user.id });
       return agencies[0];
     },
     enabled: !!user,
@@ -61,19 +61,19 @@ export default function AgencyDashboard() {
   // Get leads for this agency
   const { data: leads = [] } = useQuery({
     queryKey: ['my-leads', myAgency?.id],
-    queryFn: () => base44.entities.Lead.filter({ status: 'Open' }, '-created_date', 20),
+    queryFn: () => api.entities.Lead.filter({ status: 'Open' }, '-created_date', 20),
     enabled: !!myAgency,
   });
 
   // Get reviews for this agency
   const { data: reviews = [] } = useQuery({
     queryKey: ['my-reviews', myAgency?.id],
-    queryFn: () => base44.entities.Review.filter({ agency_id: myAgency.id }, '-created_date', 50),
+    queryFn: () => api.entities.Review.filter({ agency_id: myAgency.id }, '-created_date', 50),
     enabled: !!myAgency,
   });
 
   const updateAgencyMutation = useMutation({
-    mutationFn: (data) => base44.entities.Agency.update(myAgency.id, data),
+    mutationFn: (data) => api.entities.Agency.update(myAgency.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['my-agency']);
       toast.success('Agency profile updated');
@@ -83,7 +83,7 @@ export default function AgencyDashboard() {
 
   const respondToReviewMutation = useMutation({
     mutationFn: ({ reviewId, response }) => 
-      base44.entities.Review.update(reviewId, { 
+      api.entities.Review.update(reviewId, { 
         agency_response: response,
         agency_response_date: new Date().toISOString()
       }),

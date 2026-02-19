@@ -10,7 +10,7 @@ const getAppParamValue = (paramName, { defaultValue = undefined, removeFromUrl =
 	if (isNode) {
 		return defaultValue;
 	}
-	const storageKey = `base44_${toSnakeCase(paramName)}`;
+	const storageKey = `app_${toSnakeCase(paramName)}`;
 	const urlParams = new URLSearchParams(window.location.search);
 	const searchParam = urlParams.get(paramName);
 	if (removeFromUrl) {
@@ -36,17 +36,15 @@ const getAppParamValue = (paramName, { defaultValue = undefined, removeFromUrl =
 
 const getAppParams = () => {
 	if (typeof window !== 'undefined' && getAppParamValue("clear_access_token") === 'true') {
-		storage.removeItem('base44_access_token');
+		storage.removeItem('app_access_token');
 		storage.removeItem('token');
 	}
-	const envAppId = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_BASE44_APP_ID : undefined;
-	const envBaseUrl = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_BASE44_APP_BASE_URL : undefined;
 	return {
-		appId: getAppParamValue("app_id", { defaultValue: envAppId }) || envAppId || null,
+		appId: getAppParamValue("app_id", { defaultValue: null }),
 		token: getAppParamValue("access_token", { removeFromUrl: true }),
 		fromUrl: getAppParamValue("from_url", { defaultValue: typeof window !== 'undefined' ? window.location.href : '' }),
-		functionsVersion: getAppParamValue("functions_version", { defaultValue: typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_BASE44_FUNCTIONS_VERSION : undefined }),
-		appBaseUrl: getAppParamValue("app_base_url", { defaultValue: envBaseUrl }) || envBaseUrl || null,
+		functionsVersion: getAppParamValue("functions_version"),
+		appBaseUrl: getAppParamValue("app_base_url"),
 	}
 }
 

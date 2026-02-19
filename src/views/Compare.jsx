@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ export default function Compare({ searchParams }) {
     queryKey: ['compare-agencies', ids],
     queryFn: async () => {
       if (ids.length === 0) return [];
-      const allAgencies = await base44.entities.Agency.list();
+      const allAgencies = await api.entities.Agency.list();
       return allAgencies.filter(a => ids.includes(a.id));
     },
   });

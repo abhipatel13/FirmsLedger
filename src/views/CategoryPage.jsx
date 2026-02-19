@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { base44 } from '@/api/base44Client';
+import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import AgencyCard from '@/components/AgencyCard';
 import { ChevronRight, Briefcase } from 'lucide-react';
@@ -14,19 +14,19 @@ export default function CategoryPage({ searchParams }) {
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => base44.entities.Category.list(),
+    queryFn: () => api.entities.Category.list(),
   });
 
   const category = categories.find(c => c.slug === categorySlug);
 
   const { data: allAgencies = [], isLoading } = useQuery({
     queryKey: ['agencies'],
-    queryFn: () => base44.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
+    queryFn: () => api.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
   });
 
   const { data: agencyCategories = [] } = useQuery({
     queryKey: ['agency-categories'],
-    queryFn: () => base44.entities.AgencyCategory.list(),
+    queryFn: () => api.entities.AgencyCategory.list(),
   });
 
   const categoryAgencies = category ? allAgencies.filter(agency => {
