@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
 import Link from 'next/link';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Search, Building } from 'lucide-react';
@@ -98,12 +98,15 @@ export default function Categories() {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredCategories.map((category) => {
+              {(() => {
+                const staffingId = categories.find((c) => c.slug === 'staffing-companies')?.id;
+                return filteredCategories.map((category) => {
                 const Icon = iconMap[category.icon] || Building;
+                const underStaffing = (category.parent_id ?? category.parentId) === staffingId;
                 return (
                   <Link 
                     key={category.id}
-                    href={createPageUrl('Directory') + `?category=${category.id}`}
+                    href={category.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(category.slug, { underStaffing })}
                   >
                     <Card className="hover:shadow-xl transition-all hover:scale-105 cursor-pointer h-full border-emerald-100">
                       <CardContent className="p-6 text-center">
@@ -116,7 +119,8 @@ export default function Categories() {
                     </Card>
                   </Link>
                 );
-              })}
+              });
+              })()}
             </div>
           </>
         )}

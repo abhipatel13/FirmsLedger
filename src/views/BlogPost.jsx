@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 import { Calendar, User, Clock, Share2, Facebook, Twitter, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -114,7 +114,7 @@ export default function BlogPost({ searchParams }) {
           <p className="text-blue-100 mb-6 text-lg">
             Browse verified providers and make confident business decisions
           </p>
-          <Link href={createPageUrl('Directory')}>
+          <Link href={getDirectoryUrl()}>
             <Button size="lg" className="bg-white text-blue-600 hover:bg-slate-100 px-8 py-6 text-lg font-bold rounded-xl">
               Explore Providers
             </Button>

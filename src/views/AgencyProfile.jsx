@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { createPageUrl } from '@/utils';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { createPageUrl, getDirectoryUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -17,18 +17,27 @@ import {
   CheckCircle, Crown, Star, MessageSquare 
 } from 'lucide-react';
 
-export default function AgencyProfile() {
+export default function AgencyProfile({ companySlug }) {
   const searchParams = useSearchParams();
-  const agencyId = searchParams?.get('id') ?? null;
+  const pathname = usePathname();
+  const router = useRouter();
+  const queryId = searchParams?.get('id') ?? null;
+  const identifier = companySlug || queryId;
 
   const { data: agency, isLoading } = useQuery({
-    queryKey: ['agency', agencyId],
+    queryKey: ['agency', identifier],
     queryFn: async () => {
-      const agencies = await api.entities.Agency.filter({ id: agencyId });
-      return agencies[0];
+      if (companySlug) {
+        const bySlug = await api.entities.Agency.filter({ slug: companySlug });
+        return bySlug[0];
+      }
+      const byId = await api.entities.Agency.filter({ id: queryId });
+      return byId[0];
     },
-    enabled: !!agencyId,
+    enabled: !!identifier,
   });
+
+  const agencyId = agency?.id ?? null;
 
   const { data: reviews = [] } = useQuery({
     queryKey: ['agency-reviews', agencyId],
@@ -47,6 +56,15 @@ export default function AgencyProfile() {
     enabled: !!agencyId,
   });
 
+  // Canonical redirect: /AgencyProfile?id=xxx → /companies/slug when agency has slug
+  useEffect(() => {
+    if (!agency?.slug || !pathname?.startsWith('/AgencyProfile')) return;
+    const search = searchParams?.toString() ? `?${searchParams.toString()}` : '';
+    if (search === `?id=${agency.id}` || (searchParams?.get('id') === agency.id && !searchParams.get('slug'))) {
+      router.replace(`/companies/${encodeURIComponent(agency.slug)}`);
+    }
+  }, [agency?.id, agency?.slug, pathname, router, searchParams]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -60,7 +78,7 @@ export default function AgencyProfile() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-500 mb-4">Agency not found</p>
-          <Link href={createPageUrl('Directory')}>
+          <Link href={getDirectoryUrl()}>
             <Button>Back to Directory</Button>
           </Link>
         </div>

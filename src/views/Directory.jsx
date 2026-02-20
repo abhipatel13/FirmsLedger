@@ -8,23 +8,31 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getDirectoryUrlWithParams, getCompanyProfileUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 import FilterPanel from '@/components/FilterPanel';
 import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle, Search, Grid3x3, List, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { debounce } from 'lodash';
 
-export default function Directory() {
+export default function Directory({ initialCategorySlug, underStaffing: underStaffingProp }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const categorySlugFromUrl = searchParams.get('category') || '';
+  const pathWithoutQuery = pathname?.replace(/\?.*$/, '') || '';
+  const isStaffingHubOnly = pathWithoutQuery === '/directory/staffing';
+  const staffingMatch = pathname && pathname.match(/^\/directory\/staffing\/([^/?#]+)/);
+  const categoryFromPath = isStaffingHubOnly
+    ? 'staffing-companies'
+    : staffingMatch?.[1] || (pathname && pathname.match(/^\/directory\/([^/?#]+)/))?.[1] || '';
+  const isStaffingPath = !!staffingMatch || underStaffingProp;
+  const categorySlugFromUrl = initialCategorySlug || searchParams.get('category') || categoryFromPath || '';
   const locationFromUrl = searchParams.get('location') || '';
   const searchFromUrl = searchParams.get('search') || '';
-  
+
+  const initialCategory = initialCategorySlug || categoryFromPath || '';
   const [selectedLocation, setSelectedLocation] = useState(locationFromUrl);
-  const [selectedService, setSelectedService] = useState('');
+  const [selectedService, setSelectedService] = useState(initialCategory);
   const [selectedRating, setSelectedRating] = useState('');
   const [selectedTeamSize, setSelectedTeamSize] = useState('');
   const [sortBy, setSortBy] = useState('sponsored');
@@ -45,6 +53,13 @@ export default function Directory() {
       return true;
     });
   }, [categoriesRaw]);
+
+  const staffingParentId = React.useMemo(() => categories.find((c) => c.slug === 'staffing-companies')?.id, [categories]);
+  const staffingSubcategorySlugs = React.useMemo(
+    () => new Set(categories.filter((c) => (c.parent_id ?? c.parentId) === staffingParentId).map((c) => c.slug)),
+    [categories, staffingParentId]
+  );
+  const useStaffingPath = isStaffingPath || (!!selectedService && staffingSubcategorySlugs.has(selectedService));
 
   const { data: allAgencies = [], isLoading } = useQuery({
     queryKey: ['agencies'],
@@ -69,21 +84,23 @@ export default function Directory() {
     };
   }, [searchQuery]);
 
-  // Update URL when filters change (do not depend on searchParams to avoid replace loop)
+  // Update URL when filters change – /directory, /directory/staffing, /directory/staffing/xxx, or /directory/xxx + query
   useEffect(() => {
+    const base =
+      selectedService === 'staffing-companies' || selectedService === 'staffing'
+        ? getDirectoryStaffingUrl()
+        : getDirectoryUrl(selectedService, { underStaffing: useStaffingPath });
     const params = new URLSearchParams();
-    if (selectedService) params.set('category', selectedService);
     if (selectedLocation) params.set('location', selectedLocation);
     if (debouncedSearch) params.set('search', debouncedSearch);
     if (selectedRating) params.set('rating', selectedRating);
     if (selectedTeamSize) params.set('teamSize', selectedTeamSize);
-
-    const newSearch = params.toString() ? `?${params.toString()}` : '';
-    const currentSearch = typeof window !== 'undefined' ? window.location.search : '';
-    if (currentSearch !== newSearch) {
-      router.replace(createPageUrl('Directory') + newSearch);
+    const query = params.toString();
+    const newPath = query ? `${base}?${query}` : base;
+    if (typeof window !== 'undefined' && (window.location.pathname + window.location.search) !== newPath) {
+      router.replace(newPath);
     }
-  }, [selectedService, selectedLocation, debouncedSearch, selectedRating, selectedTeamSize, router]);
+  }, [selectedService, selectedLocation, debouncedSearch, selectedRating, selectedTeamSize, useStaffingPath, router]);
 
   // Initialize filters from URL (only when URL has a category and state is not already in sync)
   useEffect(() => {
@@ -178,7 +195,7 @@ export default function Directory() {
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Breadcrumb items={[{ label: 'Browse Agencies' }]} />
+          <Breadcrumb items={selectedService ? [{ label: 'Browse Agencies', href: getDirectoryUrl() }, { label: selectedCategoryName }] : [{ label: 'Browse Agencies' }]} />
         </div>
       </div>
 
@@ -304,7 +321,7 @@ export default function Directory() {
 
                       {/* Company Name & Rating */}
                       <div className="flex-1">
-                        <Link href={createPageUrl('AgencyProfile') + `?id=${agency.id}`}>
+                        <Link href={getCompanyProfileUrl(agency)}>
                           <h3 className="text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors mb-2">
                             {agency.name}
                           </h3>
@@ -326,7 +343,7 @@ export default function Directory() {
                             ))}
                           </div>
                           <Link 
-                            href={createPageUrl('AgencyProfile') + `?id=${agency.id}#reviews`}
+                            href={getCompanyProfileUrl(agency) + '#reviews'}
                             className="text-blue-600 hover:underline text-sm"
                           >
                             {agency.review_count || Math.floor(Math.random() * 200) + 50} Reviews
@@ -337,7 +354,7 @@ export default function Directory() {
                         <p className="text-slate-600 text-sm leading-relaxed mb-4">
                           {agency.description || `Established in ${agency.founded_year || '2015'}, ${agency.name} is a leading service provider with headquarters in ${agency.hq_city || 'India'}. Backed by a dedicated team of experts, the company has successfully delivered innovative solutions for clients worldwide, providing scalable, reliable services...`}
                           {agency.description && agency.description.length > 150 && (
-                            <Link href={createPageUrl('AgencyProfile') + `?id=${agency.id}`} className="text-blue-600 hover:underline ml-1">
+                            <Link href={getCompanyProfileUrl(agency)} className="text-blue-600 hover:underline ml-1">
                               read {agency.name} reviews & insights
                             </Link>
                           )}
@@ -387,7 +404,7 @@ export default function Directory() {
                     </div>
 
                     <div className="space-y-2">
-                      <Link href={createPageUrl('AgencyProfile') + `?id=${agency.id}`}>
+                      <Link href={getCompanyProfileUrl(agency)}>
                         <Button variant="outline" className="w-full">
                           View Profile
                         </Button>

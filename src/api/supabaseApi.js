@@ -136,10 +136,12 @@ export async function createLead(payload) {
 }
 
 export async function getInviteByToken(token) {
+  const t = typeof token === 'string' ? token.trim() : '';
+  if (!t) return null;
   const { data, error } = await supabase
     .from('company_invites')
     .select('*')
-    .eq('token', token)
+    .eq('token', t)
     .is('used_at', null)
     .gt('expires_at', new Date().toISOString())
     .maybeSingle();

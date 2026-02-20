@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getDirectoryUrlWithParams } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { 
   Menu, X, Search, ChevronDown, Facebook, Twitter, Linkedin, Instagram
@@ -42,7 +42,7 @@ export default function Layout({ children }) {
     const params = new URLSearchParams();
     if (searchQuery) params.append('search', searchQuery);
     if (_selectedLocation) params.append('location', _selectedLocation);
-    router.push(createPageUrl('Directory') + '?' + params.toString());
+    router.push(getDirectoryUrl() + (params.toString() ? '?' + params.toString() : ''));
   };
 
   return (
@@ -92,7 +92,7 @@ export default function Layout({ children }) {
                                     return (
                                       <div key={parent.id} className="border-b pb-4">
                                         <Link
-                                          href={createPageUrl('Directory') + `?category=${parent.slug}`}
+                                          href={parent.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(parent.slug)}
                                           className="flex items-start gap-3 px-3 py-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors mb-2"
                                           onClick={(e) => {
                                             e.currentTarget.blur();
@@ -112,7 +112,7 @@ export default function Layout({ children }) {
                                             {subcats.map(subcat => (
                                               <Link
                                                 key={subcat.id}
-                                                href={createPageUrl('Directory') + `?category=${subcat.slug}`}
+                                                href={getDirectoryUrl(subcat.slug, { underStaffing: true })}
                                                 className="px-3 py-2 text-xs text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 onClick={(e) => {
                                                   e.currentTarget.blur();
@@ -136,7 +136,7 @@ export default function Layout({ children }) {
                                     .map((cat) => (
                                       <Link
                                         key={cat.id}
-                                        href={createPageUrl('Directory') + `?category=${cat.slug}`}
+                                        href={cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: cat.slug !== 'staffing-companies' && categories.some((p) => (p.is_parent ?? p.isParent) && p.slug === 'staffing-companies' && p.id === (cat.parent_id ?? cat.parentId)) })}
                                         className="flex items-start gap-3 px-3 py-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         onClick={(e) => {
                                           e.currentTarget.blur();
@@ -168,7 +168,7 @@ export default function Layout({ children }) {
                       placeholder="Search"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && router.push(createPageUrl('Directory') + '?search=' + searchQuery)}
+                      onKeyPress={(e) => e.key === 'Enter' && router.push(getDirectoryUrl() + (searchQuery ? '?search=' + encodeURIComponent(searchQuery) : ''))}
                       className="bg-transparent border-none outline-none text-sm w-32"
                     />
                   </div>
@@ -208,7 +208,7 @@ export default function Layout({ children }) {
                   {categories.filter(cat => (cat.is_parent ?? cat.isParent) || !(cat.parent_id ?? cat.parentId)).map((cat) => (
                     <Link
                       key={cat.id}
-                      href={createPageUrl('Directory') + `?category=${cat.slug}`}
+                      href={cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: cat.slug !== 'staffing-companies' && categories.some((p) => (p.is_parent ?? p.isParent) && p.slug === 'staffing-companies' && p.id === (cat.parent_id ?? cat.parentId)) })}
                       className="text-gray-600 hover:text-blue-600 py-1 text-sm"
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -217,7 +217,7 @@ export default function Layout({ children }) {
                   ))}
                 </div>
                 <Link 
-                  href={createPageUrl('Directory')} 
+                  href={getDirectoryUrl()} 
                   className="text-gray-700 hover:text-blue-600 py-2 font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -272,7 +272,7 @@ export default function Layout({ children }) {
               <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Platform</h4>
               <div className="flex flex-col gap-3 text-sm">
                 <Link href={createPageUrl('Home')} className="text-slate-400 hover:text-blue-400 transition-colors">Home</Link>
-                <Link href={createPageUrl('Directory')} className="text-slate-400 hover:text-blue-400 transition-colors">Browse Agencies</Link>
+                <Link href={getDirectoryUrl()} className="text-slate-400 hover:text-blue-400 transition-colors">Browse Agencies</Link>
                 <Link href={createPageUrl('ListYourCompany')} className="text-slate-400 hover:text-blue-400 transition-colors">List your company</Link>
                 {isAdmin && (
                   <>
@@ -288,7 +288,7 @@ export default function Layout({ children }) {
               <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Top Categories</h4>
               <div className="flex flex-col gap-3 text-sm">
                 {categories.slice(0, 5).map((cat) => (
-                  <Link key={cat.id} href={createPageUrl('Directory') + `?category=${cat.slug}`} className="text-slate-400 hover:text-blue-400 transition-colors">
+                  <Link key={cat.id} href={cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: cat.slug !== 'staffing-companies' && categories.some((p) => (p.is_parent ?? p.isParent) && p.slug === 'staffing-companies' && p.id === (cat.parent_id ?? cat.parentId)) })} className="text-slate-400 hover:text-blue-400 transition-colors">
                     {cat.name}
                   </Link>
                 ))}
@@ -299,7 +299,7 @@ export default function Layout({ children }) {
               <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Top Locations</h4>
               <div className="flex flex-col gap-3 text-sm">
                 {topLocations.map((loc) => (
-                  <Link key={loc} href={createPageUrl('Directory') + `?location=${loc}`} className="text-slate-400 hover:text-blue-400 transition-colors">
+                  <Link key={loc} href={getDirectoryUrl() + '?location=' + encodeURIComponent(loc)} className="text-slate-400 hover:text-blue-400 transition-colors">
                     {loc}
                   </Link>
                 ))}

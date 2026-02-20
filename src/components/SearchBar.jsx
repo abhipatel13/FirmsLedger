@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl } from '@/utils';
 
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -15,7 +15,7 @@ export default function SearchBar() {
     e.preventDefault();
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('search', searchQuery.trim());
-    router.push(createPageUrl('Directory') + (params.toString() ? `?${params.toString()}` : ''));
+    router.push(getDirectoryUrl() + (params.toString() ? '?' + params.toString() : ''));
   };
 
   return (

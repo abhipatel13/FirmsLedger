@@ -41,7 +41,7 @@ export async function POST(request) {
 
     const token = crypto.randomBytes(24).toString('hex');
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 14);
+    expiresAt.setDate(expiresAt.getDate() + 30);
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
     const { data: invite, error: insertError } = await supabase
@@ -65,20 +65,53 @@ export async function POST(request) {
 
     if (resend) {
       const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
+      const safeJoinLink = joinLink.replace(/"/g, '&quot;');
+      const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitation to list on FirmsLedger</title>
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;color:#334155;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f8fafc;">
+    <tr>
+      <td style="padding:32px 16px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="padding:40px 32px;">
+              <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f172a;">You're invited to FirmsLedger</h1>
+              <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#64748b;">India's trusted platform for business service providers</p>
+              <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">Hi${companyName ? ` from ${companyName}` : ''},</p>
+              <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#334155;">You've been invited to add your company to <strong>FirmsLedger</strong>. Submit your details once and we'll list you on the directory.</p>
+              <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#64748b;">This link is valid for 30 days. Click the button below to get started.</p>
+              <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 24px;">
+                <tr>
+                  <td>
+                    <a href="${safeJoinLink}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Add your company</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#94a3b8;">If the button doesn't work, copy and paste this link into your browser:</p>
+              <p style="margin:8px 0 0;font-size:13px;word-break:break-all;color:#2563eb;"><a href="${safeJoinLink}" style="color:#2563eb;">${safeJoinLink}</a></p>
+              <hr style="margin:28px 0 0;border:0;border-top:1px solid #e2e8f0;">
+              <p style="margin:20px 0 0;font-size:12px;color:#94a3b8;">— FirmsLedger</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
       const { error: sendError } = await resend.emails.send({
         from: fromEmail,
         to: [email],
         subject: companyName
           ? `You're invited to list ${companyName} on FirmsLedger`
           : "You're invited to list your company on FirmsLedger",
-        html: `
-          <p>Hi${companyName ? ` from ${companyName}` : ''},</p>
-          <p>You've been invited to add your company to <strong>FirmsLedger</strong> – India's trusted platform for business service providers.</p>
-          <p>Click the link below to submit your company details. The link is valid for 14 days.</p>
-          <p><a href="${joinLink}" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:600;">Add your company</a></p>
-          <p>Or copy this link: <a href="${joinLink}">${joinLink}</a></p>
-          <p>— FirmsLedger</p>
-        `,
+        html,
       });
 
       if (sendError) {

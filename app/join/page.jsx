@@ -14,8 +14,9 @@ import { Building2, Link2Off } from 'lucide-react';
 
 export default function JoinPage() {
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+  const token = (searchParams.get('token') || '').trim();
   const [invite, setInvite] = useState(null);
+  const [linkError, setLinkError] = useState(null); // 'invalid' | 'expired' | 'already_used'
   const [loading, setLoading] = useState(!!token);
   const [formData, setFormData] = useState({
     name: '',
@@ -33,11 +34,29 @@ export default function JoinPage() {
       setLoading(false);
       return;
     }
-    api.getInviteByToken(token).then((inv) => {
-      setInvite(inv);
-      if (inv) setFormData((prev) => ({ ...prev, email: inv.email || prev.email, company_name: (inv.companyName ?? inv.company_name) || prev.company_name }));
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    setLinkError(null);
+    fetch(`/api/join?token=${encodeURIComponent(token)}`)
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.invite) {
+          setInvite(data.invite);
+          setFormData((prev) => ({
+            ...prev,
+            email: data.invite.email || prev.email,
+            company_name: data.invite.company_name || prev.company_name,
+          }));
+        } else {
+          setInvite(null);
+          if (data.error === 'expired') setLinkError('expired');
+          else if (data.error === 'already_used') setLinkError('already_used');
+          else setLinkError('invalid');
+        }
+      })
+      .catch(() => {
+        setInvite(null);
+        setLinkError('invalid');
+      })
+      .finally(() => setLoading(false));
   }, [token]);
 
   const handleSubmit = async (e) => {
@@ -89,15 +108,23 @@ export default function JoinPage() {
     );
   }
 
-  if (!invite) {
+  if (!invite && !loading) {
+    const isExpired = linkError === 'expired';
+    const isUsed = linkError === 'already_used';
+    const title = isExpired ? 'Link expired' : isUsed ? 'Link already used' : 'Invalid link';
+    const message = isExpired
+      ? 'This invite link has expired. Ask the sender for a new invite.'
+      : isUsed
+        ? 'This invite was already used to submit a company. You can list another company below.'
+        : 'This invite link is invalid or was corrupted. Use a fresh link from your email or list your company below.';
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-16 px-4 flex items-center justify-center">
         <div className="max-w-md text-center">
           <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
             <Link2Off className="w-7 h-7 text-slate-500" />
           </div>
-          <h1 className="text-xl font-bold text-slate-900 mb-2">Invalid or expired link</h1>
-          <p className="text-slate-600 mb-6">This invite link may have expired or already been used.</p>
+          <h1 className="text-xl font-bold text-slate-900 mb-2">{title}</h1>
+          <p className="text-slate-600 mb-6">{message}</p>
           <Link href={createPageUrl('ListYourCompany')}>
             <Button className="bg-blue-600 hover:bg-blue-700">List your company</Button>
           </Link>

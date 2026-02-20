@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { createPageUrl } from '@/utils';
+import { getCompanyProfileUrl } from '@/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Users, CheckCircle, Crown } from 'lucide-react';
@@ -21,7 +21,7 @@ export default function AgencyCard({ agency }) {
   };
 
   return (
-    <Link href={createPageUrl('AgencyProfile') + `?id=${agency.id}`}>
+    <Link href={getCompanyProfileUrl(agency)}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">

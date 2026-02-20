@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getCompanyProfileUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -100,7 +100,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
             >
-              <Link href={createPageUrl('Directory')}>
+              <Link href={getDirectoryUrl()}>
                 <Button 
                   size="lg" 
                   className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-2xl shadow-purple-500/50 transition-all duration-300 hover:shadow-purple-500/70 hover:scale-105"
@@ -349,7 +349,7 @@ export default function Home() {
                 </h2>
                 <p className="text-lg text-slate-600">Handpicked top-performing agencies</p>
               </div>
-              <Link href={createPageUrl('Directory')}>
+              <Link href={getDirectoryUrl()}>
                 <Button className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
                   View All 
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -398,7 +398,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mt-12"
           >
-            <Link href={createPageUrl('Directory')}>
+            <Link href={getDirectoryUrl()}>
               <Button className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
                 Browse All Categories 
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -429,15 +429,18 @@ export default function Home() {
 
             {/* Category Pills */}
             <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-              {categories.slice(0, 8).map((cat) => (
+              {(() => {
+                const staffingId = categories.find((c) => c.slug === 'staffing-companies')?.id;
+                return categories.slice(0, 8).map((cat) => (
                 <Link
                   key={cat.id}
-                  href={createPageUrl('Directory') + `?category=${cat.slug}`}
+                  href={cat.slug === 'staffing-companies' || cat.id === staffingId ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: (cat.parent_id ?? cat.parentId) === staffingId })}
                   className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   {cat.name}
                 </Link>
-              ))}
+              ));
+              })()}
             </div>
 
             {/* Company Cards Grid */}
@@ -450,7 +453,7 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.05 }}
                 >
-                  <Link href={createPageUrl('AgencyProfile') + `?id=${agency.id}`}>
+                  <Link href={getCompanyProfileUrl(agency)}>
                     <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 hover:bg-slate-750 hover:border-blue-500 transition-all duration-300">
                       <div className="flex items-start gap-4 mb-4">
                         {agency.logo_url ? (
@@ -472,7 +475,7 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <Link href={createPageUrl('AgencyProfile') + `?id=${agency.id}`} className="text-blue-400 hover:text-blue-300 text-sm font-medium">
+                      <Link href={getCompanyProfileUrl(agency)} className="text-blue-400 hover:text-blue-300 text-sm font-medium">
                         {agency.review_count || 0} Reviews →
                       </Link>
                     </div>
@@ -488,7 +491,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="text-center mt-12"
             >
-              <Link href={createPageUrl('Directory')}>
+              <Link href={getDirectoryUrl()}>
                 <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-8 py-3 text-lg font-semibold">
                   View all companies
                 </Button>
@@ -589,7 +592,7 @@ export default function Home() {
             {['Mumbai', 'Bangalore', 'Delhi', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon', 'Noida', 'Chandigarh', 'Kochi'].map((city, index) => (
               <Link 
                 key={city}
-                href={createPageUrl('Directory') + `?search=${city}`}
+                href={getDirectoryUrl() + '?search=' + encodeURIComponent(city)}
                 className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 text-center hover:-translate-y-1 hover:shadow-lg"
               >
                 <h3 className="font-semibold text-white group-hover:text-blue-300 transition-colors">{city}</h3>
@@ -619,7 +622,7 @@ export default function Home() {
               Browse verified providers across 100+ Indian cities and make the right choice for your business
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href={createPageUrl('Directory')}>
+              <Link href={getDirectoryUrl()}>
                 <Button size="lg" className="group bg-white text-blue-600 hover:bg-slate-100 px-10 py-6 text-lg font-bold rounded-xl shadow-2xl hover:shadow-white/30 transition-all duration-300 hover:scale-105">
                   Explore All Providers
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />

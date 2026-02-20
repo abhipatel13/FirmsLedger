@@ -1,0 +1,42 @@
+import { notFound } from 'next/navigation';
+import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY } from '@/lib/seo';
+import HealthcareStaffingAhmedabadArticle from '@/views/blog/HealthcareStaffingAhmedabadArticle';
+
+const ARTICLES = {
+  'top-healthcare-staffing-agencies-ahmedabad-2026': {
+    title: `Top Healthcare Staffing Agencies in Ahmedabad (${SEO_YEAR})`,
+    description: 'A curated guide to the best healthcare staffing agencies in Ahmedabad. Find medical recruitment partners for hospitals, clinics, and healthcare facilities in Gujarat. Updated February 2026.',
+    seoTitle: `Top Healthcare Staffing Agencies in Ahmedabad ${SEO_YEAR} | ${SEO_COUNTRY} | ${SITE_NAME}`,
+    seoDescription: 'Discover the top healthcare staffing agencies in Ahmedabad. Curated guide to medical recruitment partners for hospitals and clinics in Gujarat. IMS People Possible, PACE, Hire Glocal & more. Updated 2026.',
+    component: HealthcareStaffingAhmedabadArticle,
+  },
+};
+
+export async function generateMetadata({ params }) {
+  const resolved = await params;
+  const slug = resolved?.slug?.trim();
+  if (!slug || !ARTICLES[slug]) return { title: `${SITE_NAME} – Blog` };
+  const meta = ARTICLES[slug];
+  const title = meta.seoTitle || `${meta.title} | ${SITE_NAME}`;
+  const description = meta.seoDescription || meta.description;
+  const canonical = `${BASE_URL.replace(/\/$/, '')}/blogs/${slug}`;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      url: canonical,
+    },
+    alternates: { canonical },
+  };
+}
+
+export default async function BlogArticlePage({ params }) {
+  const resolved = await params;
+  const slug = resolved?.slug?.trim();
+  if (!slug || !ARTICLES[slug]) notFound();
+  const ArticleComponent = ARTICLES[slug].component;
+  return <ArticleComponent />;
+}

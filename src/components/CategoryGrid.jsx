@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { createPageUrl } from '@/utils';
+import { getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   Stethoscope, Laptop, Briefcase, FileText, 
@@ -32,17 +32,18 @@ const iconMap = {
 };
 
 export default function CategoryGrid({ categories }) {
-  // Only show parent categories or categories without parent
+  const staffingId = categories.find((c) => c.slug === 'staffing-companies')?.id;
   const displayCategories = categories.filter(cat => (cat.is_parent ?? cat.isParent) || !(cat.parent_id ?? cat.parentId));
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {displayCategories.map((category) => {
         const Icon = iconMap[category.icon] || Building;
+        const underStaffing = (category.parent_id ?? category.parentId) === staffingId;
         return (
           <Link 
              key={category.id}
-             href={createPageUrl('Directory') + `?category=${category.slug}`}
+             href={category.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(category.slug, { underStaffing })}
            >
             <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer h-full border-blue-100">
               <CardContent className="p-6 text-center">

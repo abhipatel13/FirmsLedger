@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Star, MapPin, Users, CheckCircle, X, Check, Building2 } from 'lucide-react';
 import Link from 'next/link';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getCompanyProfileUrl } from '@/utils';
 
 export default function Compare({ searchParams }) {
   const params = searchParams && typeof searchParams === 'object' ? searchParams : {};
@@ -38,7 +38,7 @@ export default function Compare({ searchParams }) {
           <Building2 className="w-16 h-16 mx-auto text-gray-400 mb-4" />
           <h1 className="text-3xl font-bold mb-4">Compare Agencies</h1>
           <p className="text-gray-600 mb-8">Select agencies from the directory to compare side-by-side</p>
-          <Link href={createPageUrl('Directory')}>
+          <Link href={getDirectoryUrl()}>
             <Button>Browse Directory</Button>
           </Link>
         </div>
@@ -162,7 +162,7 @@ export default function Compare({ searchParams }) {
                           </div>
                         )}
                         <h3 className="font-semibold text-lg mb-2">{agency.name}</h3>
-                        <Link href={createPageUrl('AgencyProfile') + `?id=${agency.id}`}>
+                        <Link href={getCompanyProfileUrl(agency)}>
                           <Button variant="outline" size="sm">View Profile</Button>
                         </Link>
                       </div>
@@ -187,7 +187,7 @@ export default function Compare({ searchParams }) {
         </div>
 
         <div className="mt-8 text-center">
-          <Link href={createPageUrl('Directory')}>
+          <Link href={getDirectoryUrl()}>
             <Button variant="outline">Back to Directory</Button>
           </Link>
         </div>
