@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getDirectoryUrlWithParams } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { 
   Menu, X, Search, ChevronDown, Facebook, Twitter, Linkedin, Instagram

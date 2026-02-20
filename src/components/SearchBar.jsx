@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { createPageUrl, getDirectoryUrl } from '@/utils';
+import { getDirectoryUrl } from '@/utils';
 
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
