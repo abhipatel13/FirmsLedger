@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { createPageUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
@@ -16,9 +17,9 @@ import {
   CheckCircle, Crown, Star, MessageSquare 
 } from 'lucide-react';
 
-export default function AgencyProfile({ searchParams }) {
-  const params = searchParams && typeof searchParams === 'object' ? searchParams : {};
-  const agencyId = params.id ?? (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null);
+export default function AgencyProfile() {
+  const searchParams = useSearchParams();
+  const agencyId = searchParams?.get('id') ?? null;
 
   const { data: agency, isLoading } = useQuery({
     queryKey: ['agency', agencyId],
@@ -39,7 +40,7 @@ export default function AgencyProfile({ searchParams }) {
     queryKey: ['agency-categories', agencyId],
     queryFn: async () => {
       const agencyCats = await api.entities.AgencyCategory.filter({ agency_id: agencyId });
-      const catIds = agencyCats.map(ac => ac.category_id);
+      const catIds = agencyCats.map(ac => ac.category_id ?? ac.categoryId);
       const allCats = await api.entities.Category.list();
       return allCats.filter(c => catIds.includes(c.id));
     },

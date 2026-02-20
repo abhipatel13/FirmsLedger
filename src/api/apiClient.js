@@ -1,9 +1,10 @@
 /**
- * Local API client (replaces Base44). Uses in-memory mock data.
- * Replace this with your own backend (REST, GraphQL, etc.) when ready.
+ * API client: uses Supabase when NEXT_PUBLIC_SUPABASE_URL is set, otherwise in-memory mock data.
  */
+import { hasSupabase } from '@/lib/supabase';
+import * as db from '@/api/supabaseApi';
 
-// Categories from Category_export.csv
+// Categories from Category_export.csv (fallback when no Supabase)
 const mockCategories = [
   { id: '69925d108a86cc8e55f7e0f9', parent_id: '', name: 'Staffing Companies', slug: 'staffing-companies', description: 'Recruitment and staffing services', icon: 'users', order: 1, is_parent: true },
   { id: '69926debe8ad702015479f4d', parent_id: '', name: 'Healthcare Staffing', slug: 'healthcare-staffing', description: 'Healthcare and medical staffing agencies', icon: '', order: 1, is_parent: false },
@@ -63,7 +64,7 @@ function sortByKey(items, orderKey) {
   });
 }
 
-const entityApi = {
+const mockEntityApi = {
   Category: {
     list: () => Promise.resolve(mockCategories),
   },
@@ -74,6 +75,10 @@ const entityApi = {
       return Promise.resolve(list);
     },
     filter: (where, order, limit) => {
+      if (where && where.id != null) {
+        const one = mockAgencies.find((a) => a.id === where.id);
+        return Promise.resolve(one ? [one] : []);
+      }
       let list = mockAgencies.filter((a) => filterBy(a, where));
       list = sortByKey(list, order || '-avg_rating');
       if (typeof limit === 'number') list = list.slice(0, limit);
@@ -111,9 +116,74 @@ const entityApi = {
   },
 };
 
+const supabaseEntityApi = {
+  Category: {
+    list: () => db.fetchCategories(),
+  },
+  Agency: {
+    list: (order, limit) => db.fetchAgencies({ approved: true }, order, limit),
+    filter: async (where, order, limit) => {
+      if (where && where.id != null) {
+        const one = await db.fetchAgencyByIdAny(where.id);
+        return one ? [one] : [];
+      }
+      return db.fetchAgencies(where || { approved: true }, order, limit);
+    },
+    update: async () => { throw new Error('Approve agencies from Supabase Dashboard'); },
+    delete: async () => { throw new Error('Delete agencies from Supabase Dashboard'); },
+    create: (data, categoryIds = []) => db.createAgency(data, categoryIds),
+  },
+  AgencyCategory: {
+    list: () => db.fetchAgencyCategories({}),
+    filter: (where) => db.fetchAgencyCategories(where),
+  },
+  Review: {
+    list: (order, limit) => db.fetchReviews({ approved: true }, order, limit),
+    filter: (where, order, limit) => db.fetchReviews(where || { approved: true }, order, limit),
+    update: async () => { throw new Error('Moderate reviews from Supabase Dashboard'); },
+    delete: async () => { throw new Error('Delete from Supabase Dashboard'); },
+  },
+  Lead: {
+    filter: (where, order, limit) => db.fetchLeads(where || {}, order, limit),
+    create: (data) => db.createLead(data),
+  },
+};
+
+const entityApi = hasSupabase() ? supabaseEntityApi : mockEntityApi;
+
+/** Submit listing request (company adds their data). When Supabase is on, creates agency (pending approval). */
+export async function submitListingRequest(data) {
+  if (hasSupabase()) {
+    return db.createAgency(
+      {
+        name: data.company_name || data.name,
+        slug: data.slug || (data.company_name || data.name || '').toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
+        description: data.message || data.description || '',
+        website: data.website || '',
+        contact_email: data.email || '',
+        hq_city: data.hq_city,
+        hq_state: data.hq_state,
+        hq_country: data.hq_country || 'India',
+        team_size: data.team_size,
+      },
+      data.category_ids || []
+    );
+  }
+  return Promise.resolve({ id: 'pending', message: 'We will contact you soon.' });
+}
+
+/** Get invite by token (for /join?token=xxx). */
+export async function getInviteByToken(token) {
+  return hasSupabase() ? db.getInviteByToken(token) : null;
+}
+
+/** Mark invite as used after company submits listing. */
+export async function markInviteUsed(inviteId, agencyId) {
+  if (hasSupabase()) return db.markInviteUsed(inviteId, agencyId);
+}
+
 export const api = {
   auth: {
-    // Resolve with null so the app renders without requiring login; no authError → no white screen
     me: () => Promise.resolve(null),
     redirectToLogin: () => {},
   },
@@ -121,4 +191,8 @@ export const api = {
   appLogs: {
     logUserInApp: () => Promise.resolve(),
   },
+  submitListingRequest,
+  getInviteByToken,
+  markInviteUsed,
+  hasSupabase: () => hasSupabase(),
 };

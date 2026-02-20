@@ -47,7 +47,7 @@ export default function Categories() {
 
   // Filter categories by search term
   const filteredCategories = categories
-    .filter(cat => cat.is_parent || !cat.parent_id)
+    .filter(cat => (cat.is_parent ?? cat.isParent) || !(cat.parent_id ?? cat.parentId))
     .filter(cat => 
       cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cat.description?.toLowerCase().includes(searchTerm.toLowerCase())

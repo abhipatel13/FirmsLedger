@@ -15,15 +15,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
-import ListAgencyDialog from '@/components/ListAgencyDialog';
 
 export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [listAgencyOpen, setListAgencyOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [_selectedLocation, _setSelectedLocation] = useState('');
   const [_selectedParentId, _setSelectedParentId] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
+
+  React.useEffect(() => {
+    fetch('/api/admin/me', { credentials: 'include' })
+      .then((res) => res.ok && setIsAdmin(true))
+      .catch(() => {});
+  }, []);
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
@@ -81,9 +86,9 @@ export default function Layout({ children }) {
                               <div className="grid grid-cols-1 gap-4">
                                 {/* Staffing Companies with Subcategories */}
                                 {categories
-                                  .filter(cat => cat.is_parent && cat.slug === 'staffing-companies')
+                                  .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug === 'staffing-companies')
                                   .map((parent) => {
-                                    const subcats = categories.filter(c => c.parent_id === parent.id).sort((a, b) => (a.order || 0) - (b.order || 0));
+                                    const subcats = categories.filter(c => (c.parent_id ?? c.parentId) === parent.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
                                     return (
                                       <div key={parent.id} className="border-b pb-4">
                                         <Link
@@ -126,8 +131,8 @@ export default function Layout({ children }) {
                                 {/* Other Parent Categories */}
                                 <div className="grid grid-cols-2 gap-2">
                                   {categories
-                                    .filter(cat => cat.is_parent && cat.slug !== 'staffing-companies')
-                                    .sort((a, b) => (a.order || 0) - (b.order || 0))
+                                    .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug !== 'staffing-companies')
+                                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                                     .map((cat) => (
                                       <Link
                                         key={cat.id}
@@ -183,14 +188,6 @@ export default function Layout({ children }) {
                   >
                     Sign In
                   </Button>
-
-                  <Button 
-                    data-list-agency-btn
-                    onClick={() => setListAgencyOpen(true)}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg px-6 font-semibold"
-                  >
-                    Get Listed
-                  </Button>
                 </nav>
 
                 {/* Mobile Menu Button */}
@@ -208,7 +205,7 @@ export default function Layout({ children }) {
               <div className="flex flex-col gap-3">
                 <div className="text-gray-700 font-medium py-2">Find a Service</div>
                 <div className="pl-4 flex flex-col gap-2 max-h-64 overflow-y-auto">
-                  {categories.filter(cat => cat.is_parent || !cat.parent_id).map((cat) => (
+                  {categories.filter(cat => (cat.is_parent ?? cat.isParent) || !(cat.parent_id ?? cat.parentId)).map((cat) => (
                     <Link
                       key={cat.id}
                       href={createPageUrl('Directory') + `?category=${cat.slug}`}
@@ -226,15 +223,6 @@ export default function Layout({ children }) {
                 >
                   Browse Agencies
                 </Link>
-                <Button 
-                  onClick={() => {
-                    setListAgencyOpen(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                >
-                  List Your Agency
-                </Button>
               </div>
             </div>
           )}
@@ -243,9 +231,6 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main>{children}</main>
-
-      {/* List Agency Dialog */}
-      <ListAgencyDialog open={listAgencyOpen} onOpenChange={setListAgencyOpen} />
 
       {/* Modern Footer */}
       <footer className="bg-slate-900 text-white mt-20 relative overflow-hidden">
@@ -288,6 +273,13 @@ export default function Layout({ children }) {
               <div className="flex flex-col gap-3 text-sm">
                 <Link href={createPageUrl('Home')} className="text-slate-400 hover:text-blue-400 transition-colors">Home</Link>
                 <Link href={createPageUrl('Directory')} className="text-slate-400 hover:text-blue-400 transition-colors">Browse Agencies</Link>
+                <Link href={createPageUrl('ListYourCompany')} className="text-slate-400 hover:text-blue-400 transition-colors">List your company</Link>
+                {isAdmin && (
+                  <>
+                    <Link href={createPageUrl('InviteAgency')} className="text-slate-400 hover:text-blue-400 transition-colors">Invite agency</Link>
+                    <Link href="/admin" className="text-slate-400 hover:text-blue-400 transition-colors">Admin</Link>
+                  </>
+                )}
                 <Link href={createPageUrl('Blogs')} className="text-slate-400 hover:text-blue-400 transition-colors">Blog</Link>
               </div>
             </div>

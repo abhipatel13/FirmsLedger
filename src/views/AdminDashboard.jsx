@@ -319,7 +319,7 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {pendingReviews.map((review) => {
-                    const agency = allAgencies.find(a => a.id === review.agency_id);
+                    const agency = allAgencies.find(a => a.id === (review.agency_id ?? review.agencyId));
                     return (
                       <div key={review.id} className="border rounded-lg p-4">
                         <div className="mb-4">
@@ -331,7 +331,7 @@ export default function AdminDashboard() {
                             size="sm"
                             onClick={() => approveReviewMutation.mutate({ 
                               reviewId: review.id,
-                              agencyId: review.agency_id
+                              agencyId: review.agency_id ?? review.agencyId
                             })}
                           >
                             <CheckCircle className="w-4 h-4 mr-1" />
@@ -359,7 +359,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {allReviews.filter(r => r.approved).map((review) => {
-                  const agency = allAgencies.find(a => a.id === review.agency_id);
+                  const agency = allAgencies.find(a => a.id === (review.agency_id ?? review.agencyId));
                   return (
                     <div key={review.id} className="border rounded-lg p-4">
                       <Badge variant="outline" className="mb-3">{agency?.name}</Badge>

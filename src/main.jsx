@@ -80,9 +80,9 @@ export default function Layout({ children, currentPageName }) {
                               <div className="grid grid-cols-1 gap-4">
                                 {/* Staffing Companies with Subcategories */}
                                 {categories
-                                  .filter(cat => cat.is_parent && cat.slug === 'staffing-companies')
+                                  .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug === 'staffing-companies')
                                   .map((parent) => {
-                                    const subcats = categories.filter(c => c.parent_id === parent.id).sort((a, b) => (a.order || 0) - (b.order || 0));
+                                    const subcats = categories.filter(c => (c.parent_id ?? c.parentId) === parent.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
                                     return (
                                       <div key={parent.id} className="border-b pb-4">
                                         <Link
@@ -125,8 +125,8 @@ export default function Layout({ children, currentPageName }) {
                                 {/* Other Parent Categories */}
                                 <div className="grid grid-cols-2 gap-2">
                                   {categories
-                                    .filter(cat => cat.is_parent && cat.slug !== 'staffing-companies')
-                                    .sort((a, b) => (a.order || 0) - (b.order || 0))
+                                    .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug !== 'staffing-companies')
+                                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                                     .map((cat) => (
                                       <Link
                                         key={cat.id}
@@ -207,7 +207,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="flex flex-col gap-3">
                 <div className="text-gray-700 font-medium py-2">Find a Service</div>
                 <div className="pl-4 flex flex-col gap-2 max-h-64 overflow-y-auto">
-                  {categories.filter(cat => cat.is_parent || !cat.parent_id).map((cat) => (
+                  {categories.filter(cat => (cat.is_parent ?? cat.isParent) || !(cat.parent_id ?? cat.parentId)).map((cat) => (
                     <Link
                       key={cat.id}
                       to={createPageUrl('Directory') + `?category=${cat.slug}`}

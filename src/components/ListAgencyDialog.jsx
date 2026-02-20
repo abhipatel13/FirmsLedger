@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -11,11 +13,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { api } from '@/api/apiClient';
 
-export default function ListAgencyDialog({ open, onOpenChange }) {
+export default function ListAgencyDialog({ open, onOpenChange, inviteEmail }) {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    email: inviteEmail || '',
     phone: '',
     company_name: '',
     website: '',
@@ -23,27 +26,40 @@ export default function ListAgencyDialog({ open, onOpenChange }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  React.useEffect(() => {
+    if (open && inviteEmail) setFormData((prev) => ({ ...prev, email: inviteEmail }));
+  }, [open, inviteEmail]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // Here you can add API call to submit the form
-      // For now, just show a success message
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
-      toast.success('Thank you! We will contact you soon.');
+      await api.submitListingRequest({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company_name: formData.company_name,
+        website: formData.website,
+        message: formData.message,
+      });
+
+      if (api.hasSupabase()) {
+        toast.success('Your listing has been submitted. We’ll review it and get back to you.');
+      } else {
+        toast.success('Thank you! We will contact you soon.');
+      }
       setFormData({
         name: '',
-        email: '',
+        email: inviteEmail || '',
         phone: '',
         company_name: '',
         website: '',
         message: '',
       });
       onOpenChange(false);
-    } catch {
-      toast.error('Something went wrong. Please try again.');
+    } catch (err) {
+      toast.error(err?.message || 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

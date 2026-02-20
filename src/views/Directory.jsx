@@ -131,15 +131,15 @@ export default function Directory() {
       if (selectedCat) {
         // Check if agency has this category or any of its subcategories
         const hasDirectCategory = agencyCategories.some(
-          (ac) => ac.agency_id === agency.id && ac.category_id === selectedCat.id
+          (ac) => (ac.agency_id ?? ac.agencyId) === agency.id && (ac.category_id ?? ac.categoryId) === selectedCat.id
         );
         
-        if (selectedCat.is_parent) {
+        if (selectedCat.is_parent ?? selectedCat.isParent) {
           const subcategoryIds = categories
-            .filter(c => c.parent_id === selectedCat.id)
+            .filter(c => (c.parent_id ?? c.parentId) === selectedCat.id)
             .map(c => c.id);
           const hasSubcategory = agencyCategories.some(
-            (ac) => ac.agency_id === agency.id && subcategoryIds.includes(ac.category_id)
+            (ac) => (ac.agency_id ?? ac.agencyId) === agency.id && subcategoryIds.includes(ac.category_id ?? ac.categoryId)
           );
           if (!hasDirectCategory && !hasSubcategory) return false;
         } else {

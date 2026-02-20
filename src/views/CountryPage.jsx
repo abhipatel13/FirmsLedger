@@ -37,7 +37,7 @@ export default function CountryPage({ searchParams }) {
   // Filter by category if selected
   const filteredAgencies = selectedCategory
     ? agencies.filter(agency => 
-        agencyCategories.some(ac => ac.agency_id === agency.id && ac.category_id === selectedCategory)
+        agencyCategories.some(ac => (ac.agency_id ?? ac.agencyId) === agency.id && (ac.category_id ?? ac.categoryId) === selectedCategory)
       )
     : agencies;
 

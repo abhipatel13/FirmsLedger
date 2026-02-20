@@ -31,7 +31,7 @@ export default function CategoryPage({ searchParams }) {
 
   const categoryAgencies = category ? allAgencies.filter(agency => {
     return agencyCategories.some(
-      ac => ac.agency_id === agency.id && ac.category_id === category.id
+      ac => (ac.agency_id ?? ac.agencyId) === agency.id && (ac.category_id ?? ac.categoryId) === category.id
     );
   }) : [];
 

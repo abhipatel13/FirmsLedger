@@ -33,7 +33,7 @@ const iconMap = {
 
 export default function CategoryGrid({ categories }) {
   // Only show parent categories or categories without parent
-  const displayCategories = categories.filter(cat => cat.is_parent || !cat.parent_id);
+  const displayCategories = categories.filter(cat => (cat.is_parent ?? cat.isParent) || !(cat.parent_id ?? cat.parentId));
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
