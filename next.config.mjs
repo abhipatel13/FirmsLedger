@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [],
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+    ],
+  },
   async redirects() {
     return [
       { source: '/Home', destination: '/', permanent: true },

@@ -2,8 +2,16 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getDirectoryUrl, createPageUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
+
+const FEATURED_IMAGE = {
+  src: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1200&q=85',
+  alt: 'Top Healthcare Staffing Agencies in Ahmedabad - medical recruitment for hospitals and clinics in Gujarat',
+  width: 1200,
+  height: 630,
+};
 
 const AGENCIES = [
   {
@@ -106,6 +114,22 @@ export default function HealthcareStaffingAhmedabadArticle() {
           </p>
         </div>
       </header>
+
+      {/* SEO-friendly featured image */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2">
+        <figure className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+          <Image
+            src={FEATURED_IMAGE.src}
+            alt={FEATURED_IMAGE.alt}
+            width={FEATURED_IMAGE.width}
+            height={FEATURED_IMAGE.height}
+            className="w-full h-auto object-cover"
+            sizes="(max-width: 896px) 100vw, 896px"
+            priority
+          />
+          <figcaption className="sr-only">{FEATURED_IMAGE.alt}</figcaption>
+        </figure>
+      </div>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="border-l-4 border-blue-600 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
