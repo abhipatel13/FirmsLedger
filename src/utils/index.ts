@@ -5,6 +5,7 @@ export function createPageUrl(pageName: string) {
   if (pageName === 'Home') return '/';
   if (pageName === 'Directory') return DIRECTORY_BASE;
   if (pageName === 'Blogs') return '/blogs';
+  if (pageName === 'Contact') return '/contact';
   return '/' + pageName.replace(/ /g, '-');
 }
 

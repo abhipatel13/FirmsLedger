@@ -281,6 +281,7 @@ export default function Layout({ children }) {
                   </>
                 )}
                 <Link href={createPageUrl('Blogs')} className="text-slate-400 hover:text-blue-400 transition-colors">Blog</Link>
+                <Link href={createPageUrl('Contact')} className="text-slate-400 hover:text-blue-400 transition-colors">Contact us</Link>
               </div>
             </div>
 

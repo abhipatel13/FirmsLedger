@@ -18,6 +18,7 @@ const nextConfig = {
       { source: '/directory/:path*', destination: '/Directory/:path*' },
       { source: '/blogs', destination: '/Blogs' },
       { source: '/blogs/:path*', destination: '/Blogs/:path*' },
+      { source: '/contact', destination: '/Contact' },
     ];
   },
 };
