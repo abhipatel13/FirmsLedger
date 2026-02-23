@@ -5,8 +5,18 @@ import BestPermanentStaffingRPOFirmsIndia2026Article from '@/views/blog/BestPerm
 import HealthcareStaffingAhmedabadArticle from '@/views/blog/HealthcareStaffingAhmedabadArticle';
 import Top10ITStaffingIndia2026Article from '@/views/blog/Top10ITStaffingIndia2026Article';
 import TopIndustrialStaffingIndia2026Article from '@/views/blog/TopIndustrialStaffingIndia2026Article';
+import Top10RecruitmentAgenciesIndia2026Article from '@/views/blog/Top10RecruitmentAgenciesIndia2026Article';
 
 const ARTICLES = {
+  'top-10-recruitment-agencies-india-2026': {
+    title: 'Top 10 Recruitment Agencies in India (2026): Find the Best Hiring Partner',
+    description: "Comprehensive guide to India's top 10 recruitment agencies — TeamLease, Naukri, Randstad, Adecco, ManpowerGroup, ABC Consultants, Michael Page, Korn Ferry, Heidrick & Struggles, Quess. Specializations, strengths, and how to choose.",
+    seoTitle: `Top 10 Recruitment Agencies in India (2026) | Best Hiring Partners | ${SEO_COUNTRY} | ${SITE_NAME}`,
+    seoDescription: "Expert guide to the best recruitment agencies in India for 2026. Compare TeamLease, Naukri, Randstad, Adecco, ManpowerGroup, ABC Consultants, Michael Page, Korn Ferry, Heidrick & Struggles, Quess. Executive search, staffing, RPO. Updated 2026.",
+    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top 10 recruitment agencies in India 2026 - best hiring partners and staffing firms',
+    component: Top10RecruitmentAgenciesIndia2026Article,
+  },
   'best-contract-staffing-agencies-india-2026': {
     title: `Best Contract Staffing Agencies in India ${SEO_YEAR}`,
     description: "A practical guide to India's top contract and temporary staffing agencies — scale your workforce with compliance, speed, and flexibility. TeamLease, Quess, Innovsource, Randstad & more.",

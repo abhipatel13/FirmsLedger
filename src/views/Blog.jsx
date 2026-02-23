@@ -11,6 +11,20 @@ import { ArrowRight, BookOpen, Building2, FileText } from 'lucide-react';
 
 const ARTICLES_LIST = [
   {
+    slug: 'top-10-recruitment-agencies-india-2026',
+    title: 'Top 10 Recruitment Agencies in India (2026): Find the Best Hiring Partner',
+    excerpt: "Comprehensive guide to India's top 10 recruitment agencies — TeamLease, Naukri, Randstad, Adecco, ManpowerGroup, ABC Consultants, Michael Page, Korn Ferry, Heidrick & Struggles, Quess.",
+    readTime: '12 min read',
+    category: 'Recruitment',
+    icon: FileText,
+    image: {
+      src: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&q=85',
+      alt: 'Top 10 recruitment agencies in India 2026 - best hiring partners and staffing firms',
+      width: 1200,
+      height: 630,
+    },
+  },
+  {
     slug: 'top-industrial-staffing-companies-india-2026',
     title: 'Top Industrial Staffing Companies in India 2026',
     excerpt: "A definitive guide to India's best industrial workforce and recruitment agencies — manufacturing, logistics, construction, automotive, and blue-collar hiring.",
