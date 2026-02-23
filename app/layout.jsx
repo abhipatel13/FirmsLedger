@@ -1,4 +1,5 @@
 import { Providers } from './providers';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 import '@/index.css';
 
 export const metadata = {
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body>
+        <GoogleAnalytics />
         <Providers>{children}</Providers>
       </body>
     </html>
