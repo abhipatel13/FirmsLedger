@@ -104,25 +104,25 @@ export default function AgencyProfile({ companySlug }) {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+          <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
             {/* Logo */}
             {agency.logo_url ? (
               <img 
                 src={agency.logo_url} 
                 alt={agency.name}
-                className="w-24 h-24 rounded-lg object-cover"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover flex-shrink-0"
               />
             ) : (
-              <div className="w-24 h-24 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-3xl">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl sm:text-3xl flex-shrink-0">
                 {agency.name.charAt(0)}
               </div>
             )}
 
             {/* Info */}
-            <div className="flex-1">
-              <div className="flex flex-wrap items-start gap-3 mb-3">
-                <h1 className="text-3xl font-bold text-gray-900">{agency.name}</h1>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">{agency.name}</h1>
                 {agency.verified && (
                   <Badge className="bg-blue-600">
                     <CheckCircle className="w-3 h-3 mr-1" />
@@ -173,14 +173,14 @@ export default function AgencyProfile({ companySlug }) {
                 )}
               </div>
 
-              <div className="flex gap-3 mt-6">
-                <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`}>
-                  <Button size="lg">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
+                <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`} className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto min-h-[44px] touch-manipulation">
                     Request Proposal
                   </Button>
                 </Link>
-                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                  <Button size="lg" variant="outline">
+                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`} className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto min-h-[44px] touch-manipulation">
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Write Review
                   </Button>
@@ -191,14 +191,14 @@ export default function AgencyProfile({ companySlug }) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-5 sm:space-y-8 min-w-0">
             {/* Overview */}
             <Card>
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Overview</h2>
+              <CardContent className="p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Overview</h2>
                 <p className="text-gray-600 whitespace-pre-line">{agency.description}</p>
               </CardContent>
             </Card>
@@ -206,9 +206,9 @@ export default function AgencyProfile({ companySlug }) {
             {/* Rating Breakdown */}
             {reviews.length > 0 && (
               <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Rating Breakdown</h2>
-                  <div className="grid grid-cols-2 gap-4">
+                <CardContent className="p-4 sm:p-6">
+                  <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Rating Breakdown</h2>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <p className="text-sm text-gray-600 mb-2">Quality</p>
                       <RatingDisplay rating={avgQuality} />
@@ -232,7 +232,7 @@ export default function AgencyProfile({ companySlug }) {
 
             {/* Reviews */}
             <div>
-              <h2 className="text-2xl font-bold mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
                 Reviews ({reviews.length})
               </h2>
               {reviews.length === 0 ? (
@@ -256,12 +256,12 @@ export default function AgencyProfile({ companySlug }) {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Categories */}
             {categories.length > 0 && (
               <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-3">Services</h3>
+                <CardContent className="p-4 sm:p-6">
+                  <h3 className="font-semibold mb-2 sm:mb-3">Services</h3>
                   <div className="flex flex-wrap gap-2">
                     {categories.map((cat) => (
                       <Badge key={cat.id} variant="secondary">
@@ -275,8 +275,8 @@ export default function AgencyProfile({ companySlug }) {
 
             {/* Details */}
             <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Agency Details</h3>
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="font-semibold mb-3 sm:mb-4">Agency Details</h3>
                 <div className="space-y-3 text-sm">
                   {agency.pricing_model && (
                     <div>
@@ -301,8 +301,8 @@ export default function AgencyProfile({ companySlug }) {
             {/* Industries */}
             {agency.industries_served?.length > 0 && (
               <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-3">Industries Served</h3>
+                <CardContent className="p-4 sm:p-6">
+                  <h3 className="font-semibold mb-2 sm:mb-3">Industries Served</h3>
                   <div className="flex flex-wrap gap-2">
                     {agency.industries_served.map((industry, idx) => (
                       <Badge key={idx} variant="outline">

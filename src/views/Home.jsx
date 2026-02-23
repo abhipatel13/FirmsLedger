@@ -46,20 +46,20 @@ export default function Home() {
         <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative">
-          <div className="text-center max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 md:py-32 relative">
+          <div className="text-center max-w-5xl mx-auto min-w-0">
             {/* Trust Badge */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-5 py-2.5 rounded-full text-sm font-medium mb-8 shadow-lg"
+              className="inline-flex flex-wrap items-center justify-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-lg"
             >
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
+              <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
               <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent font-semibold">
                 Trusted by 10,000+ businesses
               </span>
-              <div className="flex -space-x-1 ml-2">
+              <div className="flex -space-x-1">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -73,7 +73,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 sm:mb-6 leading-[1.15] tracking-tight px-0"
             >
               Discover India's Most
               <br />
@@ -87,7 +87,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg md:text-xl text-slate-300 mb-10 leading-relaxed max-w-3xl mx-auto"
+              className="text-base sm:text-lg md:text-xl text-slate-300 mb-8 sm:mb-10 leading-relaxed max-w-3xl mx-auto px-0"
             >
               Connect with verified service providers through authentic reviews, transparent ratings, 
               and data-driven insights. Make confident decisions for your business growth.
@@ -98,12 +98,12 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 w-full sm:w-auto"
             >
-              <Link href={getDirectoryUrl()}>
+              <Link href={getDirectoryUrl()} className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
-                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-2xl shadow-purple-500/50 transition-all duration-300 hover:shadow-purple-500/70 hover:scale-105"
+                  className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-semibold rounded-xl shadow-2xl shadow-purple-500/50 transition-all duration-300 hover:shadow-purple-500/70 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     Explore Providers
@@ -115,7 +115,7 @@ export default function Home() {
               <Button 
                 size="lg"
                 variant="outline"
-                className="bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white px-8 py-6 text-lg font-semibold rounded-xl transition-all duration-300 hover:border-white/50 hover:scale-105"
+                className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-semibold rounded-xl transition-all duration-300 hover:border-white/50 hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => {
                   const listBtn = document.querySelector('[data-list-agency-btn]');
                   if (listBtn) listBtn.click();
@@ -130,9 +130,9 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="max-w-4xl mx-auto"
+              className="max-w-4xl mx-auto w-full px-0"
             >
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 shadow-2xl">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl sm:rounded-2xl p-2 shadow-2xl w-full">
                 <SearchBar />
               </div>
             </motion.div>
@@ -142,103 +142,124 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mt-16 max-w-4xl mx-auto"
+              className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 md:gap-8 mt-10 sm:mt-16 max-w-4xl mx-auto"
             >
-              <div className="group text-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Award className="w-5 h-5 text-blue-400" />
-                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">50+</div>
+              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">50+</div>
                 </div>
-                <div className="text-slate-400 text-sm font-medium">Verified Providers</div>
+                <div className="text-slate-400 text-xs sm:text-sm font-medium">Verified Providers</div>
               </div>
-              <div className="group text-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">150+</div>
+              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-yellow-400" />
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">150+</div>
                 </div>
-                <div className="text-slate-400 text-sm font-medium">Authentic Reviews</div>
+                <div className="text-slate-400 text-xs sm:text-sm font-medium">Authentic Reviews</div>
               </div>
-              <div className="group text-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Globe className="w-5 h-5 text-emerald-400" />
-                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">100+</div>
+              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">100+</div>
                 </div>
-                <div className="text-slate-400 text-sm font-medium">Indian Cities</div>
+                <div className="text-slate-400 text-xs sm:text-sm font-medium">Indian Cities</div>
               </div>
-              <div className="group text-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <TrendingUp className="w-5 h-5 text-pink-400" />
-                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">4.8</div>
+              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-pink-400" />
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">4.8</div>
                 </div>
-                <div className="text-slate-400 text-sm font-medium">Average Rating</div>
+                <div className="text-slate-400 text-xs sm:text-sm font-medium">Average Rating</div>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Why Trust FirmsLedger */}
-      <section className="py-24 bg-slate-50">
+      {/* Why Trust FirmsLedger - About-style section */}
+      <section className="py-10 sm:py-14 md:py-20 lg:py-24 bg-[#f8f8fa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            <motion.div 
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-start">
+            {/* Left: Heading & subtitle */}
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
+              className="min-w-0 lg:sticky lg:top-24"
             >
-              <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
-                Why trust<br />FirmsLedger
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1a2a4c] mb-3 sm:mb-5 tracking-tight leading-tight">
+                Why trust
+                <br />
+                FirmsLedger
               </h2>
-              <p className="text-slate-600 text-lg mb-8">
+              <p className="text-slate-600 text-base sm:text-lg max-w-md leading-relaxed">
                 Hear from businesses who found their ideal partners on FirmsLedger.
               </p>
             </motion.div>
 
-            <motion.div 
+            {/* Right: Trust points */}
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="space-y-6"
+              className="space-y-5 sm:space-y-6 min-w-0"
             >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-6 h-6 text-white" />
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-1">All companies on FirmsLedger are verified for authenticity.</h3>
-                  <p className="text-slate-600">We verify each company to ensure you connect with legitimate service providers.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0">
-                  <Star className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-1">FirmsLedger does not manipulate ratings or reviews.</h3>
-                  <p className="text-slate-600">All reviews are from verified customers and reflect genuine experiences.</p>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
+                    All companies on FirmsLedger are verified for authenticity.
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                    We verify each company to ensure you connect with legitimate service providers.
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
-                  <CheckCircle className="w-6 h-6 text-white" />
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0">
+                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-1">Company information is regularly updated & accurate.</h3>
-                  <p className="text-slate-600">We maintain up-to-date information on all listed companies for your confidence.</p>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
+                    FirmsLedger does not manipulate ratings or reviews.
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                    All reviews are from verified customers and reflect genuine experiences.
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-6 h-6 text-white" />
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-1">Our research is transparent and unbiased.</h3>
-                  <p className="text-slate-600">We use data-driven metrics to rank companies based on performance and quality.</p>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
+                    Company information is regularly updated & accurate.
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                    We maintain up-to-date information on all listed companies for your confidence.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
+                    Our research is transparent and unbiased.
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                    We use data-driven metrics to rank companies based on performance and quality.
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -247,16 +268,16 @@ export default function Home() {
       </section>
 
       {/* Choose the Right Partner */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-12 sm:py-16 md:py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
               How It Works
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -264,18 +285,18 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="group relative bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-blue-300 hover:-translate-y-1"
+              className="group relative bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-blue-300 hover:-translate-y-1"
             >
               <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
                 1
               </div>
-              <h3 className="text-lg font-bold mb-3 mt-4 text-slate-900">Search by Location</h3>
+              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Search by Location</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
                 Find providers in Mumbai, Bangalore, Delhi, Pune, Hyderabad, and 100+ Indian cities
               </p>
@@ -286,12 +307,12 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="group relative bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-purple-300 hover:-translate-y-1"
+              className="group relative bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-purple-300 hover:-translate-y-1"
             >
               <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
                 2
               </div>
-              <h3 className="text-lg font-bold mb-3 mt-4 text-slate-900">Filter by Service</h3>
+              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Filter by Service</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
                 Marketing, legal, logistics, consulting, or specialized business services
               </p>
@@ -307,7 +328,7 @@ export default function Home() {
               <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
                 3
               </div>
-              <h3 className="text-lg font-bold mb-3 mt-4 text-slate-900">Compare & Review</h3>
+              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Compare & Review</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
                 Read verified reviews, compare ratings, pricing, and success rates side-by-side
               </p>
@@ -323,7 +344,7 @@ export default function Home() {
               <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
                 4
               </div>
-              <h3 className="text-lg font-bold mb-3 mt-4 text-slate-900">Contact Directly</h3>
+              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Contact Directly</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
                 View provider contact details and reach out directly to discuss your business needs
               </p>
@@ -334,17 +355,17 @@ export default function Home() {
 
       {/* Featured Agencies */}
       {featuredAgencies.length > 0 && (
-        <section className="py-24 bg-white">
+        <section className="py-12 sm:py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4"
+              className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 sm:mb-12 gap-4"
             >
-              <div>
-                <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 tracking-tight">
+              <div className="min-w-0">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 tracking-tight">
                   Featured Providers
                 </h2>
                 <p className="text-lg text-slate-600">Handpicked top-performing agencies</p>
@@ -374,16 +395,16 @@ export default function Home() {
       )}
 
       {/* Categories */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-12 sm:py-16 md:py-24 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
               Browse by Category
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -410,16 +431,16 @@ export default function Home() {
 
       {/* Top Rated Agencies */}
       {topRatedAgencies.length > 0 && (
-        <section className="py-24 bg-slate-900 text-white">
+        <section className="py-12 sm:py-16 md:py-24 bg-slate-900 text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h2 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 tracking-tight">
                 Find the top-rated companies in every service category
               </h2>
               <p className="text-slate-300 text-lg">
@@ -428,7 +449,7 @@ export default function Home() {
             </motion.div>
 
             {/* Category Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
               {(() => {
                 const staffingId = categories.find((c) => c.slug === 'staffing-companies')?.id;
                 return categories.slice(0, 8).map((cat) => (
@@ -503,20 +524,20 @@ export default function Home() {
 
       {/* Recent Reviews */}
       {recentReviews.length > 0 && (
-        <section className="py-24 bg-white">
+        <section className="py-12 sm:py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="text-center mb-16"
+              className="text-center mb-10 sm:mb-16"
             >
-              <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
                 New reviews from verified customers
               </h2>
             </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {recentReviews.map((review, index) => (
                 <motion.div
                   key={review.id}
@@ -559,7 +580,7 @@ export default function Home() {
       )}
 
       {/* Top Cities in India */}
-      <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/20 to-purple-900/20"></div>
         
@@ -569,12 +590,12 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-6 shadow-lg">
-              <Globe className="w-8 h-8 text-white" />
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-4 sm:mb-6 shadow-lg">
+              <Globe className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
               Available Across India
             </h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
@@ -603,7 +624,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:50px_50px]"></div>
         <div className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
@@ -615,10 +636,10 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 tracking-tight">
               Ready to Find Your<br />Perfect Partner?
             </h2>
-            <p className="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed">
+            <p className="text-base sm:text-xl md:text-2xl text-blue-100 mb-8 sm:mb-10 leading-relaxed px-0">
               Browse verified providers across 100+ Indian cities and make the right choice for your business
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

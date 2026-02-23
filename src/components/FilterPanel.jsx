@@ -32,7 +32,7 @@ export default function FilterPanel({
   ].filter(Boolean).length;
 
   return (
-    <div className="bg-white border-b py-4 sticky top-20 z-40">
+    <div className="bg-white border-b py-4 sticky top-16 sm:top-20 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Mobile Toggle */}
         <button

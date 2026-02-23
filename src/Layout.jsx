@@ -49,12 +49,12 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center h-20 gap-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16 sm:h-20 gap-2 sm:gap-8 min-w-0">
                 {/* Modern Logo */}
-                <Link href={createPageUrl('Home')} className="flex items-center gap-3 flex-shrink-0">
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Link href={createPageUrl('Home')} className="flex items-center gap-2 sm:gap-3 flex-shrink-0 min-w-0">
+                  <div className="relative flex-shrink-0">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                       <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none">
                         <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z" fill="currentColor" opacity="0.3"/>
                         <path d="M8 8h3v3M16 8h3v3M8 19h3v3M16 19h3v3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -62,11 +62,11 @@ export default function Layout({ children }) {
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full"></div>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight tracking-tight">
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-lg sm:text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight tracking-tight truncate">
                       FirmsLedger
                     </span>
-                    <span className="text-[10px] text-slate-600 font-semibold leading-tight tracking-wide">
+                    <span className="text-[9px] sm:text-[10px] text-slate-600 font-semibold leading-tight tracking-wide hidden sm:block">
                       BUSINESS DIRECTORY
                     </span>
                   </div>
@@ -192,24 +192,27 @@ export default function Layout({ children }) {
 
                 {/* Mobile Menu Button */}
                 <button 
-                  className="lg:hidden"
+                  type="button"
+                  className="lg:hidden p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  aria-expanded={mobileMenuOpen}
+                  aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
                 >
                   {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
               </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu - visible when hamburger is shown (below lg) */}
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t">
-              <div className="flex flex-col gap-3">
-                <div className="text-gray-700 font-medium py-2">Find a Service</div>
-                <div className="pl-4 flex flex-col gap-2 max-h-64 overflow-y-auto">
+            <div className="lg:hidden py-4 border-t overflow-y-auto max-h-[calc(100vh-5rem)]">
+              <div className="flex flex-col gap-1">
+                <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider px-1 py-2">Find a Service</div>
+                <div className="pl-2 flex flex-col gap-0.5 max-h-52 overflow-y-auto">
                   {categories.filter(cat => (cat.is_parent ?? cat.isParent) || !(cat.parent_id ?? cat.parentId)).map((cat) => (
                     <Link
                       key={cat.id}
                       href={cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: cat.slug !== 'staffing-companies' && categories.some((p) => (p.is_parent ?? p.isParent) && p.slug === 'staffing-companies' && p.id === (cat.parent_id ?? cat.parentId)) })}
-                      className="text-gray-600 hover:text-blue-600 py-1 text-sm"
+                      className="text-slate-700 hover:text-blue-600 py-3 px-3 text-sm rounded-lg hover:bg-slate-50 active:bg-slate-100 touch-manipulation"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {cat.name}
@@ -218,11 +221,34 @@ export default function Layout({ children }) {
                 </div>
                 <Link 
                   href={getDirectoryUrl()} 
-                  className="text-gray-700 hover:text-blue-600 py-2 font-medium"
+                  className="text-slate-700 hover:text-blue-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-slate-50 active:bg-slate-100 touch-manipulation"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Browse Agencies
                 </Link>
+                <Link 
+                  href={createPageUrl('Blogs')} 
+                  className="text-slate-700 hover:text-blue-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-slate-50 active:bg-slate-100 touch-manipulation"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Resources
+                </Link>
+                <Link 
+                  href={createPageUrl('WriteReview')} 
+                  className="text-slate-700 hover:text-blue-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-slate-50 active:bg-slate-100 touch-manipulation"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Write a Review
+                </Link>
+                <div className="border-t border-slate-200 mt-2 pt-3 px-3 flex flex-col gap-2">
+                  <Button 
+                    variant="outline"
+                    className="w-full justify-center border-slate-300 text-slate-700"
+                    onClick={() => { setMobileMenuOpen(false); api.auth.redirectToLogin(); }}
+                  >
+                    Sign In
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -230,13 +256,13 @@ export default function Layout({ children }) {
       </header>
 
       {/* Main Content */}
-      <main>{children}</main>
+      <main className="min-w-0 overflow-x-hidden">{children}</main>
 
       {/* Modern Footer */}
-      <footer className="bg-slate-900 text-white mt-20 relative overflow-hidden">
+      <footer className="bg-slate-900 text-white mt-12 sm:mt-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-slate-900"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12 mb-8 sm:mb-12">
             <div className="lg:col-span-2">
               <Link href={createPageUrl('Home')} className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -308,15 +334,15 @@ export default function Layout({ children }) {
             </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-slate-500 text-sm">
+          <div className="border-t border-slate-800 pt-6 sm:pt-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+              <p className="text-slate-500 text-xs sm:text-sm order-2 sm:order-1">
                 © 2026 FirmsLedger. All rights reserved.
               </p>
-              <div className="flex items-center gap-6 text-sm">
-                <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Terms of Service</a>
-                <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Privacy Policy</a>
-                <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Cookie Policy</a>
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6 text-sm order-1 sm:order-2">
+                <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Terms of Service</a>
+                <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Privacy Policy</a>
+                <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Cookie Policy</a>
               </div>
             </div>
           </div>

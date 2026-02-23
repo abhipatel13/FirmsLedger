@@ -200,23 +200,24 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
       </div>
 
       {/* Header Section */}
-      <div className="bg-white border-b py-8">
+      <div className="bg-white border-b py-5 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="min-w-0"
           >
-            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-slate-900">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-slate-900 break-words">
               Top {selectedCategoryName}
             </h1>
-            <p className="text-slate-600 mb-6 max-w-4xl leading-relaxed">
+            <p className="text-slate-600 mb-4 sm:mb-6 max-w-4xl leading-relaxed text-sm sm:text-base">
               Discover the top {selectedCategoryName.toLowerCase()} at FirmsLedger. Browse verified service providers with proven expertise. The list makes it easy for businesses to easily browse the most reliable service providers based on their expertise, project needs and pricing.
             </p>
 
-            <div className="flex items-center gap-4 text-sm text-slate-600">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-slate-600">
               <span><strong>{filteredAgencies.length}</strong> Companies</span>
-              <span>|</span>
+              <span className="hidden sm:inline">|</span>
               <span>Rankings updated: Feb 15, 2026</span>
             </div>
           </motion.div>
@@ -264,14 +265,14 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
       {/* Results Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Sort Bar */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b">
-          <h2 className="text-xl font-bold text-slate-900">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6 pb-4 border-b">
+          <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 break-words min-w-0">
             List of Top {selectedCategoryName} | Top {selectedCategoryName.split(' ')[0]} Providers
           </h2>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <span className="text-sm text-slate-600">Sort by:</span>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-40 bg-white">
+              <SelectTrigger className="w-full sm:w-40 bg-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -300,12 +301,12 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="bg-white border border-slate-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+                className="bg-white border border-slate-200 rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow"
               >
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                   {/* Left: Company Info */}
-                  <div className="lg:col-span-2">
-                    <div className="flex gap-4 mb-4">
+                  <div className="lg:col-span-2 min-w-0">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3 sm:mb-4">
                       {/* Logo */}
                       <div className="flex-shrink-0">
                         {agency.logo_url ? (
@@ -320,9 +321,9 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                       </div>
 
                       {/* Company Name & Rating */}
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <Link href={getCompanyProfileUrl(agency)}>
-                          <h3 className="text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors mb-2">
+                          <h3 className="text-lg sm:text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors mb-2 break-words">
                             {agency.name}
                           </h3>
                         </Link>
@@ -351,7 +352,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                         </div>
 
                         {/* Description */}
-                        <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                        <p className="text-slate-600 text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
                           {agency.description || `Established in ${agency.founded_year || '2015'}, ${agency.name} is a leading service provider with headquarters in ${agency.hq_city || 'India'}. Backed by a dedicated team of experts, the company has successfully delivered innovative solutions for clients worldwide, providing scalable, reliable services...`}
                           {agency.description && agency.description.length > 150 && (
                             <Link href={getCompanyProfileUrl(agency)} className="text-blue-600 hover:underline ml-1">
@@ -361,7 +362,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                         </p>
 
                         {/* Stats */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 text-xs sm:text-sm">
                           <div className="flex items-center gap-2 text-slate-600">
                             <span className="font-semibold">💰 $25 - $49/hr</span>
                           </div>
@@ -383,8 +384,8 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                   </div>
 
                   {/* Right: Verified Review & Actions */}
-                  <div className="lg:col-span-1 border-l pl-6">
-                    <div className="bg-slate-50 rounded-lg p-4 mb-4">
+                  <div className="lg:col-span-1 lg:border-l lg:pl-6 pt-4 lg:pt-0 border-t lg:border-t-0">
+                    <div className="bg-slate-50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
                       <div className="flex items-center gap-2 mb-2">
                         <CheckCircle className="w-4 h-4 text-blue-600" />
                         <span className="text-xs font-semibold text-slate-900">Verified Client Review</span>
@@ -404,14 +405,14 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                     </div>
 
                     <div className="space-y-2">
-                      <Link href={getCompanyProfileUrl(agency)}>
-                        <Button variant="outline" className="w-full">
+                      <Link href={getCompanyProfileUrl(agency)} className="block">
+                        <Button variant="outline" className="w-full min-h-[44px] touch-manipulation">
                           View Profile
                         </Button>
                       </Link>
                       {agency.website && (
-                        <a href={agency.website} target="_blank" rel="noopener noreferrer">
-                          <Button className="w-full bg-slate-900 hover:bg-slate-800">
+                        <a href={agency.website} target="_blank" rel="noopener noreferrer" className="block">
+                          <Button className="w-full min-h-[44px] bg-slate-900 hover:bg-slate-800 touch-manipulation">
                             Visit Website <ExternalLink className="w-4 h-4 ml-2" />
                           </Button>
                         </a>

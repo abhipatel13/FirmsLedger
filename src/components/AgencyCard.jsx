@@ -23,8 +23,8 @@ export default function AgencyCard({ agency }) {
   return (
     <Link href={getCompanyProfileUrl(agency)}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-4">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
             {agency.logo_url ? (
               <img 
                 src={agency.logo_url} 
@@ -37,9 +37,9 @@ export default function AgencyCard({ agency }) {
               </div>
             )}
             
-            <div className="flex-1">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+            <div className="flex-1 min-w-0 w-full">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <h3 className="font-semibold text-base sm:text-lg text-gray-900 line-clamp-1 break-words">
                   {agency.name}
                 </h3>
                 <div className="flex gap-1">
