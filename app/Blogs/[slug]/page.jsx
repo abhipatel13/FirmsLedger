@@ -31,7 +31,7 @@ const ARTICLES = {
     description: "Expert-curated guide to India's top permanent recruitment and RPO partners — for direct hire and scalable hiring programs. TeamLease Digital, Randstad, ABC Consultants, Adecco & more.",
     seoTitle: `Best Permanent Staffing & RPO Firms in India ${SEO_YEAR} | ${SEO_COUNTRY} | ${SITE_NAME}`,
     seoDescription: "Best permanent staffing and RPO firms in India for 2026. Direct hire, recruitment process outsourcing. TeamLease Digital, Randstad, ABC Consultants, Adecco, Xpheno. Updated February 2026.",
-    image: 'https://images.unsplash.com/photo-1600880292203-848bb581ba47?w=1200&h=630&fit=crop&q=85',
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=630&fit=crop&q=85',
     imageAlt: 'Best permanent staffing and RPO firms in India 2026 - recruitment process outsourcing and direct hire',
     component: BestPermanentStaffingRPOFirmsIndia2026Article,
   },

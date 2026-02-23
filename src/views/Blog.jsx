@@ -88,7 +88,7 @@ const ARTICLES_LIST = [
     category: 'Permanent & RPO',
     icon: FileText,
     image: {
-      src: 'https://images.unsplash.com/photo-1600880292203-848bb581ba47?w=1200&q=85',
+      src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=85',
       alt: 'Best permanent staffing and RPO firms in India 2026 - recruitment process outsourcing and direct hire',
       width: 1200,
       height: 630,
