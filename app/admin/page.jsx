@@ -275,7 +275,7 @@ export default function AdminPanelPage() {
                   <p className="text-slate-500 text-xs">From: {mailConfig.fromEmail}</p>
                 )}
                 <p className="text-slate-500 text-xs mt-2">
-                  Add <code className="bg-slate-100 px-1 rounded">RESEND_FROM_EMAIL</code> in .env.local to customize sender.
+                  To send to <strong>any</strong> email (invites, agencies, etc.), set <code className="bg-slate-100 px-1 rounded">RESEND_FROM_EMAIL</code> to an address at your <strong>verified Resend domain</strong>, e.g. <code>FirmsLedger &lt;noreply@firmsledger.com&gt;</code> in .env.local, then restart the server.
                 </p>
               </div>
             ) : (

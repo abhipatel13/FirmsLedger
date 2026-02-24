@@ -6,6 +6,7 @@ import { getAdminFromCookie } from '@/lib/admin-auth';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 function getAppUrl(request) {
@@ -47,12 +48,12 @@ export async function POST(request) {
       return NextResponse.json({ error: 'At least one agency email is required' }, { status: 400 });
     }
 
-    if (!supabaseUrl || !supabaseAnonKey) {
+    if (!supabaseUrl || !(supabaseServiceKey || supabaseAnonKey)) {
       return NextResponse.json({ error: 'Supabase is not configured' }, { status: 500 });
     }
 
     const appUrl = getAppUrl(request);
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey, { auth: { persistSession: false } });
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
     const buildHtml = (safeJoinLink) => `
 <!DOCTYPE html>
@@ -103,6 +104,8 @@ export async function POST(request) {
 
     let sent = 0;
     let failed = 0;
+    let firstInsertError = null;
+    let firstResendError = null;
     for (const { email, company_name: companyName } of list) {
       const token = crypto.randomBytes(24).toString('hex');
       const expiresAt = new Date();
@@ -121,6 +124,7 @@ export async function POST(request) {
 
       if (insertError) {
         console.error('Invite insert error:', insertError);
+        if (!firstInsertError) firstInsertError = insertError;
         failed++;
         continue;
       }
@@ -139,6 +143,7 @@ export async function POST(request) {
         });
         if (sendError) {
           console.error('Resend error:', sendError);
+          if (!firstResendError) firstResendError = sendError;
           failed++;
         } else {
           sent++;
@@ -152,8 +157,12 @@ export async function POST(request) {
       return NextResponse.json({ message: 'Invite sent', sent: 1 });
     }
     if (failed === list.length) {
+      const msg =
+        firstResendError?.message ||
+        firstInsertError?.message ||
+        'Failed to create or send invites. Check server logs.';
       return NextResponse.json(
-        { error: 'Failed to create or send invites. Check server logs.' },
+        { error: msg },
         { status: 500 }
       );
     }
