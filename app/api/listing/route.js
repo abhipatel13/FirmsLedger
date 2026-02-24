@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const notifyEmail = process.env.NOTIFY_SUBMISSION_EMAIL || 'abhipatel8675@gmail.com';
 
 function slugify(text) {
   return String(text || '')
@@ -84,6 +87,29 @@ export async function POST(request) {
         .from('company_invites')
         .update({ used_at: new Date().toISOString(), agency_id: agency.id })
         .eq('id', inviteId);
+    }
+
+    if (resend && notifyEmail) {
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
+      const esc = (s) => (s || '').replace(/</g, '&lt;');
+      const html = `
+        <p><strong>New listing submission</strong></p>
+        <p><strong>Company:</strong> ${esc(name)}</p>
+        <p><strong>Email:</strong> ${esc(contact_email) || '—'}</p>
+        <p><strong>Website:</strong> ${esc(website) || '—'}</p>
+        <p><strong>Location:</strong> ${[hq_city, hq_state, hq_country].filter(Boolean).join(', ') || '—'}</p>
+        <p><strong>Team size:</strong> ${esc(team_size) || '—'}</p>
+        ${description ? `<p><strong>Message:</strong><br/>${esc(description).replace(/\n/g, '<br/>')}</p>` : ''}
+        <p style="color:#64748b;font-size:12px;margin-top:16px;">Submitted via FirmsLedger. Approve in Supabase or Admin to publish.</p>
+      `;
+      resend.emails
+        .send({
+          from: fromEmail,
+          to: [notifyEmail],
+          subject: `FirmsLedger: New listing – ${(name || 'Company').slice(0, 50)}`,
+          html,
+        })
+        .catch((err) => console.error('Submission notify email failed:', err));
     }
 
     return NextResponse.json({ id: agency.id, ...agency });
