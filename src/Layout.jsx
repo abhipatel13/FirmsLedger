@@ -301,12 +301,10 @@ export default function Layout({ children }) {
                 <Link href={getDirectoryUrl()} className="text-slate-400 hover:text-blue-400 transition-colors">Browse Agencies</Link>
                 <Link href={createPageUrl('ListYourCompany')} className="text-slate-400 hover:text-blue-400 transition-colors">List your company</Link>
                 {isAdmin && (
-                  <>
-                    <Link href={createPageUrl('InviteAgency')} className="text-slate-400 hover:text-blue-400 transition-colors">Invite agency</Link>
-                    <Link href="/admin" className="text-slate-400 hover:text-blue-400 transition-colors">Admin</Link>
-                  </>
+                  <Link href={createPageUrl('InviteAgency')} className="text-slate-400 hover:text-blue-400 transition-colors">Invite agency</Link>
                 )}
                 <Link href={createPageUrl('Blogs')} className="text-slate-400 hover:text-blue-400 transition-colors">Blog</Link>
+                <Link href="/admin" className="text-slate-400 hover:text-blue-400 transition-colors">Admin</Link>
                 <Link href={createPageUrl('Contact')} className="text-slate-400 hover:text-blue-400 transition-colors">Contact us</Link>
               </div>
             </div>

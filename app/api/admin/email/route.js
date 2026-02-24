@@ -4,6 +4,20 @@ import { getAdminFromCookie } from '@/lib/admin-auth';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
+/** GET: Mail setup status (configured, fromEmail). Admin only. */
+export async function GET() {
+  const adminEmail = await getAdminFromCookie();
+  if (!adminEmail) {
+    return NextResponse.json({ error: 'Admin login required' }, { status: 401 });
+  }
+  const configured = !!process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || (configured ? 'FirmsLedger <onboarding@resend.dev>' : null);
+  return NextResponse.json({
+    configured,
+    fromEmail: fromEmail || null,
+  });
+}
+
 export async function POST(request) {
   const adminEmail = await getAdminFromCookie();
   if (!adminEmail) {

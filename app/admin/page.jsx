@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Mail, Send, Building2, Loader2, LogOut } from 'lucide-react';
+import { ArrowLeft, Mail, Send, Building2, Loader2, LogOut, Settings, CheckCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminPanelPage() {
@@ -31,6 +31,8 @@ export default function AdminPanelPage() {
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
   const [sending, setSending] = useState(false);
+  const [mailConfig, setMailConfig] = useState({ configured: false, fromEmail: null });
+  const [mailConfigLoading, setMailConfigLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/admin/me', { credentials: 'include' })
@@ -59,6 +61,16 @@ export default function AdminPanelPage() {
       })
       .catch(() => setError('Failed to load agencies'))
       .finally(() => setLoading(false));
+  }, [loggedIn]);
+
+  useEffect(() => {
+    if (!loggedIn) return;
+    setMailConfigLoading(true);
+    fetch('/api/admin/email', { credentials: 'include' })
+      .then((res) => res.ok ? res.json() : {})
+      .then((data) => setMailConfig({ configured: !!data?.configured, fromEmail: data?.fromEmail || null }))
+      .catch(() => setMailConfig({ configured: false, fromEmail: null }))
+      .finally(() => setMailConfigLoading(false));
   }, [loggedIn]);
 
   const handleLogin = async (e) => {
@@ -235,7 +247,73 @@ export default function AdminPanelPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Mail Setup & Invite */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
+                <Settings className="w-5 h-5 text-slate-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">Mail setup</h2>
+                <p className="text-slate-600 text-sm">Send invite and transactional emails</p>
+              </div>
+            </div>
+            {mailConfigLoading ? (
+              <div className="flex items-center gap-2 text-slate-500 text-sm">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Checking…
+              </div>
+            ) : mailConfig.configured ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-emerald-600 text-sm">
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Email is configured (Resend)</span>
+                </div>
+                {mailConfig.fromEmail && (
+                  <p className="text-slate-500 text-xs">From: {mailConfig.fromEmail}</p>
+                )}
+                <p className="text-slate-500 text-xs mt-2">
+                  Add <code className="bg-slate-100 px-1 rounded">RESEND_FROM_EMAIL</code> in .env.local to customize sender.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-amber-600 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Mail not configured</span>
+                </div>
+                <p className="text-slate-600 text-sm">
+                  Add <code className="bg-slate-100 px-1 rounded">RESEND_API_KEY</code> to <code className="bg-slate-100 px-1 rounded">.env.local</code> (from{' '}
+                  <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">resend.com</a>) to send invite and agency emails.
+                </p>
+              </div>
+            )}
+          </div>
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <Mail className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">Invite agency</h2>
+                <p className="text-slate-600 text-sm">Send registration invite by email</p>
+              </div>
+            </div>
+            <p className="text-slate-600 text-sm mb-4">
+              Enter an agency&apos;s email and they&apos;ll receive a link to add their company to FirmsLedger. They can submit details and you can approve the listing.
+            </p>
+            <Link href="/InviteAgency">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 gap-2">
+                <Send className="w-4 h-4" />
+                Send invite email
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Agencies list */}
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />

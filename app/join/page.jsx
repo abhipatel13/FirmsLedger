@@ -111,12 +111,12 @@ export default function JoinPage() {
   if (!invite && !loading) {
     const isExpired = linkError === 'expired';
     const isUsed = linkError === 'already_used';
-    const title = isExpired ? 'Link expired' : isUsed ? 'Link already used' : 'Invalid link';
+    const title = isExpired ? 'Link expired' : isUsed ? 'Link already used' : 'Link not found';
     const message = isExpired
       ? 'This invite link has expired. Ask the sender for a new invite.'
       : isUsed
         ? 'This invite was already used to submit a company. You can list another company below.'
-        : 'This invite link is invalid or was corrupted. Use a fresh link from your email or list your company below.';
+        : 'This invite link wasn’t found—it may have been created in a different environment or the invite may have been removed. You can still add your company using the button below.';
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-16 px-4 flex items-center justify-center">
         <div className="max-w-md text-center">

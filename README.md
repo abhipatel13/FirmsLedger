@@ -37,6 +37,7 @@ No environment variables are required. The app uses in-memory mock data by defau
   1. In Supabase, insert a row into `company_invites` with: `token` (e.g. a random string), `email` (their email), optional `company_name`, and `expires_at` (e.g. `now() + interval '14 days'`).
   2. Send them: `https://your-site.com/join?token=THE_TOKEN`.
   3. They open the link, see a pre-filled "List your company" form, submit it, and the invite is marked used and linked to the new agency.
+  - **Production:** For links like `https://www.firmsledger.com/join?token=...` to work, the invite must be created using the **same** Supabase project and `NEXT_PUBLIC_APP_URL` as production. Send invites from the Admin Panel on production (or from a deployment that uses production Supabase and `NEXT_PUBLIC_APP_URL=https://www.firmsledger.com`); otherwise the token won’t exist in production’s database and the link will show “Link not found”.
 
 ### Admin panel – email agencies that registered
 
