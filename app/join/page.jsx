@@ -67,17 +67,15 @@ export default function JoinPage() {
     }
     setIsSubmitting(true);
     try {
-      const result = await api.submitListingRequest({
+      await api.submitListingRequest({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company_name: formData.company_name,
         website: formData.website,
         message: formData.message,
+        invite_id: invite?.id || null,
       });
-      if (invite?.id && result?.id) {
-        await api.markInviteUsed(invite.id, result.id);
-      }
       setSubmitted(true);
       toast.success('Your listing has been submitted. We’ll review it and get back to you.');
     } catch (err) {

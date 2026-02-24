@@ -83,8 +83,15 @@ export async function POST(request) {
             <td style="padding:40px 32px;">
               <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f172a;">You're invited to FirmsLedger</h1>
               <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#64748b;">India's trusted platform for business service providers</p>
-              <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">Hi${companyName ? ` from ${companyName}` : ''},</p>
-              <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#334155;">You've been invited to add your company to <strong>FirmsLedger</strong>. Submit your details once and we'll list you on the directory.</p>
+              <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">Hi from FirmsLedger,</p>
+              <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">You've been invited to list your company on <strong>FirmsLedger</strong> for free. We're registering your company on our platform at no cost—submit your details once and we'll add you to the directory.</p>
+              <p style="margin:0 0 8px;font-size:14px;font-weight:600;color:#0f172a;">Why list with us?</p>
+              <ul style="margin:0 0 24px;padding-left:20px;font-size:14px;line-height:1.7;color:#475569;">
+                <li style="margin-bottom:6px;"><strong>Free listing</strong> — no cost to join or stay listed</li>
+                <li style="margin-bottom:6px;"><strong>Reach more clients</strong> — get discovered by businesses looking for your services</li>
+                <li style="margin-bottom:6px;"><strong>Build credibility</strong> — appear on India's trusted platform for service providers</li>
+                <li style="margin-bottom:6px;"><strong>One-time submission</strong> — we add you to the directory and you're set</li>
+              </ul>
               <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#64748b;">This link is valid for 30 days. Click the button below to get started.</p>
               <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 24px;">
                 <tr>

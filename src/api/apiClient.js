@@ -151,23 +151,30 @@ const supabaseEntityApi = {
 
 const entityApi = hasSupabase() ? supabaseEntityApi : mockEntityApi;
 
-/** Submit listing request (company adds their data). When Supabase is on, creates agency (pending approval). */
+/** Submit listing request (company adds their data). When Supabase is on, uses server API (service role) so RLS does not block the insert. */
 export async function submitListingRequest(data) {
   if (hasSupabase()) {
-    return db.createAgency(
-      {
-        name: data.company_name || data.name,
-        slug: data.slug || (data.company_name || data.name || '').toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
-        description: data.message || data.description || '',
-        website: data.website || '',
-        contact_email: data.email || '',
+    const res = await fetch('/api/listing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name,
+        company_name: data.company_name,
+        email: data.email,
+        website: data.website,
+        message: data.message,
+        description: data.description,
         hq_city: data.hq_city,
         hq_state: data.hq_state,
         hq_country: data.hq_country || 'India',
         team_size: data.team_size,
-      },
-      data.category_ids || []
-    );
+        category_ids: data.category_ids || [],
+        invite_id: data.invite_id || null,
+      }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.error || 'Failed to submit listing');
+    return json;
   }
   return Promise.resolve({ id: 'pending', message: 'We will contact you soon.' });
 }
