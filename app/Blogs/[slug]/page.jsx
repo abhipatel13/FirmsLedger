@@ -6,6 +6,7 @@ import HealthcareStaffingAhmedabadArticle from '@/views/blog/HealthcareStaffingA
 import Top10ITStaffingIndia2026Article from '@/views/blog/Top10ITStaffingIndia2026Article';
 import TopIndustrialStaffingIndia2026Article from '@/views/blog/TopIndustrialStaffingIndia2026Article';
 import Top10RecruitmentAgenciesIndia2026Article from '@/views/blog/Top10RecruitmentAgenciesIndia2026Article';
+import TopStaffingAgenciesDelhiNCR2026Article from '@/views/blog/TopStaffingAgenciesDelhiNCR2026Article';
 
 const ARTICLES = {
   'top-10-recruitment-agencies-india-2026': {
@@ -61,6 +62,15 @@ const ARTICLES = {
     image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&h=630&fit=crop&q=85',
     imageAlt: 'Top Industrial Staffing Companies in India 2026 - blue-collar manufacturing recruitment agencies',
     component: TopIndustrialStaffingIndia2026Article,
+  },
+  'top-staffing-agencies-delhi-ncr-2026': {
+    title: `Top Staffing Agencies in Delhi NCR (${SEO_YEAR})`,
+    description: 'A city-specific guide to the 10 best staffing and recruitment agencies serving Delhi, Gurgaon, Noida, Faridabad, and the wider NCR region. Updated March 2026.',
+    seoTitle: `Top Staffing Agencies in Delhi NCR ${SEO_YEAR} | Best Recruitment Firms in Gurgaon, Noida & Delhi | ${SITE_NAME}`,
+    seoDescription: `Expert guide to the best staffing agencies in Delhi NCR for ${SEO_YEAR} — Gurgaon, Noida, Delhi, Faridabad. ABC Consultants, TeamLease, Randstad, ManpowerGroup, GlobalHunt & more. Updated March 2026.`,
+    image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top Staffing Agencies in Delhi NCR 2026 - best recruitment firms in Gurgaon, Noida and Delhi',
+    component: TopStaffingAgenciesDelhiNCR2026Article,
   },
 };
 

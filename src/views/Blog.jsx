@@ -94,6 +94,20 @@ const ARTICLES_LIST = [
       height: 630,
     },
   },
+  {
+    slug: 'top-staffing-agencies-delhi-ncr-2026',
+    title: 'Top Staffing Agencies in Delhi NCR (2026): Best Recruitment Partners in Gurgaon, Noida & Delhi',
+    excerpt: 'A city-specific guide to the 10 best staffing and recruitment agencies serving Delhi, Gurgaon, Noida, Faridabad, and the wider NCR region.',
+    readTime: '11 min read',
+    category: 'Delhi NCR',
+    icon: Building2,
+    image: {
+      src: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1200&q=85',
+      alt: 'Top Staffing Agencies in Delhi NCR 2026 - best recruitment firms in Gurgaon, Noida and Delhi',
+      width: 1200,
+      height: 630,
+    },
+  },
 ];
 
 export default function Blogs() {
