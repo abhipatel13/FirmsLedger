@@ -108,6 +108,20 @@ const ARTICLES_LIST = [
       height: 630,
     },
   },
+  {
+    slug: 'top-it-staffing-companies-bangalore-2026',
+    title: 'Top IT Staffing Companies in Bangalore (2026): Best Tech Recruitment Agencies in Bengaluru',
+    excerpt: "A city-specific guide to the 10 best IT staffing and tech recruitment agencies serving Bangalore's ORR, Whitefield, Electronic City, Manyata, and startup corridors.",
+    readTime: '10 min read',
+    category: 'Bangalore IT',
+    icon: FileText,
+    image: {
+      src: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=1200&q=85',
+      alt: 'Top IT Staffing Companies in Bangalore 2026 - best tech recruitment agencies in Bengaluru',
+      width: 1200,
+      height: 630,
+    },
+  },
 ];
 
 export default function Blogs() {

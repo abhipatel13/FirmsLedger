@@ -7,6 +7,7 @@ import Top10ITStaffingIndia2026Article from '@/views/blog/Top10ITStaffingIndia20
 import TopIndustrialStaffingIndia2026Article from '@/views/blog/TopIndustrialStaffingIndia2026Article';
 import Top10RecruitmentAgenciesIndia2026Article from '@/views/blog/Top10RecruitmentAgenciesIndia2026Article';
 import TopStaffingAgenciesDelhiNCR2026Article from '@/views/blog/TopStaffingAgenciesDelhiNCR2026Article';
+import TopITStaffingCompaniesBangalore2026Article from '@/views/blog/TopITStaffingCompaniesBangalore2026Article';
 
 const ARTICLES = {
   'top-10-recruitment-agencies-india-2026': {
@@ -71,6 +72,15 @@ const ARTICLES = {
     image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1200&h=630&fit=crop&q=85',
     imageAlt: 'Top Staffing Agencies in Delhi NCR 2026 - best recruitment firms in Gurgaon, Noida and Delhi',
     component: TopStaffingAgenciesDelhiNCR2026Article,
+  },
+  'top-it-staffing-companies-bangalore-2026': {
+    title: `Top IT Staffing Companies in Bangalore (${SEO_YEAR})`,
+    description: "A city-specific guide to the 10 best IT staffing and tech recruitment agencies serving Bangalore's ORR, Whitefield, Electronic City, Manyata, and startup corridors. Updated March 2026.",
+    seoTitle: `Top IT Staffing Companies in Bangalore ${SEO_YEAR} | Best Tech Recruitment Agencies in Bengaluru | ${SITE_NAME}`,
+    seoDescription: `Expert guide to the best IT staffing companies in Bangalore for ${SEO_YEAR} — ORR, Whitefield, Electronic City, Manyata, Koramangala. TeamLease Digital, Xpheno, Quess, Careernet, Zyoin & more. Updated March 2026.`,
+    image: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top IT Staffing Companies in Bangalore 2026 - best tech recruitment agencies in Bengaluru',
+    component: TopITStaffingCompaniesBangalore2026Article,
   },
 };
 
