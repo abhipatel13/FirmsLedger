@@ -9,8 +9,18 @@ import Top10RecruitmentAgenciesIndia2026Article from '@/views/blog/Top10Recruitm
 import TopStaffingAgenciesDelhiNCR2026Article from '@/views/blog/TopStaffingAgenciesDelhiNCR2026Article';
 import TopITStaffingCompaniesBangalore2026Article from '@/views/blog/TopITStaffingCompaniesBangalore2026Article';
 import Top10MillingMachineManufacturersIndia2026Article from '@/views/blog/Top10MillingMachineManufacturersIndia2026Article';
+import Top10DrillingMachineBrandsIndia2026Article from '@/views/blog/Top10DrillingMachineBrandsIndia2026Article';
 
 const ARTICLES = {
+  'top-10-drilling-machine-brands-india-2026': {
+    title: 'Top 10 Drilling Machine Brands in India (2026): Complete B2B Buyer\'s Guide',
+    description: "Comprehensive B2B guide to India's top drilling machine brands — HMT, BFW, Jyoti CNC, Premier, INDER, Apex Tools, Precihole, Bosch, DeWalt & Makita. Compare by type, price range, certifications, and after-sales support.",
+    seoTitle: `Top 10 Drilling Machine Brands in India ${SEO_YEAR} | ${SITE_NAME}`,
+    seoDescription: `Expert B2B guide to the best drilling machine brands in India for ${SEO_YEAR}. Compare HMT, BFW, INDER, Bosch & more by type, price & industry. Updated ${SEO_YEAR}.`,
+    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top 10 drilling machine brands in India 2026 - industrial and CNC drilling machines',
+    component: Top10DrillingMachineBrandsIndia2026Article,
+  },
   'top-10-milling-machine-manufacturers-india-2026': {
     title: 'Top 10 Milling Machine Manufacturers in India (2026): Verified B2B Guide',
     description: "Comprehensive B2B guide to India's top milling machine manufacturers — HMT, BFW, Jyoti CNC, Ace Micromatic, Lokesh Machines, Godrej, MTAB, Premier, Electronica & Precihole. Compare certifications, specializations, and industries served.",
