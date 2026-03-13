@@ -7,9 +7,23 @@ import { getDirectoryUrl, getBlogArticleUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import Breadcrumb from '@/components/Breadcrumb';
 import { motion } from 'framer-motion';
-import { ArrowRight, BookOpen, Building2, FileText } from 'lucide-react';
+import { ArrowRight, BookOpen, Building2, FileText, Settings } from 'lucide-react';
 
 const ARTICLES_LIST = [
+  {
+    slug: 'top-10-milling-machine-manufacturers-india-2026',
+    title: 'Top 10 Milling Machine Manufacturers in India (2026): Verified B2B Guide',
+    excerpt: 'A comprehensive B2B guide to India\'s top milling machine manufacturers — HMT, BFW, Jyoti CNC, Ace Micromatic, Lokesh Machines, Godrej, MTAB, Premier, Electronica & Precihole. Compare by specialization, certifications, and industries served.',
+    readTime: '10 min read',
+    category: 'Manufacturing',
+    icon: Settings,
+    image: {
+      src: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&q=85',
+      alt: 'Top 10 milling machine manufacturers in India 2026 - CNC and industrial machine tools',
+      width: 1200,
+      height: 630,
+    },
+  },
   {
     slug: 'top-10-recruitment-agencies-india-2026',
     title: 'Top 10 Recruitment Agencies in India (2026): Find the Best Hiring Partner',

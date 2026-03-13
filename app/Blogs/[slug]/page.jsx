@@ -8,8 +8,18 @@ import TopIndustrialStaffingIndia2026Article from '@/views/blog/TopIndustrialSta
 import Top10RecruitmentAgenciesIndia2026Article from '@/views/blog/Top10RecruitmentAgenciesIndia2026Article';
 import TopStaffingAgenciesDelhiNCR2026Article from '@/views/blog/TopStaffingAgenciesDelhiNCR2026Article';
 import TopITStaffingCompaniesBangalore2026Article from '@/views/blog/TopITStaffingCompaniesBangalore2026Article';
+import Top10MillingMachineManufacturersIndia2026Article from '@/views/blog/Top10MillingMachineManufacturersIndia2026Article';
 
 const ARTICLES = {
+  'top-10-milling-machine-manufacturers-india-2026': {
+    title: 'Top 10 Milling Machine Manufacturers in India (2026): Verified B2B Guide',
+    description: "Comprehensive B2B guide to India's top milling machine manufacturers — HMT, BFW, Jyoti CNC, Ace Micromatic, Lokesh Machines, Godrej, MTAB, Premier, Electronica & Precihole. Compare certifications, specializations, and industries served.",
+    seoTitle: `Top 10 Milling Machine Manufacturers in India ${SEO_YEAR} | CNC & Industrial Machine Tools | ${SITE_NAME}`,
+    seoDescription: `Expert B2B guide to the best milling machine manufacturers in India for ${SEO_YEAR}. Compare HMT, BFW, Jyoti CNC, Ace Micromatic & more by location, certifications, and specialization. Updated ${SEO_YEAR}.`,
+    image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top 10 milling machine manufacturers in India 2026 - CNC and industrial machine tools',
+    component: Top10MillingMachineManufacturersIndia2026Article,
+  },
   'top-10-recruitment-agencies-india-2026': {
     title: 'Top 10 Recruitment Agencies in India (2026): Find the Best Hiring Partner',
     description: "Comprehensive guide to India's top 10 recruitment agencies — TeamLease, Naukri, Randstad, Adecco, ManpowerGroup, ABC Consultants, Michael Page, Korn Ferry, Heidrick & Struggles, Quess. Specializations, strengths, and how to choose.",
