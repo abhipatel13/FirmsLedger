@@ -10,8 +10,58 @@ import TopStaffingAgenciesDelhiNCR2026Article from '@/views/blog/TopStaffingAgen
 import TopITStaffingCompaniesBangalore2026Article from '@/views/blog/TopITStaffingCompaniesBangalore2026Article';
 import Top10MillingMachineManufacturersIndia2026Article from '@/views/blog/Top10MillingMachineManufacturersIndia2026Article';
 import Top10DrillingMachineBrandsIndia2026Article from '@/views/blog/Top10DrillingMachineBrandsIndia2026Article';
+import Top10WaterPumpBrandsIndia2025Article from '@/views/blog/Top10WaterPumpBrandsIndia2025Article';
+import Top10LEDLightBrandsIndia2025Article from '@/views/blog/Top10LEDLightBrandsIndia2025Article';
+import BestSolarPanelBrandsIndia2025Article from '@/views/blog/BestSolarPanelBrandsIndia2025Article';
+import Top10SwitchSocketBrandsIndia2025Article from '@/views/blog/Top10SwitchSocketBrandsIndia2025Article';
+import Top10StabilizerBrandsIndia2025Article from '@/views/blog/Top10StabilizerBrandsIndia2025Article';
 
 const ARTICLES = {
+  'top-10-stabilizer-brands-india-2025': {
+    title: 'Top 10 Stabilizer Brands in India (2025) – Best Brands for Home, Commercial & Industrial Use',
+    description: "A comprehensive guide to India's best voltage stabilizer brands — evaluated by ISI certification, voltage correction range, warranty, and price across home, commercial, and industrial use.",
+    seoTitle: `Top 10 Stabilizer Brands in India (2025) | Best Voltage Stabilizers for Home, Commercial & Industrial Use`,
+    seoDescription: 'Discover the top 10 stabilizer brands in India for 2025. Compare V-Guard, Microtek, Luminous, Servokon & more. ISI certified. Best for AC, fridge & industrial use. Updated 2025.',
+    image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top 10 stabilizer brands in India 2025 - best voltage stabilizers for home commercial and industrial use',
+    component: Top10StabilizerBrandsIndia2025Article,
+  },
+  'top-10-switch-socket-brands-india-2025': {
+    title: 'Top 10 Switch & Socket Brands in India (2025) – Best Brands for Home, Commercial & Industrial Use',
+    description: "A comprehensive guide to India's best switch and socket brands — evaluated by ISI certification, build quality, design, warranty, and price across home, commercial, and industrial use.",
+    seoTitle: `Top 10 Switch & Socket Brands in India (2025) | Best Modular Switches for Home & Commercial Use`,
+    seoDescription: 'Discover the top 10 switch and socket brands in India for 2025. Compare Legrand, Havells, Anchor, Schneider, GM Modular & more. ISI certified. Updated 2025.',
+    image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top 10 switch and socket brands in India 2025 - best modular switches for home and commercial use',
+    component: Top10SwitchSocketBrandsIndia2025Article,
+  },
+  'best-solar-panel-brands-india-2025': {
+    title: 'Best Solar Panel Brands in India (2025) – Best Brands for Home, Commercial & Industrial Use',
+    description: "A comprehensive guide to India's best solar panel brands — evaluated by BIS/ALMM certification, efficiency, warranty, and price across home, commercial, and industrial use.",
+    seoTitle: `Best Solar Panel Brands in India (2025) | Top Solar Panels for Home, Commercial & Industrial Use`,
+    seoDescription: 'Discover the best solar panel brands in India for 2025. Compare Waaree, Tata Power Solar, Adani Solar, Vikram Solar & more. BIS certified, ALMM listed. Updated 2025.',
+    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Best solar panel brands in India 2025 - top solar panels for home commercial and industrial use',
+    component: BestSolarPanelBrandsIndia2025Article,
+  },
+  'top-10-led-light-brands-india-2025': {
+    title: 'Top 10 LED Light Brands in India (2025) – Best for Home, Office & Industrial Use',
+    description: "A comprehensive guide to India's best LED light brands — evaluated for BIS/ISI certification, energy efficiency, lumen output, warranty, and value across home, commercial, and industrial use.",
+    seoTitle: `Top 10 LED Light Brands in India (2025) | Best LED Lights for Home, Office & Industrial Use`,
+    seoDescription: 'Discover the top 10 LED light brands in India for 2025. Compare Philips, Havells, Syska, Wipro, Bajaj, Crompton & more for home, office and industrial use. BIS certified. Updated 2025.',
+    image: 'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top 10 LED light brands in India 2025 - best LED lights for home office and industrial use',
+    component: Top10LEDLightBrandsIndia2025Article,
+  },
+  'top-10-water-pump-brands-india-2025': {
+    title: 'Top 10 Water Pump Brands in India (2025) – Best for Home, Agriculture & Industrial Use',
+    description: 'A comprehensive guide to India\'s best water pump brands — evaluated for reliability, energy efficiency, after-sales service, and value across home, agriculture, and industrial use.',
+    seoTitle: `Top 10 Water Pump Brands in India (2025) | Best Pumps for Home, Agriculture & Industrial Use`,
+    seoDescription: 'Discover the top 10 water pump brands in India for 2025. Compare Kirloskar, Crompton, CRI, Grundfos & more for home, agriculture & industrial use. Updated 2025.',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top 10 water pump brands in India 2025 - best pumps for home agriculture and industrial use',
+    component: Top10WaterPumpBrandsIndia2025Article,
+  },
   'top-10-drilling-machine-brands-india-2026': {
     title: 'Top 10 Drilling Machine Brands in India (2026): Complete B2B Buyer\'s Guide',
     description: "Comprehensive B2B guide to India's top drilling machine brands — HMT, BFW, Jyoti CNC, Premier, INDER, Apex Tools, Precihole, Bosch, DeWalt & Makita. Compare by type, price range, certifications, and after-sales support.",
