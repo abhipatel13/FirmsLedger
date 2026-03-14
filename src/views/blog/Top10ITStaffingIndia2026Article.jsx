@@ -202,35 +202,37 @@ export default function Top10ITStaffingIndia2026Article() {
 
         <h2 className="text-2xl font-bold text-slate-900 mb-6">🏆 Top 10 IT Staffing Companies in India for 2026</h2>
 
-        <div className="space-y-8">
+        <div className="divide-y divide-slate-200">
           {COMPANIES.map((company) => (
             <div
               key={company.rank}
-              className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+              className="py-10"
             >
-              <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block">#{company.rank}</div>
-              <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded mb-3">
-                {company.badge}
-              </span>
-              <div className="flex flex-wrap gap-2 mb-3">
+              <div className="flex items-baseline gap-3 mb-3">
+                <span className="text-3xl font-extrabold text-slate-200 leading-none">#{company.rank}</span>
+                <h3 className="text-2xl font-bold text-slate-900">{company.name}</h3>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
+                  {company.badge}
+                </span>
                 {company.tags.map((tag) => (
                   <span key={tag} className="bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1 rounded">
                     {tag}
                   </span>
                 ))}
               </div>
-              <h3 className="text-xl font-bold text-blue-600 mb-3">{company.name}</h3>
-              <p className="text-slate-600 text-[15px] leading-relaxed mb-4">{company.description}</p>
-              <ul className="space-y-2 mb-4">
+              <p className="text-slate-700 text-lg leading-relaxed mb-5">{company.description}</p>
+              <ul className="space-y-3 mb-5">
                 {company.bullets.map((bullet) => (
-                  <li key={bullet} className="text-slate-600 text-sm flex gap-2">
-                    <span className="text-blue-500 mt-0.5">•</span>
+                  <li key={bullet} className="text-slate-700 text-base flex gap-2">
+                    <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                     <span>{bullet}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-slate-700 text-sm font-medium">
-                <span className="text-slate-500">✦ Best For:</span> {company.bestFor}
+              <p className="text-base font-semibold text-slate-800">
+                <span className="text-slate-500 font-normal">Best For: </span>{company.bestFor}
               </p>
             </div>
           ))}
@@ -245,9 +247,9 @@ export default function Top10ITStaffingIndia2026Article() {
         <h3 className="text-lg font-bold text-slate-800 mb-4">Your IT Staffing Partner Checklist</h3>
         <ul className="space-y-4">
           {CHECKLIST_ITEMS.map((item) => (
-            <li key={item.title} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-              <strong className="text-slate-900">{item.title}:</strong>
-              <span className="text-slate-600 text-sm ml-1">{item.text}</span>
+            <li key={item.title} className="py-4 border-b border-slate-100 last:border-b-0">
+              <strong className="text-slate-900 text-base">{item.title}: </strong>
+              <span className="text-slate-700 text-base">{item.text}</span>
             </li>
           ))}
         </ul>
@@ -258,13 +260,13 @@ export default function Top10ITStaffingIndia2026Article() {
         <p className="text-slate-600 leading-relaxed mb-6">
           India&apos;s dominance in global IT talent isn&apos;t accidental — it&apos;s the result of decades of investment in engineering education, a maturing digital economy, and a uniquely skilled workforce. Here&apos;s why more than 60% of Fortune 500 companies are prioritizing India for future workforce expansion:
         </p>
-        <ul className="space-y-3 text-slate-600 text-sm">
-          <li className="flex gap-2"><span className="text-blue-500 font-bold">•</span> India produces over <strong className="text-slate-800">1 million engineering graduates</strong> per year, more than any other country.</li>
-          <li className="flex gap-2"><span className="text-blue-500 font-bold">•</span> Hiring through Indian staffing agencies saves companies <strong className="text-slate-800">40–70%</strong> compared to equivalent roles in the US, UK, or Canada.</li>
-          <li className="flex gap-2"><span className="text-blue-500 font-bold">•</span> Demand for AI, cloud, and cybersecurity roles has grown <strong className="text-slate-800">15–35%</strong> year-on-year in 2025–2026.</li>
-          <li className="flex gap-2"><span className="text-blue-500 font-bold">•</span> The Indian Staffing Federation projects flexi-staffing revenue to hit <strong className="text-slate-800">$24 billion by FY27</strong>.</li>
-          <li className="flex gap-2"><span className="text-blue-500 font-bold">•</span> India recorded a <strong className="text-slate-800">13% staffing industry growth rate</strong> in 2024, one of the fastest in the world.</li>
-          <li className="flex gap-2"><span className="text-blue-500 font-bold">•</span> India&apos;s real GDP is estimated to have grown at <strong className="text-slate-800">8.2%</strong> in Q2 FY26, making it the world&apos;s fastest-growing major economy.</li>
+        <ul className="space-y-4 text-slate-700 text-base">
+          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India produces over <strong className="text-slate-800">1 million engineering graduates</strong> per year, more than any other country.</li>
+          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> Hiring through Indian staffing agencies saves companies <strong className="text-slate-800">40–70%</strong> compared to equivalent roles in the US, UK, or Canada.</li>
+          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> Demand for AI, cloud, and cybersecurity roles has grown <strong className="text-slate-800">15–35%</strong> year-on-year in 2025–2026.</li>
+          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> The Indian Staffing Federation projects flexi-staffing revenue to hit <strong className="text-slate-800">$24 billion by FY27</strong>.</li>
+          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India recorded a <strong className="text-slate-800">13% staffing industry growth rate</strong> in 2024, one of the fastest in the world.</li>
+          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India&apos;s real GDP is estimated to have grown at <strong className="text-slate-800">8.2%</strong> in Q2 FY26, making it the world&apos;s fastest-growing major economy.</li>
         </ul>
 
         <hr className="border-slate-200 my-12" />
@@ -272,9 +274,9 @@ export default function Top10ITStaffingIndia2026Article() {
         <h2 className="text-2xl font-bold text-slate-900 mb-6">❓ Frequently Asked Questions</h2>
         <div className="space-y-6">
           {FAQ_ITEMS.map((faq, i) => (
-            <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-2">Q{i + 1}: {faq.q}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+            <div key={i} className="py-6 border-b border-slate-200 last:border-b-0">
+              <h3 className="font-bold text-slate-900 text-lg mb-3">Q{i + 1}: {faq.q}</h3>
+              <p className="text-slate-700 text-base leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </div>

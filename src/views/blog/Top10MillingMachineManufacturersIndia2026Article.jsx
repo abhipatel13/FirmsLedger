@@ -359,35 +359,37 @@ export default function Top10MillingMachineManufacturersIndia2026Article() {
 
         <section className="mb-12" aria-labelledby="top-10-list">
           <h2 id="top-10-list" className="text-2xl font-bold text-slate-900 mb-6">Top 10 Milling Machine Manufacturers in India (2026)</h2>
-          <div className="space-y-8">
+          <div className="divide-y divide-slate-200">
             {MANUFACTURERS.map((mfr) => (
               <div
                 key={mfr.rank}
-                className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+                className="py-10"
               >
-                <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block" aria-hidden>#{mfr.rank}</div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{mfr.name}</h3>
-                <p className="text-slate-500 text-sm mb-3">
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-3xl font-extrabold text-slate-200 leading-none">#{mfr.rank}</span>
+                  <h3 className="text-2xl font-bold text-slate-900">{mfr.name}</h3>
+                </div>
+                <p className="text-slate-500 text-sm mb-1">
                   <strong>Founded:</strong> {mfr.founded} · <strong>HQ:</strong> {mfr.hq}
                 </p>
-                <p className="text-slate-500 text-sm mb-3">
+                <p className="text-slate-500 text-sm mb-1">
                   <strong>Specialization:</strong> {mfr.specialization}
                 </p>
                 <p className="text-slate-500 text-sm mb-4">
                   <strong>Certifications:</strong> {mfr.certifications} · <strong>Industries:</strong> {mfr.industries}
                 </p>
-                <p className="text-slate-600 leading-relaxed mb-4">{mfr.description}</p>
-                <h4 className="text-sm font-bold text-slate-800 mb-2">Key Strengths</h4>
-                <ul className="space-y-2 mb-4">
+                <p className="text-slate-700 text-lg leading-relaxed mb-5">{mfr.description}</p>
+                <h4 className="text-base font-bold text-slate-800 mb-3">Key Strengths</h4>
+                <ul className="space-y-3 mb-5">
                   {mfr.strengths.map((s) => (
-                    <li key={s} className="text-slate-600 text-sm flex gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
+                    <li key={s} className="text-slate-700 text-base flex gap-2">
+                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{s}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="text-slate-700 text-sm font-medium">
-                  <span className="text-slate-500">Why They Stand Out:</span> {mfr.whyStandOut}
+                <p className="text-base font-semibold text-slate-800">
+                  <span className="text-slate-500 font-normal">Why They Stand Out: </span>{mfr.whyStandOut}
                 </p>
                 <p className="text-slate-400 text-xs mt-2">
                   <strong>Website:</strong> {mfr.website}
@@ -430,9 +432,9 @@ export default function Top10MillingMachineManufacturersIndia2026Article() {
           </p>
           <ul className="space-y-4">
             {CHOOSE_TIPS.map((tip) => (
-              <li key={tip.title} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                <strong className="text-slate-900">{tip.title}</strong>
-                <span className="text-slate-600 text-sm ml-1">{tip.text}</span>
+              <li key={tip.title} className="py-4 border-b border-slate-100 last:border-b-0">
+                <strong className="text-slate-900 text-base">{tip.title}: </strong>
+                <span className="text-slate-700 text-base">{tip.text}</span>
               </li>
             ))}
           </ul>
@@ -443,22 +445,22 @@ export default function Top10MillingMachineManufacturersIndia2026Article() {
           <p className="text-slate-600 leading-relaxed mb-4">
             India&apos;s milling machine sector is undergoing its most significant transformation since CNC replaced conventional machining.
           </p>
-          <div className="space-y-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-              <strong className="text-slate-900">5-Axis CNC Adoption</strong>
-              <p className="text-slate-600 text-sm mt-1">Demand for 5-axis simultaneous machining is rising sharply, driven by aerospace, defence, and complex automotive component manufacturing. Domestic manufacturers like Jyoti CNC are now competitive with European imports at 30–40% lower price points.</p>
+          <div className="divide-y divide-slate-200">
+            <div className="py-5">
+              <strong className="text-slate-900 text-lg">5-Axis CNC Adoption</strong>
+              <p className="text-slate-700 text-base mt-2">Demand for 5-axis simultaneous machining is rising sharply, driven by aerospace, defence, and complex automotive component manufacturing. Domestic manufacturers like Jyoti CNC are now competitive with European imports at 30–40% lower price points.</p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-              <strong className="text-slate-900">Industry 4.0 and IoT Integration</strong>
-              <p className="text-slate-600 text-sm mt-1">Leading manufacturers are embedding machine monitoring systems, predictive maintenance sensors, and OEE dashboards directly into machines. Real-time ERP integration (SAP, Oracle) is becoming a standard procurement requirement for large buyers.</p>
+            <div className="py-5">
+              <strong className="text-slate-900 text-lg">Industry 4.0 and IoT Integration</strong>
+              <p className="text-slate-700 text-base mt-2">Leading manufacturers are embedding machine monitoring systems, predictive maintenance sensors, and OEE dashboards directly into machines. Real-time ERP integration (SAP, Oracle) is becoming a standard procurement requirement for large buyers.</p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-              <strong className="text-slate-900">Robotic Automation and Unmanned Machining</strong>
-              <p className="text-slate-600 text-sm mt-1">Unmanned overnight machining using robotic part loading is transitioning from large OEMs to Tier-1 and Tier-2 suppliers. Manufacturers offering integrated automation cells — machine + robot + conveyor — are gaining significant procurement preference.</p>
+            <div className="py-5">
+              <strong className="text-slate-900 text-lg">Robotic Automation and Unmanned Machining</strong>
+              <p className="text-slate-700 text-base mt-2">Unmanned overnight machining using robotic part loading is transitioning from large OEMs to Tier-1 and Tier-2 suppliers. Manufacturers offering integrated automation cells — machine + robot + conveyor — are gaining significant procurement preference.</p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-              <strong className="text-slate-900">Export Growth and Global Competitiveness</strong>
-              <p className="text-slate-600 text-sm mt-1">India&apos;s machine tool exports grew 18% in FY2024-25. PLI scheme incentives are enabling domestic manufacturers to invest in export-grade manufacturing quality, making Indian milling machines increasingly competitive in Southeast Asia, the Middle East, and Africa.</p>
+            <div className="py-5">
+              <strong className="text-slate-900 text-lg">Export Growth and Global Competitiveness</strong>
+              <p className="text-slate-700 text-base mt-2">India&apos;s machine tool exports grew 18% in FY2024-25. PLI scheme incentives are enabling domestic manufacturers to invest in export-grade manufacturing quality, making Indian milling machines increasingly competitive in Southeast Asia, the Middle East, and Africa.</p>
             </div>
           </div>
         </section>
@@ -467,9 +469,9 @@ export default function Top10MillingMachineManufacturersIndia2026Article() {
           <h2 id="faq-heading" className="text-2xl font-bold text-slate-900 mb-6">Frequently Asked Questions</h2>
           <div className="space-y-6">
             {FAQ_ITEMS.map((faq, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-2">{faq.q}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+              <div key={i} className="py-6 border-b border-slate-200 last:border-b-0">
+                <h3 className="font-bold text-slate-900 text-lg mb-3">{faq.q}</h3>
+                <p className="text-slate-700 text-base leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

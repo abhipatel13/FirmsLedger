@@ -133,37 +133,33 @@ export default function TopIndustrialStaffingIndia2026Article() {
 
         <h2 className="text-2xl font-bold text-slate-900 mb-6">🏆 Top Industrial Staffing Companies in India for 2026</h2>
 
-        <div className="space-y-8">
+        <div className="divide-y divide-slate-200">
           {COMPANIES.map((co) => (
-            <div key={co.rank} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex flex-wrap gap-4 items-start mb-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg border-2 flex-shrink-0 ${co.rankClass === 'gold' ? 'border-amber-500 text-amber-600 bg-amber-50' : co.rankClass === 'silver' ? 'border-slate-400 text-slate-600 bg-slate-50' : co.rankClass === 'bronze' ? 'border-amber-700 text-amber-700 bg-amber-50/50' : 'border-slate-200 text-slate-500 bg-slate-50'}`}>
-                  #{co.rank}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-slate-900">{co.name}</h3>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {co.badge && <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded">{co.badge}</span>}
-                    {co.tags.map((t) => <span key={t} className="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded">{t}</span>)}
-                  </div>
-                </div>
+            <div key={co.rank} className="py-10">
+              <div className="flex items-baseline gap-3 mb-3">
+                <span className="text-3xl font-extrabold text-slate-200 leading-none">#{co.rank}</span>
+                <h3 className="text-2xl font-bold text-slate-900">{co.name}</h3>
               </div>
-              <p className="text-slate-600 text-[15px] leading-relaxed mb-4">{co.description}</p>
-              <ul className="space-y-2 mb-4">
+              <div className="flex flex-wrap gap-2 mb-4">
+                {co.badge && <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1 rounded">{co.badge}</span>}
+                {co.tags.map((t) => <span key={t} className="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded">{t}</span>)}
+              </div>
+              <p className="text-slate-700 text-lg leading-relaxed mb-5">{co.description}</p>
+              <ul className="space-y-3 mb-5">
                 {co.features.map((f) => (
-                  <li key={f} className="text-slate-600 text-sm flex gap-2">
+                  <li key={f} className="text-slate-700 text-base flex gap-2">
                     <span className="text-amber-500 flex-shrink-0">▸</span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-200">
-                <span className="text-slate-500 text-xs font-semibold">Key Sectors:</span>
-                {co.sectors.map((s) => <span key={s} className="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded border border-slate-200">{s}</span>)}
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="text-slate-500 text-sm font-semibold">Key Sectors:</span>
+                {co.sectors.map((s) => <span key={s} className="bg-slate-100 text-slate-600 text-sm px-2.5 py-0.5 rounded">{s}</span>)}
               </div>
-              <div className="mt-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg py-2 px-4 text-sm text-blue-800 font-medium">
-                ✦ Best For: {co.bestFor}
-              </div>
+              <p className="text-base font-semibold text-slate-800">
+                <span className="text-slate-500 font-normal">Best For: </span>{co.bestFor}
+              </p>
             </div>
           ))}
         </div>
@@ -195,11 +191,11 @@ export default function TopIndustrialStaffingIndia2026Article() {
 
         <h2 className="text-2xl font-bold text-slate-900 mb-4">🔎 How to Choose the Right Industrial Staffing Partner</h2>
         <p className="text-slate-600 mb-6">Industrial staffing is more specialized than general white-collar recruitment. Workers are deployed on production lines, in warehouses, or on construction sites — mistakes in hiring have direct safety and productivity consequences. Here is what to evaluate:</p>
-        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-12">
-          <h3 className="font-bold text-slate-900 mb-4">Your Industrial Staffing Evaluation Checklist</h3>
-          <ul className="space-y-4">
+        <div className="mb-12">
+          <h3 className="font-bold text-slate-900 text-lg mb-4">Your Industrial Staffing Evaluation Checklist</h3>
+          <ul className="divide-y divide-slate-200">
             {CHECKLIST.map((item) => (
-              <li key={item.title} className="flex gap-3 text-slate-600 text-sm">
+              <li key={item.title} className="py-4 flex gap-3 text-slate-700 text-base">
                 <span className="text-blue-600 font-bold flex-shrink-0">✓</span>
                 <span><strong className="text-slate-800">{item.title}:</strong> {item.text}</span>
               </li>
@@ -211,7 +207,7 @@ export default function TopIndustrialStaffingIndia2026Article() {
         <p className="text-slate-600 mb-6">The industrial workforce landscape in India is evolving rapidly. These are the most important trends shaping hiring in 2026:</p>
         <ul className="space-y-4 mb-12">
           {TRENDS.map((t) => (
-            <li key={t.title} className="flex gap-3 text-slate-600 text-sm">
+            <li key={t.title} className="flex gap-3 text-slate-700 text-base">
               <span className="text-amber-500 font-bold flex-shrink-0">↗</span>
               <span><strong className="text-slate-800">{t.title}:</strong> {t.text}</span>
             </li>
@@ -221,9 +217,9 @@ export default function TopIndustrialStaffingIndia2026Article() {
         <h2 className="text-2xl font-bold text-slate-900 mb-6">❓ Frequently Asked Questions</h2>
         <div className="space-y-6 mb-12">
           {FAQ.map((faq, i) => (
-            <div key={i} className="border-b border-slate-200 pb-4">
-              <p className="font-bold text-slate-900 mb-2">Q{i + 1}: {faq.q}</p>
-              <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+            <div key={i} className="py-6 border-b border-slate-200 last:border-b-0">
+              <p className="font-bold text-slate-900 text-lg mb-3">Q{i + 1}: {faq.q}</p>
+              <p className="text-slate-700 text-base leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </div>

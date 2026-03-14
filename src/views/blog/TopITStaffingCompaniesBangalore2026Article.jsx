@@ -396,14 +396,14 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
           <p className="text-slate-600 leading-relaxed mb-6">
             Bangalore&apos;s IT market is not monolithic — it spans five distinct employment corridors, each with its own dominant employer type, salary benchmarks, and talent dynamics. The right staffing agency must have active networks in <em>your</em> specific zone.
           </p>
-          <div className="space-y-4">
+          <div className="divide-y divide-slate-200">
             {TECH_ZONES.map((zone) => (
-              <div key={zone.zone} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+              <div key={zone.zone} className="py-5">
                 <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
-                  <h3 className="font-bold text-slate-900">{zone.zone}</h3>
+                  <h3 className="font-bold text-slate-900 text-lg">{zone.zone}</h3>
                   <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded whitespace-nowrap">{zone.companies}</span>
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed">{zone.detail}</p>
+                <p className="text-slate-700 text-base leading-relaxed">{zone.detail}</p>
               </div>
             ))}
           </div>
@@ -413,7 +413,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">How We Selected These Agencies</h2>
           <p className="text-slate-600 leading-relaxed mb-4">Our ranking is based on:</p>
-          <ul className="list-disc pl-6 space-y-2 text-slate-600 text-sm">
+          <ul className="list-disc pl-6 space-y-2 text-slate-700 text-base">
             <li>Physical presence and active operations in Bangalore (not just pan-India coverage)</li>
             <li>Specialization in IT and technology roles — not generalist staffing</li>
             <li>Track record across Bangalore&apos;s diverse hiring zones: ORR, Electronic City, Whitefield, Manyata, and startup corridors</li>
@@ -428,40 +428,40 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
           <h2 id="companies-heading" className="text-2xl font-bold text-slate-900 mb-6">
             Top 10 IT Staffing Companies in Bangalore (2026)
           </h2>
-          <div className="space-y-8">
+          <div className="divide-y divide-slate-200">
             {COMPANIES.map((company) => (
               <div
                 key={company.rank}
-                className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+                className="py-10"
               >
-                <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block" aria-hidden>
-                  #{company.rank}
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-3xl font-extrabold text-slate-200 leading-none">#{company.rank}</span>
+                  <h3 className="text-2xl font-bold text-slate-900">{company.name}</h3>
                 </div>
-                <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded mb-3">
-                  {company.badge}
-                </span>
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
+                    {company.badge}
+                  </span>
                   {company.tags.map((tag) => (
                     <span key={tag} className="bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1 rounded">
                       {tag}
                     </span>
                   ))}
                 </div>
-                <h3 className="text-xl font-bold text-blue-600 mb-1">{company.name}</h3>
                 <p className="text-slate-500 text-sm mb-4">
                   <strong>Founded:</strong> {company.founded} &middot; <strong>HQ:</strong> {company.hq}
                 </p>
-                <p className="text-slate-600 text-[15px] leading-relaxed mb-4">{company.description}</p>
-                <ul className="space-y-2 mb-4">
+                <p className="text-slate-700 text-lg leading-relaxed mb-5">{company.description}</p>
+                <ul className="space-y-3 mb-5">
                   {company.bullets.map((bullet) => (
-                    <li key={bullet} className="text-slate-600 text-sm flex gap-2">
+                    <li key={bullet} className="text-slate-700 text-base flex gap-2">
                       <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="text-slate-700 text-sm font-medium">
-                  <span className="text-slate-500">✦ Best For:</span> {company.bestFor}
+                <p className="text-base font-semibold text-slate-800">
+                  <span className="text-slate-500 font-normal">Best For: </span>{company.bestFor}
                 </p>
               </div>
             ))}
@@ -509,9 +509,9 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
           </p>
           <ul className="space-y-4">
             {CHECKLIST.map((item) => (
-              <li key={item.title} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                <strong className="text-slate-900">{item.title}: </strong>
-                <span className="text-slate-600 text-sm">{item.text}</span>
+              <li key={item.title} className="py-4 border-b border-slate-100 last:border-b-0">
+                <strong className="text-slate-900 text-base">{item.title}: </strong>
+                <span className="text-slate-700 text-base">{item.text}</span>
               </li>
             ))}
           </ul>
@@ -527,24 +527,24 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
           <p className="text-slate-600 leading-relaxed mb-6">
             Despite a global tech hiring correction in 2023–2024, Bangalore&apos;s structural advantages remain unmatched. Here&apos;s what continues to make it the world&apos;s most important destination for IT talent sourcing outside of Silicon Valley:
           </p>
-          <ul className="space-y-3 text-slate-600 text-sm">
-            <li className="flex gap-2">
+          <ul className="space-y-4 text-slate-700 text-base">
+            <li className="flex gap-3">
               <span className="text-blue-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">2 million+ IT professionals</strong> — the largest single-city IT talent pool in Asia, spanning software engineering, data science, cloud, DevOps, AI, and cybersecurity.</span>
             </li>
-            <li className="flex gap-2">
+            <li className="flex gap-3">
               <span className="text-blue-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">India&apos;s unicorn factory</strong> — Flipkart, Swiggy, Meesho, PhonePe, Razorpay, Zepto, and dozens of other unicorns are headquartered here, creating constant demand for top engineering talent.</span>
             </li>
-            <li className="flex gap-2">
+            <li className="flex gap-3">
               <span className="text-blue-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">40+ Global Capability Centers</strong> — Amazon, Google, Microsoft, JP Morgan, Goldman Sachs, and Visa all have major engineering and R&amp;D centers here, competing for the same talent.</span>
             </li>
-            <li className="flex gap-2">
+            <li className="flex gap-3">
               <span className="text-blue-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">AI talent concentration</strong> — Demand for AI/ML engineers in Bangalore has grown 35% year-on-year in 2025–2026, with supply still lagging significantly behind demand.</span>
             </li>
-            <li className="flex gap-2">
+            <li className="flex gap-3">
               <span className="text-blue-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">60–90 day notice periods</strong> — unlike Western markets, top Bangalore engineers often have 2–3 month notice periods, making specialized agencies with pre-noticed candidate pools critical to fast hiring.</span>
             </li>
@@ -560,9 +560,9 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
           </h2>
           <div className="space-y-6">
             {FAQ_ITEMS.map((faq, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-2">Q{i + 1}: {faq.q}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+              <div key={i} className="py-6 border-b border-slate-200 last:border-b-0">
+                <h3 className="font-bold text-slate-900 text-lg mb-3">Q{i + 1}: {faq.q}</h3>
+                <p className="text-slate-700 text-base leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

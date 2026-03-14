@@ -253,29 +253,31 @@ export default function Top10RecruitmentAgenciesIndia2026Article() {
 
         <section className="mb-12" aria-labelledby="top-10-list">
           <h2 id="top-10-list" className="text-2xl font-bold text-slate-900 mb-6">Top 10 Recruitment Agencies in India (2026)</h2>
-          <div className="space-y-8">
+          <div className="divide-y divide-slate-200">
             {AGENCIES.map((agency) => (
               <div
                 key={agency.rank}
-                className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+                className="py-10"
               >
-                <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block" aria-hidden>#{agency.rank}</div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{agency.name}</h3>
+                <div className="flex items-baseline gap-3 mb-2">
+                  <span className="text-3xl font-extrabold text-slate-200 leading-none">#{agency.rank}</span>
+                  <h3 className="text-2xl font-bold text-slate-900">{agency.name}</h3>
+                </div>
                 <p className="text-slate-500 text-sm mb-4">
                   <strong>Founded:</strong> {agency.founded} · <strong>Headquarters:</strong> {agency.hq} · <strong>Specialization:</strong> {agency.specialization}
                 </p>
-                <p className="text-slate-600 leading-relaxed mb-4">{agency.description}</p>
-                <h4 className="text-sm font-bold text-slate-800 mb-2">Key Strengths</h4>
-                <ul className="space-y-2 mb-4">
+                <p className="text-slate-700 text-lg leading-relaxed mb-5">{agency.description}</p>
+                <h4 className="text-base font-bold text-slate-800 mb-3">Key Strengths</h4>
+                <ul className="space-y-3 mb-5">
                   {agency.strengths.map((s) => (
-                    <li key={s} className="text-slate-600 text-sm flex gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
+                    <li key={s} className="text-slate-700 text-base flex gap-2">
+                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{s}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="text-slate-700 text-sm font-medium">
-                  <span className="text-slate-500">Best For:</span> {agency.bestFor}
+                <p className="text-base font-semibold text-slate-800">
+                  <span className="text-slate-500 font-normal">Best For: </span>{agency.bestFor}
                 </p>
               </div>
             ))}
@@ -317,9 +319,9 @@ export default function Top10RecruitmentAgenciesIndia2026Article() {
           </p>
           <ul className="space-y-4">
             {CHOOSE_TIPS.map((tip) => (
-              <li key={tip.title} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                <strong className="text-slate-900">{tip.title}</strong>
-                <span className="text-slate-600 text-sm ml-1">{tip.text}</span>
+              <li key={tip.title} className="py-4 border-b border-slate-100 last:border-b-0">
+                <strong className="text-slate-900 text-base">{tip.title}: </strong>
+                <span className="text-slate-700 text-base">{tip.text}</span>
               </li>
             ))}
           </ul>
@@ -329,9 +331,9 @@ export default function Top10RecruitmentAgenciesIndia2026Article() {
           <h2 id="faq-heading" className="text-2xl font-bold text-slate-900 mb-6">Frequently Asked Questions</h2>
           <div className="space-y-6">
             {FAQ_ITEMS.map((faq, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-2">{faq.q}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+              <div key={i} className="py-6 border-b border-slate-200 last:border-b-0">
+                <h3 className="font-bold text-slate-900 text-lg mb-3">{faq.q}</h3>
+                <p className="text-slate-700 text-base leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

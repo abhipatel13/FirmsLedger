@@ -397,12 +397,12 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
           <p className="text-slate-600 leading-relaxed mb-6">
             Unlike a single-city job market, Delhi NCR spans four states and five distinct employment zones — each with its own dominant sectors, salary benchmarks, and talent dynamics. Choosing the right staffing agency means finding one with depth in <em>your</em> specific zone, not just generic &ldquo;Delhi NCR&rdquo; coverage.
           </p>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="divide-y divide-slate-200">
             {NCR_HUBS.map((hub) => (
-              <div key={hub.city} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-1">{hub.city}</h3>
+              <div key={hub.city} className="py-5">
+                <h3 className="font-bold text-slate-900 text-lg mb-1">{hub.city}</h3>
                 <span className="inline-block text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded mb-2">{hub.focus}</span>
-                <p className="text-slate-600 text-sm leading-relaxed">{hub.detail}</p>
+                <p className="text-slate-700 text-base leading-relaxed">{hub.detail}</p>
               </div>
             ))}
           </div>
@@ -412,7 +412,7 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">How We Selected These Agencies</h2>
           <p className="text-slate-600 leading-relaxed mb-4">Our ranking is based on:</p>
-          <ul className="list-disc pl-6 space-y-2 text-slate-600 text-sm">
+          <ul className="list-disc pl-6 space-y-2 text-slate-700 text-base">
             <li>Physical presence and operational depth in Delhi NCR (not just a sales office)</li>
             <li>Track record of placements within key NCR sub-markets (Gurgaon, Noida, Delhi, Faridabad)</li>
             <li>Sector specialization relevant to NCR&apos;s dominant industries</li>
@@ -427,40 +427,40 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
           <h2 id="agencies-heading" className="text-2xl font-bold text-slate-900 mb-6">
             Top 10 Staffing Agencies in Delhi NCR (2026)
           </h2>
-          <div className="space-y-8">
+          <div className="divide-y divide-slate-200">
             {AGENCIES.map((agency) => (
               <div
                 key={agency.rank}
-                className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+                className="py-10"
               >
-                <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block" aria-hidden>
-                  #{agency.rank}
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-3xl font-extrabold text-slate-200 leading-none">#{agency.rank}</span>
+                  <h3 className="text-2xl font-bold text-slate-900">{agency.name}</h3>
                 </div>
-                <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded mb-3">
-                  {agency.badge}
-                </span>
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
+                    {agency.badge}
+                  </span>
                   {agency.tags.map((tag) => (
                     <span key={tag} className="bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1 rounded">
                       {tag}
                     </span>
                   ))}
                 </div>
-                <h3 className="text-xl font-bold text-blue-600 mb-1">{agency.name}</h3>
                 <p className="text-slate-500 text-sm mb-4">
                   <strong>Founded:</strong> {agency.founded} &middot; <strong>HQ / NCR Office:</strong> {agency.hq} &middot; <strong>Focus:</strong> {agency.specialization}
                 </p>
-                <p className="text-slate-600 text-[15px] leading-relaxed mb-4">{agency.description}</p>
-                <ul className="space-y-2 mb-4">
+                <p className="text-slate-700 text-lg leading-relaxed mb-5">{agency.description}</p>
+                <ul className="space-y-3 mb-5">
                   {agency.bullets.map((bullet) => (
-                    <li key={bullet} className="text-slate-600 text-sm flex gap-2">
+                    <li key={bullet} className="text-slate-700 text-base flex gap-2">
                       <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="text-slate-700 text-sm font-medium">
-                  <span className="text-slate-500">✦ Best For:</span> {agency.bestFor}
+                <p className="text-base font-semibold text-slate-800">
+                  <span className="text-slate-500 font-normal">Best For: </span>{agency.bestFor}
                 </p>
               </div>
             ))}
@@ -508,9 +508,9 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
           </p>
           <ul className="space-y-4">
             {CHOOSE_TIPS.map((tip) => (
-              <li key={tip.title} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                <strong className="text-slate-900">{tip.title}: </strong>
-                <span className="text-slate-600 text-sm">{tip.text}</span>
+              <li key={tip.title} className="py-4 border-b border-slate-100 last:border-b-0">
+                <strong className="text-slate-900 text-base">{tip.title}: </strong>
+                <span className="text-slate-700 text-base">{tip.text}</span>
               </li>
             ))}
           </ul>
@@ -557,9 +557,9 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
           </h2>
           <div className="space-y-6">
             {FAQ_ITEMS.map((faq, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-2">Q{i + 1}: {faq.q}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+              <div key={i} className="py-6 border-b border-slate-200 last:border-b-0">
+                <h3 className="font-bold text-slate-900 text-lg mb-3">Q{i + 1}: {faq.q}</h3>
+                <p className="text-slate-700 text-base leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

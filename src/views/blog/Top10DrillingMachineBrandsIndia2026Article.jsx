@@ -365,9 +365,9 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
           <h2 className="text-xl font-bold text-slate-900 mb-4">Quick Summary: Top 10 Drilling Machine Brands in India (2026)</h2>
           <ul className="space-y-3">
             {QUICK_SUMMARY.map((item) => (
-              <li key={item.rank} className="flex gap-3 text-sm">
+              <li key={item.rank} className="flex gap-3 text-base">
                 <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{item.rank}</span>
-                <span><strong className="text-slate-900">{item.name}</strong> — <span className="text-slate-600">{item.overview}</span></span>
+                <span><strong className="text-slate-900">{item.name}</strong> — <span className="text-slate-700">{item.overview}</span></span>
               </li>
             ))}
           </ul>
@@ -390,45 +390,45 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
         {/* Brand Profiles */}
         <section className="mb-12" aria-labelledby="brand-profiles">
           <h2 id="brand-profiles" className="text-2xl font-bold text-slate-900 mb-6">Top 10 Drilling Machine Brands in India: Detailed Profiles</h2>
-          <div className="space-y-8">
+          <div className="divide-y divide-slate-200">
             {BRANDS.map((brand) => (
               <div
                 key={brand.rank}
-                className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+                className="py-10"
               >
-                <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block" aria-hidden>#{brand.rank}</div>
-                <h3 className="text-xl font-bold text-slate-900 mb-1">{brand.name}</h3>
-                <p className="text-slate-500 text-sm mb-2">
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-3xl font-extrabold text-slate-200 leading-none">#{brand.rank}</span>
+                  <h3 className="text-2xl font-bold text-slate-900">{brand.name}</h3>
+                </div>
+                <p className="text-slate-500 text-sm mb-1">
                   <strong>Est.:</strong> {brand.founded} · <strong>HQ:</strong> {brand.hq}
                 </p>
-                <p className="text-slate-500 text-sm mb-2">
+                <p className="text-slate-500 text-sm mb-1">
                   <strong>Machine Types:</strong> {brand.types}
                 </p>
-                <p className="text-slate-500 text-sm mb-2">
+                <p className="text-slate-500 text-sm mb-1">
                   <strong>Industries:</strong> {brand.industries}
                 </p>
-                <p className="text-slate-500 text-sm mb-4">
+                <p className="text-slate-500 text-sm mb-5">
                   <strong>Certifications:</strong> {brand.certifications}
                 </p>
 
-                <h4 className="text-sm font-bold text-slate-800 mb-2">Key Strengths</h4>
-                <ul className="space-y-1.5 mb-4">
+                <h4 className="text-base font-bold text-slate-800 mb-3">Key Strengths</h4>
+                <ul className="space-y-3 mb-5">
                   {brand.strengths.map((s) => (
-                    <li key={s} className="text-slate-600 text-sm flex gap-2">
+                    <li key={s} className="text-slate-700 text-base flex gap-2">
                       <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{s}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 mb-3">
-                  <p className="text-slate-700 text-sm">
-                    <strong className="text-slate-800">After-Sales Support:</strong> {brand.afterSales}
-                  </p>
-                </div>
+                <p className="text-slate-700 text-base mb-3">
+                  <strong className="text-slate-800">After-Sales Support:</strong> {brand.afterSales}
+                </p>
 
-                <p className="text-slate-700 text-sm">
-                  <span className="font-semibold text-blue-700">Why It Stands Out:</span> {brand.whyStandOut}
+                <p className="text-base font-semibold text-slate-800">
+                  <span className="text-blue-700 font-semibold">Why It Stands Out: </span>{brand.whyStandOut}
                 </p>
               </div>
             ))}
@@ -470,11 +470,11 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
           <p className="text-slate-600 leading-relaxed mb-6">
             Before comparing brands, define your exact requirement. Use this framework to evaluate and shortlist the right drilling machine for your application:
           </p>
-          <div className="space-y-4">
+          <div className="divide-y divide-slate-200">
             {BUYING_TIPS.map((tip) => (
-              <div key={tip.title} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-1">{tip.title}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{tip.text}</p>
+              <div key={tip.title} className="py-5">
+                <h3 className="font-bold text-slate-900 text-lg mb-2">{tip.title}</h3>
+                <p className="text-slate-700 text-base leading-relaxed">{tip.text}</p>
               </div>
             ))}
           </div>
@@ -483,28 +483,28 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
         {/* Industry Trends */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Drilling Machine Industry Trends in India: 2026 Outlook</h2>
-          <div className="space-y-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-1">Automation & Smart Drilling</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+          <div className="divide-y divide-slate-200">
+            <div className="py-5">
+              <h3 className="font-bold text-slate-900 text-lg mb-2">Automation & Smart Drilling</h3>
+              <p className="text-slate-700 text-base leading-relaxed">
                 IoT-enabled drilling machines with embedded sensors for real-time vibration monitoring, spindle load tracking, and predictive maintenance alerts are entering the Indian market. Manufacturers like BFW and Jyoti CNC are integrating OEE dashboards and ERP connectivity directly into new machine releases.
               </p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-1">CNC Adoption Across MSME Segment</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+            <div className="py-5">
+              <h3 className="font-bold text-slate-900 text-lg mb-2">CNC Adoption Across MSME Segment</h3>
+              <p className="text-slate-700 text-base leading-relaxed">
                 CNC drilling centres are transitioning from large OEM-only equipment to MSME-accessible tools, driven by lower financing costs and government CLCSS and MUDRA scheme support. Entry-level CNC drilling centres are now available from Indian manufacturers under ₹30 lakh — a price point previously occupied only by imports.
               </p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-1">Make in India & PLI Impact</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+            <div className="py-5">
+              <h3 className="font-bold text-slate-900 text-lg mb-2">Make in India & PLI Impact</h3>
+              <p className="text-slate-700 text-base leading-relaxed">
                 The Production Linked Incentive (PLI) scheme for capital goods has directly incentivised drilling machine manufacturers to invest in R&D and export-grade quality. HMT, BFW, and Jyoti CNC have all announced expansion plans under Make in India, with increased domestic manufacturing and reduced import dependency.
               </p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-1">Export Growth</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+            <div className="py-5">
+              <h3 className="font-bold text-slate-900 text-lg mb-2">Export Growth</h3>
+              <p className="text-slate-700 text-base leading-relaxed">
                 India&apos;s machine tool exports — including drilling machines — grew 18% in FY2024-25, with primary markets in Southeast Asia, the Middle East, and Africa. Jyoti CNC and Precihole are establishing service partnerships in Europe, allowing Indian-manufactured drilling machines to compete directly against German and Japanese machines on quality and price.
               </p>
             </div>
@@ -516,9 +516,9 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
           <h2 id="faq-heading" className="text-2xl font-bold text-slate-900 mb-6">Frequently Asked Questions</h2>
           <div className="space-y-5">
             {FAQ_ITEMS.map((faq, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-2">{faq.q}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+              <div key={i} className="py-6 border-b border-slate-200 last:border-b-0">
+                <h3 className="font-bold text-slate-900 text-lg mb-3">{faq.q}</h3>
+                <p className="text-slate-700 text-base leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

@@ -151,19 +151,19 @@ export default function BestContractStaffingAgenciesIndia2026Article() {
           Contract staffing agencies take on the legal employer role — they hire workers on their rolls and deploy them to your premises or projects. You get flexibility to scale up or down; they handle payroll, PF, ESI, gratuity, and labour law compliance. For project-based work, seasonal peaks, or try-before-you-hire, contract staffing is often faster and lower-risk than direct hiring.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+        <ul className="divide-y divide-slate-200 mb-12">
           {[
             { title: 'Compliance & Liability', text: 'Agencies assume employer liability for PF, ESI, professional tax, and contract labour regulations — reducing your statutory and legal risk.' },
             { title: 'Speed to Deploy', text: 'Pre-vetted talent pools and streamlined onboarding mean top agencies can place contract workers in 48–72 hours for volume roles.' },
             { title: 'Flexibility', text: 'Scale up for projects or peak season and scale down when demand falls — without the complexity of layoffs or severance.' },
             { title: 'Cost Clarity', text: 'Fixed monthly mark-up per worker (typically ₹5,000–₹15,000 above base wage) makes budgeting predictable.' },
           ].map((item) => (
-            <div key={item.title} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
-              <p className="text-slate-600 text-sm">{item.text}</p>
-            </div>
+            <li key={item.title} className="py-4">
+              <strong className="text-slate-900 text-base">{item.title}: </strong>
+              <span className="text-slate-700 text-base">{item.text}</span>
+            </li>
           ))}
-        </div>
+        </ul>
 
         <hr className="border-slate-200 my-12" />
 
@@ -172,24 +172,26 @@ export default function BestContractStaffingAgenciesIndia2026Article() {
           These agencies lead in contract and temporary staffing — by scale, speed, sector focus, or compliance infrastructure. Choose based on your industry, volume, and geography.
         </p>
 
-        <div className="space-y-8">
+        <div className="divide-y divide-slate-200">
           {AGENCIES.map((agency) => (
             <div
               key={agency.rank}
-              className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+              className="py-10"
             >
-              <div className="absolute top-6 right-6 text-4xl font-extrabold text-amber-100 hidden md:block">{agency.rank}</div>
+              <div className="flex items-baseline gap-3 mb-3">
+                <span className="text-3xl font-extrabold text-slate-200 leading-none">{agency.rank}</span>
+                <h3 className="text-2xl font-bold text-slate-900">{agency.name}</h3>
+              </div>
               {agency.badge && (
                 <span className="inline-block text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded bg-amber-50 text-amber-700 mb-3">
                   {agency.badge}
                 </span>
               )}
-              <h3 className="text-xl font-bold text-amber-700 mb-1">{agency.name}</h3>
               <p className="text-slate-500 text-sm italic mb-4">{agency.tagline}</p>
-              <p className="text-slate-600 text-[15px] leading-relaxed mb-4">{agency.description}</p>
+              <p className="text-slate-700 text-lg leading-relaxed mb-5">{agency.description}</p>
               <div className="flex flex-wrap gap-2">
                 {agency.strengths.map((s) => (
-                  <span key={s} className="bg-slate-100 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-full">
+                  <span key={s} className="bg-slate-100 text-slate-700 text-sm font-medium px-3 py-1.5 rounded-full">
                     {s}
                   </span>
                 ))}
@@ -209,7 +211,7 @@ export default function BestContractStaffingAgenciesIndia2026Article() {
             { strong: 'Pricing:', text: 'Typical mark-up is ₹5,000–₹15,000 per worker/month. Get all-inclusive quotes with no hidden charges.' },
             { strong: 'Replacement guarantee:', text: 'Top agencies offer 30–90 day replacement if a contract worker leaves early.' },
           ].map((item, i) => (
-            <li key={i} className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-amber-600 before:font-semibold">
+            <li key={i} className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-amber-600 before:font-semibold">
               <strong className="text-slate-900">{item.strong}</strong> {item.text}
             </li>
           ))}

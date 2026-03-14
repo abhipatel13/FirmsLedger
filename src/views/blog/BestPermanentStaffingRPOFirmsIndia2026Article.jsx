@@ -151,17 +151,17 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
           Use a <strong className="text-slate-900">permanent staffing agency</strong> when you need to fill specific roles and are happy to pay per hire (8–20% of annual CTC). Use an <strong className="text-slate-900">RPO partner</strong> when you have high volume, recurring hiring, or want to outsource the entire recruitment function. Many top firms offer both — so you can start with permanent hiring and scale into RPO as needs grow.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+        <ul className="divide-y divide-slate-200 mb-12">
           {[
             { title: 'Permanent staffing', text: 'Best for: filling defined roles, paying per hire, retaining control of process. Typical fee: 8–20% of CTC. Timeline: 2–4 weeks for mid-level, 4–8 weeks for leadership.' },
             { title: 'RPO (Recruitment Process Outsourcing)', text: 'Best for: high volume, recurring hiring, or embedding a dedicated recruitment team. Pricing: per-hire, monthly retainer, or hybrid. You get scalability and often better time-to-fill.' },
           ].map((item) => (
-            <div key={item.title} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
-              <p className="text-slate-600 text-sm">{item.text}</p>
-            </div>
+            <li key={item.title} className="py-5">
+              <strong className="text-slate-900 text-base">{item.title}: </strong>
+              <span className="text-slate-700 text-base">{item.text}</span>
+            </li>
           ))}
-        </div>
+        </ul>
 
         <hr className="border-slate-200 my-12" />
 
@@ -170,24 +170,26 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
           These firms lead in permanent recruitment and RPO — by scale, sector, seniority, or delivery model. Choose based on whether you need one-off permanent hires or a full hiring partnership.
         </p>
 
-        <div className="space-y-8">
+        <div className="divide-y divide-slate-200">
           {FIRMS.map((agency) => (
             <div
               key={agency.rank}
-              className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+              className="py-10"
             >
-              <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block">{agency.rank}</div>
+              <div className="flex items-baseline gap-3 mb-3">
+                <span className="text-3xl font-extrabold text-slate-200 leading-none">{agency.rank}</span>
+                <h3 className="text-2xl font-bold text-slate-900">{agency.name}</h3>
+              </div>
               {agency.badge && (
                 <span className="inline-block text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded bg-blue-50 text-blue-700 mb-3">
                   {agency.badge}
                 </span>
               )}
-              <h3 className="text-xl font-bold text-blue-600 mb-1">{agency.name}</h3>
               <p className="text-slate-500 text-sm italic mb-4">{agency.tagline}</p>
-              <p className="text-slate-600 text-[15px] leading-relaxed mb-4">{agency.description}</p>
+              <p className="text-slate-700 text-lg leading-relaxed mb-5">{agency.description}</p>
               <div className="flex flex-wrap gap-2">
                 {agency.strengths.map((s) => (
-                  <span key={s} className="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full">
+                  <span key={s} className="bg-blue-50 text-blue-700 text-sm font-medium px-3 py-1.5 rounded-full">
                     {s}
                   </span>
                 ))}
@@ -207,7 +209,7 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
             { strong: 'Time-to-fill:', text: 'Top agencies quote 14–21 days for mid-level permanent; 4–8 weeks for leadership. Ask for guarantees or benchmarks.' },
             { strong: 'Replacement guarantee:', text: 'Most offer 30–90 day free replacement if a permanent hire leaves. Confirm this in writing.' },
           ].map((item, i) => (
-            <li key={i} className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+            <li key={i} className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
               <strong className="text-slate-900">{item.strong}</strong> {item.text}
             </li>
           ))}

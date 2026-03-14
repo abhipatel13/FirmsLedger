@@ -158,28 +158,22 @@ export default function HealthcareStaffingAhmedabadArticle() {
           Traditional HR teams often lack the specialized knowledge to verify clinical credentials, check NMC/MCI registrations, or assess ACLS/BLS certifications. Healthcare staffing agencies fill this gap — offering pre-vetted, compliant talent within weeks, not months. In Ahmedabad&apos;s competitive medical talent market, the right staffing partner can make or break a hospital&apos;s operational efficiency.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-lg mb-4">🩺</div>
-            <h3 className="font-bold text-slate-900 mb-2">Clinical Credential Verification</h3>
-            <p className="text-slate-600 text-sm">Agencies handle NMC/MCI checks, experience letter verification, BLS/ACLS certifications, and police clearance — reducing liability for hospitals.</p>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-lg mb-4">⚡</div>
-            <h3 className="font-bold text-slate-900 mb-2">Faster Time-to-Hire</h3>
-            <p className="text-slate-600 text-sm">Specialist agencies maintain pre-screened talent pools, cutting placement time from 60–120 days (traditional) to as little as 20 days.</p>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-lg mb-4">📊</div>
-            <h3 className="font-bold text-slate-900 mb-2">Flexible Staffing Models</h3>
-            <p className="text-slate-600 text-sm">From locum doctors and contract nurses to permanent executive hires — agencies offer scalable solutions for every staffing need.</p>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-lg mb-4">🔒</div>
-            <h3 className="font-bold text-slate-900 mb-2">Regulatory Compliance</h3>
-            <p className="text-slate-600 text-sm">Navigating Gujarat&apos;s healthcare labor laws, shift regulations, and patient-ratio mandates is far easier with a knowledgeable agency partner.</p>
-          </div>
-        </div>
+        <ul className="divide-y divide-slate-200 mb-12">
+          {[
+            { icon: '🩺', title: 'Clinical Credential Verification', text: 'Agencies handle NMC/MCI checks, experience letter verification, BLS/ACLS certifications, and police clearance — reducing liability for hospitals.' },
+            { icon: '⚡', title: 'Faster Time-to-Hire', text: 'Specialist agencies maintain pre-screened talent pools, cutting placement time from 60–120 days (traditional) to as little as 20 days.' },
+            { icon: '📊', title: 'Flexible Staffing Models', text: 'From locum doctors and contract nurses to permanent executive hires — agencies offer scalable solutions for every staffing need.' },
+            { icon: '🔒', title: 'Regulatory Compliance', text: "Navigating Gujarat's healthcare labor laws, shift regulations, and patient-ratio mandates is far easier with a knowledgeable agency partner." },
+          ].map((item) => (
+            <li key={item.title} className="py-5 flex gap-4">
+              <span className="text-2xl flex-shrink-0">{item.icon}</span>
+              <div>
+                <h3 className="font-bold text-slate-900 text-lg mb-1">{item.title}</h3>
+                <p className="text-slate-700 text-base">{item.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
 
         <hr className="border-slate-200 my-12" />
 
@@ -188,22 +182,24 @@ export default function HealthcareStaffingAhmedabadArticle() {
           Below are the leading agencies — both Ahmedabad-based and national firms with strong local presence — that hospitals and clinics in the city rely on today.
         </p>
 
-        <div className="space-y-8">
+        <div className="divide-y divide-slate-200">
           {AGENCIES.map((agency) => (
             <div
               key={agency.rank}
-              className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative"
+              className="py-10"
             >
-              <div className="absolute top-6 right-6 text-4xl font-extrabold text-blue-100 hidden md:block">{agency.rank}</div>
+              <div className="flex items-baseline gap-3 mb-3">
+                <span className="text-3xl font-extrabold text-slate-200 leading-none">{agency.rank}</span>
+                <h3 className="text-2xl font-bold text-slate-900">{agency.name}</h3>
+              </div>
               <span className={`inline-block text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded mb-3 ${agency.badge === 'badge-local' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
                 {agency.badgeLabel}
               </span>
-              <h3 className="text-xl font-bold text-blue-600 mb-1">{agency.name}</h3>
               <p className="text-slate-500 text-sm italic mb-4">{agency.tagline}</p>
-              <p className="text-slate-600 text-[15px] leading-relaxed mb-4">{agency.description}</p>
+              <p className="text-slate-700 text-lg leading-relaxed mb-5">{agency.description}</p>
               <div className="flex flex-wrap gap-2">
                 {agency.specialties.map((spec) => (
-                  <span key={spec} className="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full">
+                  <span key={spec} className="bg-blue-50 text-blue-700 text-sm font-medium px-3 py-1.5 rounded-full">
                     {spec}
                   </span>
                 ))}
@@ -220,25 +216,25 @@ export default function HealthcareStaffingAhmedabadArticle() {
         </p>
 
         <ul className="space-y-0 border-t border-slate-200">
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
             <strong className="text-slate-900">Healthcare Specialization:</strong> Choose an agency that exclusively or primarily works in healthcare — not a general staffing firm dabbling in medical roles.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
             <strong className="text-slate-900">Credential Verification Process:</strong> Ask specifically how they verify NMC/MCI registration, ACLS/BLS certifications, and conduct background checks.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
             <strong className="text-slate-900">Local Gujarat Network:</strong> Agencies with deep local ties can source passive candidates from Ahmedabad, Gandhinagar, Surat, and Vadodara — giving you a wider talent pool.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
             <strong className="text-slate-900">Time-to-Fill Guarantee:</strong> Top agencies should be able to present verified candidates within 20–45 days for most roles. Demand this clarity upfront.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
             <strong className="text-slate-900">Flexible Engagement Models:</strong> Ensure they offer contract, temp-to-perm, and permanent hiring — so you can scale staffing up or down with patient volumes.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
             <strong className="text-slate-900">Transparent Pricing:</strong> Healthcare permanent staffing typically costs 8–15% of annual CTC. Be wary of hidden charges for onboarding or compliance documentation.
           </li>
-          <li className="py-4 pl-8 relative text-slate-600 text-[15px] before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
             <strong className="text-slate-900">Post-Placement Support:</strong> The best agencies offer a replacement guarantee (typically 30–90 days) if a hired candidate leaves early.
           </li>
         </ul>
