@@ -4,6 +4,29 @@
  */
 
 export const SITE_NAME = 'FirmsLedger';
+
+/**
+ * All published blog article slugs.
+ * Keep in sync with app/Blogs/[slug]/page.jsx ARTICLES keys
+ * and app/sitemap.js BLOG_SLUGS.
+ */
+export const BLOG_SLUGS = [
+  'top-10-stabilizer-brands-india-2025',
+  'top-10-switch-socket-brands-india-2025',
+  'best-solar-panel-brands-india-2025',
+  'top-10-led-light-brands-india-2025',
+  'top-10-water-pump-brands-india-2025',
+  'top-10-drilling-machine-brands-india-2026',
+  'top-10-milling-machine-manufacturers-india-2026',
+  'top-10-recruitment-agencies-india-2026',
+  'best-contract-staffing-agencies-india-2026',
+  'best-permanent-staffing-rpo-firms-india-2026',
+  'top-healthcare-staffing-agencies-ahmedabad-2026',
+  'top-10-it-staffing-companies-india-2026',
+  'top-industrial-staffing-companies-india-2026',
+  'top-staffing-agencies-delhi-ncr-2026',
+  'top-it-staffing-companies-bangalore-2026',
+];
 export const SEO_YEAR = 2026;
 export const SEO_COUNTRY = 'India';
 export const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://firmsledger.com';

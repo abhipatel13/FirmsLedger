@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import { createPageUrl } from '@/utils';
 
+export const metadata = {
+  title: 'Top Rankings – Coming Soon',
+  robots: { index: false, follow: true },
+};
+
 export default function TopRankingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">

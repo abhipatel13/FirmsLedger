@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import { createPageUrl } from '@/utils';
 
+export const metadata = {
+  title: 'Write a Review',
+  robots: { index: false, follow: true },
+};
+
 export default function WriteReviewPage({ searchParams }) {
   const agencyId = searchParams?.agency;
   return (
