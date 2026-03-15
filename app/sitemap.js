@@ -34,30 +34,8 @@ const STAFFING_SLUGS = [
   'industrial-staffing',
 ];
 
-/** Fetch all approved company slugs from Supabase. Fails silently. */
-async function getCompanySlugs() {
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!supabaseUrl || !supabaseKey) return [];
-    const res = await fetch(
-      `${supabaseUrl}/rest/v1/agencies?approved=eq.true&select=slug&limit=2000`,
-      {
-        headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
-        next: { revalidate: 86400 }, // revalidate every 24 h
-      }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.map((r) => r.slug).filter(Boolean);
-  } catch {
-    return [];
-  }
-}
-
 export default async function sitemap() {
   const now = new Date();
-  const companySlugs = await getCompanySlugs();
 
   const staticRoutes = [
     { url: `${BASE_URL}/`,                  lastModified: now, changeFrequency: 'daily',   priority: 1.0 },
@@ -83,12 +61,5 @@ export default async function sitemap() {
     priority: 0.7,
   }));
 
-  const companyRoutes = companySlugs.map((slug) => ({
-    url: `${BASE_URL}/companies/${slug}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.6,
-  }));
-
-  return [...staticRoutes, ...staffingRoutes, ...blogRoutes, ...companyRoutes];
+  return [...staticRoutes, ...staffingRoutes, ...blogRoutes];
 }
