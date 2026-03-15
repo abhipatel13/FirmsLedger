@@ -9,7 +9,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 
 const FEATURED_IMAGE = {
   src: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=85',
-  alt: 'Top 10 Switch and Socket Brands in India 2025 - best electrical switches and sockets for home and commercial use',
+  alt: 'Top 10 Switch and Socket Brands in India 2026 - best electrical switches and sockets for home and commercial use',
   width: 1200,
   height: 630,
 };
@@ -332,8 +332,8 @@ const COMPARISON = [
 
 const FAQ_ITEMS = [
   {
-    q: 'Which is the best switch and socket brand in India in 2025?',
-    a: 'Legrand, Havells, and Anchor by Panasonic are the top three switch and socket brands in India in 2025. Legrand leads for premium quality and commercial projects, Havells leads for the best overall value across all price segments, and Anchor is the most trusted brand among electricians and homeowners for reliable everyday use. For budget buyers, Anchor Roma remains the most widely used and dependable option.',
+    q: 'Which is the best switch and socket brand in India in 2026?',
+    a: 'Legrand, Havells, and Anchor by Panasonic are the top three switch and socket brands in India in 2026. Legrand leads for premium quality and commercial projects, Havells leads for the best overall value across all price segments, and Anchor is the most trusted brand among electricians and homeowners for reliable everyday use. For budget buyers, Anchor Roma remains the most widely used and dependable option.',
   },
   {
     q: 'Which switch and socket brand offers the best warranty in India?',
@@ -352,8 +352,8 @@ const FAQ_ITEMS = [
     a: 'ISI (Indian Standards Institute) certification, managed by the Bureau of Indian Standards (BIS), confirms that a switch or socket complies with IS 3854 — the Indian safety standard for switches. ISI certified switches are tested for electrical safety, durability, heat resistance, and flame retardancy. In India, it is mandatory for 6A and 16A switches and sockets sold domestically to carry an ISI mark. Always verify the ISI mark on the product before purchasing to ensure safety in your home or building.',
   },
   {
-    q: 'What is the average price of a modular switch in India in 2025?',
-    a: 'The average price of a modular switch in India in 2025 ranges from ₹30 to ₹3,000+ per module depending on the brand and series. Budget options like Anchor Roma and Finolex cost ₹30–₹100 per module. Mid-range options like Havells Coral, GM Modular Casablanca, and Goldmedal Fina Plus cost ₹60–₹300 per module. Premium options like Legrand Arteor, Crabtree Athena, and Schneider Opale cost ₹400–₹2,000+ per module. Please verify current prices on Amazon, Flipkart, or directly with electricians as prices vary by city and quantity.',
+    q: 'What is the average price of a modular switch in India in 2026?',
+    a: 'The average price of a modular switch in India in 2026 ranges from ₹30 to ₹3,000+ per module depending on the brand and series. Budget options like Anchor Roma and Finolex cost ₹30–₹100 per module. Mid-range options like Havells Coral, GM Modular Casablanca, and Goldmedal Fina Plus cost ₹60–₹300 per module. Premium options like Legrand Arteor, Crabtree Athena, and Schneider Opale cost ₹400–₹2,000+ per module. Please verify current prices on Amazon, Flipkart, or directly with electricians as prices vary by city and quantity.',
   },
   {
     q: 'What is the difference between modular and conventional switches?',
@@ -371,7 +371,7 @@ const faqSchema = {
   })),
 };
 
-export default function Top10SwitchSocketBrandsIndia2025Article() {
+export default function Top10SwitchSocketBrandsIndia2026Article() {
   return (
     <>
       <Script
@@ -387,7 +387,7 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
             <Breadcrumb
               items={[
                 { label: 'Blog', href: createPageUrl('Blogs') },
-                { label: 'Top 10 Switch & Socket Brands in India (2025)' },
+                { label: 'Top 10 Switch & Socket Brands in India (2026)' },
               ]}
             />
           </div>
@@ -397,10 +397,10 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
         <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
             <div className="inline-block bg-blue-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-5 uppercase tracking-wider">
-              Electrical · Updated 2025
+              Electrical · Updated 2026
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5">
-              Top 10 Switch &amp; Socket Brands in India (2025) – Best Brands for Home, Commercial &amp; Industrial Use
+              Top 10 Switch &amp; Socket Brands in India (2026) – Best Brands for Home, Commercial &amp; Industrial Use
             </h1>
             <p className="text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed mb-8">
               A comprehensive, unbiased guide to India's best switch and socket brands — compared by ISI certification, build quality, warranty, and price to help you wire your home or project with confidence.
@@ -434,7 +434,7 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-14">
             {[
-              { value: '₹12,000 Cr+', label: 'India wiring devices market size (2025)' },
+              { value: '₹12,000 Cr+', label: 'India wiring devices market size (2026)' },
               { value: 'IS 3854', label: 'Indian standard for switches & sockets' },
               { value: '2 years', label: 'Standard warranty from top brands' },
               { value: '10 brands', label: 'Reviewed & compared in this guide' },
@@ -457,7 +457,7 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
                 Switches and sockets are touched dozens of times every day. Choosing the wrong brand means loose fittings, overheating sockets, and safety risks from uncertified products — all in exchange for a few hundred rupees in savings. The right brand delivers 20+ years of safe, reliable operation with a finish that still looks good a decade later.
               </p>
               <p>
-                This guide reviews the top 10 switch and socket brands in India for 2025, comparing them on ISI certification, build quality, design, warranty, and price. Whether you are a homeowner choosing for your new flat, a contractor specifying for a project, or an electrician recommending to clients — this guide will help you make the right call.
+                This guide reviews the top 10 switch and socket brands in India for 2026, comparing them on ISI certification, build quality, design, warranty, and price. Whether you are a homeowner choosing for your new flat, a contractor specifying for a project, or an electrician recommending to clients — this guide will help you make the right call.
               </p>
             </div>
           </section>
@@ -502,7 +502,7 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
 
           {/* Brand Profiles */}
           <section className="mb-14">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Top 10 Switch &amp; Socket Brands in India (2025)</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Top 10 Switch &amp; Socket Brands in India (2026)</h2>
             <p className="text-lg text-slate-600 mb-8">Reviewed and ranked based on ISI certification, build quality, design, warranty, and market reputation.</p>
 
             <div className="divide-y divide-slate-200">
@@ -585,7 +585,7 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
 
           {/* Comparison Table */}
           <section className="mb-14">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">Switch &amp; Socket Brand Comparison Table (2025)</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">Switch &amp; Socket Brand Comparison Table (2026)</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
               <table className="min-w-full text-base">
                 <thead>
@@ -671,7 +671,7 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-5">Conclusion</h2>
             <div className="space-y-4 text-lg text-slate-700 leading-relaxed">
               <p>
-                Choosing the right switch and socket brand in India is a long-term decision — these fittings will be touched every day for the next 20 years. Our top three picks for 2025 are <strong>Havells</strong> for the best all-round value across all budgets and segments, <strong>Legrand</strong> for the best premium quality in luxury and commercial projects, and <strong>Anchor by Panasonic</strong> for the most trusted and durable everyday option.
+                Choosing the right switch and socket brand in India is a long-term decision — these fittings will be touched every day for the next 20 years. Our top three picks for 2026 are <strong>Havells</strong> for the best all-round value across all budgets and segments, <strong>Legrand</strong> for the best premium quality in luxury and commercial projects, and <strong>Anchor by Panasonic</strong> for the most trusted and durable everyday option.
               </p>
               <p>
                 If you are specifying for a commercial project, Schneider Electric is the most reliable choice for integration with the complete electrical system. If you want premium aesthetics from an Indian brand, Crabtree Athena by Havells is an excellent alternative to Legrand at a somewhat lower cost.
@@ -691,7 +691,7 @@ export default function Top10SwitchSocketBrandsIndia2025Article() {
             <div className="flex flex-wrap gap-2">
               {[
                 'Switch Socket Brands in India',
-                'Best Modular Switches India 2025',
+                'Best Modular Switches India 2026',
                 'ISI Certified Switches India',
                 'Legrand Modular Switches',
                 'Havells Switches India',

@@ -37,7 +37,7 @@ const COMPANIES = [
     name: 'Quess Corp',
     badge: 'LARGEST BY HEADCOUNT',
     tags: ['GENERAL + IT STAFFING', 'EPFO COMPLIANCE'],
-    description: "With over 450,000 employees under management as of 2025, Quess Corp is India's largest staffing company by workforce volume. Post its strategic demerger, the company is now a more focused talent platform suited for high-volume IT and professional services staffing.",
+    description: "With over 450,000 employees under management as of 2026, Quess Corp is India's largest staffing company by workforce volume. Post its strategic demerger, the company is now a more focused talent platform suited for high-volume IT and professional services staffing.",
     bullets: ["Market leader by headcount in India's staffing industry", 'Professional staffing, IT staffing, and general labour solutions', 'Accounts for ~1.4% of all new EPFO registrations nationally', 'Dedicated IT and professional services division post-demerger', 'Industry-leading scale for managing complex, large recruitment drives'],
     bestFor: 'Enterprise-scale staffing across multiple verticals',
   },
@@ -263,7 +263,7 @@ export default function Top10ITStaffingIndia2026Article() {
         <ul className="space-y-4 text-slate-700 text-base">
           <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India produces over <strong className="text-slate-800">1 million engineering graduates</strong> per year, more than any other country.</li>
           <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> Hiring through Indian staffing agencies saves companies <strong className="text-slate-800">40–70%</strong> compared to equivalent roles in the US, UK, or Canada.</li>
-          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> Demand for AI, cloud, and cybersecurity roles has grown <strong className="text-slate-800">15–35%</strong> year-on-year in 2025–2026.</li>
+          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> Demand for AI, cloud, and cybersecurity roles has grown <strong className="text-slate-800">15–35%</strong> year-on-year in 2026–2027.</li>
           <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> The Indian Staffing Federation projects flexi-staffing revenue to hit <strong className="text-slate-800">$24 billion by FY27</strong>.</li>
           <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India recorded a <strong className="text-slate-800">13% staffing industry growth rate</strong> in 2024, one of the fastest in the world.</li>
           <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India&apos;s real GDP is estimated to have grown at <strong className="text-slate-800">8.2%</strong> in Q2 FY26, making it the world&apos;s fastest-growing major economy.</li>

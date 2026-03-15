@@ -7,7 +7,7 @@ const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   let companyName = 'Company Profile';
-  let description = `View this company profile on FirmsLedger – India's verified business directory.`;
+  let description = `View this company profile on FirmsLedger – the global verified business directory.`;
 
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

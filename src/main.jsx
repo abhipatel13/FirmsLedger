@@ -20,7 +20,7 @@ export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [listAgencyOpen, setListAgencyOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedParentId, setSelectedParentId] = useState(null);
   const navigate = useNavigate();
 
@@ -29,13 +29,20 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => api.entities.Category.list(),
   });
 
-  const topLocations = ['Mumbai', 'Bangalore', 'Delhi', 'Pune', 'Hyderabad', 'Chennai'];
+  const topLocations = [
+    { label: 'United States', value: 'United States' },
+    { label: 'United Kingdom', value: 'United Kingdom' },
+    { label: 'Canada', value: 'Canada' },
+    { label: 'Australia', value: 'Australia' },
+    { label: 'Singapore', value: 'Singapore' },
+    { label: 'UAE', value: 'United Arab Emirates' },
+  ];
 
   const handleSearch = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (searchQuery) params.append('search', searchQuery);
-    if (selectedLocation) params.append('location', selectedLocation);
+    if (selectedCountry) params.append('country', selectedCountry);
     navigate(createPageUrl('Directory') + '?' + params.toString());
   };
 
@@ -264,7 +271,7 @@ export default function Layout({ children, currentPageName }) {
                 </span>
               </Link>
               <p className="text-slate-400 text-sm mb-6 leading-relaxed max-w-sm">
-                India's most trusted platform to discover and connect with verified business service providers. Make confident decisions for your business growth.
+                The trusted global platform to discover and connect with verified business service providers worldwide. Make confident decisions for your business growth.
               </p>
               <div className="flex items-center gap-3">
                 <a href="#" className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all hover:-translate-y-1">
@@ -305,9 +312,9 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Top Locations</h4>
               <div className="flex flex-col gap-3 text-sm">
-                {topLocations.map((loc) => (
-                  <Link key={loc} to={createPageUrl('Directory') + `?location=${loc}`} className="text-slate-400 hover:text-blue-400 transition-colors">
-                    {loc}
+                {topLocations.map(({ label, value }) => (
+                  <Link key={value} to={createPageUrl('Directory') + `?country=${encodeURIComponent(value)}`} className="text-slate-400 hover:text-blue-400 transition-colors">
+                    {label}
                   </Link>
                 ))}
               </div>

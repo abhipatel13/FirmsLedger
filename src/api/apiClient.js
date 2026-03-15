@@ -30,9 +30,9 @@ const mockCategories = [
 ];
 
 const mockAgencies = [
-  { id: 'agency-1', name: 'NextEdge Talent', slug: 'nextedge-talent', description: 'Executive search and fractional HR leadership.', website: 'https://nextedge.in', logo_url: 'https://ui-avatars.com/api/?name=NextEdge&background=4F46E5&color=fff', hq_city: 'Mumbai', hq_state: 'Maharashtra', hq_country: 'India', team_size: '1-10', approved: true, featured: true, verified: false, avg_rating: 4.5, review_count: 12 },
-  { id: 'agency-2', name: 'Wisemonk', slug: 'wisemonk', description: 'Remote staffing, EOR and HR-as-a-service for startups.', website: 'https://wisemonk.io', logo_url: 'https://ui-avatars.com/api/?name=Wisemonk&background=DC2626&color=fff', hq_city: 'Bengaluru', hq_state: 'Karnataka', hq_country: 'India', team_size: '1-10', approved: true, featured: true, verified: true, avg_rating: 4.8, review_count: 8 },
-  { id: 'agency-3', name: 'TalentBridge Consulting', slug: 'talentbridge-consulting', description: 'CXO and senior leadership hires for mid-sized firms.', website: 'https://talentbridge.in', logo_url: 'https://ui-avatars.com/api/?name=TalentBridge&background=2563EB&color=fff', hq_city: 'Pune', hq_state: 'Maharashtra', hq_country: 'India', team_size: '1-10', approved: true, featured: false, verified: false, avg_rating: 4.2, review_count: 5 },
+  { id: 'agency-1', name: 'NextEdge Talent', slug: 'nextedge-talent', description: 'Executive search and fractional HR leadership.', website: 'https://nextedge.example.com', logo_url: 'https://ui-avatars.com/api/?name=NextEdge&background=4F46E5&color=fff', hq_city: 'New York', hq_state: 'New York', hq_country: 'United States', team_size: '1-10', approved: true, featured: true, verified: false, avg_rating: 4.5, review_count: 12 },
+  { id: 'agency-2', name: 'Wisemonk', slug: 'wisemonk', description: 'Remote staffing, EOR and HR-as-a-service for startups.', website: 'https://wisemonk.example.com', logo_url: 'https://ui-avatars.com/api/?name=Wisemonk&background=DC2626&color=fff', hq_city: 'London', hq_state: 'England', hq_country: 'United Kingdom', team_size: '1-10', approved: true, featured: true, verified: true, avg_rating: 4.8, review_count: 8 },
+  { id: 'agency-3', name: 'TalentBridge Consulting', slug: 'talentbridge-consulting', description: 'CXO and senior leadership hires for mid-sized firms.', website: 'https://talentbridge.example.com', logo_url: 'https://ui-avatars.com/api/?name=TalentBridge&background=2563EB&color=fff', hq_city: 'Singapore', hq_state: '', hq_country: 'Singapore', team_size: '1-10', approved: true, featured: false, verified: false, avg_rating: 4.2, review_count: 5 },
 ];
 
 const mockAgencyCategories = [
@@ -166,7 +166,7 @@ export async function submitListingRequest(data) {
         description: data.description,
         hq_city: data.hq_city,
         hq_state: data.hq_state,
-        hq_country: data.hq_country || 'India',
+        hq_country: data.hq_country || '',
         team_size: data.team_size,
         category_ids: data.category_ids || [],
         invite_id: data.invite_id || null,

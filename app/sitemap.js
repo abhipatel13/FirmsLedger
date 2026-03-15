@@ -2,11 +2,11 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 
 /** All published blog article slugs — keep in sync with app/Blogs/[slug]/page.jsx */
 const BLOG_SLUGS = [
-  'top-10-stabilizer-brands-india-2025',
-  'top-10-switch-socket-brands-india-2025',
-  'best-solar-panel-brands-india-2025',
-  'top-10-led-light-brands-india-2025',
-  'top-10-water-pump-brands-india-2025',
+  'top-10-stabilizer-brands-india-2026',
+  'top-10-switch-socket-brands-india-2026',
+  'best-solar-panel-brands-india-2026',
+  'top-10-led-light-brands-india-2026',
+  'top-10-water-pump-brands-india-2026',
   'top-10-drilling-machine-brands-india-2026',
   'top-10-milling-machine-manufacturers-india-2026',
   'top-10-recruitment-agencies-india-2026',

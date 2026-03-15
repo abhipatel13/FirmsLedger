@@ -284,7 +284,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'What is Bangalore\'s IT talent market like in 2026?',
-    a: "Bangalore remains India's #1 IT talent hub with approximately 2 million IT professionals. The market is highly competitive — AI, cloud, and cybersecurity skills see demand exceeding supply by 3–5x. Attrition rates remain elevated at 18–25% annually. However, the 2024–2025 correction in tech hiring has created a slightly larger available candidate pool for non-niche roles.",
+    a: "Bangalore remains India's #1 IT talent hub with approximately 2 million IT professionals. The market is highly competitive — AI, cloud, and cybersecurity skills see demand exceeding supply by 3–5x. Attrition rates remain elevated at 18–25% annually. However, the 2025–2026 correction in tech hiring has created a slightly larger available candidate pool for non-niche roles.",
   },
   {
     q: 'Which staffing agencies are best for Bangalore startups and unicorns?',
@@ -542,7 +542,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
             </li>
             <li className="flex gap-3">
               <span className="text-blue-500 font-bold flex-shrink-0">•</span>
-              <span><strong className="text-slate-800">AI talent concentration</strong> — Demand for AI/ML engineers in Bangalore has grown 35% year-on-year in 2025–2026, with supply still lagging significantly behind demand.</span>
+              <span><strong className="text-slate-800">AI talent concentration</strong> — Demand for AI/ML engineers in Bangalore has grown 35% year-on-year in 2026–2027, with supply still lagging significantly behind demand.</span>
             </li>
             <li className="flex gap-3">
               <span className="text-blue-500 font-bold flex-shrink-0">•</span>

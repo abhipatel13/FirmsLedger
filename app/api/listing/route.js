@@ -37,7 +37,7 @@ export async function POST(request) {
     const contact_email = body.email || null;
     const hq_city = body.hq_city || null;
     const hq_state = body.hq_state || null;
-    const hq_country = body.hq_country || 'India';
+    const hq_country = body.hq_country || '';
     const team_size = body.team_size || null;
     const categoryIds = Array.isArray(body.category_ids) ? body.category_ids : [];
     const inviteId = body.invite_id || null;
@@ -60,7 +60,7 @@ export async function POST(request) {
       contact_email: contact_email?.trim() || null,
       hq_city: hq_city?.trim() || null,
       hq_state: hq_state?.trim() || null,
-      hq_country: (hq_country || 'India').trim(),
+      hq_country: (hq_country || '').trim() || null,
       team_size: team_size?.trim() || null,
       approved: false,
     };

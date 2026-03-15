@@ -7,13 +7,13 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'FirmsLedger – Business Directory India',
+    default: 'FirmsLedger – Global Business Directory',
     template: '%s | FirmsLedger',
   },
-  description: "India's most trusted platform to discover and connect with verified business service providers.",
+  description: "The trusted global platform to discover and connect with verified business service providers worldwide.",
   openGraph: {
     type: 'website',
-    locale: 'en_IN',
+    locale: 'en',
     siteName: 'FirmsLedger',
   },
   twitter: {

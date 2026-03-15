@@ -75,7 +75,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 sm:mb-6 leading-[1.15] tracking-tight px-0"
             >
-              Discover India's Most
+              Discover the World's Most
               <br />
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Trusted Business Partners
@@ -163,7 +163,7 @@ export default function Home() {
                   <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">100+</div>
                 </div>
-                <div className="text-slate-400 text-xs sm:text-sm font-medium">Indian Cities</div>
+                <div className="text-slate-400 text-xs sm:text-sm font-medium">Countries & Cities</div>
               </div>
               <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
@@ -298,7 +298,7 @@ export default function Home() {
               </div>
               <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Search by Location</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Find providers in Mumbai, Bangalore, Delhi, Pune, Hyderabad, and 100+ Indian cities
+                Filter by country and state/region, or search by city to find providers near you
               </p>
             </motion.div>
 
@@ -579,7 +579,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Top Cities in India */}
+      {/* Top Cities Worldwide */}
       <section className="py-12 sm:py-16 md:py-24 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/20 to-purple-900/20"></div>
@@ -596,10 +596,10 @@ export default function Home() {
               <Globe className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
-              Available Across India
+              Available Worldwide
             </h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-              Discover top business service providers in major Indian cities
+              Discover top business service providers in major cities across the globe
             </p>
           </motion.div>
           
@@ -610,13 +610,26 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
           >
-            {['Mumbai', 'Bangalore', 'Delhi', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon', 'Noida', 'Chandigarh', 'Kochi'].map((city, index) => (
-              <Link 
-                key={city}
-                href={getDirectoryUrl() + '?search=' + encodeURIComponent(city)}
+            {[
+              { label: 'United States', value: 'United States' },
+              { label: 'United Kingdom', value: 'United Kingdom' },
+              { label: 'Canada', value: 'Canada' },
+              { label: 'Australia', value: 'Australia' },
+              { label: 'Singapore', value: 'Singapore' },
+              { label: 'UAE', value: 'United Arab Emirates' },
+              { label: 'Germany', value: 'Germany' },
+              { label: 'France', value: 'France' },
+              { label: 'Japan', value: 'Japan' },
+              { label: 'India', value: 'India' },
+              { label: 'Netherlands', value: 'Netherlands' },
+              { label: 'Sweden', value: 'Sweden' },
+            ].map(({ label, value }) => (
+              <Link
+                key={value}
+                href={getDirectoryUrl() + '?country=' + encodeURIComponent(value)}
                 className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 text-center hover:-translate-y-1 hover:shadow-lg"
               >
-                <h3 className="font-semibold text-white group-hover:text-blue-300 transition-colors">{city}</h3>
+                <h3 className="font-semibold text-white group-hover:text-blue-300 transition-colors">{label}</h3>
               </Link>
             ))}
           </motion.div>
@@ -640,7 +653,7 @@ export default function Home() {
               Ready to Find Your<br />Perfect Partner?
             </h2>
             <p className="text-base sm:text-xl md:text-2xl text-blue-100 mb-8 sm:mb-10 leading-relaxed px-0">
-              Browse verified providers across 100+ Indian cities and make the right choice for your business
+              Browse verified providers across cities worldwide and make the right choice for your business
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href={getDirectoryUrl()}>

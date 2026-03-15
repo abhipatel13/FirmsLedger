@@ -9,7 +9,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 
 const FEATURED_IMAGE = {
   src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=85',
-  alt: 'Top 10 Water Pump Brands in India 2025 - best pumps for home, agriculture and industrial use',
+  alt: 'Top 10 Water Pump Brands in India 2026 - best pumps for home, agriculture and industrial use',
   width: 1200,
   height: 630,
 };
@@ -301,7 +301,7 @@ const FAQ_JSON_LD = {
   })),
 };
 
-export default function Top10WaterPumpBrandsIndia2025Article() {
+export default function Top10WaterPumpBrandsIndia2026Article() {
   const directoryUrl = getDirectoryUrl();
 
   return (
@@ -316,7 +316,7 @@ export default function Top10WaterPumpBrandsIndia2025Article() {
           <Breadcrumb
             items={[
               { label: 'Blog', href: createPageUrl('Blogs') },
-              { label: 'Top 10 Water Pump Brands in India (2025)' },
+              { label: 'Top 10 Water Pump Brands in India (2026)' },
             ]}
           />
         </div>
@@ -326,16 +326,16 @@ export default function Top10WaterPumpBrandsIndia2025Article() {
       <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-block bg-cyan-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
-            Manufacturing · India · 2025
+            Manufacturing · India · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
-            Top 10 Water Pump Brands in India (2025) – Best for Home, Agriculture &amp; Industrial Use
+            Top 10 Water Pump Brands in India (2026) – Best for Home, Agriculture &amp; Industrial Use
           </h1>
           <p className="text-slate-300 text-lg mt-4 max-w-2xl">
             A comprehensive guide to India&apos;s best water pump brands — evaluated for reliability, energy efficiency, after-sales service, and value across every application.
           </p>
           <div className="flex flex-wrap items-center gap-6 mt-8 text-sm text-slate-400">
-            <span>Last Updated: 2025</span>
+            <span>Last Updated: 2026</span>
             <span>15 min read</span>
             <span>10 Brands Reviewed</span>
           </div>
@@ -369,7 +369,7 @@ export default function Top10WaterPumpBrandsIndia2025Article() {
             India&apos;s water pump market is valued at over ₹8,000 crore and growing — driven by urbanisation, agricultural intensification, and the push for solar-powered irrigation. With hundreds of brands competing for your attention, choosing the right water pump brand in India is harder than it should be.
           </p>
           <p className="text-slate-700 text-lg leading-relaxed">
-            This guide cuts through the noise. We&apos;ve reviewed the top 10 water pump brands in India for 2025 — covering home use pumps, agriculture water pumps, submersible pump brands, and industrial-grade systems. For each brand, we&apos;ll give you a clear overview, the best model, key features, pros and cons, and approximate price ranges so you can make a confident purchase decision.
+            This guide cuts through the noise. We&apos;ve reviewed the top 10 water pump brands in India for 2026 — covering home use pumps, agriculture water pumps, submersible pump brands, and industrial-grade systems. For each brand, we&apos;ll give you a clear overview, the best model, key features, pros and cons, and approximate price ranges so you can make a confident purchase decision.
           </p>
         </section>
 
@@ -444,10 +444,10 @@ export default function Top10WaterPumpBrandsIndia2025Article() {
         {/* Brand Profiles */}
         <section className="mb-12" aria-labelledby="brands-heading">
           <h2 id="brands-heading" className="text-2xl font-bold text-slate-900 mb-2">
-            Top 10 Water Pump Brands in India (2025): Detailed Reviews
+            Top 10 Water Pump Brands in India (2026): Detailed Reviews
           </h2>
           <p className="text-slate-700 text-base leading-relaxed mb-8">
-            The following brands lead India&apos;s water pump market in 2025 — ranked on reliability, product range, after-sales support, energy efficiency, and overall value.
+            The following brands lead India&apos;s water pump market in 2026 — ranked on reliability, product range, after-sales support, energy efficiency, and overall value.
           </p>
 
           <div className="divide-y divide-slate-200">
@@ -536,7 +536,7 @@ export default function Top10WaterPumpBrandsIndia2025Article() {
         {/* Comparison Table */}
         <section className="mb-12 overflow-x-auto">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">
-            Comparison Table: Top 10 Water Pump Brands in India (2025)
+            Comparison Table: Top 10 Water Pump Brands in India (2026)
           </h2>
           <p className="text-slate-700 text-base mb-6">
             Use this quick-reference table to compare all 10 brands side by side. <strong className="text-slate-800">Note:</strong> Prices are approximate — verify current prices on Amazon India and Flipkart before purchasing.
@@ -667,7 +667,7 @@ export default function Top10WaterPumpBrandsIndia2025Article() {
 
         <footer className="mt-12 pt-8 border-t border-slate-200 text-center text-slate-500 text-sm">
           <p>
-            Last Updated: 2025. This article is for informational purposes. Brand specifications, prices, and availability may change. Verify current prices on Amazon India and Flipkart before purchasing. Consult an authorised dealer for industrial and agricultural pump sizing.
+            Last Updated: 2026. This article is for informational purposes. Brand specifications, prices, and availability may change. Verify current prices on Amazon India and Flipkart before purchasing. Consult an authorised dealer for industrial and agricultural pump sizing.
           </p>
         </footer>
       </main>

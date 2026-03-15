@@ -118,7 +118,7 @@ export default function TopIndustrialStaffingIndia2026Article() {
             { val: '7.7%', lab: 'Manufacturing GDP growth in Q2 FY26' },
             { val: '48 hrs', lab: 'Top agency deployment time for blue-collar roles' },
             { val: '5–6M', lab: 'New electronics mfg jobs projected by 2026' },
-            { val: '$18.5B', lab: 'India staffing market valuation (2025)' },
+            { val: '$18.5B', lab: 'India staffing market valuation (2026)' },
           ].map((stat) => (
             <div key={stat.val} className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-amber-500">
               <div className="text-2xl font-extrabold text-amber-600">{stat.val}</div>

@@ -20,7 +20,7 @@ export default function ListYourCompanyPage() {
     website: '',
     hq_city: '',
     hq_state: '',
-    hq_country: 'India',
+    hq_country: '',
     team_size: '',
     message: '',
   });
@@ -152,7 +152,7 @@ export default function ListYourCompanyPage() {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+91 98765 43210"
+                placeholder="+1 234 567 8900"
               />
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function ListYourCompanyPage() {
                 id="hq_city"
                 value={formData.hq_city}
                 onChange={(e) => setFormData({ ...formData, hq_city: e.target.value })}
-                placeholder="Mumbai"
+                placeholder="City"
               />
             </div>
             <div>
@@ -173,7 +173,7 @@ export default function ListYourCompanyPage() {
                 id="hq_state"
                 value={formData.hq_state}
                 onChange={(e) => setFormData({ ...formData, hq_state: e.target.value })}
-                placeholder="Maharashtra"
+                placeholder="State / Region"
               />
             </div>
             <div>
@@ -182,7 +182,7 @@ export default function ListYourCompanyPage() {
                 id="hq_country"
                 value={formData.hq_country}
                 onChange={(e) => setFormData({ ...formData, hq_country: e.target.value })}
-                placeholder="India"
+                placeholder="Country"
               />
             </div>
           </div>

@@ -9,7 +9,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 
 const FEATURED_IMAGE = {
   src: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=85',
-  alt: 'Best Solar Panel Brands in India 2025 - top solar panels for home, commercial and industrial use',
+  alt: 'Best Solar Panel Brands in India 2026 - top solar panels for home, commercial and industrial use',
   width: 1200,
   height: 630,
 };
@@ -333,8 +333,8 @@ const COMPARISON = [
 
 const FAQ_ITEMS = [
   {
-    q: 'Which is the best solar panel brand in India in 2025?',
-    a: 'Waaree Energies, Tata Power Solar, and Adani Solar are the top three solar panel brands in India in 2025. Waaree leads in manufacturing capacity, Tata Power Solar leads in brand trust for home buyers, and Adani Solar leads for commercial and industrial projects. For premium quality, Vikram Solar\'s 30-year warranty panels are also excellent.',
+    q: 'Which is the best solar panel brand in India in 2026?',
+    a: 'Waaree Energies, Tata Power Solar, and Adani Solar are the top three solar panel brands in India in 2026. Waaree leads in manufacturing capacity, Tata Power Solar leads in brand trust for home buyers, and Adani Solar leads for commercial and industrial projects. For premium quality, Vikram Solar\'s 30-year warranty panels are also excellent.',
   },
   {
     q: 'Which solar panel brand offers the best warranty in India?',
@@ -349,8 +349,8 @@ const FAQ_ITEMS = [
     a: 'Yes, Indian solar panel brands have improved significantly in quality over the last decade. Brands like Waaree, Tata Power Solar, Vikram Solar, and Adani Solar now export to Europe, the US, and Japan — meeting stringent international quality standards. They are BIS certified and ALMM listed, making them eligible for government subsidy schemes. Indian brands also offer better after-sales support and spare part availability compared to imported brands.',
   },
   {
-    q: 'What is the average price of a solar panel in India in 2025?',
-    a: 'In 2025, the average price of a solar panel in India ranges from ₹18 to ₹45 per watt depending on the brand, type, and wattage. A 335W poly panel from a budget brand costs approximately ₹6,000–₹8,000, while a 540W premium mono PERC panel costs ₹12,000–₹19,000. For a complete 3kW home solar system (panels + inverter + installation), expect to spend ₹1.5 lakh to ₹2.5 lakh before subsidies. Please verify current prices on Amazon, Flipkart, or directly with dealers as prices change frequently.',
+    q: 'What is the average price of a solar panel in India in 2026?',
+    a: 'In 2026, the average price of a solar panel in India ranges from ₹18 to ₹45 per watt depending on the brand, type, and wattage. A 335W poly panel from a budget brand costs approximately ₹6,000–₹8,000, while a 540W premium mono PERC panel costs ₹12,000–₹19,000. For a complete 3kW home solar system (panels + inverter + installation), expect to spend ₹1.5 lakh to ₹2.5 lakh before subsidies. Please verify current prices on Amazon, Flipkart, or directly with dealers as prices change frequently.',
   },
   {
     q: 'What does ALMM listing mean and why does it matter?',
@@ -372,7 +372,7 @@ const faqSchema = {
   })),
 };
 
-export default function BestSolarPanelBrandsIndia2025Article() {
+export default function BestSolarPanelBrandsIndia2026Article() {
   return (
     <>
       <Script
@@ -388,7 +388,7 @@ export default function BestSolarPanelBrandsIndia2025Article() {
             <Breadcrumb
               items={[
                 { label: 'Blog', href: createPageUrl('Blogs') },
-                { label: 'Best Solar Panel Brands in India (2025)' },
+                { label: 'Best Solar Panel Brands in India (2026)' },
               ]}
             />
           </div>
@@ -398,10 +398,10 @@ export default function BestSolarPanelBrandsIndia2025Article() {
         <header className="bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
             <div className="inline-block bg-emerald-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-5 uppercase tracking-wider">
-              Solar Energy · Updated 2025
+              Solar Energy · Updated 2026
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5">
-              Best Solar Panel Brands in India (2025) – Best Brands for Home, Commercial &amp; Industrial Use
+              Best Solar Panel Brands in India (2026) – Best Brands for Home, Commercial &amp; Industrial Use
             </h1>
             <p className="text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed mb-8">
               A comprehensive, unbiased guide to India's top solar panel brands — compared by efficiency, BIS/ALMM certification, warranty, and price to help you make the right investment.
@@ -435,7 +435,7 @@ export default function BestSolarPanelBrandsIndia2025Article() {
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-14">
             {[
-              { value: '73 GW+', label: 'India installed solar capacity (2025)' },
+              { value: '73 GW+', label: 'India installed solar capacity (2026)' },
               { value: '25 yrs', label: 'Standard panel warranty in India' },
               { value: '₹78,000', label: 'Avg. 3kW home system cost (after subsidy)' },
               { value: '10 brands', label: 'Reviewed & compared in this guide' },
@@ -458,7 +458,7 @@ export default function BestSolarPanelBrandsIndia2025Article() {
                 With over 200 solar panel brands available in India, the market is flooded with both excellent products and poor imitations. The right solar panel brand can deliver 25+ years of reliable energy savings. The wrong one can mean panels that degrade faster, warranties that are never honoured, and installers who disappear after payment.
               </p>
               <p>
-                This guide cuts through the noise. We have researched and ranked the best solar panel brands in India for 2025 — focusing on manufacturing quality, BIS and ALMM certification, warranty terms, efficiency ratings, and real-world performance in Indian climatic conditions. Whether you are a homeowner, farmer, contractor, or business owner, this guide will help you choose the right brand with confidence.
+                This guide cuts through the noise. We have researched and ranked the best solar panel brands in India for 2026 — focusing on manufacturing quality, BIS and ALMM certification, warranty terms, efficiency ratings, and real-world performance in Indian climatic conditions. Whether you are a homeowner, farmer, contractor, or business owner, this guide will help you choose the right brand with confidence.
               </p>
             </div>
           </section>
@@ -503,7 +503,7 @@ export default function BestSolarPanelBrandsIndia2025Article() {
 
           {/* Brand Profiles */}
           <section className="mb-14">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Top 10 Solar Panel Brands in India (2025)</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Top 10 Solar Panel Brands in India (2026)</h2>
             <p className="text-lg text-slate-600 mb-8">Reviewed and ranked based on quality, certifications, warranty, efficiency, and market reputation.</p>
 
             <div className="divide-y divide-slate-200">
@@ -586,7 +586,7 @@ export default function BestSolarPanelBrandsIndia2025Article() {
 
           {/* Comparison Table */}
           <section className="mb-14">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">Solar Panel Brand Comparison Table (2025)</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">Solar Panel Brand Comparison Table (2026)</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
               <table className="min-w-full text-base">
                 <thead>
@@ -672,7 +672,7 @@ export default function BestSolarPanelBrandsIndia2025Article() {
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-5">Conclusion</h2>
             <div className="space-y-4 text-lg text-slate-700 leading-relaxed">
               <p>
-                India's solar market has matured significantly, and buyers today have access to world-class solar panel brands in India — both homegrown and international. Our top three picks for 2025 are <strong>Waaree Energies</strong> for the best combination of quality and value, <strong>Tata Power Solar</strong> for the most trusted home brand, and <strong>Vikram Solar</strong> for the best long-term investment with a 30-year warranty.
+                India's solar market has matured significantly, and buyers today have access to world-class solar panel brands in India — both homegrown and international. Our top three picks for 2026 are <strong>Waaree Energies</strong> for the best combination of quality and value, <strong>Tata Power Solar</strong> for the most trusted home brand, and <strong>Vikram Solar</strong> for the best long-term investment with a 30-year warranty.
               </p>
               <p>
                 If you are buying for a government-subsidised rooftop system, stick to ALMM-listed Indian brands — Waaree, Tata Power Solar, Adani Solar, Luminous, Loom Solar, or RenewSys. If you are buying for a large commercial or industrial project without subsidy constraints, Canadian Solar and LONGi Solar are excellent internationally bankable options.
@@ -692,7 +692,7 @@ export default function BestSolarPanelBrandsIndia2025Article() {
             <div className="flex flex-wrap gap-2">
               {[
                 'Solar Panel Brands in India',
-                'Best Solar Panels 2025',
+                'Best Solar Panels 2026',
                 'Mono PERC Solar Panel India',
                 'BIS Certified Solar Panel',
                 'ALMM Listed Solar Panels',

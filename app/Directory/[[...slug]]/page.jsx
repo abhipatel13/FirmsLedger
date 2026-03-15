@@ -4,7 +4,7 @@ import Directory from '@/views/Directory';
 import { notFound } from 'next/navigation';
 import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle, getCategoryMetaDescription } from '@/lib/seo';
 
-const BASE_DESC = "India's trusted platform to discover and connect with verified business service providers and staffing agencies.";
+const BASE_DESC = "The global platform to discover and connect with verified business service providers and staffing agencies worldwide.";
 
 async function getCategoryBySlug(slug) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

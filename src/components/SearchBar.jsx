@@ -36,24 +36,31 @@ function CategoryIcon({ className = 'w-5 h-5' }) {
   );
 }
 
-const LOCATIONS = [
-  'Mumbai',
-  'Bangalore',
-  'Delhi',
-  'Pune',
-  'Hyderabad',
-  'Chennai',
-  'Kolkata',
-  'Ahmedabad',
-  'Gurgaon',
-  'Noida',
-  'Chandigarh',
-  'Kochi',
+const COUNTRIES = [
+  'United States',
+  'United Kingdom',
+  'Canada',
+  'Australia',
+  'Singapore',
+  'United Arab Emirates',
+  'India',
+  'Germany',
+  'France',
+  'Netherlands',
+  'Japan',
+  'Sweden',
+  'Switzerland',
+  'Ireland',
+  'New Zealand',
+  'South Africa',
+  'Brazil',
+  'Mexico',
+  'Other',
 ];
 
 export default function SearchBar() {
   const [selectedCategorySlug, setSelectedCategorySlug] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
   const router = useRouter();
 
   const { data: categoriesRaw = [] } = useQuery({
@@ -100,13 +107,13 @@ export default function SearchBar() {
               ),
           });
     const params = new URLSearchParams();
-    if (selectedLocation?.trim()) params.set('location', selectedLocation.trim());
+    if (selectedCountry?.trim()) params.set('country', selectedCountry.trim());
     const url = params.toString() ? `${base}?${params.toString()}` : base;
     router.push(url);
   };
 
   const hasCategory = !!selectedCategorySlug?.trim();
-  const locationDisabled = !hasCategory;
+  const countryDisabled = !hasCategory;
 
   return (
     <form
@@ -147,40 +154,40 @@ export default function SearchBar() {
         </Select>
       </div>
 
-      {/* Location - disabled until category selected */}
+      {/* Country - disabled until category selected */}
       <div className="flex-1 min-w-0">
         <Select
-          value={selectedLocation || '__none__'}
-          onValueChange={(v) => setSelectedLocation(v === '__none__' ? '' : v)}
-          disabled={locationDisabled}
+          value={selectedCountry || '__none__'}
+          onValueChange={(v) => setSelectedCountry(v === '__none__' ? '' : v)}
+          disabled={countryDisabled}
         >
           <SelectTrigger
             className={`relative flex h-12 items-center gap-3 rounded-xl pl-3 pr-9 ${
-              locationDisabled
+              countryDisabled
                 ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
                 : 'bg-white/95 border-white/20 text-slate-900'
             }`}
-            aria-label="Location"
+            aria-label="Country"
           >
             <MapPin className="w-5 h-5 shrink-0 text-amber-600/80" />
             <span className="flex-1 min-w-0 text-left">
               <SelectValue
                 placeholder={
-                  locationDisabled ? 'Select a category first' : 'Location'
+                  countryDisabled ? 'Select a category first' : 'Country'
                 }
               />
             </span>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__none__">All locations</SelectItem>
-            {LOCATIONS.map((loc) => (
-              <SelectItem key={loc} value={loc}>
-                {loc}
+            <SelectItem value="__none__">All countries</SelectItem>
+            {COUNTRIES.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        {locationDisabled && (
+        {countryDisabled && (
           <p className="text-xs text-amber-200/90 mt-1 px-1">
             Select a category first
           </p>

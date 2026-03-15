@@ -1,31 +1,58 @@
 import React, { useState } from 'react';
-import { MapPin, Users, Star, Filter, X } from 'lucide-react';
+import { MapPin, Users, Star, Filter, X, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function FilterPanel({ 
+const COUNTRIES = [
+  'United States',
+  'United Kingdom',
+  'Canada',
+  'Australia',
+  'Singapore',
+  'United Arab Emirates',
+  'India',
+  'Germany',
+  'France',
+  'Netherlands',
+  'Japan',
+  'Sweden',
+  'Switzerland',
+  'Ireland',
+  'New Zealand',
+  'South Africa',
+  'Brazil',
+  'Mexico',
+  'Other',
+];
+
+export default function FilterPanel({
   categories,
-  selectedLocation, 
-  setSelectedLocation,
-  selectedService, 
+  selectedCountry,
+  setSelectedCountry,
+  selectedState,
+  setSelectedState,
+  selectedService,
   setSelectedService,
-  selectedTeamSize, 
+  selectedTeamSize,
   setSelectedTeamSize,
-  selectedRating, 
+  selectedRating,
   setSelectedRating,
   onApply
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleReset = () => {
-    setSelectedLocation('');
+    setSelectedCountry('');
+    setSelectedState('');
     setSelectedService('');
     setSelectedTeamSize('');
     setSelectedRating('');
   };
 
   const activeFiltersCount = [
-    selectedLocation,
+    selectedCountry,
+    selectedState,
     selectedService,
     selectedTeamSize,
     selectedRating
@@ -53,31 +80,36 @@ export default function FilterPanel({
 
         {/* Desktop & Expanded Mobile Filters */}
         <div className={`${isExpanded ? 'block' : 'hidden'} lg:block`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-3">
-            {/* Location */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-3">
+            {/* Country */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">Location</label>
-              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <label className="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">Country</label>
+              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                 <SelectTrigger className="w-full bg-slate-50 border-slate-200 hover:bg-white">
-                  <MapPin className="w-4 h-4 mr-2 text-slate-400" />
-                  <SelectValue placeholder="All Locations" />
+                  <Globe className="w-4 h-4 mr-2 text-slate-400 flex-shrink-0" />
+                  <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={null}>All Locations</SelectItem>
-                  <SelectItem value="Mumbai">Mumbai</SelectItem>
-                  <SelectItem value="Bangalore">Bangalore</SelectItem>
-                  <SelectItem value="Delhi">Delhi</SelectItem>
-                  <SelectItem value="Pune">Pune</SelectItem>
-                  <SelectItem value="Hyderabad">Hyderabad</SelectItem>
-                  <SelectItem value="Chennai">Chennai</SelectItem>
-                  <SelectItem value="Kolkata">Kolkata</SelectItem>
-                  <SelectItem value="Ahmedabad">Ahmedabad</SelectItem>
-                  <SelectItem value="Gurgaon">Gurgaon</SelectItem>
-                  <SelectItem value="Noida">Noida</SelectItem>
-                  <SelectItem value="Chandigarh">Chandigarh</SelectItem>
-                  <SelectItem value="Kochi">Kochi</SelectItem>
+                  <SelectItem value={null}>All Countries</SelectItem>
+                  {COUNTRIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* State / Region */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">State / Region</label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                  placeholder="e.g. California"
+                  className="pl-9 bg-slate-50 border-slate-200 hover:bg-white"
+                />
+              </div>
             </div>
 
             {/* Services */}

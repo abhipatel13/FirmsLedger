@@ -27,11 +27,13 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
     : staffingMatch?.[1] || (pathname && pathname.match(/^\/directory\/([^/?#]+)/))?.[1] || '';
   const isStaffingPath = !!staffingMatch || underStaffingProp;
   const categorySlugFromUrl = initialCategorySlug || searchParams.get('category') || categoryFromPath || '';
-  const locationFromUrl = searchParams.get('location') || '';
+  const countryFromUrl = searchParams.get('country') || '';
+  const stateFromUrl = searchParams.get('state') || '';
   const searchFromUrl = searchParams.get('search') || '';
 
   const initialCategory = initialCategorySlug || categoryFromPath || '';
-  const [selectedLocation, setSelectedLocation] = useState(locationFromUrl);
+  const [selectedCountry, setSelectedCountry] = useState(countryFromUrl);
+  const [selectedState, setSelectedState] = useState(stateFromUrl);
   const [selectedService, setSelectedService] = useState(initialCategory);
   const [selectedRating, setSelectedRating] = useState('');
   const [selectedTeamSize, setSelectedTeamSize] = useState('');
@@ -91,7 +93,8 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
         ? getDirectoryStaffingUrl()
         : getDirectoryUrl(selectedService, { underStaffing: useStaffingPath });
     const params = new URLSearchParams();
-    if (selectedLocation) params.set('location', selectedLocation);
+    if (selectedCountry) params.set('country', selectedCountry);
+    if (selectedState) params.set('state', selectedState);
     if (debouncedSearch) params.set('search', debouncedSearch);
     if (selectedRating) params.set('rating', selectedRating);
     if (selectedTeamSize) params.set('teamSize', selectedTeamSize);
@@ -100,7 +103,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
     if (typeof window !== 'undefined' && (window.location.pathname + window.location.search) !== newPath) {
       router.replace(newPath);
     }
-  }, [selectedService, selectedLocation, debouncedSearch, selectedRating, selectedTeamSize, useStaffingPath, router]);
+  }, [selectedService, selectedCountry, selectedState, debouncedSearch, selectedRating, selectedTeamSize, useStaffingPath, router]);
 
   // Initialize filters from URL (only when URL has a category and state is not already in sync)
   useEffect(() => {
@@ -111,16 +114,17 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
     }
   }, [categorySlugFromUrl, categories, selectedService]);
 
-  // Sync other URL params to state (location, search, rating, teamSize)
+  // Sync other URL params to state (country, state, search, rating, teamSize)
   useEffect(() => {
-    setSelectedLocation(locationFromUrl);
+    setSelectedCountry(countryFromUrl);
+    setSelectedState(stateFromUrl);
     setSearchQuery(searchFromUrl);
     setDebouncedSearch(searchFromUrl);
     const ratingParam = searchParams.get('rating');
     const teamSizeParam = searchParams.get('teamSize');
     if (ratingParam) setSelectedRating(ratingParam);
     if (teamSizeParam) setSelectedTeamSize(teamSizeParam);
-  }, [locationFromUrl, searchFromUrl, searchParams]);
+  }, [countryFromUrl, stateFromUrl, searchFromUrl, searchParams]);
 
   // Get selected category name
   const selectedCategoryName = categories.find(c => c.slug === selectedService || c.id === selectedService)?.name || 'Business Service Providers';
@@ -165,16 +169,17 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
       }
     }
 
-    // Handle location filter (works with search and category)
-    if (selectedLocation) {
-      const locationLower = selectedLocation.toLowerCase();
-      const cityMatch = agency.hq_city?.toLowerCase().includes(locationLower);
-      const stateMatch = agency.hq_state?.toLowerCase().includes(locationLower);
-      const countryMatch = agency.hq_country?.toLowerCase().includes(locationLower);
-      
-      if (!cityMatch && !stateMatch && !countryMatch) {
-        return false;
-      }
+    // Handle country filter
+    if (selectedCountry) {
+      const countryMatch = agency.hq_country?.toLowerCase() === selectedCountry.toLowerCase();
+      if (!countryMatch) return false;
+    }
+
+    // Handle state / region filter
+    if (selectedState) {
+      const stateLower = selectedState.trim().toLowerCase();
+      const stateMatch = agency.hq_state?.toLowerCase().includes(stateLower);
+      if (!stateMatch) return false;
     }
 
     // Handle rating filter
@@ -251,8 +256,10 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
       {/* Filter Panel */}
       <FilterPanel
         categories={categories}
-        selectedLocation={selectedLocation}
-        setSelectedLocation={setSelectedLocation}
+        selectedCountry={selectedCountry}
+        setSelectedCountry={setSelectedCountry}
+        selectedState={selectedState}
+        setSelectedState={setSelectedState}
         selectedService={selectedService}
         setSelectedService={setSelectedService}
         selectedTeamSize={selectedTeamSize}
@@ -353,7 +360,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
 
                         {/* Description */}
                         <p className="text-slate-600 text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
-                          {agency.description || `Established in ${agency.founded_year || '2015'}, ${agency.name} is a leading service provider with headquarters in ${agency.hq_city || 'India'}. Backed by a dedicated team of experts, the company has successfully delivered innovative solutions for clients worldwide, providing scalable, reliable services...`}
+                          {agency.description || `Established in ${agency.founded_year || '2015'}, ${agency.name} is a leading service provider${agency.hq_city ? ` with headquarters in ${agency.hq_city}` : ''}. Backed by a dedicated team of experts, the company has successfully delivered innovative solutions for clients worldwide, providing scalable, reliable services...`}
                           {agency.description && agency.description.length > 150 && (
                             <Link href={getCompanyProfileUrl(agency)} className="text-blue-600 hover:underline ml-1">
                               read {agency.name} reviews & insights
@@ -375,8 +382,8 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                             <span>{agency.founded_year || '2015'}</span>
                           </div>
                           <div className="flex items-center gap-2 text-slate-600">
-                            <MapPin className="w-4 h-4" />
-                            <span>{agency.hq_city || 'India'}</span>
+                            <MapPin className="w-4 h-4 flex-shrink-0" />
+                            <span className="truncate">{[agency.hq_city, agency.hq_state, agency.hq_country].filter(Boolean).join(', ') || 'Global'}</span>
                           </div>
                         </div>
                       </div>

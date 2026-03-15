@@ -264,9 +264,9 @@ export default function AdminPanelPage() {
 
   const openEmailModal = (agency) => {
     setSelectedAgency(agency);
-    setEmailSubject("Your listing on FirmsLedger – India's Business Directory");
+    setEmailSubject("Your listing on FirmsLedger – Global Business Directory");
     setEmailBody(
-      `Hi${agency.name ? ` ${agency.name}` : ''},\n\nThank you for registering on FirmsLedger – India's trusted platform for business service providers.\n\nWe're here to help you reach more clients. If you have any questions or want to update your listing, just reply to this email.\n\nBest regards,\nFirmsLedger Team`
+      `Hi${agency.name ? ` ${agency.name}` : ''},\n\nThank you for registering on FirmsLedger – the global platform for verified business service providers.\n\nWe're here to help you reach more clients. If you have any questions or want to update your listing, just reply to this email.\n\nBest regards,\nFirmsLedger Team`
     );
     setEmailModalOpen(true);
   };
@@ -391,7 +391,7 @@ export default function AdminPanelPage() {
                 <div>
                   <h1 className="text-2xl font-bold text-slate-900">Admin Panel</h1>
                   <p className="text-slate-600 text-sm">
-                    FirmsLedger – India&apos;s Business Directory. Manage and email registered agencies.
+                    FirmsLedger – Global Business Directory. Manage and email registered agencies.
                   </p>
                 </div>
               </div>

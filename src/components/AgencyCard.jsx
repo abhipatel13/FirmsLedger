@@ -63,10 +63,12 @@ export default function AgencyCard({ agency }) {
               </p>
               
               <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
-                {agency.hq_city && (
+                {(agency.hq_city || agency.hq_country) && (
                   <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    <span>{agency.hq_city}, {agency.hq_country}</span>
+                    <MapPin className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">
+                      {[agency.hq_city, agency.hq_state, agency.hq_country].filter(Boolean).join(', ')}
+                    </span>
                   </div>
                 )}
                 

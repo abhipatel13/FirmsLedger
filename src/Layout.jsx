@@ -19,7 +19,7 @@ import { api } from '@/api/apiClient';
 export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [_selectedLocation, _setSelectedLocation] = useState('');
+  const [_selectedCountry, _setSelectedCountry] = useState('');
   const [_selectedParentId, _setSelectedParentId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
@@ -35,13 +35,20 @@ export default function Layout({ children }) {
     queryFn: () => api.entities.Category.list(),
   });
 
-  const topLocations = ['Mumbai', 'Bangalore', 'Delhi', 'Pune', 'Hyderabad', 'Chennai'];
+  const topLocations = [
+    { label: 'United States', value: 'United States' },
+    { label: 'United Kingdom', value: 'United Kingdom' },
+    { label: 'Canada', value: 'Canada' },
+    { label: 'Australia', value: 'Australia' },
+    { label: 'Singapore', value: 'Singapore' },
+    { label: 'UAE', value: 'United Arab Emirates' },
+  ];
 
   const _handleSearch = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (searchQuery) params.append('search', searchQuery);
-    if (_selectedLocation) params.append('location', _selectedLocation);
+    if (_selectedCountry) params.append('country', _selectedCountry);
     router.push(getDirectoryUrl() + (params.toString() ? '?' + params.toString() : ''));
   };
 
@@ -82,77 +89,30 @@ export default function Layout({ children }) {
                               Find Services
                               <ChevronDown className="w-4 h-4" />
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-[600px] p-4" align="start">
-                              <div className="grid grid-cols-1 gap-4">
-                                {/* Staffing Companies with Subcategories */}
+                            <DropdownMenuContent className="w-[480px] p-4" align="start">
+                              <div className="grid grid-cols-2 gap-2">
                                 {categories
-                                  .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug === 'staffing-companies')
-                                  .map((parent) => {
-                                    const subcats = categories.filter(c => (c.parent_id ?? c.parentId) === parent.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-                                    return (
-                                      <div key={parent.id} className="border-b pb-4">
-                                        <Link
-                                          href={parent.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(parent.slug)}
-                                          className="flex items-start gap-3 px-3 py-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors mb-2"
-                                          onClick={(e) => {
-                                            e.currentTarget.blur();
-                                            document.activeElement?.blur();
-                                          }}
-                                        >
-                                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0">
-                                            <span className="text-xs font-bold text-blue-600">{parent.name.charAt(0)}</span>
-                                          </div>
-                                          <div className="flex flex-col">
-                                            <span className="font-semibold text-slate-900">{parent.name}</span>
-                                            <span className="text-xs text-slate-500">{parent.description}</span>
-                                          </div>
-                                        </Link>
-                                        {subcats.length > 0 && (
-                                          <div className="grid grid-cols-2 gap-2 pl-3 mt-2">
-                                            {subcats.map(subcat => (
-                                              <Link
-                                                key={subcat.id}
-                                                href={getDirectoryUrl(subcat.slug, { underStaffing: true })}
-                                                className="px-3 py-2 text-xs text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                                onClick={(e) => {
-                                                  e.currentTarget.blur();
-                                                  document.activeElement?.blur();
-                                                }}
-                                              >
-                                                {subcat.name}
-                                              </Link>
-                                            ))}
-                                          </div>
-                                        )}
+                                  .filter(cat => (cat.is_parent ?? cat.isParent))
+                                  .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                                  .map((cat) => (
+                                    <Link
+                                      key={cat.id}
+                                      href={cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug)}
+                                      className="flex items-start gap-3 px-3 py-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                      onClick={(e) => {
+                                        e.currentTarget.blur();
+                                        document.activeElement?.blur();
+                                      }}
+                                    >
+                                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-xs font-bold text-blue-600">{cat.name.charAt(0)}</span>
                                       </div>
-                                    );
-                                  })}
-
-                                {/* Other Parent Categories */}
-                                <div className="grid grid-cols-2 gap-2">
-                                  {categories
-                                    .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug !== 'staffing-companies')
-                                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                                    .map((cat) => (
-                                      <Link
-                                        key={cat.id}
-                                        href={cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: cat.slug !== 'staffing-companies' && categories.some((p) => (p.is_parent ?? p.isParent) && p.slug === 'staffing-companies' && p.id === (cat.parent_id ?? cat.parentId)) })}
-                                        className="flex items-start gap-3 px-3 py-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                        onClick={(e) => {
-                                          e.currentTarget.blur();
-                                          document.activeElement?.blur();
-                                        }}
-                                      >
-                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0">
-                                          <span className="text-xs font-bold text-blue-600">{cat.name.charAt(0)}</span>
-                                        </div>
-                                        <div className="flex flex-col">
-                                          <span className="font-semibold text-slate-900">{cat.name}</span>
-                                          <span className="text-xs text-slate-500 line-clamp-1">{cat.description}</span>
-                                        </div>
-                                      </Link>
-                                    ))}
-                                </div>
+                                      <div className="flex flex-col">
+                                        <span className="font-semibold text-slate-900">{cat.name}</span>
+                                        <span className="text-xs text-slate-500 line-clamp-1">{cat.description}</span>
+                                      </div>
+                                    </Link>
+                                  ))}
                               </div>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -276,7 +236,7 @@ export default function Layout({ children }) {
                 </span>
               </Link>
               <p className="text-slate-400 text-sm mb-6 leading-relaxed max-w-sm">
-                India's most trusted platform to discover and connect with verified business service providers. Make confident decisions for your business growth.
+                The trusted global platform to discover and connect with verified business service providers worldwide. Make confident decisions for your business growth.
               </p>
               <div className="flex items-center gap-3">
                 <a href="#" className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all hover:-translate-y-1">
@@ -322,9 +282,9 @@ export default function Layout({ children }) {
             <div>
               <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Top Locations</h4>
               <div className="flex flex-col gap-3 text-sm">
-                {topLocations.map((loc) => (
-                  <Link key={loc} href={getDirectoryUrl() + '?location=' + encodeURIComponent(loc)} className="text-slate-400 hover:text-blue-400 transition-colors">
-                    {loc}
+                {topLocations.map(({ label, value }) => (
+                  <Link key={value} href={getDirectoryUrl() + '?country=' + encodeURIComponent(value)} className="text-slate-400 hover:text-blue-400 transition-colors">
+                    {label}
                   </Link>
                 ))}
               </div>

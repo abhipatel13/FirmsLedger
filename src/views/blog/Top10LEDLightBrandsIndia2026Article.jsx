@@ -9,7 +9,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 
 const FEATURED_IMAGE = {
   src: 'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=1200&q=85',
-  alt: 'Top 10 LED Light Brands in India 2025 - best LED lights for home, commercial and industrial use',
+  alt: 'Top 10 LED Light Brands in India 2026 - best LED lights for home, commercial and industrial use',
   width: 1200,
   height: 630,
 };
@@ -301,7 +301,7 @@ const FAQ_JSON_LD = {
   })),
 };
 
-export default function Top10LEDLightBrandsIndia2025Article() {
+export default function Top10LEDLightBrandsIndia2026Article() {
   const directoryUrl = getDirectoryUrl();
 
   return (
@@ -316,7 +316,7 @@ export default function Top10LEDLightBrandsIndia2025Article() {
           <Breadcrumb
             items={[
               { label: 'Blog', href: createPageUrl('Blogs') },
-              { label: 'Top 10 LED Light Brands in India (2025)' },
+              { label: 'Top 10 LED Light Brands in India (2026)' },
             ]}
           />
         </div>
@@ -326,16 +326,16 @@ export default function Top10LEDLightBrandsIndia2025Article() {
       <header className="bg-gradient-to-br from-slate-900 via-indigo-900 to-yellow-900 text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-block bg-yellow-500/90 text-slate-900 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
-            Electricals · India · 2025
+            Electricals · India · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
-            Top 10 LED Light Brands in India (2025) – Best for Home, Commercial &amp; Industrial Use
+            Top 10 LED Light Brands in India (2026) – Best for Home, Commercial &amp; Industrial Use
           </h1>
           <p className="text-slate-300 text-lg mt-4 max-w-2xl">
             A comprehensive, unbiased guide to India&apos;s most trusted LED light brands — evaluated on quality certifications, energy efficiency, warranty, and value across every use case.
           </p>
           <div className="flex flex-wrap items-center gap-6 mt-8 text-sm text-slate-400">
-            <span>Last Updated: 2025</span>
+            <span>Last Updated: 2026</span>
             <span>14 min read</span>
             <span>10 Brands Reviewed</span>
           </div>
@@ -369,7 +369,7 @@ export default function Top10LEDLightBrandsIndia2025Article() {
             This is the problem millions of Indian buyers face every day. The Indian LED lighting market is worth over ₹14,000 crore — but it is also flooded with uncertified, substandard products that look identical to quality ones on the shelf. Choosing the wrong brand can mean frequent replacements, higher electricity bills, and in extreme cases, electrical fires caused by poorly made drivers.
           </p>
           <p className="text-slate-700 text-lg leading-relaxed">
-            This guide covers the top 10 LED light brands in India for 2025 — including the best options for home use, commercial spaces, and industrial applications. For each brand, we give you a clear overview, the best model to consider, key features, pros and cons, and approximate prices so you can buy with confidence. Always look for the ISI mark before purchasing — it is your guarantee of quality and safety.
+            This guide covers the top 10 LED light brands in India for 2026 — including the best options for home use, commercial spaces, and industrial applications. For each brand, we give you a clear overview, the best model to consider, key features, pros and cons, and approximate prices so you can buy with confidence. Always look for the ISI mark before purchasing — it is your guarantee of quality and safety.
           </p>
         </section>
 
@@ -444,10 +444,10 @@ export default function Top10LEDLightBrandsIndia2025Article() {
         {/* Brand Profiles */}
         <section className="mb-12" aria-labelledby="brands-heading">
           <h2 id="brands-heading" className="text-2xl font-bold text-slate-900 mb-2">
-            Top 10 LED Light Brands in India (2025): Detailed Reviews
+            Top 10 LED Light Brands in India (2026): Detailed Reviews
           </h2>
           <p className="text-slate-700 text-base leading-relaxed mb-8">
-            The following brands represent the best LED light brands in India for 2025 — ranked on quality certifications, product range, energy efficiency, after-sales service, and overall value across home, commercial, and industrial applications.
+            The following brands represent the best LED light brands in India for 2026 — ranked on quality certifications, product range, energy efficiency, after-sales service, and overall value across home, commercial, and industrial applications.
           </p>
 
           <div className="divide-y divide-slate-200">
@@ -536,7 +536,7 @@ export default function Top10LEDLightBrandsIndia2025Article() {
         {/* Comparison Table */}
         <section className="mb-12 overflow-x-auto">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">
-            Comparison Table: Top 10 LED Light Brands in India (2025)
+            Comparison Table: Top 10 LED Light Brands in India (2026)
           </h2>
           <p className="text-slate-700 text-base mb-6">
             Use this table to compare all 10 LED light brands side by side. <strong className="text-slate-800">Disclaimer:</strong> Prices are approximate — always check current prices on Amazon India and Flipkart before purchasing as they change frequently.
@@ -676,7 +676,7 @@ export default function Top10LEDLightBrandsIndia2025Article() {
 
         <footer className="mt-12 pt-8 border-t border-slate-200 text-center text-slate-500 text-sm">
           <p>
-            Last Updated: 2025. This article is for informational purposes only. Brand specifications, prices, and product availability may change. Always verify current prices on Amazon India and Flipkart before purchasing. Look for the ISI mark on all LED lighting products.
+            Last Updated: 2026. This article is for informational purposes only. Brand specifications, prices, and product availability may change. Always verify current prices on Amazon India and Flipkart before purchasing. Look for the ISI mark on all LED lighting products.
           </p>
         </footer>
       </main>

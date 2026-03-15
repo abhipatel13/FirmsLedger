@@ -60,7 +60,7 @@ export default function Categories() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Browse All Categories</h1>
           <p className="text-xl text-emerald-100 max-w-3xl">
-            Discover service providers across all business categories in India
+            Discover service providers across all business categories worldwide
           </p>
         </div>
       </div>

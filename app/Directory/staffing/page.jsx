@@ -4,7 +4,7 @@ import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle } from '@/
 
 export async function generateMetadata() {
   const title = getCategoryTitle('Staffing Companies');
-  const description = "Discover the top staffing companies at FirmsLedger. Browse verified staffing agencies—executive search, healthcare staffing, IT staffing, and more. Compare the most reliable staffing providers in India by expertise, project needs, and pricing.";
+  const description = "Discover the top staffing companies at FirmsLedger. Browse verified staffing agencies—executive search, healthcare staffing, IT staffing, and more. Compare the most reliable staffing providers worldwide by expertise, project needs, and pricing.";
   const canonical = `${BASE_URL.replace(/\/$/, '')}/directory/staffing`;
   return {
     title,

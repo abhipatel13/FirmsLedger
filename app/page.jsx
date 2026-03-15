@@ -6,7 +6,7 @@ const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
   title: `Top Companies List in ${SEO_COUNTRY} ${SEO_YEAR} | Verified Service Providers | ${SITE_NAME}`,
-  description: `FirmsLedger delivers India's definitive top companies list. Discover verified staffing agencies, consultants, and business service providers. Browse by expertise, project needs, and pricing—all in one trusted directory.`,
+  description: `FirmsLedger delivers the definitive global top companies list. Discover verified staffing agencies, consultants, and business service providers worldwide. Browse by expertise, project needs, and pricing—all in one trusted directory.`,
   alternates: { canonical: _BASE },
   openGraph: {
     title: `Top Companies List in ${SEO_COUNTRY} | ${SITE_NAME}`,
@@ -21,7 +21,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: SITE_NAME,
   url: _BASE,
-  description: "India's most trusted platform to discover and connect with verified business service providers.",
+  description: "The trusted global platform to discover and connect with verified business service providers worldwide.",
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -38,8 +38,8 @@ const organizationSchema = {
   name: SITE_NAME,
   url: _BASE,
   logo: `${_BASE}/icon.svg`,
-  description: "India's most trusted platform to discover and connect with verified business service providers.",
-  areaServed: 'IN',
+  description: "The trusted global platform to discover and connect with verified business service providers worldwide.",
+  areaServed: 'Worldwide',
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer service',
