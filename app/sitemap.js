@@ -2,6 +2,7 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 
 /** All published blog article slugs — keep in sync with app/Blogs/[slug]/page.jsx */
 const BLOG_SLUGS = [
+  'best-solar-panels-australia-2026',
   'top-10-stabilizer-brands-india-2026',
   'top-10-switch-socket-brands-india-2026',
   'best-solar-panel-brands-india-2026',
