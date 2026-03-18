@@ -323,7 +323,7 @@ export default function Top10LEDLightBrandsIndia2026Article() {
       </div>
 
       {/* Header */}
-      <header className="bg-gradient-to-br from-slate-900 via-indigo-900 to-yellow-900 text-white py-16 md:py-20">
+      <header className="bg-[#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-block bg-yellow-500/90 text-slate-900 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             Electricals · India · 2026
@@ -640,7 +640,7 @@ export default function Top10LEDLightBrandsIndia2026Article() {
         </section>
 
         {/* CTA */}
-        <div className="bg-gradient-to-br from-slate-900 via-indigo-900 to-yellow-900 text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-[#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">Find Verified Electrical &amp; Lighting Suppliers in India</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Looking for verified electrical contractors, lighting dealers, or B2B electrical service providers? Browse FirmsLedger&apos;s directory of reviewed and verified companies across India.

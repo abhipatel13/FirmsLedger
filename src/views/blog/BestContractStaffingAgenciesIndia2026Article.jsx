@@ -91,7 +91,7 @@ export default function BestContractStaffingAgenciesIndia2026Article() {
         </div>
       </div>
 
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-block bg-amber-500/20 border border-amber-400/40 text-amber-200 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
             Contract Staffing · 2026
@@ -217,7 +217,7 @@ export default function BestContractStaffingAgenciesIndia2026Article() {
           ))}
         </ul>
 
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center mt-12">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center mt-12">
           <h2 className="text-2xl font-bold mb-3">Find Your Contract Staffing Partner</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Compare contract staffing agencies by sector, scale, and location. Use our directory to shortlist and connect with the right partner for 2026.

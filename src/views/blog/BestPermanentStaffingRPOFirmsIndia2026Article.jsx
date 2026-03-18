@@ -91,9 +91,9 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
         </div>
       </div>
 
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block bg-blue-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             Permanent Hiring & RPO · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
@@ -126,7 +126,7 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="border-l-4 border-blue-600 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
+        <div className="border-l-4 border-orange-500 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
           <p className="text-slate-600 text-base leading-relaxed">
             <strong className="text-slate-900">Permanent staffing vs RPO in 2026:</strong> Permanent staffing agencies help you fill individual roles on a per-hire fee (typically 8–20% of CTC). RPO (Recruitment Process Outsourcing) partners take over your entire or partial hiring process — from sourcing and screening to offer and onboarding — often on a per-hire or retained basis. Both are essential for building a long-term workforce; the right firm depends on volume, seniority, and whether you want project-based or embedded support.
           </p>
@@ -139,8 +139,8 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
             { val: 'RPO', lab: 'Full hiring process outsourcing' },
             { val: '3,000+', lab: 'Largest agency client base' },
           ].map((item) => (
-            <div key={item.val} className="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm border-t-4 border-t-blue-600">
-              <div className="text-2xl font-extrabold text-blue-600">{item.val}</div>
+            <div key={item.val} className="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm border-t-4 border-t-orange-500">
+              <div className="text-2xl font-extrabold text-orange-500">{item.val}</div>
               <div className="text-xs text-slate-500 mt-1">{item.lab}</div>
             </div>
           ))}
@@ -181,7 +181,7 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
                 <h3 className="text-2xl font-bold text-slate-900">{agency.name}</h3>
               </div>
               {agency.badge && (
-                <span className="inline-block text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded bg-blue-50 text-blue-700 mb-3">
+                <span className="inline-block text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded bg-orange-50 text-orange-600 mb-3">
                   {agency.badge}
                 </span>
               )}
@@ -189,7 +189,7 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
               <p className="text-slate-700 text-lg leading-relaxed mb-5">{agency.description}</p>
               <div className="flex flex-wrap gap-2">
                 {agency.strengths.map((s) => (
-                  <span key={s} className="bg-blue-50 text-blue-700 text-sm font-medium px-3 py-1.5 rounded-full">
+                  <span key={s} className="bg-orange-50 text-orange-600 text-sm font-medium px-3 py-1.5 rounded-full">
                     {s}
                   </span>
                 ))}
@@ -209,20 +209,20 @@ export default function BestPermanentStaffingRPOFirmsIndia2026Article() {
             { strong: 'Time-to-fill:', text: 'Top agencies quote 14–21 days for mid-level permanent; 4–8 weeks for leadership. Ask for guarantees or benchmarks.' },
             { strong: 'Replacement guarantee:', text: 'Most offer 30–90 day free replacement if a permanent hire leaves. Confirm this in writing.' },
           ].map((item, i) => (
-            <li key={i} className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+            <li key={i} className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
               <strong className="text-slate-900">{item.strong}</strong> {item.text}
             </li>
           ))}
         </ul>
 
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center mt-12">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center mt-12">
           <h2 className="text-2xl font-bold mb-3">Explore Staffing & RPO Partners</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Compare permanent staffing and RPO firms by sector, scale, and service model. Use our directory to shortlist the right partner for 2026.
           </p>
           <Link
             href={staffingUrl}
-            className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-all"
+            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-all"
           >
             Browse Companies →
           </Link>

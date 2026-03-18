@@ -182,9 +182,9 @@ export default function Top10RecruitmentAgenciesIndia2026Article() {
         </div>
       </div>
 
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block bg-blue-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             Recruitment · India · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
@@ -271,7 +271,7 @@ export default function Top10RecruitmentAgenciesIndia2026Article() {
                 <ul className="space-y-3 mb-5">
                   {agency.strengths.map((s) => (
                     <li key={s} className="text-slate-700 text-base flex gap-2">
-                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                      <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{s}</span>
                     </li>
                   ))}
@@ -349,7 +349,7 @@ export default function Top10RecruitmentAgenciesIndia2026Article() {
           </p>
         </section>
 
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">Ready to Find Your Hiring Partner?</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Browse verified staffing and recruitment agencies on FirmsLedger. Compare providers by expertise, reviews, and location — and connect with the best fit for your hiring needs.
@@ -357,7 +357,7 @@ export default function Top10RecruitmentAgenciesIndia2026Article() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href={directoryUrl}
-              className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
+              className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
             >
               Browse All Agencies →
             </Link>

@@ -1,15 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getDirectoryUrl, getBlogArticleUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import Breadcrumb from '@/components/Breadcrumb';
-import { motion } from 'framer-motion';
-import { ArrowRight, BookOpen, Building2, FileText, Settings } from 'lucide-react';
+import { ArrowRight, BookOpen, Building2, FileText, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const POSTS_PER_PAGE = 6;
 
 const ARTICLES_LIST = [
+  {
+    slug: 'best-specialty-chemical-companies-australia-2026',
+    title: 'Best Specialty Chemical Companies in Australia for Manufacturing (2026)',
+    excerpt: 'A verified B2B guide to Australia\'s top specialty chemical suppliers — Orica, Nufarm, Ixom, Brenntag, Chem-Supply & more. Compared by AICIS compliance, certifications, and industries served.',
+    readTime: '20 min read',
+    category: 'Specialty Chemicals',
+    icon: Settings,
+    image: {
+      src: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=85',
+      alt: 'Best specialty chemical companies in Australia for manufacturing 2026 - industrial chemical facility',
+      width: 1200,
+      height: 630,
+    },
+  },
   {
     slug: 'best-solar-panels-australia-2026',
     title: 'Best Solar Panels in Australia (2026) — Brands Compared & Reviewed',
@@ -239,9 +254,21 @@ const ARTICLES_LIST = [
 export default function Blogs() {
   const featured = ARTICLES_LIST[0];
   const rest = ARTICLES_LIST.slice(1);
+  const totalPages = Math.ceil(rest.length / POSTS_PER_PAGE);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const paginatedRest = rest.slice(
+    (currentPage - 1) * POSTS_PER_PAGE,
+    currentPage * POSTS_PER_PAGE
+  );
+
+  function handlePageChange(page) {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-[#F7F8FA]">
       {/* Breadcrumb */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -250,46 +277,35 @@ export default function Blogs() {
       </div>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,119,198,0.2),transparent)]" />
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center"
-          >
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 mb-6">
-              <BookOpen className="w-4 h-4 text-blue-200" />
-              <span className="text-sm font-medium text-slate-200">Guides & lists</span>
+      <section className="bg-[#0D1B2A] text-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-18">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/20 text-orange-400 text-xs font-semibold px-4 py-2 rounded-full mb-6 uppercase tracking-wider">
+              <BookOpen className="w-4 h-4" />
+              Guides & Lists
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-5">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-5 text-white">
               Insights & Resources
             </h1>
-            <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Expert guides and curated lists to help you choose the right staffing and service providers in India.
+            <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              Expert guides and curated lists to help you choose the right staffing and service providers.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <p className="text-slate-600 text-center mb-10 max-w-xl mx-auto">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+        <p className="text-slate-500 text-center mb-10 max-w-xl mx-auto text-sm">
           Browse our latest articles on IT staffing, healthcare recruitment, industrial workforce, and more.
         </p>
 
         {/* Featured article */}
-        {featured && featured.image && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-10"
-          >
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Featured</span>
+        {currentPage === 1 && featured && featured.image && (
+          <div className="mb-10">
+            <span className="text-xs font-semibold text-orange-500 uppercase tracking-widest">Featured</span>
             <Link href={getBlogArticleUrl(featured.slug)} className="block group mt-2">
-              <article className="bg-white rounded-2xl border-2 border-slate-200 overflow-hidden shadow-md hover:shadow-xl hover:border-blue-200 transition-all duration-300">
+              <article className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-orange-300 transition-all duration-200">
                 <div className="flex flex-col md:flex-row">
                   <div className="relative w-full md:w-80 lg:w-96 flex-shrink-0 aspect-[16/10] md:aspect-auto md:h-[240px] bg-slate-100">
                     <Image
@@ -302,96 +318,119 @@ export default function Blogs() {
                     />
                   </div>
                   <div className="p-6 md:p-8 flex flex-col md:justify-center gap-4 flex-1 min-w-0">
-                    <span className="inline-block text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md w-fit">
+                    <span className="inline-block text-xs font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded border border-orange-200 w-fit">
                       {featured.category}
                     </span>
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-[#0D1B2A] group-hover:text-orange-600 transition-colors leading-snug">
                       {featured.title}
                     </h2>
-                    <p className="text-slate-600 text-base leading-relaxed line-clamp-2">
+                    <p className="text-slate-500 text-base leading-relaxed line-clamp-2">
                       {featured.excerpt}
                     </p>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-sm text-slate-500">{featured.readTime}</span>
-                      <span className="inline-flex items-center gap-2 text-blue-600 font-semibold group-hover:gap-3 transition-all">
+                      <span className="text-sm text-slate-400">{featured.readTime}</span>
+                      <span className="inline-flex items-center gap-2 text-orange-600 font-semibold group-hover:gap-3 transition-all text-sm">
                         Read article
-                        <ArrowRight className="w-5 h-5" />
+                        <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>
                   </div>
                 </div>
               </article>
             </Link>
-          </motion.div>
+          </div>
         )}
 
         {/* More articles */}
-        <div className="grid gap-6 sm:grid-cols-2">
-          {rest.map((article, index) => (
-            <motion.div
-              key={article.slug}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.15 + index * 0.08 }}
-            >
-              <Link href={getBlogArticleUrl(article.slug)} className="block h-full group">
-                <article className="h-full bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 flex flex-col">
-                  {article.image && (
-                    <div className="relative w-full aspect-[16/10] bg-slate-100 flex-shrink-0">
-                      <Image
-                        src={article.image.src}
-                        alt={article.image.alt}
-                        width={article.image.width}
-                        height={article.image.height}
-                        className="object-cover w-full h-full"
-                        sizes="(max-width: 640px) 100vw, 50vw"
-                      />
-                    </div>
-                  )}
-                  <div className="p-5 flex-1 flex flex-col min-w-0">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      {article.category}
-                    </span>
-                    <h3 className="text-lg font-bold text-slate-900 mt-1 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {article.title}
-                    </h3>
-                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-2 mb-3 flex-1">
-                      {article.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="text-xs text-slate-500">{article.readTime}</span>
-                      <span className="inline-flex items-center gap-1 text-blue-600 font-medium text-sm group-hover:gap-2 transition-all">
-                        Read
-                        <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {paginatedRest.map((article) => (
+            <Link key={article.slug} href={getBlogArticleUrl(article.slug)} className="block h-full group">
+              <article className="h-full bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-md hover:border-orange-300 transition-all duration-200 flex flex-col">
+                {article.image && (
+                  <div className="relative w-full aspect-[16/10] bg-slate-100 flex-shrink-0">
+                    <Image
+                      src={article.image.src}
+                      alt={article.image.alt}
+                      width={article.image.width}
+                      height={article.image.height}
+                      className="object-cover w-full h-full"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                    />
                   </div>
-                </article>
-              </Link>
-            </motion.div>
+                )}
+                <div className="p-5 flex-1 flex flex-col min-w-0">
+                  <span className="text-xs font-semibold text-orange-500 uppercase tracking-wider">
+                    {article.category}
+                  </span>
+                  <h3 className="text-base font-bold text-slate-900 mt-1.5 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors leading-snug">
+                    {article.title}
+                  </h3>
+                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-3 flex-1">
+                    {article.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between mt-auto">
+                    <span className="text-xs text-slate-400">{article.readTime}</span>
+                    <span className="inline-flex items-center gap-1 text-orange-600 font-medium text-sm group-hover:gap-2 transition-all">
+                      Read
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
+              </article>
+            </Link>
           ))}
         </div>
 
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-10">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`w-9 h-9 rounded-md border text-sm font-medium transition-colors ${
+                  page === currentPage
+                    ? 'bg-orange-500 border-orange-500 text-white'
+                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* CTA */}
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-16 rounded-2xl bg-slate-100 border border-slate-200 p-8 md:p-10 text-center"
-        >
-          <h3 className="text-xl font-bold text-slate-800 mb-2">Explore verified companies</h3>
-          <p className="text-slate-600 max-w-md mx-auto mb-6">
+        <section className="mt-14 rounded-xl bg-[#0D1B2A] p-8 md:p-10 text-center">
+          <h3 className="text-xl font-extrabold text-white mb-2">Explore verified companies</h3>
+          <p className="text-slate-400 max-w-md mx-auto mb-6 text-sm">
             Find staffing agencies and service providers across India. Compare reviews, expertise, and pricing.
           </p>
           <Link href={getDirectoryUrl()}>
-            <Button
-              variant="outline"
-              className="bg-white border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-blue-300 hover:text-blue-700 rounded-xl px-6 py-3 font-medium"
-            >
-              Browse directory
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-3 h-auto rounded-md transition-colors text-sm">
+              Browse Directory
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
-        </motion.section>
+        </section>
       </div>
     </div>
   );

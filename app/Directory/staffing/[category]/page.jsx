@@ -4,6 +4,27 @@ import Directory from '@/views/Directory';
 import { notFound } from 'next/navigation';
 import { SITE_NAME, BASE_URL, getCategoryTitle, getCategoryMetaDescription } from '@/lib/seo';
 
+function getServerSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false } });
+}
+
+async function getInitialDirectoryData() {
+  try {
+    const supabase = getServerSupabase();
+    if (!supabase) return { agencies: [], agencyCategories: [] };
+    const [{ data: agencies }, { data: agencyCategories }] = await Promise.all([
+      supabase.from('agencies').select('*').eq('approved', true).order('avg_rating', { ascending: false }).limit(100),
+      supabase.from('agency_categories').select('*'),
+    ]);
+    return { agencies: agencies || [], agencyCategories: agencyCategories || [] };
+  } catch {
+    return { agencies: [], agencyCategories: [] };
+  }
+}
+
 async function getCategoryBySlug(slug) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -37,10 +58,15 @@ export default async function DirectoryStaffingCategoryPage({ params }) {
     notFound();
     return null;
   }
-  const category = await getCategoryBySlug(slug);
+  const { agencies, agencyCategories } = await getInitialDirectoryData();
   return (
     <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full" /></div>}>
-      <Directory initialCategorySlug={slug} underStaffing />
+      <Directory
+        initialCategorySlug={slug}
+        underStaffing
+        initialAgencies={agencies}
+        initialAgencyCategories={agencyCategories}
+      />
     </Suspense>
   );
 }

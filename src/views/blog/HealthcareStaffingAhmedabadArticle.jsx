@@ -101,9 +101,9 @@ export default function HealthcareStaffingAhmedabadArticle() {
       </div>
 
       {/* Header - site theme hero */}
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block bg-blue-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             Healthcare Recruitment · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
@@ -132,23 +132,23 @@ export default function HealthcareStaffingAhmedabadArticle() {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="border-l-4 border-blue-600 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
+        <div className="border-l-4 border-orange-500 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
           <p className="text-slate-600 text-base leading-relaxed">
             Ahmedabad is fast becoming one of India&apos;s most dynamic healthcare hubs — home to <strong className="text-slate-900">Civil Hospital</strong>, one of Asia&apos;s largest public hospitals, and a rapidly growing network of private super-specialty centers. As the city&apos;s medical ecosystem expands, the demand for qualified doctors, nurses, paramedics, and allied health professionals has surged. This is where <strong className="text-slate-900">healthcare staffing agencies</strong> play a critical role — bridging the gap between talent and opportunity at speed.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-          <div className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-3xl font-extrabold text-blue-600">2.4M</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-3xl font-extrabold text-orange-500">2.4M</div>
             <div className="text-xs text-slate-500 uppercase tracking-wider mt-2">Nursing Shortfall in India by 2026</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-3xl font-extrabold text-blue-600">20–60</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-3xl font-extrabold text-orange-500">20–60</div>
             <div className="text-xs text-slate-500 uppercase tracking-wider mt-2">Days avg. placement via specialist agency</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-3xl font-extrabold text-blue-600">35%</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-3xl font-extrabold text-orange-500">35%</div>
             <div className="text-xs text-slate-500 uppercase tracking-wider mt-2">Better retention vs. traditional hiring</div>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default function HealthcareStaffingAhmedabadArticle() {
               <p className="text-slate-700 text-lg leading-relaxed mb-5">{agency.description}</p>
               <div className="flex flex-wrap gap-2">
                 {agency.specialties.map((spec) => (
-                  <span key={spec} className="bg-blue-50 text-blue-700 text-sm font-medium px-3 py-1.5 rounded-full">
+                  <span key={spec} className="bg-orange-50 text-orange-600 text-sm font-medium px-3 py-1.5 rounded-full">
                     {spec}
                   </span>
                 ))}
@@ -216,25 +216,25 @@ export default function HealthcareStaffingAhmedabadArticle() {
         </p>
 
         <ul className="space-y-0 border-t border-slate-200">
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
             <strong className="text-slate-900">Healthcare Specialization:</strong> Choose an agency that exclusively or primarily works in healthcare — not a general staffing firm dabbling in medical roles.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
             <strong className="text-slate-900">Credential Verification Process:</strong> Ask specifically how they verify NMC/MCI registration, ACLS/BLS certifications, and conduct background checks.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
             <strong className="text-slate-900">Local Gujarat Network:</strong> Agencies with deep local ties can source passive candidates from Ahmedabad, Gandhinagar, Surat, and Vadodara — giving you a wider talent pool.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
             <strong className="text-slate-900">Time-to-Fill Guarantee:</strong> Top agencies should be able to present verified candidates within 20–45 days for most roles. Demand this clarity upfront.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
             <strong className="text-slate-900">Flexible Engagement Models:</strong> Ensure they offer contract, temp-to-perm, and permanent hiring — so you can scale staffing up or down with patient volumes.
           </li>
-          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 border-b border-slate-200 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
             <strong className="text-slate-900">Transparent Pricing:</strong> Healthcare permanent staffing typically costs 8–15% of annual CTC. Be wary of hidden charges for onboarding or compliance documentation.
           </li>
-          <li className="py-4 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-blue-600 before:font-semibold">
+          <li className="py-4 pl-8 relative text-slate-700 text-base before:content-['→'] before:absolute before:left-0 before:text-orange-500 before:font-semibold">
             <strong className="text-slate-900">Post-Placement Support:</strong> The best agencies offer a replacement guarantee (typically 30–90 days) if a hired candidate leaves early.
           </li>
         </ul>
@@ -249,14 +249,14 @@ export default function HealthcareStaffingAhmedabadArticle() {
           The Gujarat government&apos;s push to expand healthcare infrastructure — including proposed expansions at Civil Hospital that would make it the world&apos;s largest hospital — signals that the demand for healthcare talent will only intensify over the next few years. For HR managers and hospital administrators, building relationships with reliable staffing agencies now is not just smart — it&apos;s essential.
         </p>
 
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">Ready to Find the Right Staffing Partner?</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Whether you&apos;re a hospital administrator looking to fill urgent nursing vacancies or a healthcare professional seeking your next career move in Ahmedabad — the agencies listed above are your best starting point.
           </p>
           <Link
             href={healthcareUrl}
-            className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-all"
+            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-all"
           >
             Explore All Agencies →
           </Link>

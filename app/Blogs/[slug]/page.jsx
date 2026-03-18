@@ -16,8 +16,18 @@ import BestSolarPanelBrandsIndia2026Article from '@/views/blog/BestSolarPanelBra
 import Top10SwitchSocketBrandsIndia2026Article from '@/views/blog/Top10SwitchSocketBrandsIndia2026Article';
 import Top10StabilizerBrandsIndia2026Article from '@/views/blog/Top10StabilizerBrandsIndia2026Article';
 import BestSolarPanelsAustralia2026Article from '@/views/blog/BestSolarPanelsAustralia2026Article';
+import BestSpecialtyChemicalCompaniesAustralia2026Article from '@/views/blog/BestSpecialtyChemicalCompaniesAustralia2026Article';
 
 const ARTICLES = {
+  'best-specialty-chemical-companies-australia-2026': {
+    title: 'Best Specialty Chemical Companies in Australia for Manufacturing (2026)',
+    description: 'A verified B2B guide to Australia\'s top specialty chemical suppliers — compared by sector expertise, AICIS compliance, certifications, and manufacturing capability for 2026.',
+    seoTitle: 'Best Specialty Chemical Companies in Australia (2026) | B2B Guide',
+    seoDescription: 'Discover the best specialty chemical companies in Australia for manufacturing in 2026. Compare Orica, Nufarm, Ixom, Brenntag, Chem-Supply & more by AICIS compliance, certifications & sectors served.',
+    image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Best specialty chemical companies in Australia for manufacturing 2026 - industrial chemical facility',
+    component: BestSpecialtyChemicalCompaniesAustralia2026Article,
+  },
   'best-solar-panels-australia-2026': {
     title: 'Best Solar Panels in Australia (2026) — Brands Compared & Reviewed',
     description: "A comprehensive guide to the best solar panel brands in Australia — compared by CEC approval, efficiency, warranty, and AUD price for homes, farms, and commercial use.",

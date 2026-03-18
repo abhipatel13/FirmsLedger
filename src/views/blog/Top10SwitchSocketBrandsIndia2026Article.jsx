@@ -394,9 +394,9 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
         </div>
 
         {/* Hero */}
-        <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white">
+        <header className="bg-[#0D1B2A] text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
-            <div className="inline-block bg-blue-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-5 uppercase tracking-wider">
+            <div className="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-5 uppercase tracking-wider">
               Electrical · Updated 2026
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5">
@@ -439,7 +439,7 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
               { value: '2 years', label: 'Standard warranty from top brands' },
               { value: '10 brands', label: 'Reviewed & compared in this guide' },
             ].map(({ value, label }) => (
-              <div key={label} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm text-center border-t-4 border-t-blue-500">
+              <div key={label} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm text-center border-t-4 border-t-orange-500">
                 <div className="text-2xl font-extrabold text-slate-900 mb-1">{value}</div>
                 <div className="text-xs text-slate-500 leading-snug">{label}</div>
               </div>
@@ -512,7 +512,7 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
                     <span className="text-5xl font-extrabold text-slate-100 leading-none select-none">{brand.rank}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-0.5 uppercase tracking-wide">
+                        <span className="text-xs font-bold bg-orange-50 text-orange-600 border border-orange-200 rounded-full px-3 py-0.5 uppercase tracking-wide">
                           {brand.badge}
                         </span>
                         {brand.tags.map((tag) => (
@@ -528,7 +528,7 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
 
                   <div className="mb-5">
                     <p className="text-base font-semibold text-slate-800 mb-1">Best Model:</p>
-                    <p className="text-lg text-blue-700 font-medium">{brand.bestModel}</p>
+                    <p className="text-lg text-orange-600 font-medium">{brand.bestModel}</p>
                   </div>
 
                   <div className="mb-5">
@@ -536,7 +536,7 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
                     <ul className="space-y-2">
                       {brand.features.map((f) => (
                         <li key={f} className="flex items-start gap-3 text-base text-slate-700">
-                          <span className="text-blue-500 font-bold mt-0.5 flex-shrink-0">✓</span>
+                          <span className="text-orange-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                           <span>{f}</span>
                         </li>
                       ))}
@@ -575,7 +575,7 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
                     </div>
                     <div>
                       <span className="font-semibold text-slate-700">Price Range: </span>
-                      <span className="text-blue-700 font-medium">{brand.price}</span>
+                      <span className="text-orange-600 font-medium">{brand.price}</span>
                     </div>
                   </div>
                 </div>
@@ -604,7 +604,7 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
                       <td className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap">{row.brand}</td>
                       <td className="px-4 py-3 text-slate-700 whitespace-nowrap">{row.model}</td>
                       <td className="px-4 py-3 text-slate-700 whitespace-nowrap">{row.bestFor}</td>
-                      <td className="px-4 py-3 text-blue-700 font-medium whitespace-nowrap">{row.price}</td>
+                      <td className="px-4 py-3 text-orange-600 font-medium whitespace-nowrap">{row.price}</td>
                       <td className="px-4 py-3 text-slate-700 whitespace-nowrap">{row.warranty}</td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         {row.bis ? (
@@ -711,13 +711,13 @@ export default function Top10SwitchSocketBrandsIndia2026Article() {
           </div>
 
           {/* CTA */}
-          <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-8 md:p-10 text-center text-white">
+          <div className="rounded-2xl bg-[#0D1B2A] p-8 md:p-10 text-center text-white">
             <h3 className="text-xl font-bold mb-2">Find Verified Electrical Suppliers &amp; Contractors</h3>
-            <p className="text-blue-100 max-w-md mx-auto mb-6 text-base">
+            <p className="text-slate-300 max-w-md mx-auto mb-6 text-base">
               Browse verified electrical contractors, wholesalers, and installation companies across India. Compare reviews, services, and pricing.
             </p>
             <Link href={getDirectoryUrl()}>
-              <span className="inline-block bg-white text-slate-900 hover:bg-blue-50 font-semibold rounded-xl px-7 py-3 text-base transition-colors cursor-pointer">
+              <span className="inline-block bg-white text-slate-900 hover:bg-orange-50 font-semibold rounded-xl px-7 py-3 text-base transition-colors cursor-pointer">
                 Browse Directory
               </span>
             </Link>

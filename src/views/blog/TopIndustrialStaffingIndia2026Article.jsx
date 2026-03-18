@@ -77,7 +77,7 @@ export default function TopIndustrialStaffingIndia2026Article() {
         </div>
       </div>
 
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-block bg-amber-500/20 border border-amber-400/40 text-amber-200 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
             ⚙️ Updated February 2026
@@ -196,7 +196,7 @@ export default function TopIndustrialStaffingIndia2026Article() {
           <ul className="divide-y divide-slate-200">
             {CHECKLIST.map((item) => (
               <li key={item.title} className="py-4 flex gap-3 text-slate-700 text-base">
-                <span className="text-blue-600 font-bold flex-shrink-0">✓</span>
+                <span className="text-orange-500 font-bold flex-shrink-0">✓</span>
                 <span><strong className="text-slate-800">{item.title}:</strong> {item.text}</span>
               </li>
             ))}
@@ -224,7 +224,7 @@ export default function TopIndustrialStaffingIndia2026Article() {
           ))}
         </div>
 
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">⚙️ Ready to Build Your Industrial Workforce in India?</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             India&apos;s industrial staffing market is one of the most dynamic and opportunity-rich in the world. Whether you&apos;re scaling a manufacturing plant, managing seasonal logistics demand, or building a new EV assembly operation, the agencies listed above are equipped to deliver compliant, skilled, and deployable industrial talent — faster than you can hire in-house.

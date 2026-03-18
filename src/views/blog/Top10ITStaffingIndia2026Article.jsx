@@ -136,9 +136,9 @@ export default function Top10ITStaffingIndia2026Article() {
         </div>
       </div>
 
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block bg-blue-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             IT Staffing · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
@@ -171,27 +171,27 @@ export default function Top10ITStaffingIndia2026Article() {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="border-l-4 border-blue-600 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
+        <div className="border-l-4 border-orange-500 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
           <p className="text-slate-600 text-base leading-relaxed">
             <strong className="text-slate-900">Why this matters in 2026:</strong> India&apos;s IT staffing market is projected to reach $24 billion by FY27, growing at 9.7% annually. With demand for AI, cloud, and cybersecurity talent surging 15–35%, choosing the right IT staffing partner is a strategic advantage — not just an HR task.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">1M+</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">1M+</div>
             <div className="text-xs text-slate-500 mt-1">Engineering graduates per year in India</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">13%</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">13%</div>
             <div className="text-xs text-slate-500 mt-1">Staffing industry growth rate (2024)</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">40–70%</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">40–70%</div>
             <div className="text-xs text-slate-500 mt-1">Cost savings vs US/UK hiring</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">$24B</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">$24B</div>
             <div className="text-xs text-slate-500 mt-1">Projected flexi-staffing revenue by FY27</div>
           </div>
         </div>
@@ -213,7 +213,7 @@ export default function Top10ITStaffingIndia2026Article() {
                 <h3 className="text-2xl font-bold text-slate-900">{company.name}</h3>
               </div>
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
+                <span className="inline-block bg-orange-50 text-orange-600 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
                   {company.badge}
                 </span>
                 {company.tags.map((tag) => (
@@ -226,7 +226,7 @@ export default function Top10ITStaffingIndia2026Article() {
               <ul className="space-y-3 mb-5">
                 {company.bullets.map((bullet) => (
                   <li key={bullet} className="text-slate-700 text-base flex gap-2">
-                    <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                    <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
                     <span>{bullet}</span>
                   </li>
                 ))}
@@ -261,12 +261,12 @@ export default function Top10ITStaffingIndia2026Article() {
           India&apos;s dominance in global IT talent isn&apos;t accidental — it&apos;s the result of decades of investment in engineering education, a maturing digital economy, and a uniquely skilled workforce. Here&apos;s why more than 60% of Fortune 500 companies are prioritizing India for future workforce expansion:
         </p>
         <ul className="space-y-4 text-slate-700 text-base">
-          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India produces over <strong className="text-slate-800">1 million engineering graduates</strong> per year, more than any other country.</li>
-          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> Hiring through Indian staffing agencies saves companies <strong className="text-slate-800">40–70%</strong> compared to equivalent roles in the US, UK, or Canada.</li>
-          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> Demand for AI, cloud, and cybersecurity roles has grown <strong className="text-slate-800">15–35%</strong> year-on-year in 2026–2027.</li>
-          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> The Indian Staffing Federation projects flexi-staffing revenue to hit <strong className="text-slate-800">$24 billion by FY27</strong>.</li>
-          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India recorded a <strong className="text-slate-800">13% staffing industry growth rate</strong> in 2024, one of the fastest in the world.</li>
-          <li className="flex gap-3"><span className="text-blue-500 font-bold flex-shrink-0">•</span> India&apos;s real GDP is estimated to have grown at <strong className="text-slate-800">8.2%</strong> in Q2 FY26, making it the world&apos;s fastest-growing major economy.</li>
+          <li className="flex gap-3"><span className="text-orange-500 font-bold flex-shrink-0">•</span> India produces over <strong className="text-slate-800">1 million engineering graduates</strong> per year, more than any other country.</li>
+          <li className="flex gap-3"><span className="text-orange-500 font-bold flex-shrink-0">•</span> Hiring through Indian staffing agencies saves companies <strong className="text-slate-800">40–70%</strong> compared to equivalent roles in the US, UK, or Canada.</li>
+          <li className="flex gap-3"><span className="text-orange-500 font-bold flex-shrink-0">•</span> Demand for AI, cloud, and cybersecurity roles has grown <strong className="text-slate-800">15–35%</strong> year-on-year in 2026–2027.</li>
+          <li className="flex gap-3"><span className="text-orange-500 font-bold flex-shrink-0">•</span> The Indian Staffing Federation projects flexi-staffing revenue to hit <strong className="text-slate-800">$24 billion by FY27</strong>.</li>
+          <li className="flex gap-3"><span className="text-orange-500 font-bold flex-shrink-0">•</span> India recorded a <strong className="text-slate-800">13% staffing industry growth rate</strong> in 2024, one of the fastest in the world.</li>
+          <li className="flex gap-3"><span className="text-orange-500 font-bold flex-shrink-0">•</span> India&apos;s real GDP is estimated to have grown at <strong className="text-slate-800">8.2%</strong> in Q2 FY26, making it the world&apos;s fastest-growing major economy.</li>
         </ul>
 
         <hr className="border-slate-200 my-12" />
@@ -281,14 +281,14 @@ export default function Top10ITStaffingIndia2026Article() {
           ))}
         </div>
 
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center mt-12">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center mt-12">
           <h2 className="text-2xl font-bold mb-3">Ready to Build Your Tech Team in India?</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             India&apos;s IT staffing market is brimming with specialized agencies ready to connect you with world-class tech talent. Whether you need a contract developer tomorrow or a CTO next quarter, one of the 10 companies above can deliver. Start by shortlisting 2–3 agencies that match your hiring model, tech domain, and budget — then request a consultation to evaluate their screening process and candidate pipeline firsthand.
           </p>
           <Link
             href={itStaffingUrl}
-            className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-all"
+            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-all"
           >
             Explore IT Staffing Agencies →
           </Link>

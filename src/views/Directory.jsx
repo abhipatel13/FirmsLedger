@@ -11,11 +11,10 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getDirectoryUrlWithParams, getCompanyProfileUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 import FilterPanel from '@/components/FilterPanel';
-import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle, Search, Grid3x3, List, Filter } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle, Search } from 'lucide-react';
 import { debounce } from 'lodash';
 
-export default function Directory({ initialCategorySlug, underStaffing: underStaffingProp }) {
+export default function Directory({ initialCategorySlug, underStaffing: underStaffingProp, initialAgencies, initialAgencyCategories }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -66,11 +65,13 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
   const { data: allAgencies = [], isLoading } = useQuery({
     queryKey: ['agencies'],
     queryFn: () => api.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
+    initialData: initialAgencies?.length ? initialAgencies : undefined,
   });
 
   const { data: agencyCategories = [] } = useQuery({
     queryKey: ['agency-categories'],
     queryFn: () => api.entities.AgencyCategory.list(),
+    initialData: initialAgencyCategories?.length ? initialAgencyCategories : undefined,
   });
 
   // Debounce search input
@@ -196,59 +197,40 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Breadcrumb items={selectedService ? [{ label: 'Browse Agencies', href: getDirectoryUrl() }, { label: selectedCategoryName }] : [{ label: 'Browse Agencies' }]} />
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F7F8FA]">
+      {/* Page Header */}
+      <div className="bg-[#0D1B2A] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-7">
+          <Breadcrumb items={selectedService ? [{ label: 'Directory', href: getDirectoryUrl() }, { label: selectedCategoryName }] : [{ label: 'Directory' }]} dark />
 
-      {/* Header Section */}
-      <div className="bg-white border-b py-5 sm:py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="min-w-0"
-          >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-slate-900 break-words">
-              Top {selectedCategoryName}
-            </h1>
-            <p className="text-slate-600 mb-4 sm:mb-6 max-w-4xl leading-relaxed text-sm sm:text-base">
-              Discover the top {selectedCategoryName.toLowerCase()} at FirmsLedger. Browse verified service providers with proven expertise. The list makes it easy for businesses to easily browse the most reliable service providers based on their expertise, project needs and pricing.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-slate-600">
-              <span><strong>{filteredAgencies.length}</strong> Companies</span>
-              <span className="hidden sm:inline">|</span>
-              <span>Rankings updated: Feb 15, 2026</span>
-            </div>
-          </motion.div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-4 mb-2 text-white tracking-tight">
+            Top {selectedCategoryName}
+          </h1>
+          <p className="text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed mb-4">
+            Discover verified {selectedCategoryName.toLowerCase()} — ranked by authentic client reviews and real outcomes.
+          </p>
+          <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
+            <span><strong className="text-white">{filteredAgencies.length}</strong> Companies Listed</span>
+            <span>·</span>
+            <span>Rankings updated: Feb 15, 2026</span>
+          </div>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white border-b py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <Input
-                type="text"
-                placeholder="Search by name, services, location..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setDebouncedSearch(searchQuery);
-                  }
-                }}
-                className="pl-10 h-12 text-base"
-                aria-label="Search agencies"
-              />
-            </div>
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="relative max-w-xl">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              type="text"
+              placeholder="Search by name, services, location..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') setDebouncedSearch(searchQuery); }}
+              className="pl-9 h-10 text-sm border-slate-200 focus:border-orange-400 focus:ring-orange-400"
+              aria-label="Search agencies"
+            />
           </div>
         </div>
       </div>
@@ -269,21 +251,21 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
         onApply={() => {}}
       />
 
-      {/* Results Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Results */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Sort Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6 pb-4 border-b">
-          <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 break-words min-w-0">
-            List of Top {selectedCategoryName} | Top {selectedCategoryName.split(' ')[0]} Providers
-          </h2>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span className="text-sm text-slate-600">Sort by:</span>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+          <p className="text-sm text-slate-500">
+            Showing <strong className="text-slate-800">{filteredAgencies.length}</strong> {selectedCategoryName}
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 font-medium">Sort:</span>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-40 bg-white">
+              <SelectTrigger className="w-36 bg-white border-slate-200 text-sm h-8">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="sponsored">Sponsored</SelectItem>
+                <SelectItem value="sponsored">Best Match</SelectItem>
                 <SelectItem value="rating">Highest Rated</SelectItem>
                 <SelectItem value="reviews">Most Reviews</SelectItem>
               </SelectContent>
@@ -293,141 +275,116 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
 
         {isLoading ? (
           <div className="text-center py-20">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-            <p className="mt-4 text-slate-600">Loading agencies...</p>
+            <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-slate-300 border-t-orange-500"></div>
+            <p className="mt-3 text-slate-500 text-sm">Loading...</p>
           </div>
         ) : filteredAgencies.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-slate-600 text-lg">No agencies found matching your criteria</p>
+            <p className="text-slate-500">No companies found matching your criteria.</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-3">
             {filteredAgencies.map((agency, index) => (
-              <motion.div
+              <div
                 key={agency.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="bg-white border border-slate-200 rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow"
+                className="bg-white border border-slate-200 rounded-lg hover:border-slate-300 hover:shadow-sm transition-all duration-150"
               >
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {/* Left: Company Info */}
-                  <div className="lg:col-span-2 min-w-0">
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3 sm:mb-4">
-                      {/* Logo */}
-                      <div className="flex-shrink-0">
-                        {agency.logo_url ? (
-                          <img src={agency.logo_url} alt={agency.name} className="w-16 h-16 rounded-lg object-cover border border-slate-200" />
-                        ) : (
-                          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <span className="text-2xl font-bold text-white">
-                              {agency.name.charAt(0)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                <div className="p-5 sm:p-6">
+                  <div className="flex flex-col sm:flex-row gap-5">
 
-                      {/* Company Name & Rating */}
-                      <div className="flex-1 min-w-0">
-                        <Link href={getCompanyProfileUrl(agency)}>
-                          <h3 className="text-lg sm:text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors mb-2 break-words">
-                            {agency.name}
-                          </h3>
-                        </Link>
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="flex items-center gap-1">
-                            <span className="text-lg font-bold text-slate-900">
-                              {(agency.avg_rating || 4.8).toFixed(1)}
-                            </span>
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`w-4 h-4 ${
-                                  i < Math.floor(agency.avg_rating || 4.8)
-                                    ? 'fill-yellow-400 text-yellow-400'
-                                    : 'text-slate-300'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <Link 
-                            href={getCompanyProfileUrl(agency) + '#reviews'}
-                            className="text-blue-600 hover:underline text-sm"
-                          >
-                            {agency.review_count || Math.floor(Math.random() * 200) + 50} Reviews
-                          </Link>
+                    {/* Rank + Logo */}
+                    <div className="flex items-start gap-3 flex-shrink-0">
+                      <div className="w-7 h-7 rounded bg-[#0D1B2A] flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[10px] font-black text-white">{index + 1}</span>
+                      </div>
+                      {agency.logo_url ? (
+                        <img src={agency.logo_url} alt={agency.name} className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white" />
+                      ) : (
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-slate-100 rounded-md flex items-center justify-center border border-slate-200 flex-shrink-0">
+                          <span className="text-xl font-bold text-slate-400">{agency.name.charAt(0)}</span>
                         </div>
-
-                        {/* Description */}
-                        <p className="text-slate-600 text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
-                          {agency.description || `Established in ${agency.founded_year || '2015'}, ${agency.name} is a leading service provider${agency.hq_city ? ` with headquarters in ${agency.hq_city}` : ''}. Backed by a dedicated team of experts, the company has successfully delivered innovative solutions for clients worldwide, providing scalable, reliable services...`}
-                          {agency.description && agency.description.length > 150 && (
-                            <Link href={getCompanyProfileUrl(agency)} className="text-blue-600 hover:underline ml-1">
-                              read {agency.name} reviews & insights
-                            </Link>
-                          )}
-                        </p>
-
-                        {/* Stats */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 text-xs sm:text-sm">
-                          <div className="flex items-center gap-2 text-slate-600">
-                            <span className="font-semibold">💰 $25 - $49/hr</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-slate-600">
-                            <Users className="w-4 h-4" />
-                            <span>{agency.team_size || '50 - 249'}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-slate-600">
-                            <Calendar className="w-4 h-4" />
-                            <span>{agency.founded_year || '2015'}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-slate-600">
-                            <MapPin className="w-4 h-4 flex-shrink-0" />
-                            <span className="truncate">{[agency.hq_city, agency.hq_state, agency.hq_country].filter(Boolean).join(', ') || 'Global'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Verified Review & Actions */}
-                  <div className="lg:col-span-1 lg:border-l lg:pl-6 pt-4 lg:pt-0 border-t lg:border-t-0">
-                    <div className="bg-slate-50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CheckCircle className="w-4 h-4 text-blue-600" />
-                        <span className="text-xs font-semibold text-slate-900">Verified Client Review</span>
-                      </div>
-                      <div className="flex items-center gap-1 mb-2">
-                        <span className="font-bold text-slate-900">5.0</span>
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-                      <p className="text-xs text-slate-600 italic mb-2">
-                        "They saw inefficiencies in our processes that we'd stopped noticing, and built a solution."
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        Reviewed by: Emma Taylor, Vice President
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Link href={getCompanyProfileUrl(agency)} className="block">
-                        <Button variant="outline" className="w-full min-h-[44px] touch-manipulation">
-                          View Profile
-                        </Button>
-                      </Link>
-                      {agency.website && (
-                        <a href={agency.website} target="_blank" rel="noopener noreferrer" className="block">
-                          <Button className="w-full min-h-[44px] bg-slate-900 hover:bg-slate-800 touch-manipulation">
-                            Visit Website <ExternalLink className="w-4 h-4 ml-2" />
-                          </Button>
-                        </a>
                       )}
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+
+                        {/* Left info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <Link href={getCompanyProfileUrl(agency)}>
+                              <h3 className="text-base font-bold text-slate-900 hover:text-orange-600 transition-colors">
+                                {agency.name}
+                              </h3>
+                            </Link>
+                            {agency.verified && (
+                              <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[10px] font-semibold px-1.5 py-0.5 rounded border border-green-200">
+                                <CheckCircle className="w-2.5 h-2.5" /> Verified
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Rating row */}
+                          <div className="flex items-center gap-2 mb-2.5">
+                            <div className="flex items-center gap-0.5">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(agency.avg_rating || 0) ? 'fill-orange-400 text-orange-400' : 'text-slate-200'}`} />
+                              ))}
+                            </div>
+                            <span className="text-sm font-bold text-slate-900">{(agency.avg_rating || 0).toFixed(1)}</span>
+                            <Link href={getCompanyProfileUrl(agency) + '#reviews'} className="text-xs text-slate-500 hover:underline">
+                              {agency.review_count || 0} Reviews
+                            </Link>
+                          </div>
+
+                          {/* Description */}
+                          <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-3">
+                            {agency.description || `${agency.name} is a verified service provider${agency.hq_city ? ` based in ${agency.hq_city}` : ''}. Connect to learn about their expertise, pricing, and client outcomes.`}
+                          </p>
+
+                          {/* Meta chips */}
+                          <div className="flex flex-wrap gap-2">
+                            {agency.team_size && (
+                              <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
+                                <Users className="w-3 h-3" /> {agency.team_size}
+                              </span>
+                            )}
+                            {agency.founded_year && (
+                              <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
+                                <Calendar className="w-3 h-3" /> Est. {agency.founded_year}
+                              </span>
+                            )}
+                            {(agency.hq_city || agency.hq_country) && (
+                              <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
+                                <MapPin className="w-3 h-3" />
+                                {[agency.hq_city, agency.hq_country].filter(Boolean).join(', ')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Right: Actions */}
+                        <div className="flex flex-row lg:flex-col gap-2 lg:w-36 flex-shrink-0">
+                          <Link href={getCompanyProfileUrl(agency)} className="flex-1 lg:flex-none">
+                            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold h-9 rounded-md transition-colors">
+                              View Profile
+                            </Button>
+                          </Link>
+                          {agency.website && (
+                            <a href={agency.website} target="_blank" rel="noopener noreferrer" className="flex-1 lg:flex-none">
+                              <Button variant="outline" className="w-full border-slate-200 text-slate-700 hover:border-slate-300 text-xs font-semibold h-9 rounded-md">
+                                Website <ExternalLink className="w-3 h-3 ml-1" />
+                              </Button>
+                            </a>
+                          )}
+                        </div>
+
+                      </div>
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}

@@ -1,27 +1,32 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getCompanyProfileUrl } from '@/utils';
+import { getDirectoryUrl, getCompanyProfileUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import SearchBar from '@/components/SearchBar';
-import CategoryGrid from '@/components/CategoryGrid';
-import AgencyCard from '@/components/AgencyCard';
-import ReviewCard from '@/components/ReviewCard';
-import { ArrowRight, Star, Shield, Zap, Globe, CheckCircle, TrendingUp, Award } from 'lucide-react';
-import { motion } from 'framer-motion';
+import AIMatchmaker from '@/components/AIMatchmaker';
+import {
+  ArrowRight, Star, Shield, CheckCircle, Award,
+  ChevronRight, Sparkles, Globe, Users, Zap,
+} from 'lucide-react';
+
+const CATEGORIES_STATIC = [
+  { label: 'IT Staffing', slug: 'it-staffing', icon: '💻' },
+  { label: 'Temporary Staffing', slug: 'temporary-staffing', icon: '⏱️' },
+  { label: 'Executive Search', slug: 'executive-search', icon: '🎯' },
+  { label: 'Healthcare Staffing', slug: 'healthcare-staffing', icon: '🏥' },
+  { label: 'Permanent Staffing', slug: 'permanent-staffing', icon: '📋' },
+  { label: 'Contract Staffing', slug: 'contract-staffing', icon: '📝' },
+  { label: 'Remote Staffing', slug: 'remote-staffing', icon: '🌐' },
+  { label: 'Industrial Staffing', slug: 'industrial-staffing', icon: '🏭' },
+];
 
 export default function Home() {
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: () => api.entities.Category.list(),
-  });
-
-  const { data: featuredAgencies = [] } = useQuery({
-    queryKey: ['featured-agencies'],
-    queryFn: () => api.entities.Agency.filter({ featured: true, approved: true }, '-avg_rating', 3),
   });
 
   const { data: topRatedAgencies = [] } = useQuery({
@@ -34,649 +39,356 @@ export default function Home() {
     queryFn: () => api.entities.Review.filter({ approved: true }, '-created_date', 3),
   });
 
+  const displayCategories = categories.length > 0
+    ? categories.slice(0, 8).map((c, i) => ({
+        label: c.name, slug: c.slug, id: c.id,
+        icon: CATEGORIES_STATIC[i]?.icon || '🏢',
+      }))
+    : CATEGORIES_STATIC;
+
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
-        
-        {/* Floating Gradient Orbs */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 md:py-32 relative">
-          <div className="text-center max-w-5xl mx-auto min-w-0">
-            {/* Trust Badge */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex flex-wrap items-center justify-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-lg"
-            >
-              <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent font-semibold">
-                Trusted by 10,000+ businesses
-              </span>
-              <div className="flex -space-x-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              </div>
-            </motion.div>
+    <div className="bg-white">
 
-            {/* Main Headline */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 sm:mb-6 leading-[1.15] tracking-tight px-0"
-            >
-              Discover the World's Most
-              <br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Trusted Business Partners
-              </span>
-            </motion.h1>
+      {/* ── HERO ──────────────────────────────────────────────────── */}
+      <section className="bg-[#0D1B2A] relative overflow-hidden">
+        {/* Subtle grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }}
+        />
 
-            {/* Subheading */}
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-base sm:text-lg md:text-xl text-slate-300 mb-8 sm:mb-10 leading-relaxed max-w-3xl mx-auto px-0"
-            >
-              Connect with verified service providers through authentic reviews, transparent ratings, 
-              and data-driven insights. Make confident decisions for your business growth.
-            </motion.p>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-0">
+          <div className="max-w-4xl mx-auto text-center">
 
-            {/* CTA Buttons */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 w-full sm:w-auto"
-            >
-              <Link href={getDirectoryUrl()} className="w-full sm:w-auto">
-                <Button 
-                  size="lg" 
-                  className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-semibold rounded-xl shadow-2xl shadow-purple-500/50 transition-all duration-300 hover:shadow-purple-500/70 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Explore Providers
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </Button>
-              </Link>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-semibold rounded-xl transition-all duration-300 hover:border-white/50 hover:scale-[1.02] active:scale-[0.98]"
-                onClick={() => {
-                  const listBtn = document.querySelector('[data-list-agency-btn]');
-                  if (listBtn) listBtn.click();
-                }}
-              >
-                List Your Business
-              </Button>
-            </motion.div>
+            {/* Eyebrow pill */}
+            <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 tracking-wide">
+              <Sparkles className="w-3.5 h-3.5" />
+              AI-Powered B2B Matchmaking
+            </div>
 
-            {/* Enhanced Search Bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="max-w-4xl mx-auto w-full px-0"
-            >
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl sm:rounded-2xl p-2 shadow-2xl w-full">
-                <SearchBar />
-              </div>
-            </motion.div>
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight mb-5">
+              Describe what you need.{' '}
+              <span className="text-orange-400">AI finds</span>{' '}
+              your best match.
+            </h1>
 
-            {/* Trust Indicators */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 md:gap-8 mt-10 sm:mt-16 max-w-4xl mx-auto"
-            >
-              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">50+</div>
-                </div>
-                <div className="text-slate-400 text-xs sm:text-sm font-medium">Verified Providers</div>
-              </div>
-              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-yellow-400" />
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">150+</div>
-                </div>
-                <div className="text-slate-400 text-xs sm:text-sm font-medium">Authentic Reviews</div>
-              </div>
-              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">100+</div>
-                </div>
-                <div className="text-slate-400 text-xs sm:text-sm font-medium">Countries & Cities</div>
-              </div>
-              <div className="group text-center p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-pink-400" />
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">4.8</div>
-                </div>
-                <div className="text-slate-400 text-xs sm:text-sm font-medium">Average Rating</div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Trust FirmsLedger - About-style section */}
-      <section className="py-10 sm:py-14 md:py-20 lg:py-24 bg-[#f8f8fa]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-start">
-            {/* Left: Heading & subtitle */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="min-w-0 lg:sticky lg:top-24"
-            >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1a2a4c] mb-3 sm:mb-5 tracking-tight leading-tight">
-                Why trust
-                <br />
-                FirmsLedger
-              </h2>
-              <p className="text-slate-600 text-base sm:text-lg max-w-md leading-relaxed">
-                Hear from businesses who found their ideal partners on FirmsLedger.
-              </p>
-            </motion.div>
-
-            {/* Right: Trust points */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="space-y-5 sm:space-y-6 min-w-0"
-            >
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
-                    All companies on FirmsLedger are verified for authenticity.
-                  </h3>
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                    We verify each company to ensure you connect with legitimate service providers.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0">
-                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
-                    FirmsLedger does not manipulate ratings or reviews.
-                  </h3>
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                    All reviews are from verified customers and reflect genuine experiences.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
-                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
-                    Company information is regularly updated & accurate.
-                  </h3>
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                    We maintain up-to-date information on all listed companies for your confidence.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-base sm:text-lg text-[#1a2a4c] mb-1 break-words">
-                    Our research is transparent and unbiased.
-                  </h3>
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                    We use data-driven metrics to rank companies based on performance and quality.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Choose the Right Partner */}
-      <section className="py-12 sm:py-16 md:py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-10 sm:mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-              How It Works
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Make informed decisions with comprehensive provider profiles, verified reviews, and side-by-side comparisons
+            <p className="text-slate-400 text-lg sm:text-xl mb-10 leading-relaxed max-w-2xl mx-auto">
+              Stop filtering endlessly. Just tell us what you're looking for — FirmsLedger AI matches you to the right verified agency in seconds.
             </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="group relative bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-blue-300 hover:-translate-y-1"
-            >
-              <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                1
+            {/* AI Matchmaker Box */}
+            <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-2xl shadow-black/30 mb-8 text-left">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-7 h-7 rounded-lg bg-orange-500 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-sm font-bold text-slate-800">AI Vendor Matchmaker</span>
+                <span className="ml-auto bg-green-50 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-200 uppercase tracking-wide">Live</span>
               </div>
-              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Search by Location</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Filter by country and state/region, or search by city to find providers near you
-              </p>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="group relative bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-purple-300 hover:-translate-y-1"
-            >
-              <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                2
-              </div>
-              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Filter by Service</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Marketing, legal, logistics, consulting, or specialized business services
-              </p>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="group relative bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-blue-300 hover:-translate-y-1"
-            >
-              <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                3
-              </div>
-              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Compare & Review</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Read verified reviews, compare ratings, pricing, and success rates side-by-side
-              </p>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="group relative bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-purple-300 hover:-translate-y-1"
-            >
-              <div className="absolute -top-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                4
-              </div>
-              <h3 className="text-base sm:text-lg font-bold mb-3 mt-4 text-slate-900">Contact Directly</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                View provider contact details and reach out directly to discuss your business needs
-              </p>
-            </motion.div>
+              <AIMatchmaker />
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Featured Agencies */}
-      {featuredAgencies.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 sm:mb-12 gap-4"
-            >
-              <div className="min-w-0">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 tracking-tight">
-                  Featured Providers
-                </h2>
-                <p className="text-lg text-slate-600">Handpicked top-performing agencies</p>
-              </div>
-              <Link href={getDirectoryUrl()}>
-                <Button className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
-                  View All 
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredAgencies.map((agency, index) => (
-                <motion.div
-                  key={agency.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <AgencyCard agency={agency} />
-                </motion.div>
+        {/* Stats bar */}
+        <div className="relative border-t border-white/10 mt-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div className="flex flex-wrap justify-center sm:justify-start gap-8 sm:gap-14">
+              {[
+                { num: '50+', label: 'Verified Agencies' },
+                { num: '150+', label: 'Client Reviews' },
+                { num: '20+', label: 'Service Categories' },
+                { num: '4.8★', label: 'Avg Rating' },
+              ].map(({ num, label }) => (
+                <div key={label} className="text-center sm:text-left">
+                  <div className="text-xl font-extrabold text-white">{num}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{label}</div>
+                </div>
               ))}
             </div>
           </div>
-        </section>
-      )}
-
-      {/* Categories */}
-      <section className="py-12 sm:py-16 md:py-24 bg-gradient-to-b from-slate-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-10 sm:mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-              Browse by Category
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              From staffing to consulting, find verified service providers across all business categories
-            </p>
-          </motion.div>
-          <CategoryGrid categories={categories.slice(0, 8)} />
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mt-12"
-          >
-            <Link href={getDirectoryUrl()}>
-              <Button className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
-                Browse All Categories 
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </motion.div>
         </div>
       </section>
 
-      {/* Top Rated Agencies */}
-      {topRatedAgencies.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-24 bg-slate-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-8 sm:mb-12"
-            >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 tracking-tight">
-                Find the top-rated companies in every service category
-              </h2>
-              <p className="text-slate-300 text-lg">
-                FirmsLedger helps you connect with top-ranked companies backed by trusted research and verified reviews.
-              </p>
-            </motion.div>
-
-            {/* Category Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
-              {(() => {
-                const staffingId = categories.find((c) => c.slug === 'staffing-companies')?.id;
-                return categories.slice(0, 8).map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={cat.slug === 'staffing-companies' || cat.id === staffingId ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: (cat.parent_id ?? cat.parentId) === staffingId })}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors"
-                >
-                  {cat.name}
-                </Link>
-              ));
-              })()}
-            </div>
-
-            {/* Company Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {topRatedAgencies.slice(0, 9).map((agency, index) => (
-                <motion.div
-                  key={agency.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
-                >
-                  <Link href={getCompanyProfileUrl(agency)}>
-                    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 hover:bg-slate-750 hover:border-blue-500 transition-all duration-300">
-                      <div className="flex items-start gap-4 mb-4">
-                        {agency.logo_url ? (
-                          <img src={agency.logo_url} alt={agency.name} className="w-16 h-16 rounded-xl object-cover" />
-                        ) : (
-                          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                            <span className="text-2xl font-bold text-white">{agency.name.charAt(0)}</span>
-                          </div>
-                        )}
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg text-white mb-1">{agency.name}</h3>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
-                              {[...Array(5)].map((_, i) => (
-                                <Star key={i} className={`w-4 h-4 ${i < Math.floor(agency.avg_rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-600'}`} />
-                              ))}
-                            </div>
-                            <span className="text-white font-semibold">{(agency.avg_rating || 0).toFixed(1)}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <Link href={getCompanyProfileUrl(agency)} className="text-blue-400 hover:text-blue-300 text-sm font-medium">
-                        {agency.review_count || 0} Reviews →
-                      </Link>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mt-12"
-            >
-              <Link href={getDirectoryUrl()}>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-8 py-3 text-lg font-semibold">
-                  View all companies
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Recent Reviews */}
-      {recentReviews.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-10 sm:mb-16"
-            >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-                New reviews from verified customers
-              </h2>
-            </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {recentReviews.map((review, index) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-                >
-                  <div className="mb-4">
-                    <h3 className="font-bold text-lg text-slate-900 mb-2">{review.title}</h3>
-                    <div className="flex items-center gap-1 mb-3">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < Math.floor(review.rating_overall || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300'}`} />
-                      ))}
-                      <span className="ml-2 text-sm font-semibold text-slate-900">{(review.rating_overall || 0).toFixed(1)}</span>
-                    </div>
-                    <p className="text-slate-600 text-sm line-clamp-3">{review.body}</p>
-                  </div>
-                  <div className="pt-4 border-t border-slate-200">
-                    <p className="text-sm font-semibold text-slate-900">{review.company_name}</p>
-                    <p className="text-xs text-slate-500">{review.role_hired}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mt-12"
-            >
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-8 py-3 text-lg font-semibold">
-                Write a review
-              </Button>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Top Cities Worldwide */}
-      <section className="py-12 sm:py-16 md:py-24 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/20 to-purple-900/20"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-10 sm:mb-16"
-          >
-            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-4 sm:mb-6 shadow-lg">
-              <Globe className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
-              Available Worldwide
+      {/* ── HOW AI WORKS ─────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 bg-[#F7F8FA]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">How It Works</p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
+              From requirement to shortlist in seconds
             </h2>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-              Discover top business service providers in major cities across the globe
-            </p>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
-          >
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+            {/* Connector line — desktop only */}
+            <div className="hidden md:block absolute top-10 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px bg-slate-200 z-0" />
+
             {[
-              { label: 'United States', value: 'United States' },
-              { label: 'United Kingdom', value: 'United Kingdom' },
-              { label: 'Canada', value: 'Canada' },
-              { label: 'Australia', value: 'Australia' },
-              { label: 'Singapore', value: 'Singapore' },
-              { label: 'UAE', value: 'United Arab Emirates' },
-              { label: 'Germany', value: 'Germany' },
-              { label: 'France', value: 'France' },
-              { label: 'Japan', value: 'Japan' },
-              { label: 'India', value: 'India' },
-              { label: 'Netherlands', value: 'Netherlands' },
-              { label: 'Sweden', value: 'Sweden' },
-            ].map(({ label, value }) => (
+              {
+                num: '1',
+                icon: Sparkles,
+                title: 'Describe your need',
+                desc: 'Type what you\'re looking for in plain English — location, industry, team size, budget, timeline.',
+                color: 'bg-orange-500',
+              },
+              {
+                num: '2',
+                icon: Zap,
+                title: 'AI matches instantly',
+                desc: 'Our AI reads your requirement and scores every verified agency against it in real time.',
+                color: 'bg-[#0D1B2A]',
+              },
+              {
+                num: '3',
+                icon: CheckCircle,
+                title: 'Get your shortlist',
+                desc: 'Receive your top 3 matches with scores, AI explanations, and direct links to their profiles.',
+                color: 'bg-green-600',
+              },
+            ].map(({ num, icon: Icon, title, desc, color }) => (
+              <div key={num} className="relative z-10 bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className={`w-11 h-11 ${color} rounded-xl flex items-center justify-center mb-4`}>
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-3xl font-black text-slate-100 mb-2 leading-none">{num}</div>
+                <h3 className="font-bold text-[#0D1B2A] mb-2">{title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SERVICE CATEGORIES ────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Categories</p>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
+                Browse by Service
+              </h2>
+            </div>
+            <Link href={getDirectoryUrl()} className="flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors whitespace-nowrap">
+              View all <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {displayCategories.map((cat) => (
               <Link
-                key={value}
-                href={getDirectoryUrl() + '?country=' + encodeURIComponent(value)}
-                className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 text-center hover:-translate-y-1 hover:shadow-lg"
+                key={cat.slug || cat.label}
+                href={cat.slug ? getDirectoryUrl(cat.slug) : getDirectoryUrl()}
+                className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-sm transition-all duration-200 flex items-center gap-3"
               >
-                <h3 className="font-semibold text-white group-hover:text-blue-300 transition-colors">{label}</h3>
+                <span className="text-xl flex-shrink-0">{cat.icon}</span>
+                <span className="text-sm font-semibold text-slate-700 group-hover:text-orange-600 transition-colors leading-snug">
+                  {cat.label}
+                </span>
               </Link>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:50px_50px]"></div>
-        <div className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-        
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 tracking-tight">
-              Ready to Find Your<br />Perfect Partner?
-            </h2>
-            <p className="text-base sm:text-xl md:text-2xl text-blue-100 mb-8 sm:mb-10 leading-relaxed px-0">
-              Browse verified providers across cities worldwide and make the right choice for your business
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+      {/* ── TOP RATED COMPANIES ───────────────────────────────────── */}
+      {topRatedAgencies.length > 0 && (
+        <section className="py-16 sm:py-20 bg-[#F7F8FA]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+              <div>
+                <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Rankings</p>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
+                  Top Rated Agencies
+                </h2>
+              </div>
+              <Link href={getDirectoryUrl()} className="flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors whitespace-nowrap">
+                View all <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {topRatedAgencies.slice(0, 6).map((agency, index) => (
+                <Link key={agency.id} href={getCompanyProfileUrl(agency)}>
+                  <div className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-md transition-all duration-200 h-full">
+                    <div className="flex items-center gap-3 mb-3">
+                      {/* Rank badge */}
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black ${index === 0 ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                        #{index + 1}
+                      </div>
+
+                      {/* Logo */}
+                      {agency.logo_url ? (
+                        <img src={agency.logo_url} alt={agency.name} className="w-10 h-10 rounded-lg object-contain border border-slate-100 bg-white" />
+                      ) : (
+                        <div className="w-10 h-10 bg-[#0D1B2A] rounded-lg flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-bold text-orange-400">{agency.name.charAt(0)}</span>
+                        </div>
+                      )}
+
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-slate-900 text-sm truncate group-hover:text-orange-600 transition-colors">
+                          {agency.name}
+                        </h3>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className={`w-3 h-3 ${i < Math.floor(agency.avg_rating || 0) ? 'fill-orange-400 text-orange-400' : 'fill-slate-100 text-slate-100'}`} />
+                          ))}
+                          <span className="text-xs font-semibold text-slate-600 ml-1">{(agency.avg_rating || 0).toFixed(1)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                      <span className="text-xs text-slate-400">{agency.review_count || 0} verified reviews</span>
+                      <span className="text-xs font-semibold text-orange-500 group-hover:text-orange-600">View →</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── WHY TRUST ─────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div>
+              <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-3">Why FirmsLedger</p>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0D1B2A] tracking-tight leading-tight mb-5">
+                The trusted standard<br />for B2B vendor research
+              </h2>
+              <p className="text-slate-500 leading-relaxed mb-8 max-w-md text-[15px]">
+                Every company is manually verified. Every review is from a real client. Rankings are data-driven — never paid placements.
+              </p>
               <Link href={getDirectoryUrl()}>
-                <Button size="lg" className="group bg-white text-blue-600 hover:bg-slate-100 px-10 py-6 text-lg font-bold rounded-xl shadow-2xl hover:shadow-white/30 transition-all duration-300 hover:scale-105">
-                  Explore All Providers
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Button className="bg-[#0D1B2A] hover:bg-[#1a2f4a] text-white font-semibold px-6 py-3 h-auto rounded-xl text-sm">
+                  Explore the directory <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="bg-white/10 backdrop-blur-md border-2 border-white/40 hover:bg-white/20 text-white px-10 py-6 text-lg font-bold rounded-xl transition-all duration-300 hover:border-white/60 hover:scale-105"
-                onClick={() => {
-                  const listBtn = document.querySelector('[data-list-agency-btn]');
-                  if (listBtn) listBtn.click();
-                }}
-              >
-                List Your Business
-              </Button>
             </div>
-          </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { icon: Shield, title: 'Verified Listings', desc: 'Every company is checked before going live. No fake agencies, no ghost profiles.' },
+                { icon: Star, title: 'Real Reviews Only', desc: 'All reviews are from verified clients — we never edit, hide, or filter ratings.' },
+                { icon: CheckCircle, title: 'Always Updated', desc: 'Company data is reviewed regularly to keep information accurate and current.' },
+                { icon: Award, title: 'Unbiased Rankings', desc: 'Rankings are purely performance-based. Zero pay-to-rank influence.' },
+              ].map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="border border-slate-200 rounded-xl p-5 hover:border-orange-300 hover:bg-orange-50/30 transition-all">
+                  <div className="w-9 h-9 bg-orange-50 border border-orange-100 rounded-lg flex items-center justify-center mb-3">
+                    <Icon className="w-4.5 h-4.5 text-orange-500" />
+                  </div>
+                  <h3 className="font-bold text-[#0D1B2A] text-sm mb-1.5">{title}</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* ── RECENT REVIEWS ────────────────────────────────────────── */}
+      {recentReviews.length > 0 && (
+        <section className="py-16 sm:py-20 bg-[#F7F8FA]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-8">
+              <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Social Proof</p>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
+                What Clients Are Saying
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentReviews.map((review) => (
+                <div key={review.id} className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col">
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(review.rating_overall || 0) ? 'fill-orange-400 text-orange-400' : 'fill-slate-100 text-slate-100'}`} />
+                    ))}
+                    <span className="text-xs font-bold text-slate-700 ml-1">{(review.rating_overall || 0).toFixed(1)}</span>
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm mb-2 leading-snug">{review.title}</h3>
+                  <p className="text-slate-500 text-xs line-clamp-3 mb-4 leading-relaxed flex-1">{review.body}</p>
+                  <div className="border-t border-slate-100 pt-3 flex items-center gap-2">
+                    <div className="w-7 h-7 bg-[#0D1B2A] rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-[10px] font-bold text-orange-400">
+                        {(review.company_name || 'C').charAt(0)}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-800 leading-none">{review.company_name}</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{review.role_hired}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── COUNTRIES ─────────────────────────────────────────────── */}
+      <section className="py-12 bg-white border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-5">
+            <Globe className="w-4 h-4 text-slate-400" />
+            <span className="text-sm font-bold text-slate-600">Available in 100+ Countries</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[
+              'United States', 'United Kingdom', 'Canada', 'Australia',
+              'Singapore', 'United Arab Emirates', 'Germany', 'France',
+              'Japan', 'India', 'Netherlands', 'Sweden',
+            ].map((country) => (
+              <Link
+                key={country}
+                href={`${getDirectoryUrl()}?country=${encodeURIComponent(country)}`}
+                className="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50 transition-all"
+              >
+                {country}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ────────────────────────────────────────────── */}
+      <section className="bg-[#0D1B2A] py-14 sm:py-16 relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }}
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">
+                Ready to find your perfect agency?
+              </h2>
+              <p className="text-slate-400 text-sm max-w-lg leading-relaxed">
+                Join businesses using FirmsLedger AI to cut vendor sourcing from weeks to seconds.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+              <Link href={getDirectoryUrl()}>
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-3 h-auto rounded-xl text-sm transition-colors">
+                  Try AI Matchmaker <Sparkles className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+              <Link href="/ListYourCompany">
+                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 font-semibold px-7 py-3 h-auto rounded-xl text-sm transition-colors bg-transparent">
+                  List Your Company
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }

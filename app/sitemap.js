@@ -2,6 +2,7 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 
 /** All published blog article slugs — keep in sync with app/Blogs/[slug]/page.jsx */
 const BLOG_SLUGS = [
+  'best-specialty-chemical-companies-australia-2026',
   'best-solar-panels-australia-2026',
   'top-10-stabilizer-brands-india-2026',
   'top-10-switch-socket-brands-india-2026',
@@ -34,6 +35,20 @@ const STAFFING_SLUGS = [
   'industrial-staffing',
 ];
 
+async function getCategorySlugs() {
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return [];
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(url, key, { auth: { persistSession: false } });
+    const { data } = await supabase.from('categories').select('slug').order('slug');
+    return (data || []).map((row) => row.slug).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
 export default async function sitemap() {
   const now = new Date();
 
@@ -61,5 +76,13 @@ export default async function sitemap() {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...staffingRoutes, ...blogRoutes];
+  const categorySlugs = await getCategorySlugs();
+  const categoryRoutes = categorySlugs.map((slug) => ({
+    url: `${BASE_URL}/directory/${slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...staffingRoutes, ...blogRoutes, ...categoryRoutes];
 }

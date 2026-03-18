@@ -327,9 +327,9 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
         </div>
       </div>
 
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block bg-blue-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             IT Staffing · Bangalore · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
@@ -364,7 +364,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
         {/* Intro callout */}
-        <div className="border-l-4 border-blue-600 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
+        <div className="border-l-4 border-orange-500 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
           <p className="text-slate-600 text-base leading-relaxed">
             <strong className="text-slate-900">Why Bangalore in 2026:</strong> Bangalore is Asia&apos;s Silicon Valley — home to 2 million+ IT professionals, 10,000+ tech startups, 40+ Global Capability Centers, and the Indian headquarters of Google, Microsoft, Amazon, Flipkart, and hundreds of MNCs. Finding the right IT staffing partner here requires more than a generic national agency — it requires local network depth, startup ecosystem fluency, and zone-specific expertise.
           </p>
@@ -372,20 +372,20 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">2M+</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">2M+</div>
             <div className="text-xs text-slate-500 mt-1">IT professionals in Bangalore</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">10K+</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">10K+</div>
             <div className="text-xs text-slate-500 mt-1">Tech startups in the city</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">40+</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">40+</div>
             <div className="text-xs text-slate-500 mt-1">Global Capability Centers (GCCs)</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">18–25%</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">18–25%</div>
             <div className="text-xs text-slate-500 mt-1">Annual IT attrition rate</div>
           </div>
         </div>
@@ -401,7 +401,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
               <div key={zone.zone} className="py-5">
                 <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
                   <h3 className="font-bold text-slate-900 text-lg">{zone.zone}</h3>
-                  <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded whitespace-nowrap">{zone.companies}</span>
+                  <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded whitespace-nowrap">{zone.companies}</span>
                 </div>
                 <p className="text-slate-700 text-base leading-relaxed">{zone.detail}</p>
               </div>
@@ -439,7 +439,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
                   <h3 className="text-2xl font-bold text-slate-900">{company.name}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
+                  <span className="inline-block bg-orange-50 text-orange-600 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
                     {company.badge}
                   </span>
                   {company.tags.map((tag) => (
@@ -455,7 +455,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
                 <ul className="space-y-3 mb-5">
                   {company.bullets.map((bullet) => (
                     <li key={bullet} className="text-slate-700 text-base flex gap-2">
-                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                      <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
@@ -529,23 +529,23 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
           </p>
           <ul className="space-y-4 text-slate-700 text-base">
             <li className="flex gap-3">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">2 million+ IT professionals</strong> — the largest single-city IT talent pool in Asia, spanning software engineering, data science, cloud, DevOps, AI, and cybersecurity.</span>
             </li>
             <li className="flex gap-3">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">India&apos;s unicorn factory</strong> — Flipkart, Swiggy, Meesho, PhonePe, Razorpay, Zepto, and dozens of other unicorns are headquartered here, creating constant demand for top engineering talent.</span>
             </li>
             <li className="flex gap-3">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">40+ Global Capability Centers</strong> — Amazon, Google, Microsoft, JP Morgan, Goldman Sachs, and Visa all have major engineering and R&amp;D centers here, competing for the same talent.</span>
             </li>
             <li className="flex gap-3">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">AI talent concentration</strong> — Demand for AI/ML engineers in Bangalore has grown 35% year-on-year in 2026–2027, with supply still lagging significantly behind demand.</span>
             </li>
             <li className="flex gap-3">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">60–90 day notice periods</strong> — unlike Western markets, top Bangalore engineers often have 2–3 month notice periods, making specialized agencies with pre-noticed candidate pools critical to fast hiring.</span>
             </li>
           </ul>
@@ -580,7 +580,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
         </section>
 
         {/* CTA */}
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">Find Your Bangalore IT Hiring Partner</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Browse verified IT staffing and tech recruitment agencies on FirmsLedger. Filter by city, expertise, and hiring model to find the right match for your Bangalore team.
@@ -588,7 +588,7 @@ export default function TopITStaffingCompaniesBangalore2026Article() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href={itStaffingUrl}
-              className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
+              className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
             >
               Browse IT Staffing Agencies →
             </Link>

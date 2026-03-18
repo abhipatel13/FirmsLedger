@@ -37,53 +37,58 @@ export default function CategoryPage({ searchParams }) {
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Category not found</p>
+      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
+        <p className="text-slate-500">Category not found</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F7F8FA]">
       {/* Breadcrumbs */}
-      <div className="bg-white border-b">
+      <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Link href={createPageUrl('Home')} className="hover:text-blue-600">Home</Link>
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900 font-medium">{category.name}</span>
+          <div className="flex items-center gap-2 text-sm text-slate-600">
+            <Link href={createPageUrl('Home')} className="hover:text-orange-600 transition-colors">Home</Link>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+            <span className="text-slate-900 font-semibold">{category.name}</span>
           </div>
         </div>
       </div>
 
       {/* Hero */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="bg-[#0D1B2A] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
           <div className="flex items-center gap-3 mb-4">
-            <Briefcase className="w-10 h-10" />
+            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Briefcase className="w-5 h-5 text-white" />
+            </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{category.name}</h1>
-          <p className="text-xl text-blue-100 max-w-3xl">{category.description}</p>
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-tight text-white">{category.name}</h1>
+          {category.description && (
+            <p className="text-slate-300 max-w-2xl text-base leading-relaxed">{category.description}</p>
+          )}
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-6">
-          <p className="text-gray-600">
-            <span className="font-semibold text-gray-900">{categoryAgencies.length}</span> agencies in this category
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mb-5">
+          <p className="text-slate-500 text-sm">
+            <span className="font-semibold text-slate-900">{categoryAgencies.length}</span> agencies in this category
           </p>
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Loading agencies...</p>
+          <div className="text-center py-16">
+            <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-slate-300 border-t-orange-500"></div>
+            <p className="mt-3 text-slate-500 text-sm">Loading agencies...</p>
           </div>
         ) : categoryAgencies.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No agencies found in this category</p>
+          <div className="text-center py-16">
+            <p className="text-slate-500 text-sm">No agencies found in this category</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 gap-4">
             {categoryAgencies.map(agency => (
               <AgencyCard key={agency.id} agency={agency} />
             ))}

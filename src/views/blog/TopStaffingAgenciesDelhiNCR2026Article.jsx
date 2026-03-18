@@ -328,9 +328,9 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
         </div>
       </div>
 
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block bg-blue-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             Staffing · Delhi NCR · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
@@ -365,7 +365,7 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
         {/* Intro callout */}
-        <div className="border-l-4 border-blue-600 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
+        <div className="border-l-4 border-orange-500 bg-white rounded-r-xl shadow-sm p-6 md:p-8 mb-12">
           <p className="text-slate-600 text-base leading-relaxed">
             <strong className="text-slate-900">Why Delhi NCR in 2026:</strong> Delhi NCR is home to more than 70,000 registered companies, 200+ Fortune 500 India offices in Gurgaon alone, and India&apos;s second-largest IT hub in Noida. With a workforce of 20 million+ and hiring spread across four distinct sub-markets, finding the right staffing agency is critical — and requires local knowledge that national lists often miss.
           </p>
@@ -373,20 +373,20 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">70K+</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">70K+</div>
             <div className="text-xs text-slate-500 mt-1">Companies registered in Delhi NCR</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">200+</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">200+</div>
             <div className="text-xs text-slate-500 mt-1">Fortune 500 offices in Gurgaon</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">20M+</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">20M+</div>
             <div className="text-xs text-slate-500 mt-1">NCR workforce size</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-blue-600">
-            <div className="text-2xl md:text-3xl font-extrabold text-blue-600">#2</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm border-t-4 border-t-orange-500">
+            <div className="text-2xl md:text-3xl font-extrabold text-orange-500">#2</div>
             <div className="text-xs text-slate-500 mt-1">IT hub in India (Noida)</div>
           </div>
         </div>
@@ -401,7 +401,7 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
             {NCR_HUBS.map((hub) => (
               <div key={hub.city} className="py-5">
                 <h3 className="font-bold text-slate-900 text-lg mb-1">{hub.city}</h3>
-                <span className="inline-block text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded mb-2">{hub.focus}</span>
+                <span className="inline-block text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded mb-2">{hub.focus}</span>
                 <p className="text-slate-700 text-base leading-relaxed">{hub.detail}</p>
               </div>
             ))}
@@ -438,7 +438,7 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
                   <h3 className="text-2xl font-bold text-slate-900">{agency.name}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
+                  <span className="inline-block bg-orange-50 text-orange-600 text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded">
                     {agency.badge}
                   </span>
                   {agency.tags.map((tag) => (
@@ -454,7 +454,7 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
                 <ul className="space-y-3 mb-5">
                   {agency.bullets.map((bullet) => (
                     <li key={bullet} className="text-slate-700 text-base flex gap-2">
-                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                      <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
@@ -528,23 +528,23 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
           </p>
           <ul className="space-y-3 text-slate-600 text-sm">
             <li className="flex gap-2">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">Gurgaon is India&apos;s MNC capital</strong> — more Fortune 500 company India offices are headquartered here than any other single city, making it the premier BFSI, consulting, and professional services talent market.</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">Noida is India&apos;s #2 IT hub</strong> — home to HCL, Samsung, Infosys BPO, Sapient, and over 30,000 tech companies, creating one of the densest IT candidate pools outside Bengaluru.</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">Manesar and Faridabad form India&apos;s auto belt</strong> — Maruti Suzuki, Hero MotoCorp, and hundreds of Tier 1 suppliers create continuous demand for engineering, manufacturing, and industrial staffing.</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">Delhi hosts the highest density of PSU and government employers</strong> in India — creating a unique demand for public sector-experienced HR partners.</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-blue-500 font-bold flex-shrink-0">•</span>
+              <span className="text-orange-500 font-bold flex-shrink-0">•</span>
               <span><strong className="text-slate-800">NCR spans three states</strong> (Delhi, Haryana, Uttar Pradesh) — each with different labour laws, PF contribution rules, and compliance requirements that generalist agencies often mishandle.</span>
             </li>
           </ul>
@@ -577,7 +577,7 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
         </section>
 
         {/* CTA */}
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">Find Your Delhi NCR Hiring Partner</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Browse verified staffing and recruitment agencies on FirmsLedger. Filter by location, sector, and expertise to find the right match for Gurgaon, Noida, Delhi, or Faridabad hiring.
@@ -585,7 +585,7 @@ export default function TopStaffingAgenciesDelhiNCR2026Article() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href={directoryUrl}
-              className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
+              className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
             >
               Browse All Agencies →
             </Link>

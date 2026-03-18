@@ -315,9 +315,9 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
       </div>
 
       {/* Header */}
-      <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white py-16 md:py-20">
+      <header className="bg-gradient-to-br [#0D1B2A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-block bg-blue-500/90 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             Manufacturing · India · 2026
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl">
@@ -361,12 +361,12 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
         </p>
 
         {/* Quick Summary — Featured Snippet Optimized */}
-        <section className="mb-12 bg-blue-50 border border-blue-100 rounded-2xl p-6 md:p-8">
+        <section className="mb-12 bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8">
           <h2 className="text-xl font-bold text-slate-900 mb-4">Quick Summary: Top 10 Drilling Machine Brands in India (2026)</h2>
           <ul className="space-y-3">
             {QUICK_SUMMARY.map((item) => (
               <li key={item.rank} className="flex gap-3 text-base">
-                <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{item.rank}</span>
+                <span className="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold">{item.rank}</span>
                 <span><strong className="text-slate-900">{item.name}</strong> — <span className="text-slate-700">{item.overview}</span></span>
               </li>
             ))}
@@ -417,7 +417,7 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
                 <ul className="space-y-3 mb-5">
                   {brand.strengths.map((s) => (
                     <li key={s} className="text-slate-700 text-base flex gap-2">
-                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                      <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
                       <span>{s}</span>
                     </li>
                   ))}
@@ -428,7 +428,7 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
                 </p>
 
                 <p className="text-base font-semibold text-slate-800">
-                  <span className="text-blue-700 font-semibold">Why It Stands Out: </span>{brand.whyStandOut}
+                  <span className="text-orange-600 font-semibold">Why It Stands Out: </span>{brand.whyStandOut}
                 </p>
               </div>
             ))}
@@ -455,7 +455,7 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
                     <td className="p-3 font-medium text-slate-800">{row.brand}</td>
                     <td className="p-3 text-slate-600">{row.specialization}</td>
                     <td className="p-3 text-slate-600">{row.suitableFor}</td>
-                    <td className="p-3 text-slate-600 font-medium text-blue-700">{row.priceRange}</td>
+                    <td className="p-3 text-slate-600 font-medium text-orange-600">{row.priceRange}</td>
                     <td className="p-3 text-slate-600">{row.afterSales}</td>
                   </tr>
                 ))}
@@ -536,7 +536,7 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
         </section>
 
         {/* CTA */}
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-gradient-to-br [#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">Find Verified Industrial & Manufacturing Partners</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Looking for verified industrial service providers, equipment consultants, or procurement partners in India? Browse FirmsLedger&apos;s directory of reviewed and verified B2B service providers.
@@ -544,7 +544,7 @@ export default function Top10DrillingMachineBrandsIndia2026Article() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href={directoryUrl}
-              className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
+              className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-all"
             >
               Browse Service Providers →
             </Link>
