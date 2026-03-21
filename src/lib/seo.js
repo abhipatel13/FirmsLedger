@@ -27,6 +27,7 @@ export const BLOG_SLUGS = [
   'top-staffing-agencies-delhi-ncr-2026',
   'top-it-staffing-companies-bangalore-2026',
   'best-solar-panels-australia-2026',
+  'top-cnc-manufacturers-nevada-2026',
 ];
 export const SEO_YEAR = 2026;
 export const SEO_COUNTRY = process.env.NEXT_PUBLIC_SEO_COUNTRY || 'Global';

@@ -49,18 +49,8 @@ export default function Layout({ children }) {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20 gap-2 sm:gap-8 min-w-0">
             {/* Logo */}
-            <Link href={createPageUrl('Home')} className="flex items-center gap-2 sm:gap-3 flex-shrink-0 min-w-0">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 bg-[#0D1B2A] rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-orange-400 font-black text-base sm:text-lg leading-none tracking-tight">FL</span>
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-lg sm:text-xl font-extrabold text-[#0D1B2A] leading-tight tracking-tight truncate">
-                  FirmsLedger
-                </span>
-                <span className="text-[9px] sm:text-[10px] text-orange-500 font-semibold leading-tight tracking-widest hidden sm:block uppercase">
-                  AI Matchmaker
-                </span>
-              </div>
+            <Link href={createPageUrl('Home')} className="flex items-center flex-shrink-0">
+              <img src="/logo.svg" alt="FirmsLedger" className="h-11 sm:h-12 w-auto" />
             </Link>
 
             {/* Desktop Navigation */}
@@ -273,13 +263,8 @@ export default function Layout({ children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12 mb-8 sm:mb-12">
             <div className="lg:col-span-2">
-              <Link href={createPageUrl('Home')} className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <span className="text-white font-black text-base leading-none tracking-tight">FL</span>
-                </div>
-                <span className="text-xl font-extrabold text-white">
-                  FirmsLedger
-                </span>
+              <Link href={createPageUrl('Home')} className="flex items-center mb-6">
+                <img src="/logo-white.svg" alt="FirmsLedger" className="h-11 w-auto" />
               </Link>
               <p className="text-slate-400 text-sm mb-6 leading-relaxed max-w-sm">
                 The trusted global platform to discover and connect with verified business service providers worldwide. Make confident decisions for your business growth.

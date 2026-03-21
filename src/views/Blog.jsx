@@ -12,6 +12,20 @@ const POSTS_PER_PAGE = 6;
 
 const ARTICLES_LIST = [
   {
+    slug: 'top-cnc-manufacturers-nevada-2026',
+    title: 'Top CNC Manufacturers in Nevada: Best Machine Shops for Precision Machining in 2026',
+    excerpt: 'A comprehensive guide to the best CNC manufacturers in Nevada — CES Machine, Owens Industries, Frigate, CapableMachining & Tonza Making. Compared by capabilities, certifications, and industries served.',
+    readTime: '12 min read',
+    category: 'Manufacturing',
+    icon: Settings,
+    image: {
+      src: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1200&q=85',
+      alt: 'Top CNC manufacturers in Nevada 2026 - precision machining and CNC machine shops',
+      width: 1200,
+      height: 630,
+    },
+  },
+  {
     slug: 'best-specialty-chemical-companies-australia-2026',
     title: 'Best Specialty Chemical Companies in Australia for Manufacturing (2026)',
     excerpt: 'A verified B2B guide to Australia\'s top specialty chemical suppliers — Orica, Nufarm, Ixom, Brenntag, Chem-Supply & more. Compared by AICIS compliance, certifications, and industries served.',

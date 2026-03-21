@@ -11,8 +11,10 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getDirectoryUrlWithParams, getCompanyProfileUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 import FilterPanel from '@/components/FilterPanel';
-import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle, Search } from 'lucide-react';
+import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { debounce } from 'lodash';
+
+const PAGE_SIZE = 10;
 
 export default function Directory({ initialCategorySlug, underStaffing: underStaffingProp, initialAgencies, initialAgencyCategories }) {
   const router = useRouter();
@@ -40,6 +42,8 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const [debouncedSearch, setDebouncedSearch] = useState(searchFromUrl);
+  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
+  const [currentPage, setCurrentPage] = useState(isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl);
 
   const { data: categoriesRaw = [] } = useQuery({
     queryKey: ['categories'],
@@ -87,7 +91,12 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
     };
   }, [searchQuery]);
 
-  // Update URL when filters change – /directory, /directory/staffing, /directory/staffing/xxx, or /directory/xxx + query
+  // Reset to page 1 whenever any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedService, selectedCountry, selectedState, debouncedSearch, selectedRating, selectedTeamSize]);
+
+  // Update URL when filters or page change
   useEffect(() => {
     const base =
       selectedService === 'staffing-companies' || selectedService === 'staffing'
@@ -99,12 +108,13 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
     if (debouncedSearch) params.set('search', debouncedSearch);
     if (selectedRating) params.set('rating', selectedRating);
     if (selectedTeamSize) params.set('teamSize', selectedTeamSize);
+    if (currentPage > 1) params.set('page', currentPage);
     const query = params.toString();
     const newPath = query ? `${base}?${query}` : base;
     if (typeof window !== 'undefined' && (window.location.pathname + window.location.search) !== newPath) {
       router.replace(newPath);
     }
-  }, [selectedService, selectedCountry, selectedState, debouncedSearch, selectedRating, selectedTeamSize, useStaffingPath, router]);
+  }, [selectedService, selectedCountry, selectedState, debouncedSearch, selectedRating, selectedTeamSize, currentPage, useStaffingPath, router]);
 
   // Initialize filters from URL (only when URL has a category and state is not already in sync)
   useEffect(() => {
@@ -196,6 +206,16 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
     return true;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredAgencies.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const pagedAgencies = filteredAgencies.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  function goToPage(p) {
+    const next = Math.max(1, Math.min(p, totalPages));
+    setCurrentPage(next);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Page Header */}
@@ -256,7 +276,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
         {/* Sort Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <p className="text-sm text-slate-500">
-            Showing <strong className="text-slate-800">{filteredAgencies.length}</strong> {selectedCategoryName}
+            Showing <strong className="text-slate-800">{(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filteredAgencies.length)}</strong> of <strong className="text-slate-800">{filteredAgencies.length}</strong> {selectedCategoryName}
           </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500 font-medium">Sort:</span>
@@ -284,7 +304,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredAgencies.map((agency, index) => (
+            {pagedAgencies.map((agency, index) => (
               <div
                 key={agency.id}
                 className="bg-white border border-slate-200 rounded-lg hover:border-slate-300 hover:shadow-sm transition-all duration-150"
@@ -295,7 +315,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
                     {/* Rank + Logo */}
                     <div className="flex items-start gap-3 flex-shrink-0">
                       <div className="w-7 h-7 rounded bg-[#0D1B2A] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[10px] font-black text-white">{index + 1}</span>
+                        <span className="text-[10px] font-black text-white">{(safePage - 1) * PAGE_SIZE + index + 1}</span>
                       </div>
                       {agency.logo_url ? (
                         <img src={agency.logo_url} alt={agency.name} className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white" />
@@ -388,7 +408,59 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
             ))}
           </div>
         )}
+
+        {/* Pagination */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-1.5 mt-8 mb-2">
+            <button
+              onClick={() => goToPage(safePage - 1)}
+              disabled={safePage === 1}
+              className="flex items-center gap-1 px-3 py-2 rounded-md border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Prev
+            </button>
+
+            {getPaginationPages(safePage, totalPages).map((item, i) =>
+              item === '...' ? (
+                <span key={`ellipsis-${i}`} className="px-2 py-2 text-slate-400 text-sm select-none">…</span>
+              ) : (
+                <button
+                  key={item}
+                  onClick={() => goToPage(item)}
+                  className={`w-9 h-9 rounded-md border text-sm font-medium transition-colors ${
+                    item === safePage
+                      ? 'bg-orange-500 border-orange-500 text-white'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {item}
+                </button>
+              )
+            )}
+
+            <button
+              onClick={() => goToPage(safePage + 1)}
+              disabled={safePage === totalPages}
+              className="flex items-center gap-1 px-3 py-2 rounded-md border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
+}
+
+function getPaginationPages(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = [];
+  if (current <= 4) {
+    pages.push(1, 2, 3, 4, 5, '...', total);
+  } else if (current >= total - 3) {
+    pages.push(1, '...', total - 4, total - 3, total - 2, total - 1, total);
+  } else {
+    pages.push(1, '...', current - 1, current, current + 1, '...', total);
+  }
+  return pages;
 }

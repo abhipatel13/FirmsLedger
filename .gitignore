@@ -28,4 +28,6 @@ dist-ssr
 *.sln
 *.sw?
 
-.env
+# Google Cloud service account keys — never commit
+firmsledger-*.json
+*-credentials.json

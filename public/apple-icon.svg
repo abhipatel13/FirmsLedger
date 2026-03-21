@@ -1,4 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none">
-  <rect width="180" height="180" rx="36" fill="#0D1B2A"/>
-  <text x="90" y="122" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="78" fill="#F97316" letter-spacing="-2">FL</text>
+  <rect width="180" height="180" rx="40" fill="#1A2E4A"/>
+  <defs>
+    <linearGradient id="sg" x1="90" y1="20" x2="90" y2="165" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#2E4E6E"/>
+      <stop offset="100%" stop-color="#0F1C2B"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield -->
+  <path d="M90,18 L158,44 L158,105 C158,140 126,158 90,168 C54,158 22,140 22,105 L22,44 Z"
+        fill="url(#sg)"/>
+  <path d="M90,18 L158,44 L153,46 L90,22 L27,46 L22,44 Z"
+        fill="#F5A623" opacity="0.4"/>
+  <!-- Ledger lines -->
+  <rect x="52" y="62" width="76" height="8" rx="4" fill="white" opacity="0.20"/>
+  <rect x="52" y="78" width="55" height="8" rx="4" fill="white" opacity="0.14"/>
+  <!-- Gold checkmark -->
+  <path d="M48,108 L72,134 L132,78"
+        stroke="#F5A623" stroke-width="14"
+        stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

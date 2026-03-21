@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/daily-blog",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/generate-blog",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/seo-audit",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/submit-urls",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}

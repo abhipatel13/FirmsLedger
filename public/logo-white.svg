@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 188 48" fill="none">
+  <!-- Shield — semi-transparent white for dark backgrounds -->
+  <g transform="translate(2, 3)">
+    <path d="M17,1 L32,7 L32,22 C32,30 25,34 17,37 C9,34 2,30 2,22 L2,7 Z"
+          fill="white" fill-opacity="0.10"
+          stroke="white" stroke-opacity="0.22" stroke-width="1"/>
+    <path d="M17,1 L32,7 L30.5,7.7 L17,2.3 L3.5,7.7 L2,7 Z"
+          fill="#F5A623" opacity="0.5"/>
+    <rect x="8.5" y="10" width="17" height="1.8" rx="0.9" fill="white" opacity="0.28"/>
+    <rect x="8.5" y="13.5" width="12" height="1.8" rx="0.9" fill="white" opacity="0.18"/>
+    <path d="M8,22 L14,28 L25,15"
+          stroke="#F5A623" stroke-width="3.2"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Wordmark — white -->
+  <text x="46" y="31"
+        font-family="system-ui,-apple-system,'Helvetica Neue','Segoe UI',Arial,sans-serif"
+        font-size="23" fill="white">
+    <tspan font-weight="800" letter-spacing="-0.6">Firms</tspan><tspan
+          font-weight="300" letter-spacing="-0.3" opacity="0.80">Ledger</tspan>
+  </text>
+
+  <!-- Gold accent dot -->
+  <circle cx="180" cy="26" r="2.8" fill="#F5A623"/>
+</svg>

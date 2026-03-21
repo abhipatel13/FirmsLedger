@@ -19,6 +19,9 @@ const nextConfig = {
       { source: '/blogs', destination: '/Blogs' },
       { source: '/blogs/:path*', destination: '/Blogs/:path*' },
       { source: '/contact', destination: '/Contact' },
+      { source: '/blog-automation', destination: '/BlogAutomation' },
+      // Admin routes — served directly from app/admin/ (no rewrite needed)
+      // but kept here as documentation; Next.js App Router resolves /admin/** automatically
     ];
   },
 };

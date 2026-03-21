@@ -35,6 +35,25 @@ const STAFFING_SLUGS = [
   'industrial-staffing',
 ];
 
+/** Fetch AI-generated blog slugs from Supabase */
+async function getDbBlogSlugs() {
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return [];
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(url, key, { auth: { persistSession: false } });
+    const { data } = await supabase
+      .from('blog_posts')
+      .select('slug, updated_at')
+      .eq('published', true)
+      .order('created_at', { ascending: false });
+    return data || [];
+  } catch {
+    return [];
+  }
+}
+
 async function getCategorySlugs() {
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -84,5 +103,17 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...staffingRoutes, ...blogRoutes, ...categoryRoutes];
+  // AI-generated posts from Supabase (exclude slugs already in static list)
+  const dbPosts = await getDbBlogSlugs();
+  const staticSlugsSet = new Set(BLOG_SLUGS);
+  const dbBlogRoutes = dbPosts
+    .filter((p) => !staticSlugsSet.has(p.slug))
+    .map((p) => ({
+      url: `${BASE_URL}/blogs/${p.slug}`,
+      lastModified: p.updated_at ? new Date(p.updated_at) : now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }));
+
+  return [...staticRoutes, ...staffingRoutes, ...blogRoutes, ...dbBlogRoutes, ...categoryRoutes];
 }

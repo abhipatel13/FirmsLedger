@@ -1,5 +1,27 @@
 import { notFound } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY } from '@/lib/seo';
+import DynamicBlogRenderer from '@/components/DynamicBlogRenderer';
+
+/** Fetch an AI-generated post from Supabase by slug */
+async function getDbPost(slug) {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      { auth: { persistSession: false } }
+    );
+    const { data } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('slug', slug)
+      .eq('published', true)
+      .single();
+    return data || null;
+  } catch {
+    return null;
+  }
+}
 import BestContractStaffingAgenciesIndia2026Article from '@/views/blog/BestContractStaffingAgenciesIndia2026Article';
 import BestPermanentStaffingRPOFirmsIndia2026Article from '@/views/blog/BestPermanentStaffingRPOFirmsIndia2026Article';
 import HealthcareStaffingAhmedabadArticle from '@/views/blog/HealthcareStaffingAhmedabadArticle';
@@ -17,8 +39,18 @@ import Top10SwitchSocketBrandsIndia2026Article from '@/views/blog/Top10SwitchSoc
 import Top10StabilizerBrandsIndia2026Article from '@/views/blog/Top10StabilizerBrandsIndia2026Article';
 import BestSolarPanelsAustralia2026Article from '@/views/blog/BestSolarPanelsAustralia2026Article';
 import BestSpecialtyChemicalCompaniesAustralia2026Article from '@/views/blog/BestSpecialtyChemicalCompaniesAustralia2026Article';
+import TopCNCManufacturersNevada2026Article from '@/views/blog/TopCNCManufacturersNevada2026Article';
 
 const ARTICLES = {
+  'top-cnc-manufacturers-nevada-2026': {
+    title: 'Top CNC Manufacturers in Nevada: Best Machine Shops for Precision Machining in 2026',
+    description: 'A comprehensive guide to the best CNC manufacturers in Nevada — CES Machine, Owens Industries, Frigate, CapableMachining, and Tonza Making. Compared by capabilities, certifications, and industries served.',
+    seoTitle: `Top CNC Manufacturers in Nevada: Best Machine Shops for Precision Machining in 2026 | ${SITE_NAME}`,
+    seoDescription: 'Discover the top CNC manufacturers in Nevada for 2026. Compare CES Machine, Owens Industries, Frigate & more for precision machining, certifications, and industries served.',
+    image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top CNC manufacturers in Nevada 2026 - precision machining and CNC machine shops',
+    component: TopCNCManufacturersNevada2026Article,
+  },
   'best-specialty-chemical-companies-australia-2026': {
     title: 'Best Specialty Chemical Companies in Australia for Manufacturing (2026)',
     description: 'A verified B2B guide to Australia\'s top specialty chemical suppliers — compared by sector expertise, AICIS compliance, certifications, and manufacturing capability for 2026.',
@@ -177,25 +209,50 @@ const ARTICLES = {
 export async function generateMetadata({ params }) {
   const resolved = await params;
   const slug = resolved?.slug?.trim();
-  if (!slug || !ARTICLES[slug]) return { title: `${SITE_NAME} – Blog` };
-  const meta = ARTICLES[slug];
-  const title = meta.seoTitle || `${meta.title} | ${SITE_NAME}`;
-  const description = meta.seoDescription || meta.description;
-  const canonical = `${BASE_URL.replace(/\/$/, '')}/blogs/${slug}`;
-  const imageUrl = meta.image || null;
-  return {
-    title,
-    description,
-    openGraph: {
+  if (!slug) return { title: `${SITE_NAME} – Blog` };
+
+  // Static article metadata
+  if (ARTICLES[slug]) {
+    const meta = ARTICLES[slug];
+    const title = meta.seoTitle || `${meta.title} | ${SITE_NAME}`;
+    const description = meta.seoDescription || meta.description;
+    const canonical = `${BASE_URL.replace(/\/$/, '')}/blogs/${slug}`;
+    const imageUrl = meta.image || null;
+    return {
       title,
       description,
+      openGraph: {
+        title,
+        description,
+        type: 'article',
+        url: canonical,
+        ...(imageUrl && {
+          images: [{ url: imageUrl, width: 1200, height: 630, alt: meta.imageAlt || title }],
+        }),
+      },
+      ...(imageUrl && { twitter: { card: 'summary_large_image', images: [imageUrl] } }),
+      alternates: { canonical },
+    };
+  }
+
+  // DB-backed (AI-generated) article metadata
+  const dbPost = await getDbPost(slug);
+  if (!dbPost) return { title: `${SITE_NAME} – Blog` };
+  const title = `${dbPost.title} | ${SITE_NAME}`;
+  const canonical = `${BASE_URL.replace(/\/$/, '')}/blogs/${slug}`;
+  return {
+    title,
+    description: dbPost.meta_description,
+    openGraph: {
+      title,
+      description: dbPost.meta_description,
       type: 'article',
       url: canonical,
-      ...(imageUrl && {
-        images: [{ url: imageUrl, width: 1200, height: 630, alt: meta.imageAlt || title }],
+      ...(dbPost.image_url && {
+        images: [{ url: dbPost.image_url, width: 1200, height: 630, alt: dbPost.image_alt || title }],
       }),
     },
-    ...(imageUrl && { twitter: { card: 'summary_large_image', images: [imageUrl] } }),
+    ...(dbPost.image_url && { twitter: { card: 'summary_large_image', images: [dbPost.image_url] } }),
     alternates: { canonical },
   };
 }
@@ -203,7 +260,16 @@ export async function generateMetadata({ params }) {
 export default async function BlogArticlePage({ params }) {
   const resolved = await params;
   const slug = resolved?.slug?.trim();
-  if (!slug || !ARTICLES[slug]) notFound();
-  const ArticleComponent = ARTICLES[slug].component;
-  return <ArticleComponent />;
+  if (!slug) notFound();
+
+  // 1. Try static hand-written article first
+  if (ARTICLES[slug]) {
+    const ArticleComponent = ARTICLES[slug].component;
+    return <ArticleComponent />;
+  }
+
+  // 2. Fall back to AI-generated post from Supabase
+  const dbPost = await getDbPost(slug);
+  if (!dbPost) notFound();
+  return <DynamicBlogRenderer post={dbPost} />;
 }

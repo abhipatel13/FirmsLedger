@@ -32,8 +32,18 @@ export const metadata = {
     },
   },
   icons: {
-    icon: { url: '/icon.svg', type: 'image/svg+xml' },
-    apple: { url: '/apple-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
+    icon: [
+      { url: '/favicon.ico', sizes: '16x16 32x32', type: 'image/x-icon' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      { rel: 'mask-icon', url: '/icon.svg', color: '#1A2E4A' },
+    ],
   },
 };
 
