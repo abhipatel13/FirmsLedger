@@ -17,9 +17,13 @@ const TEAM_SIZES = ['1–10', '11–50', '51–200', '201–500', '500+'];
 
 const EMPTY_FORM = {
   name: '', contact_email: '', phone: '', website: '', logo_url: '',
-  description: '', hq_city: '', hq_country: '', team_size: '',
-  founded_year: '', pricing_model: '', min_project_size: '', remote_support: false,
+  tagline: '', description: '', address: '',
+  hq_city: '', hq_state: '', hq_country: '',
+  team_size: '', founded_year: '', hourly_rate: '',
+  pricing_model: '', min_project_size: '', remote_support: false,
   industries_served: [], approved: true, verified: false, featured: false,
+  linkedin_url: '', twitter_url: '', facebook_url: '', instagram_url: '',
+  service_focus: [], industry_focus: [], client_focus: { small_business: 0, medium_business: 0, large_business: 0 },
 };
 
 function Badge({ label, color }) {
@@ -64,6 +68,128 @@ function FormField({ label, required, children }) {
 }
 
 const INPUT = 'w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500';
+
+const SERVICE_CATEGORIES = [
+  'Digital Marketing', 'SEO', 'Web Development', 'Mobile App Development',
+  'IT Services', 'Staffing', 'Accounting', 'Legal', 'Public Relations',
+  'Graphic Design', 'Content Marketing', 'Social Media', 'PPC / Paid Ads', 'Other',
+];
+
+function ServiceFocusEditor({ value, onChange }) {
+  const rows = Array.isArray(value) ? value : [];
+  const add = () => onChange([...rows, { service: '', category: '', percentage: 0 }]);
+  const remove = (i) => onChange(rows.filter((_, idx) => idx !== i));
+  const update = (i, key, val) => onChange(rows.map((row, idx) => idx === i ? { ...row, [key]: val } : row));
+  return (
+    <div className="space-y-2">
+      {rows.map((row, i) => (
+        <div key={i} className="flex gap-2 items-center">
+          <input
+            className={INPUT + ' flex-1 min-w-0'}
+            placeholder="Service name"
+            value={row.service}
+            onChange={(e) => update(i, 'service', e.target.value)}
+          />
+          <select
+            className={INPUT + ' w-40'}
+            value={row.category}
+            onChange={(e) => update(i, 'category', e.target.value)}
+          >
+            <option value="">Category</option>
+            {SERVICE_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <div className="flex items-center gap-1 shrink-0">
+            <input
+              type="number" min="0" max="100"
+              className="w-16 bg-gray-800 border border-gray-700 rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-blue-500"
+              value={row.percentage}
+              onChange={(e) => update(i, 'percentage', parseInt(e.target.value) || 0)}
+            />
+            <span className="text-gray-500 text-sm">%</span>
+          </div>
+          <button type="button" onClick={() => remove(i)} className="text-gray-600 hover:text-red-400 transition-colors shrink-0">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
+      <button
+        type="button" onClick={add}
+        className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-1"
+      >
+        <Plus className="w-3.5 h-3.5" /> Add Service
+      </button>
+    </div>
+  );
+}
+
+function IndustryFocusEditor({ value, onChange }) {
+  const rows = Array.isArray(value) ? value : [];
+  const add = () => onChange([...rows, { industry: '', percentage: 0 }]);
+  const remove = (i) => onChange(rows.filter((_, idx) => idx !== i));
+  const update = (i, key, val) => onChange(rows.map((row, idx) => idx === i ? { ...row, [key]: val } : row));
+  return (
+    <div className="space-y-2">
+      {rows.map((row, i) => (
+        <div key={i} className="flex gap-2 items-center">
+          <input
+            className={INPUT + ' flex-1 min-w-0'}
+            placeholder="Industry (e.g. Healthcare)"
+            value={row.industry}
+            onChange={(e) => update(i, 'industry', e.target.value)}
+          />
+          <div className="flex items-center gap-1 shrink-0">
+            <input
+              type="number" min="0" max="100"
+              className="w-16 bg-gray-800 border border-gray-700 rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-blue-500"
+              value={row.percentage}
+              onChange={(e) => update(i, 'percentage', parseInt(e.target.value) || 0)}
+            />
+            <span className="text-gray-500 text-sm">%</span>
+          </div>
+          <button type="button" onClick={() => remove(i)} className="text-gray-600 hover:text-red-400 transition-colors shrink-0">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
+      <button
+        type="button" onClick={add}
+        className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-1"
+      >
+        <Plus className="w-3.5 h-3.5" /> Add Industry
+      </button>
+    </div>
+  );
+}
+
+function ClientFocusEditor({ value, onChange }) {
+  const cf = (value && typeof value === 'object' && !Array.isArray(value))
+    ? value
+    : { small_business: 0, medium_business: 0, large_business: 0 };
+  const update = (key, val) => onChange({ ...cf, [key]: parseInt(val) || 0 });
+  const labels = [
+    { key: 'small_business', label: 'Small Business' },
+    { key: 'medium_business', label: 'Mid-Market' },
+    { key: 'large_business', label: 'Enterprise' },
+  ];
+  return (
+    <div className="flex gap-4">
+      {labels.map(({ key, label }) => (
+        <div key={key} className="flex-1">
+          <p className="text-xs text-gray-500 mb-1">{label}</p>
+          <div className="flex items-center gap-1">
+            <input
+              type="number" min="0" max="100"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-blue-500"
+              value={cf[key] ?? 0}
+              onChange={(e) => update(key, e.target.value)}
+            />
+            <span className="text-gray-500 text-sm shrink-0">%</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function RegisterModal({ onClose, onCreated }) {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -141,7 +267,7 @@ function RegisterModal({ onClose, onCreated }) {
               <input className={INPUT} type="url" value={form.logo_url} onChange={(e) => set('logo_url', e.target.value)} placeholder="https://..." />
             </FormField>
             <FormField label="Founded Year">
-              <input className={INPUT} type="number" min="1900" max="2026" value={form.founded_year} onChange={(e) => set('founded_year', e.target.value)} placeholder="2010" />
+              <input className={INPUT} type="number" min="1900" max="2030" value={form.founded_year} onChange={(e) => set('founded_year', e.target.value)} placeholder="2010" />
             </FormField>
           </div>
 
@@ -155,14 +281,28 @@ function RegisterModal({ onClose, onCreated }) {
             />
           </FormField>
 
+          <FormField label="Tagline">
+            <input className={INPUT} value={form.tagline} onChange={(e) => set('tagline', e.target.value)} placeholder="Award-winning digital marketing agency" />
+          </FormField>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField label="City">
               <input className={INPUT} value={form.hq_city} onChange={(e) => set('hq_city', e.target.value)} placeholder="New York" />
             </FormField>
+            <FormField label="State">
+              <input className={INPUT} value={form.hq_state} onChange={(e) => set('hq_state', e.target.value)} placeholder="NY" />
+            </FormField>
             <FormField label="Country">
               <input className={INPUT} value={form.hq_country} onChange={(e) => set('hq_country', e.target.value)} placeholder="United States" />
             </FormField>
+            <FormField label="Hourly Rate">
+              <input className={INPUT} value={form.hourly_rate} onChange={(e) => set('hourly_rate', e.target.value)} placeholder="$100 - $149/hr" />
+            </FormField>
           </div>
+
+          <FormField label="Full Address">
+            <input className={INPUT} value={form.address} onChange={(e) => set('address', e.target.value)} placeholder="123 Main St, Suite 100, New York, NY 10001" />
+          </FormField>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <FormField label="Team Size">
@@ -179,6 +319,39 @@ function RegisterModal({ onClose, onCreated }) {
             </FormField>
             <FormField label="Min. Project Size">
               <input className={INPUT} value={form.min_project_size} onChange={(e) => set('min_project_size', e.target.value)} placeholder="$5,000" />
+            </FormField>
+          </div>
+
+          {/* Social Media */}
+          <div className="pt-2 border-t border-gray-800">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Social Media</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="LinkedIn URL">
+                <input className={INPUT} type="url" value={form.linkedin_url} onChange={(e) => set('linkedin_url', e.target.value)} placeholder="https://linkedin.com/company/..." />
+              </FormField>
+              <FormField label="Twitter / X URL">
+                <input className={INPUT} type="url" value={form.twitter_url} onChange={(e) => set('twitter_url', e.target.value)} placeholder="https://x.com/..." />
+              </FormField>
+              <FormField label="Facebook URL">
+                <input className={INPUT} type="url" value={form.facebook_url} onChange={(e) => set('facebook_url', e.target.value)} placeholder="https://facebook.com/..." />
+              </FormField>
+              <FormField label="Instagram URL">
+                <input className={INPUT} type="url" value={form.instagram_url} onChange={(e) => set('instagram_url', e.target.value)} placeholder="https://instagram.com/..." />
+              </FormField>
+            </div>
+          </div>
+
+          {/* Focus fields */}
+          <div className="pt-2 border-t border-gray-800 space-y-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Focus Data</p>
+            <FormField label="Service Focus">
+              <ServiceFocusEditor value={form.service_focus} onChange={(v) => set('service_focus', v)} />
+            </FormField>
+            <FormField label="Industry Focus">
+              <IndustryFocusEditor value={form.industry_focus} onChange={(v) => set('industry_focus', v)} />
+            </FormField>
+            <FormField label="Client Focus (%)">
+              <ClientFocusEditor value={form.client_focus} onChange={(v) => set('client_focus', v)} />
             </FormField>
           </div>
 
@@ -258,9 +431,11 @@ function EditModal({ agency, onClose, onSaved }) {
     twitter_url:      agency.twitter_url      ?? '',
     facebook_url:     agency.facebook_url     ?? '',
     instagram_url:    agency.instagram_url    ?? '',
-    service_focus:    agency.service_focus    ? JSON.stringify(agency.service_focus, null, 2) : '',
-    industry_focus:   agency.industry_focus   ? JSON.stringify(agency.industry_focus, null, 2) : '',
-    client_focus:     agency.client_focus     ? JSON.stringify(agency.client_focus, null, 2) : '',
+    service_focus:    Array.isArray(agency.service_focus)  ? agency.service_focus  : [],
+    industry_focus:   Array.isArray(agency.industry_focus) ? agency.industry_focus : [],
+    client_focus:     (agency.client_focus && typeof agency.client_focus === 'object' && !Array.isArray(agency.client_focus))
+                        ? agency.client_focus
+                        : { small_business: 0, medium_business: 0, large_business: 0 },
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -280,20 +455,11 @@ function EditModal({ agency, onClose, onSaved }) {
     setSaving(true);
     setError('');
     try {
-      // Parse JSON fields
-      let service_focus = null, industry_focus = null, client_focus = null;
-      try { service_focus  = form.service_focus  ? JSON.parse(form.service_focus)  : []; } catch { setError('service_focus is not valid JSON'); setSaving(false); return; }
-      try { industry_focus = form.industry_focus ? JSON.parse(form.industry_focus) : []; } catch { setError('industry_focus is not valid JSON'); setSaving(false); return; }
-      try { client_focus   = form.client_focus   ? JSON.parse(form.client_focus)   : {}; } catch { setError('client_focus is not valid JSON'); setSaving(false); return; }
-
-      const payload = { id: agency.id, ...form, service_focus, industry_focus, client_focus };
-      delete payload.service_focus; payload.service_focus = service_focus;
-
       const res = await fetch('/api/admin/agencies', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ id: agency.id, ...form, service_focus, industry_focus, client_focus }),
+        body: JSON.stringify({ id: agency.id, ...form }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Failed to save'); return; }
@@ -417,17 +583,17 @@ function EditModal({ agency, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* Focus JSON fields */}
+          {/* Focus fields */}
           <div className="pt-2 border-t border-gray-800 space-y-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Focus Data (JSON)</p>
-            <FormField label='Service Focus — e.g. [{"service":"SEO","percentage":50,"category":"Digital Marketing"}]'>
-              <textarea className={`${INPUT} resize-none font-mono text-xs`} rows={3} value={form.service_focus} onChange={(e) => set('service_focus', e.target.value)} placeholder='[{"service": "SEO Services", "percentage": 50, "category": "Digital Marketing"}]' />
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Focus Data</p>
+            <FormField label="Service Focus">
+              <ServiceFocusEditor value={form.service_focus} onChange={(v) => set('service_focus', v)} />
             </FormField>
-            <FormField label='Industry Focus — e.g. [{"industry":"Healthcare","percentage":30}]'>
-              <textarea className={`${INPUT} resize-none font-mono text-xs`} rows={3} value={form.industry_focus} onChange={(e) => set('industry_focus', e.target.value)} placeholder='[{"industry": "Healthcare", "percentage": 30}]' />
+            <FormField label="Industry Focus">
+              <IndustryFocusEditor value={form.industry_focus} onChange={(v) => set('industry_focus', v)} />
             </FormField>
-            <FormField label='Client Focus — e.g. {"small_business":65,"medium_business":30,"large_business":5}'>
-              <textarea className={`${INPUT} resize-none font-mono text-xs`} rows={2} value={form.client_focus} onChange={(e) => set('client_focus', e.target.value)} placeholder='{"small_business": 65, "medium_business": 30, "large_business": 5}' />
+            <FormField label="Client Focus (%)">
+              <ClientFocusEditor value={form.client_focus} onChange={(v) => set('client_focus', v)} />
             </FormField>
           </div>
 

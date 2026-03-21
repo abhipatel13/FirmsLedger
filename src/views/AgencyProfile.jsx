@@ -15,8 +15,9 @@ import {
   DollarSign,
 } from 'lucide-react';
 
-// ─── Colour palette for donut chart ──────────────────────────────────────────
-const DONUT_COLORS = ['#B08D57', '#8B6E42', '#D4A96A', '#6B5230', '#E8C88A', '#4A3820', '#C9A96A'];
+// ─── Brand palette ────────────────────────────────────────────────────────────
+// Orange shades + navy accents — matches FirmsLedger brand
+const DONUT_COLORS = ['#F97316', '#0D1B2A', '#FB923C', '#1E3A5F', '#FDBA74', '#2E4E6E', '#FED7AA'];
 
 // ─── Social media icons (inline SVGs — no extra dep) ─────────────────────────
 function LinkedInIcon() {
@@ -53,7 +54,7 @@ function Stars({ rating }) {
   return (
     <span className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} className={`w-3.5 h-3.5 ${n <= Math.round(rating) ? 'text-[#B08D57] fill-[#B08D57]' : 'text-slate-300'}`} />
+        <Star key={n} className={`w-3.5 h-3.5 ${n <= Math.round(rating) ? 'text-orange-500 fill-orange-500' : 'text-slate-300'}`} />
       ))}
     </span>
   );
@@ -98,7 +99,7 @@ export default function AgencyProfile({ companySlug }) {
 
   const { data: reviews = [] } = useQuery({
     queryKey: ['agency-reviews', agencyId],
-    queryFn: () => api.entities.Review.filter({ agency_id: agencyId, approved: true }, '-created_date', 50),
+    queryFn: () => api.entities.Review.filter({ agency_id: agencyId, approved: true }, '-created_at', 50),
     enabled: !!agencyId,
   });
 
@@ -263,7 +264,7 @@ export default function AgencyProfile({ companySlug }) {
             {/* Description + social */}
             <div className="p-6">
               {agency.tagline && (
-                <p className="text-[#B08D57] text-sm font-medium mb-2">{agency.tagline}</p>
+                <p className="text-orange-500 text-sm font-medium mb-2">{agency.tagline}</p>
               )}
               <ExpandableText text={agency.description} />
               {socialLinks.length > 0 && (
@@ -303,19 +304,19 @@ export default function AgencyProfile({ companySlug }) {
             <div className="p-6 space-y-4">
               {agency.hourly_rate && (
                 <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <DollarSign className="w-4 h-4 text-[#B08D57]" />
+                  <DollarSign className="w-4 h-4 text-orange-500" />
                   {agency.hourly_rate}
                 </div>
               )}
               {agency.team_size && (
                 <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <Users className="w-4 h-4 text-[#B08D57]" />
+                  <Users className="w-4 h-4 text-orange-500" />
                   {agency.team_size}
                 </div>
               )}
               {agency.founded_year && (
                 <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <Calendar className="w-4 h-4 text-[#B08D57]" />
+                  <Calendar className="w-4 h-4 text-orange-500" />
                   {agency.founded_year}
                 </div>
               )}
@@ -327,23 +328,24 @@ export default function AgencyProfile({ companySlug }) {
         {serviceFocus.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#0D1B2A] mb-5">Service Focus</h2>
-            <div className="grid md:grid-cols-[200px_1fr_1fr] gap-6 items-center">
+            <div className="grid md:grid-cols-[220px_1fr_1fr] gap-8 items-center">
               {/* Category tabs */}
               <div className="space-y-2">
                 {serviceCategories.length > 0 ? serviceCategories.map((cat, i) => (
                   <button
                     key={cat}
                     onClick={() => setActiveService(i)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded border text-sm font-medium text-left transition-colors ${
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border text-sm font-medium text-left transition-colors ${
                       activeService === i
-                        ? 'bg-[#FDF6EC] border-[#B08D57] text-[#7A5C2E]'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'bg-orange-50 border-orange-400 text-orange-700'
+                        : 'border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'
                     }`}
                   >
-                    {cat} <span className="text-slate-400">›</span>
+                    {cat}
+                    <span className={`text-xs ${activeService === i ? 'text-orange-400' : 'text-slate-400'}`}>›</span>
                   </button>
                 )) : (
-                  <div className="px-4 py-3 rounded border border-[#B08D57] bg-[#FDF6EC] text-sm font-medium text-[#7A5C2E]">
+                  <div className="px-4 py-3 rounded-lg border border-orange-400 bg-orange-50 text-sm font-medium text-orange-700">
                     Services
                   </div>
                 )}
@@ -351,7 +353,7 @@ export default function AgencyProfile({ companySlug }) {
 
               {/* Donut chart */}
               <div className="flex justify-center">
-                <ResponsiveContainer width={200} height={200}>
+                <ResponsiveContainer width={210} height={210}>
                   <PieChart>
                     <Pie
                       data={donutData}
@@ -359,10 +361,12 @@ export default function AgencyProfile({ companySlug }) {
                       nameKey="service"
                       cx="50%"
                       cy="50%"
-                      innerRadius={60}
-                      outerRadius={95}
-                      paddingAngle={2}
+                      innerRadius={62}
+                      outerRadius={100}
+                      paddingAngle={3}
                       label={false}
+                      strokeWidth={2}
+                      stroke="#fff"
                     >
                       {donutData.map((_, i) => (
                         <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />
@@ -370,7 +374,7 @@ export default function AgencyProfile({ companySlug }) {
                     </Pie>
                     <Tooltip
                       formatter={(v, n) => [`${v}%`, n]}
-                      contentStyle={{ borderRadius: 8, fontSize: 12, border: '1px solid #e2e8f0' }}
+                      contentStyle={{ borderRadius: 8, fontSize: 12, border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / .1)' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -379,16 +383,16 @@ export default function AgencyProfile({ companySlug }) {
               {/* Legend */}
               <div>
                 {activeCategory && (
-                  <p className="font-semibold text-[#0D1B2A] text-sm mb-3">
+                  <p className="font-bold text-[#0D1B2A] text-sm mb-4">
                     Focus of {activeCategory}
                   </p>
                 )}
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {donutData.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
-                      <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                      <span className="text-slate-700">{item.service || item.name}</span>
-                      <span className="text-slate-500 ml-auto">- {item.percentage}%</span>
+                    <div key={i} className="flex items-center gap-3 text-sm">
+                      <span className="w-3 h-3 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                      <span className="text-slate-700 flex-1">{item.service || item.name}</span>
+                      <span className="text-slate-500 font-medium tabular-nums">- {item.percentage}%</span>
                     </div>
                   ))}
                 </div>
@@ -403,8 +407,10 @@ export default function AgencyProfile({ companySlug }) {
             <h2 className="text-lg font-bold text-[#0D1B2A] mb-4">Industry Focus</h2>
             <div className="flex flex-wrap gap-2">
               {industryFocus.map((item, i) => (
-                <span key={i} className="inline-flex items-center border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-700">
-                  {item.industry || item.name} - {item.percentage}%
+                <span key={i} className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                  <span className="w-2 h-2 rounded-full bg-orange-400 flex-shrink-0" />
+                  {item.industry || item.name}
+                  <span className="text-slate-400 font-medium">· {item.percentage}%</span>
                 </span>
               ))}
             </div>
@@ -414,23 +420,24 @@ export default function AgencyProfile({ companySlug }) {
         {/* ── Client Focus ──────────────────────────────────────────────────── */}
         {(clientFocus.small_business || clientFocus.medium_business || clientFocus.large_business) && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h2 className="text-lg font-bold text-[#0D1B2A] mb-5">Client Focus</h2>
-            <div className="grid sm:grid-cols-3 gap-6">
+            <h2 className="text-lg font-bold text-[#0D1B2A] mb-6">Client Focus</h2>
+            <div className="grid sm:grid-cols-3 gap-8">
               {[
                 { label: 'Small Business',  key: 'small_business' },
-                { label: 'Large Business',  key: 'large_business' },
                 { label: 'Medium Business', key: 'medium_business' },
+                { label: 'Large Business',  key: 'large_business' },
               ].filter(({ key }) => clientFocus[key]).map(({ label, key }) => (
                 <div key={key}>
-                  <div className="w-full bg-slate-200 rounded-full h-1.5 mb-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-[#0D1B2A]">{clientFocus[key]}%</span>
+                    <span className="text-xs text-slate-500">{label}</span>
+                  </div>
+                  <div className="w-full bg-slate-100 rounded-full h-2">
                     <div
-                      className="bg-[#B08D57] h-1.5 rounded-full transition-all"
+                      className="bg-orange-500 h-2 rounded-full transition-all"
                       style={{ width: `${Math.min(clientFocus[key], 100)}%` }}
                     />
                   </div>
-                  <p className="text-sm font-semibold text-[#0D1B2A]">
-                    {clientFocus[key]}% {label}
-                  </p>
                 </div>
               ))}
             </div>
@@ -451,9 +458,9 @@ export default function AgencyProfile({ companySlug }) {
                 { label: 'Overall Rating',  value: `${avgOverall.toFixed(1)}/5` },
                 { label: 'Recent Reviews',  value: Math.min(reviews.length, 80) },
               ].map(({ label, value }) => (
-                <div key={label} className="bg-[#FDF6EC] border-b-2 border-[#B08D57] rounded-lg p-5">
-                  <p className="text-2xl font-extrabold text-[#0D1B2A]">{value}</p>
-                  <p className="text-sm font-semibold text-[#0D1B2A] mt-1">{label}</p>
+                <div key={label} className="bg-[#0D1B2A] border-b-2 border-orange-500 rounded-lg p-5">
+                  <p className="text-2xl font-extrabold text-white">{value}</p>
+                  <p className="text-sm font-medium text-slate-400 mt-1">{label}</p>
                 </div>
               ))}
             </div>
@@ -541,7 +548,7 @@ function ExpandableText({ text }) {
     <div>
       <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{displayed}</p>
       {short && (
-        <button onClick={() => setExpanded(!expanded)} className="text-[#B08D57] text-sm font-medium mt-2 hover:underline">
+        <button onClick={() => setExpanded(!expanded)} className="text-orange-500 text-sm font-medium mt-2 hover:underline">
           {expanded ? 'Show less' : 'Read more'}
         </button>
       )}
@@ -551,7 +558,7 @@ function ExpandableText({ text }) {
 
 // ─── Detailed review card (matching the images) ───────────────────────────────
 function DetailedReviewCard({ review, expanded, onToggle }) {
-  const ago = timeAgo(review.created_date);
+  const ago = timeAgo(review.created_at || review.created_date);
   const ratings = [
     { label: 'Quality',            value: review.rating_quality       || 0 },
     { label: 'Schedule & Timing',  value: review.rating_timeliness    || 0 },

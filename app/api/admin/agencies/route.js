@@ -47,9 +47,12 @@ export async function POST(request) {
     const body = await request.json();
     const {
       name, contact_email, phone, website, logo_url,
-      description, hq_city, hq_country, team_size, founded_year,
-      pricing_model, min_project_size, remote_support,
+      tagline, description, address,
+      hq_city, hq_state, hq_country, team_size, founded_year,
+      hourly_rate, pricing_model, min_project_size, remote_support,
       industries_served, approved, verified, featured,
+      linkedin_url, twitter_url, facebook_url, instagram_url,
+      service_focus, industry_focus, client_focus,
     } = body;
 
     if (!name?.trim()) {
@@ -65,11 +68,15 @@ export async function POST(request) {
       phone: phone?.trim() || null,
       website: website?.trim() || null,
       logo_url: logo_url?.trim() || null,
+      tagline: tagline?.trim() || null,
       description: description?.trim() || null,
+      address: address?.trim() || null,
       hq_city: hq_city?.trim() || null,
+      hq_state: hq_state?.trim() || null,
       hq_country: hq_country?.trim() || null,
       team_size: team_size?.trim() || null,
       founded_year: founded_year ? parseInt(founded_year, 10) : null,
+      hourly_rate: hourly_rate?.trim() || null,
       pricing_model: pricing_model?.trim() || null,
       min_project_size: min_project_size?.trim() || null,
       remote_support: remote_support === true || remote_support === 'true',
@@ -77,6 +84,13 @@ export async function POST(request) {
       approved: approved === true || approved === 'true',
       verified: verified === true || verified === 'true',
       featured: featured === true || featured === 'true',
+      linkedin_url: linkedin_url?.trim() || null,
+      twitter_url: twitter_url?.trim() || null,
+      facebook_url: facebook_url?.trim() || null,
+      instagram_url: instagram_url?.trim() || null,
+      service_focus: Array.isArray(service_focus) ? service_focus : [],
+      industry_focus: Array.isArray(industry_focus) ? industry_focus : [],
+      client_focus: (client_focus && typeof client_focus === 'object' && !Array.isArray(client_focus)) ? client_focus : {},
     };
 
     const { data, error } = await db().from('agencies').insert(row).select('*').single();
@@ -100,9 +114,12 @@ export async function PUT(request) {
 
     const {
       name, contact_email, phone, website, logo_url,
-      description, hq_city, hq_country, team_size, founded_year,
-      pricing_model, min_project_size, remote_support,
+      tagline, description, address,
+      hq_city, hq_state, hq_country, team_size, founded_year,
+      hourly_rate, pricing_model, min_project_size, remote_support,
       industries_served, approved, verified, featured,
+      linkedin_url, twitter_url, facebook_url, instagram_url,
+      service_focus, industry_focus, client_focus,
     } = fields;
 
     if (!name?.trim()) {
@@ -116,11 +133,15 @@ export async function PUT(request) {
       phone: phone?.trim() || null,
       website: website?.trim() || null,
       logo_url: logo_url?.trim() || null,
+      tagline: tagline?.trim() || null,
       description: description?.trim() || null,
+      address: address?.trim() || null,
       hq_city: hq_city?.trim() || null,
+      hq_state: hq_state?.trim() || null,
       hq_country: hq_country?.trim() || null,
       team_size: team_size?.trim() || null,
       founded_year: founded_year ? parseInt(founded_year, 10) : null,
+      hourly_rate: hourly_rate?.trim() || null,
       pricing_model: pricing_model?.trim() || null,
       min_project_size: min_project_size?.trim() || null,
       remote_support: remote_support === true || remote_support === 'true',
@@ -128,6 +149,13 @@ export async function PUT(request) {
       approved: approved === true || approved === 'true',
       verified: verified === true || verified === 'true',
       featured: featured === true || featured === 'true',
+      linkedin_url: linkedin_url?.trim() || null,
+      twitter_url: twitter_url?.trim() || null,
+      facebook_url: facebook_url?.trim() || null,
+      instagram_url: instagram_url?.trim() || null,
+      service_focus: Array.isArray(service_focus) ? service_focus : [],
+      industry_focus: Array.isArray(industry_focus) ? industry_focus : [],
+      client_focus: (client_focus && typeof client_focus === 'object' && !Array.isArray(client_focus)) ? client_focus : {},
       updated_at: new Date().toISOString(),
     };
 

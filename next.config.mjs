@@ -10,6 +10,8 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/Home', destination: '/', permanent: true },
+      { source: '/list-your-company', destination: '/ListYourCompany', permanent: false },
+      { source: '/join',              destination: '/ListYourCompany', permanent: false },
     ];
   },
   async rewrites() {

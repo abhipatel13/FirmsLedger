@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { getDirectoryUrl, getCompanyProfileUrl } from '@/utils';
+import { getDirectoryUrl, getDirectoryStaffingUrl, getCompanyProfileUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -12,16 +12,6 @@ import {
   ChevronRight, Sparkles, Globe, Users, Zap,
 } from 'lucide-react';
 
-const CATEGORIES_STATIC = [
-  { label: 'IT Staffing', slug: 'it-staffing', icon: '💻' },
-  { label: 'Temporary Staffing', slug: 'temporary-staffing', icon: '⏱️' },
-  { label: 'Executive Search', slug: 'executive-search', icon: '🎯' },
-  { label: 'Healthcare Staffing', slug: 'healthcare-staffing', icon: '🏥' },
-  { label: 'Permanent Staffing', slug: 'permanent-staffing', icon: '📋' },
-  { label: 'Contract Staffing', slug: 'contract-staffing', icon: '📝' },
-  { label: 'Remote Staffing', slug: 'remote-staffing', icon: '🌐' },
-  { label: 'Industrial Staffing', slug: 'industrial-staffing', icon: '🏭' },
-];
 
 export default function Home() {
   const { data: categories = [] } = useQuery({
@@ -38,13 +28,6 @@ export default function Home() {
     queryKey: ['recent-reviews'],
     queryFn: () => api.entities.Review.filter({ approved: true }, '-created_date', 3),
   });
-
-  const displayCategories = categories.length > 0
-    ? categories.slice(0, 8).map((c, i) => ({
-        label: c.name, slug: c.slug, id: c.id,
-        icon: CATEGORIES_STATIC[i]?.icon || '🏢',
-      }))
-    : CATEGORIES_STATIC;
 
   return (
     <div className="bg-white">
@@ -162,33 +145,88 @@ export default function Home() {
       </section>
 
       {/* ── SERVICE CATEGORIES ────────────────────────────────────── */}
-      <section className="py-16 sm:py-20 bg-white">
+      <section className="py-16 sm:py-20 bg-[#F7F8FA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-            <div>
-              <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Categories</p>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
-                Browse by Service
-              </h2>
-            </div>
-            <Link href={getDirectoryUrl()} className="flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors whitespace-nowrap">
-              View all <ChevronRight className="w-4 h-4" />
-            </Link>
+          <div className="text-center mb-10 sm:mb-12">
+            <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Categories</p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
+              Browse Service Categories
+            </h2>
+            <p className="text-slate-500 text-sm mt-2 max-w-xl mx-auto">
+              Find verified companies specialising in staffing, IT services, marketing, and other key business services.
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {displayCategories.map((cat) => (
-              <Link
-                key={cat.slug || cat.label}
-                href={cat.slug ? getDirectoryUrl(cat.slug) : getDirectoryUrl()}
-                className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-sm transition-all duration-200 flex items-center gap-3"
-              >
-                <span className="text-xl flex-shrink-0">{cat.icon}</span>
-                <span className="text-sm font-semibold text-slate-700 group-hover:text-orange-600 transition-colors leading-snug">
-                  {cat.label}
-                </span>
-              </Link>
-            ))}
+          {(() => {
+            const parents = categories.filter(c => (c.is_parent ?? c.isParent));
+            const catIcons = {
+              'staffing-companies': '👥',
+              'it-staffing': '💻',
+              'healthcare-staffing': '🏥',
+              'digital-marketing': '📣',
+              'seo': '🔍',
+              'web-development': '🌐',
+              'mobile-app-development': '📱',
+              'accounting': '📊',
+              'legal': '⚖️',
+              'public-relations': '📰',
+              'graphic-design': '🎨',
+              'it-services': '🖥️',
+            };
+            const displayParents = parents.length > 0 ? parents : [
+              { id: '1', name: 'Staffing Companies', slug: 'staffing-companies', description: 'Recruitment and staffing services' },
+              { id: '2', name: 'IT Services', slug: 'it-services', description: 'Information technology solutions' },
+              { id: '3', name: 'Digital Marketing', slug: 'digital-marketing', description: 'Online marketing and advertising' },
+              { id: '4', name: 'Accounting', slug: 'accounting', description: 'Financial and accounting services' },
+            ];
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {displayParents.map((parent) => {
+                  const children = categories
+                    .filter(c => (c.parent_id ?? c.parentId) === parent.id)
+                    .slice(0, 6);
+                  const icon = catIcons[parent.slug] || '🏢';
+                  const href = parent.slug === 'staffing-companies'
+                    ? getDirectoryStaffingUrl()
+                    : getDirectoryUrl(parent.slug);
+                  return (
+                    <Link key={parent.id} href={href}>
+                      <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-orange-300 hover:shadow-md transition-all duration-200 h-full flex flex-col cursor-pointer">
+                        <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4 text-2xl">
+                          {icon}
+                        </div>
+                        <h3 className="font-bold text-[#0D1B2A] text-base mb-3">{parent.name}</h3>
+
+                        {children.length > 0 && (
+                          <div className="mb-3">
+                            <span className="inline-block text-[10px] font-semibold bg-slate-100 text-slate-500 rounded px-2 py-0.5 mb-1.5 uppercase tracking-wide">Services</span>
+                            <p className="text-xs text-slate-500 leading-relaxed">
+                              {children.map((c, i) => (
+                                <React.Fragment key={c.id}>
+                                  {c.name}
+                                  {i < children.length - 1 && <span className="mx-1.5 text-slate-300">|</span>}
+                                </React.Fragment>
+                              ))}
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="mt-auto pt-2">
+                          <span className="inline-block text-[10px] font-semibold bg-slate-100 text-slate-500 rounded px-2 py-0.5 mb-1.5 uppercase tracking-wide">Locations</span>
+                          <p className="text-xs text-slate-500">USA | UK | India | Canada | Australia</p>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            );
+          })()}
+
+          <div className="text-center mt-8">
+            <Link href="/Categories" className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-orange-600 transition-colors">
+              View all categories <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

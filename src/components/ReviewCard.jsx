@@ -28,7 +28,7 @@ export default function ReviewCard({ review, showAgencyName: _showAgencyName = f
                   )}
                 </div>
                 <p className="text-sm text-gray-500">
-                  {format(new Date(review.created_date), 'MMM d, yyyy')}
+                  {format(new Date(review.created_at || review.created_date), 'MMM d, yyyy')}
                 </p>
               </div>
             </div>

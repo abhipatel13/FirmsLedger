@@ -6,13 +6,8 @@ import { useRouter } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import {
-  Menu, X, Search, ChevronDown, Facebook, Twitter, Linkedin, Instagram
+  Menu, X, Search, Facebook, Twitter, Linkedin, Instagram
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
 
@@ -55,73 +50,9 @@ export default function Layout({ children }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6 flex-1 justify-end">
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  className="flex items-center gap-1 text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm"
-                  aria-label="Find Services Menu"
-                >
-                  Find Services
-                  <ChevronDown className="w-4 h-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[620px] p-5" align="start">
-                  <div className="grid grid-cols-2 gap-1">
-                    {categories
-                      .filter(cat => (cat.is_parent ?? cat.isParent))
-                      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                      .map((cat) => {
-                        const children = categories
-                          .filter(c => (c.parent_id ?? c.parentId) === cat.id)
-                          .slice(0, 4);
-                        const parentHref = cat.slug === 'staffing-companies'
-                          ? getDirectoryStaffingUrl()
-                          : getDirectoryUrl(cat.slug);
-                        const isStaffing = cat.slug === 'staffing-companies';
-                        return (
-                          <div key={cat.id} className="flex flex-col rounded-xl hover:bg-slate-50 transition-colors p-2.5 group">
-                            <Link
-                              href={parentHref}
-                              className="flex items-center gap-2.5 mb-2"
-                              onClick={(e) => { e.currentTarget.blur(); document.activeElement?.blur(); }}
-                            >
-                              <div className="w-7 h-7 rounded-md bg-[#0D1B2A] flex items-center justify-center flex-shrink-0">
-                                <span className="text-[10px] font-black text-orange-400">{cat.name.charAt(0)}</span>
-                              </div>
-                              <span className="font-bold text-slate-900 text-sm group-hover:text-orange-600 transition-colors">
-                                {cat.name}
-                              </span>
-                            </Link>
-                            {children.length > 0 && (
-                              <div className="pl-9 flex flex-col gap-0.5">
-                                {children.map(child => (
-                                  <Link
-                                    key={child.id}
-                                    href={isStaffing
-                                      ? getDirectoryUrl(child.slug, { underStaffing: true })
-                                      : getDirectoryUrl(child.slug)
-                                    }
-                                    className="text-[11px] text-slate-500 hover:text-orange-500 transition-colors py-0.5 leading-snug"
-                                    onClick={(e) => { e.currentTarget.blur(); document.activeElement?.blur(); }}
-                                  >
-                                    {child.name}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                  </div>
-                  <div className="mt-3 pt-3 border-t border-slate-100">
-                    <Link
-                      href={getDirectoryUrl()}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-orange-500 hover:text-orange-600 transition-colors"
-                      onClick={(e) => { e.currentTarget.blur(); document.activeElement?.blur(); }}
-                    >
-                      Browse all agencies →
-                    </Link>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Link href="/Categories" className="text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm">
+                Browse Categories
+              </Link>
 
               <Link href={createPageUrl('Blogs')} className="text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm">
                 Resources
@@ -160,6 +91,12 @@ export default function Layout({ children }) {
               >
                 Sign In
               </Button>
+
+              <Link href="/ListYourCompany">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-5">
+                  Get Listed
+                </Button>
+              </Link>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -178,47 +115,13 @@ export default function Layout({ children }) {
           {mobileMenuOpen && (
             <div className="lg:hidden py-4 border-t border-slate-200 overflow-y-auto max-h-[calc(100vh-5rem)]">
               <div className="flex flex-col gap-1">
-                <div className="text-slate-500 text-xs font-semibold uppercase tracking-wider px-3 py-2">Find a Service</div>
-                <div className="pl-2 flex flex-col gap-0.5 max-h-72 overflow-y-auto">
-                  {categories
-                    .filter(cat => (cat.is_parent ?? cat.isParent))
-                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                    .map((cat) => {
-                      const isStaffing = cat.slug === 'staffing-companies';
-                      const children = categories.filter(c => (c.parent_id ?? c.parentId) === cat.id);
-                      return (
-                        <div key={cat.id}>
-                          <Link
-                            href={isStaffing ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug)}
-                            className="text-slate-800 font-semibold hover:text-orange-600 py-2.5 px-3 text-sm rounded-lg hover:bg-orange-50 active:bg-orange-100 touch-manipulation flex items-center gap-2"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            <div className="w-5 h-5 rounded bg-[#0D1B2A] flex items-center justify-center flex-shrink-0">
-                              <span className="text-[9px] font-black text-orange-400">{cat.name.charAt(0)}</span>
-                            </div>
-                            {cat.name}
-                          </Link>
-                          {children.length > 0 && (
-                            <div className="pl-10 flex flex-col">
-                              {children.map(child => (
-                                <Link
-                                  key={child.id}
-                                  href={isStaffing
-                                    ? getDirectoryUrl(child.slug, { underStaffing: true })
-                                    : getDirectoryUrl(child.slug)
-                                  }
-                                  className="text-slate-500 hover:text-orange-600 py-1.5 px-2 text-xs rounded hover:bg-orange-50 touch-manipulation"
-                                  onClick={() => setMobileMenuOpen(false)}
-                                >
-                                  {child.name}
-                                </Link>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
+                <Link
+                  href="/Categories"
+                  className="text-slate-700 hover:text-orange-600 py-3 px-3 font-semibold text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Browse Categories
+                </Link>
                 <Link
                   href={getDirectoryUrl()}
                   className="text-slate-700 hover:text-orange-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
@@ -241,6 +144,11 @@ export default function Layout({ children }) {
                   Write a Review
                 </Link>
                 <div className="border-t border-slate-200 mt-2 pt-3 px-3 flex flex-col gap-2">
+                  <Link href="/ListYourCompany" onClick={() => setMobileMenuOpen(false)}>
+                    <Button className="w-full justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold">
+                      Get Listed — It's Free
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     className="w-full justify-center border-slate-200 text-slate-700 hover:border-orange-400 hover:text-orange-600"

@@ -5,6 +5,7 @@ ALTER TABLE agencies
   ADD COLUMN IF NOT EXISTS phone            TEXT,
   ADD COLUMN IF NOT EXISTS hourly_rate      TEXT,
   ADD COLUMN IF NOT EXISTS address          TEXT,
+  ADD COLUMN IF NOT EXISTS tagline          TEXT,
   ADD COLUMN IF NOT EXISTS linkedin_url     TEXT,
   ADD COLUMN IF NOT EXISTS twitter_url      TEXT,
   ADD COLUMN IF NOT EXISTS facebook_url     TEXT,

@@ -8,7 +8,8 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 function getServiceSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    { auth: { persistSession: false } }
   );
 }
 
@@ -37,10 +38,15 @@ export async function POST(request) {
   }
 
   const body = await request.json();
-  const { name, subject, body_html, audience = 'all_with_email', custom_emails = [] } = body;
+  const {
+    name, subject, body_html,
+    btn_url,                          // original CTA URL for click tracking
+    audience = 'all_with_email',
+    custom_emails = [],
+  } = body;
 
-  if (!name?.trim()) return NextResponse.json({ error: 'Campaign name is required' }, { status: 400 });
-  if (!subject?.trim()) return NextResponse.json({ error: 'Subject is required' }, { status: 400 });
+  if (!name?.trim())      return NextResponse.json({ error: 'Campaign name is required' }, { status: 400 });
+  if (!subject?.trim())   return NextResponse.json({ error: 'Subject is required' }, { status: 400 });
   if (!body_html?.trim()) return NextResponse.json({ error: 'Email body is required' }, { status: 400 });
 
   const supabase = getServiceSupabase();
@@ -61,32 +67,32 @@ export async function POST(request) {
       .neq('contact_email', '');
 
     if (audience === 'approved') query = query.eq('approved', true);
-    if (audience === 'pending') query = query.eq('approved', false);
+    if (audience === 'pending')  query = query.eq('approved', false);
 
     const { data: agencies, error: agErr } = await query;
     if (agErr) return NextResponse.json({ error: agErr.message }, { status: 500 });
 
     recipients = (agencies || []).map((a) => ({
-      email: a.contact_email,
-      agency_id: a.id,
+      email:       a.contact_email,
+      agency_id:   a.id,
       agency_name: a.name,
     }));
   }
 
   if (recipients.length === 0) {
-    return NextResponse.json({ error: 'No recipients found for this audience' }, { status: 400 });
+    return NextResponse.json({ error: 'No recipients found' }, { status: 400 });
   }
 
   // ── 2. Create campaign record ──────────────────────────────────────────────
   const { data: campaign, error: campErr } = await supabase
     .from('email_campaigns')
     .insert({
-      name: name.trim(),
-      subject: subject.trim(),
-      body_html: body_html.trim(),
+      name:             name.trim(),
+      subject:          subject.trim(),
+      body_html:        body_html.trim(),
       audience,
       custom_emails,
-      status: 'sending',
+      status:           'sending',
       total_recipients: recipients.length,
     })
     .select()
@@ -94,98 +100,113 @@ export async function POST(request) {
 
   if (campErr) return NextResponse.json({ error: campErr.message }, { status: 500 });
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
-  const BATCH_SIZE = 50;
-  let sentCount = 0;
-  let failedCount = 0;
-  const logs = [];
+  // ── 3. Pre-insert log rows as 'pending' to get their UUIDs ────────────────
+  const pendingLogs = recipients.map((r) => ({
+    campaign_id:     campaign.id,
+    recipient_email: r.email,
+    agency_id:       r.agency_id,
+    agency_name:     r.agency_name,
+    status:          'pending',
+  }));
 
-  // ── 3. Send in batches of 50 ───────────────────────────────────────────────
+  const { data: insertedLogs } = await supabase
+    .from('email_logs')
+    .insert(pendingLogs)
+    .select('id, recipient_email');
+
+  // Build email → log_id map
+  const logIdByEmail = {};
+  (insertedLogs || []).forEach((l) => { logIdByEmail[l.recipient_email] = l.id; });
+
+  const baseUrl   = process.env.NEXT_PUBLIC_SITE_URL || 'https://firmsledger.com';
+  const fromEmail = process.env.RESEND_FROM_EMAIL    || 'FirmsLedger <onboarding@resend.dev>';
+  const BATCH_SIZE = 50;
+
+  let sentCount   = 0;
+  let failedCount = 0;
+  const logUpdates = []; // { id, status, resend_id?, error_message? }
+
+  // ── 4. Send in batches with per-recipient tracking ─────────────────────────
   for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
     const chunk = recipients.slice(i, i + BATCH_SIZE);
 
-    const batchPayload = chunk.map((r) => ({
-      from: fromEmail,
-      to: [r.email],
-      subject: subject.trim(),
-      html: body_html.trim(),
-    }));
+    const batchPayload = chunk.map((r) => {
+      const lid = logIdByEmail[r.email];
+
+      // Tracking pixel (open)
+      const pixelHtml = lid
+        ? `<img src="${baseUrl}/api/track/open?lid=${lid}" width="1" height="1" style="display:none;border:0;height:1px;width:1px;max-height:1px;max-width:1px;opacity:0;" alt="" />`
+        : '';
+
+      // Wrap the CTA button URL with click tracking
+      let html = body_html.trim();
+      if (lid && btn_url) {
+        const trackClickUrl = `${baseUrl}/api/track/click?lid=${lid}&url=${encodeURIComponent(btn_url)}`;
+        html = html.replaceAll(btn_url, trackClickUrl);
+      }
+
+      return {
+        from:    fromEmail,
+        to:      [r.email],
+        subject: subject.trim(),
+        html:    `${html}${pixelHtml}`,
+      };
+    });
 
     try {
       const { data: batchData, error: batchErr } = await resend.batch.send(batchPayload);
 
       if (batchErr) {
-        // Mark all in chunk as failed
         chunk.forEach((r) => {
-          logs.push({
-            campaign_id: campaign.id,
-            recipient_email: r.email,
-            agency_id: r.agency_id,
-            agency_name: r.agency_name,
-            resend_id: null,
-            status: 'failed',
-            error_message: batchErr.message,
-          });
+          logUpdates.push({ id: logIdByEmail[r.email], status: 'failed', error_message: batchErr.message });
           failedCount++;
         });
       } else {
-        // batchData is an array of { id } matching the chunk order
         const ids = Array.isArray(batchData) ? batchData : (batchData?.data ?? []);
         chunk.forEach((r, idx) => {
-          const resendId = ids[idx]?.id || null;
-          logs.push({
-            campaign_id: campaign.id,
-            recipient_email: r.email,
-            agency_id: r.agency_id,
-            agency_name: r.agency_name,
-            resend_id: resendId,
-            status: 'sent',
-          });
+          logUpdates.push({ id: logIdByEmail[r.email], status: 'sent', resend_id: ids[idx]?.id || null });
           sentCount++;
         });
       }
     } catch (err) {
       chunk.forEach((r) => {
-        logs.push({
-          campaign_id: campaign.id,
-          recipient_email: r.email,
-          agency_id: r.agency_id,
-          agency_name: r.agency_name,
-          resend_id: null,
-          status: 'failed',
-          error_message: err.message,
-        });
+        logUpdates.push({ id: logIdByEmail[r.email], status: 'failed', error_message: err.message });
         failedCount++;
       });
     }
 
-    // Small delay between batches to respect rate limits
     if (i + BATCH_SIZE < recipients.length) {
       await new Promise((res) => setTimeout(res, 500));
     }
   }
 
-  // ── 4. Insert all logs ─────────────────────────────────────────────────────
-  if (logs.length > 0) {
-    await supabase.from('email_logs').insert(logs);
-  }
+  // ── 5. Update all logs in bulk ─────────────────────────────────────────────
+  await Promise.all(
+    logUpdates.map(({ id, status, resend_id, error_message }) =>
+      supabase
+        .from('email_logs')
+        .update({ status, resend_id: resend_id || null, error_message: error_message || null })
+        .eq('id', id)
+    )
+  );
 
-  // ── 5. Update campaign stats ───────────────────────────────────────────────
+  // ── 6. Update campaign stats ───────────────────────────────────────────────
   await supabase
     .from('email_campaigns')
     .update({
-      status: failedCount === recipients.length ? 'failed' : 'sent',
-      sent_count: sentCount,
-      failed_count: failedCount,
-      sent_at: new Date().toISOString(),
+      status:          failedCount === recipients.length ? 'failed' : 'sent',
+      sent_count:      sentCount,
+      delivered_count: sentCount,   // Resend accepted = delivered
+      failed_count:    failedCount,
+      sent_at:         new Date().toISOString(),
     })
     .eq('id', campaign.id);
 
   return NextResponse.json({
-    message: 'Campaign sent',
+    message:     'Campaign sent',
     campaign_id: campaign.id,
-    total: recipients.length,
-    sent: sentCount,
-    failed: failedCount,
+    total:       recipients.length,
+    sent:        sentCount,
+    failed:      failedCount,
   });
 }
