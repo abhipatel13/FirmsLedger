@@ -287,10 +287,10 @@ export default function Blogs() {
       .catch(() => {});
   }, []);
 
-  // Merge: static first, then DB posts not already in static list
+  // DB posts first (newest AI posts), then static articles
   const staticSlugs = new Set(ARTICLES_LIST.map((a) => a.slug));
   const newDbPosts = dbPosts.filter((p) => !staticSlugs.has(p.slug));
-  const allArticles = [...ARTICLES_LIST, ...newDbPosts];
+  const allArticles = [...newDbPosts, ...ARTICLES_LIST];
 
   const featured = allArticles[0];
   const rest = allArticles.slice(1);

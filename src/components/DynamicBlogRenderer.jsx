@@ -143,7 +143,6 @@ export default function DynamicBlogRenderer({ post }) {
         {post.image_url && (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-0">
             <div className="rounded-t-2xl overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={post.image_url}
                 alt={post.image_alt || post.title}
