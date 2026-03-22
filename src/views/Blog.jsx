@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getDirectoryUrl, getBlogArticleUrl } from '@/utils';
@@ -266,10 +266,36 @@ const ARTICLES_LIST = [
 ];
 
 export default function Blogs() {
-  const featured = ARTICLES_LIST[0];
-  const rest = ARTICLES_LIST.slice(1);
-  const totalPages = Math.ceil(rest.length / POSTS_PER_PAGE);
+  const [dbPosts, setDbPosts] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/blog-posts')
+      .then((r) => r.ok ? r.json() : [])
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        const mapped = data.map((p) => ({
+          slug: p.slug,
+          title: p.title,
+          excerpt: p.meta_description || '',
+          readTime: p.read_time || '10 min read',
+          category: p.category || 'General',
+          icon: FileText,
+          image: p.image_url ? { src: p.image_url, alt: p.image_alt || p.title, width: 1200, height: 630 } : null,
+        }));
+        setDbPosts(mapped);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Merge: static first, then DB posts not already in static list
+  const staticSlugs = new Set(ARTICLES_LIST.map((a) => a.slug));
+  const newDbPosts = dbPosts.filter((p) => !staticSlugs.has(p.slug));
+  const allArticles = [...ARTICLES_LIST, ...newDbPosts];
+
+  const featured = allArticles[0];
+  const rest = allArticles.slice(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(rest.length / POSTS_PER_PAGE);
 
   const paginatedRest = rest.slice(
     (currentPage - 1) * POSTS_PER_PAGE,

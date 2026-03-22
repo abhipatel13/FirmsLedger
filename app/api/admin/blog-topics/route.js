@@ -61,6 +61,10 @@ export async function DELETE(request) {
   if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 });
 
   const supabase = getServiceSupabase();
+
+  // Nullify blog_posts.topic_id first to avoid FK constraint violation
+  await supabase.from('blog_posts').update({ topic_id: null }).eq('topic_id', id);
+
   const { error } = await supabase.from('blog_topics').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });

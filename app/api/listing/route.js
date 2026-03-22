@@ -46,6 +46,35 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Company name is required' }, { status: 400 });
     }
 
+    // ── Send notification email immediately (don't wait for DB) ─────────────
+    if (resend && notifyEmail) {
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
+      const esc = (s) => (s || '').replace(/</g, '&lt;');
+      const submitterName = body.name || '';
+      const html = `
+        <h2 style="color:#0D1B2A;margin-bottom:16px;">New Listing Submission</h2>
+        <table style="border-collapse:collapse;width:100%;font-size:14px;">
+          <tr><td style="padding:8px 12px;font-weight:600;color:#374151;width:140px;">Company</td><td style="padding:8px 12px;color:#111827;">${esc(name)}</td></tr>
+          ${submitterName ? `<tr><td style="padding:8px 12px;font-weight:600;color:#374151;">Contact Name</td><td style="padding:8px 12px;color:#111827;">${esc(submitterName)}</td></tr>` : ''}
+          <tr><td style="padding:8px 12px;font-weight:600;color:#374151;">Email</td><td style="padding:8px 12px;color:#111827;">${esc(contact_email) || '—'}</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:600;color:#374151;">Website</td><td style="padding:8px 12px;color:#111827;">${esc(website) || '—'}</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:600;color:#374151;">Location</td><td style="padding:8px 12px;color:#111827;">${[hq_city, hq_state, hq_country].filter(Boolean).join(', ') || '—'}</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:600;color:#374151;">Team Size</td><td style="padding:8px 12px;color:#111827;">${esc(team_size) || '—'}</td></tr>
+          ${description ? `<tr><td style="padding:8px 12px;font-weight:600;color:#374151;vertical-align:top;">Message</td><td style="padding:8px 12px;color:#111827;">${esc(description).replace(/\n/g, '<br/>')}</td></tr>` : ''}
+        </table>
+        <p style="margin-top:20px;"><a href="https://firmsledger.com/admin" style="background:#F97316;color:#fff;padding:10px 22px;border-radius:6px;text-decoration:none;font-weight:600;">Review in Admin →</a></p>
+        <p style="color:#9ca3af;font-size:12px;margin-top:16px;">Submitted via FirmsLedger · Approve to publish listing</p>
+      `;
+      resend.emails
+        .send({
+          from: fromEmail,
+          to: [notifyEmail],
+          subject: `New Listing: ${(name || 'Company').slice(0, 60)}`,
+          html,
+        })
+        .catch((err) => console.error('Submission notify email failed:', err));
+    }
+
     const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
     let baseSlug = (slug.trim() || slugify(name) || 'listing').slice(0, 200);
@@ -87,29 +116,6 @@ export async function POST(request) {
         .from('company_invites')
         .update({ used_at: new Date().toISOString(), agency_id: agency.id })
         .eq('id', inviteId);
-    }
-
-    if (resend && notifyEmail) {
-      const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
-      const esc = (s) => (s || '').replace(/</g, '&lt;');
-      const html = `
-        <p><strong>New listing submission</strong></p>
-        <p><strong>Company:</strong> ${esc(name)}</p>
-        <p><strong>Email:</strong> ${esc(contact_email) || '—'}</p>
-        <p><strong>Website:</strong> ${esc(website) || '—'}</p>
-        <p><strong>Location:</strong> ${[hq_city, hq_state, hq_country].filter(Boolean).join(', ') || '—'}</p>
-        <p><strong>Team size:</strong> ${esc(team_size) || '—'}</p>
-        ${description ? `<p><strong>Message:</strong><br/>${esc(description).replace(/\n/g, '<br/>')}</p>` : ''}
-        <p style="color:#64748b;font-size:12px;margin-top:16px;">Submitted via FirmsLedger. Approve in Supabase or Admin to publish.</p>
-      `;
-      resend.emails
-        .send({
-          from: fromEmail,
-          to: [notifyEmail],
-          subject: `FirmsLedger: New listing – ${(name || 'Company').slice(0, 50)}`,
-          html,
-        })
-        .catch((err) => console.error('Submission notify email failed:', err));
     }
 
     return NextResponse.json({ id: agency.id, ...agency });
