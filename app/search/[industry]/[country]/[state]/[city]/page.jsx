@@ -73,6 +73,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function StateCityPage({ params }) {
   const { industry, country, state, city } = await params;
   const stateInfo = stateSlugToInfo(country, state);

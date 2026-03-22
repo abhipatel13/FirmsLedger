@@ -69,7 +69,7 @@ export function getCategoryMetaDescription(categoryName, slug, options = {}) {
   return `Discover the top ${categoryName} companies at FirmsLedger. Browse verified service providers with proven expertise. Compare the most reliable providers worldwide by expertise, project needs, and pricing.`;
 }
 
-/** Title for a category listing page: "Top [Category Name] in 2026 in Global" */
+/** Title for a category listing page: "Top [Category Name] Companies in 2026" */
 export function getCategoryTitle(categoryName) {
-  return `Top ${categoryName} in ${SEO_YEAR} in ${SEO_COUNTRY}`;
+  return `Top ${categoryName} Companies in ${SEO_YEAR}`;
 }

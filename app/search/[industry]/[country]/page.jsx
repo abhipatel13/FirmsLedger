@@ -70,19 +70,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export async function generateStaticParams() {
-  const supabase = getServerSupabase();
-  if (!supabase) return [];
-  const { data: categories } = await supabase.from('categories').select('slug');
-  const categorySlugs = (categories || []).map((c) => c.slug).filter(Boolean);
-  const params = [];
-  for (const industry of categorySlugs) {
-    for (const country of TARGET_COUNTRIES) {
-      params.push({ industry, country });
-    }
-  }
-  return params;
-}
+// Pages render dynamically on-demand — no static pre-build
+export const dynamic = 'force-dynamic';
 
 export default async function SearchPage({ params }) {
   const { industry, country } = await params;
