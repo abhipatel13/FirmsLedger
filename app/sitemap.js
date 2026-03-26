@@ -277,7 +277,7 @@ export default async function sitemap() {
       const stateName = STATE_NAMES[state];
       if (!countryName || !stateName) continue;
       stateRoutes.push({
-        url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&state=${encodeURIComponent(stateName)}`,
+        url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`,
         lastModified: now, changeFrequency: 'weekly', priority: 0.78,
       });
     }
@@ -292,7 +292,7 @@ export default async function sitemap() {
       const stateName = STATE_NAMES[state];
       if (!countryName || !stateName) continue;
       cityRoutes.push({
-        url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&state=${encodeURIComponent(stateName)}`,
+        url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`,
         lastModified: now, changeFrequency: 'weekly', priority: 0.75,
       });
     }
