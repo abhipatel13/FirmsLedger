@@ -311,14 +311,14 @@ export default function Blogs() {
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Breadcrumb */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
           <Breadcrumb items={[{ label: 'Blog' }]} />
         </div>
       </div>
 
       {/* Hero */}
       <section className="bg-[#0D1B2A] text-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-18">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-14 md:py-18">
           <div className="text-center">
             <div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/20 text-orange-400 text-xs font-semibold px-4 py-2 rounded-full mb-6 uppercase tracking-wider">
               <BookOpen className="w-4 h-4" />
@@ -335,7 +335,7 @@ export default function Blogs() {
       </section>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-10 md:py-14">
         <p className="text-slate-500 text-center mb-10 max-w-xl mx-auto text-sm">
           Browse our latest articles on IT staffing, healthcare recruitment, industrial workforce, and more.
         </p>

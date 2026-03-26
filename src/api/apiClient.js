@@ -84,6 +84,11 @@ const mockEntityApi = {
       if (typeof limit === 'number') list = list.slice(0, limit);
       return Promise.resolve(list);
     },
+    filterByCategory: (slug, order, limit) => {
+      let list = sortByKey(mockAgencies, order || '-avg_rating');
+      if (typeof limit === 'number') list = list.slice(0, limit);
+      return Promise.resolve(list);
+    },
     update: (id, data) => {
       const i = mockAgencies.findIndex((a) => a.id === id);
       if (i !== -1) Object.assign(mockAgencies[i], data);
@@ -129,6 +134,7 @@ const supabaseEntityApi = {
       }
       return db.fetchAgencies(where || { approved: true }, order, limit);
     },
+    filterByCategory: (slug, order, limit) => db.fetchAgenciesByCategory(slug, order, limit),
     update: async () => { throw new Error('Approve agencies from Supabase Dashboard'); },
     delete: async () => { throw new Error('Delete agencies from Supabase Dashboard'); },
     create: (data, categoryIds = []) => db.createAgency(data, categoryIds),

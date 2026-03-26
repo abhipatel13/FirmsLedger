@@ -44,7 +44,7 @@ export default function CountryPage({ searchParams }) {
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Hero */}
       <div className="bg-[#0D1B2A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-14">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
               <MapPin className="w-5 h-5 text-white" />
@@ -65,7 +65,7 @@ export default function CountryPage({ searchParams }) {
       {/* Popular Cities */}
       {popularCities.length > 0 && (
         <div className="bg-white border-b border-slate-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-7">
             <h2 className="text-base font-bold text-[#0D1B2A] mb-4">Popular Cities</h2>
             <div className="flex flex-wrap gap-2">
               {popularCities.map((city) => (
@@ -85,13 +85,13 @@ export default function CountryPage({ searchParams }) {
       )}
 
       {/* Categories */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-10">
         <h2 className="text-xl font-extrabold text-[#0D1B2A] mb-6">Browse by Category</h2>
         <CategoryGrid categories={categories} />
       </div>
 
       {/* Agencies List */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-extrabold text-[#0D1B2A]">Top Agencies in {country}</h2>
           <Link href={getDirectoryUrl() + `?country=${encodeURIComponent(country)}`}>

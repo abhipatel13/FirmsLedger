@@ -34,7 +34,7 @@ export default function Compare({ searchParams }) {
   if (agencies.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-16 text-center">
           <Building2 className="w-16 h-16 mx-auto text-gray-400 mb-4" />
           <h1 className="text-3xl font-bold mb-4">Compare Agencies</h1>
           <p className="text-gray-600 mb-8">Select agencies from the directory to compare side-by-side</p>
@@ -134,13 +134,13 @@ export default function Compare({ searchParams }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold mb-2">Compare Agencies</h1>
           <p className="text-gray-600">Side-by-side comparison of staffing agencies</p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">

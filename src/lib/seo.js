@@ -73,3 +73,30 @@ export function getCategoryMetaDescription(categoryName, slug, options = {}) {
 export function getCategoryTitle(categoryName) {
   return `Top ${categoryName} Companies in ${SEO_YEAR}`;
 }
+
+/**
+ * Location-aware title: "Top [Category] Companies in [State, Country] (2026)"
+ * Falls back to plain category title when no location provided.
+ */
+export function getCategoryTitleWithLocation(categoryName, location) {
+  if (location) {
+    return `Top ${categoryName} Companies in ${location} (${SEO_YEAR})`;
+  }
+  return `Top ${categoryName} Companies in ${SEO_YEAR}`;
+}
+
+/**
+ * Location-aware meta description.
+ * Generates unique copy per category+location combo — prevents duplicate content
+ * across the millions of programmatic geo pages.
+ */
+export function getCategoryMetaDescriptionWithLocation(categoryName, slug, location) {
+  const key = (slug || '').trim().toLowerCase();
+  // Use hand-written staffing descriptions when no location filter
+  if (!location && STAFFING_CATEGORY_DESCRIPTIONS[key]) {
+    return STAFFING_CATEGORY_DESCRIPTIONS[key];
+  }
+  const inLocation = location ? ` in ${location}` : '';
+  const name = categoryName || 'Business';
+  return `Browse verified ${name} companies${inLocation} on FirmsLedger. Compare top-rated ${name.toLowerCase()} service providers${inLocation} by client reviews, pricing, team size, and expertise. Find the best ${name.toLowerCase()} partner for your needs${inLocation}.`;
+}

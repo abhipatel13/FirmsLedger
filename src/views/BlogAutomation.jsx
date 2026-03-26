@@ -104,7 +104,7 @@ export default function BlogAutomation() {
 
   return (
     <div className="min-h-screen bg-[#F7F8FA] p-4 sm:p-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="w-full">
 
         {/* Header */}
         <div className="mb-8">

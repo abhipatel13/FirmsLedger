@@ -11,17 +11,42 @@ function getServerSupabase() {
   return createClient(url, key, { auth: { persistSession: false } });
 }
 
-async function getInitialDirectoryData() {
+async function getInitialDirectoryData(categorySlug) {
   try {
     const supabase = getServerSupabase();
-    if (!supabase) return { agencies: [], agencyCategories: [] };
-    const [{ data: agencies }, { data: agencyCategories }] = await Promise.all([
-      supabase.from('agencies').select('*').eq('approved', true).order('avg_rating', { ascending: false }).limit(100),
-      supabase.from('agency_categories').select('*'),
+    if (!supabase) return { agencies: [], categories: [], specificCategory: null };
+    const [{ data: agencyCategories }, { data: categories }] = await Promise.all([
+      supabase.from('agency_categories').select('*').limit(10000),
+      supabase.from('categories').select('*').order('name').limit(10000),
     ]);
-    return { agencies: agencies || [], agencyCategories: agencyCategories || [] };
+
+    let specificCategory = categorySlug ? (categories || []).find(c => c.slug === categorySlug) || null : null;
+    if (categorySlug && !specificCategory) {
+      const { data: catData } = await supabase.from('categories').select('*').eq('slug', categorySlug).maybeSingle();
+      specificCategory = catData || null;
+    }
+
+    let agencies = [];
+    const cat = specificCategory;
+    if (cat) {
+      let categoryIds = [cat.id];
+      if (cat.is_parent) {
+        const subIds = (categories || []).filter(c => c.parent_id === cat.id).map(c => c.id);
+        categoryIds.push(...subIds);
+      }
+      const relatedIds = [...new Set(
+        (agencyCategories || []).filter(ac => categoryIds.includes(ac.category_id)).map(ac => ac.agency_id)
+      )];
+      if (relatedIds.length > 0) {
+        const { data } = await supabase.from('agencies')
+          .select('*').eq('approved', true).in('id', relatedIds)
+          .order('avg_rating', { ascending: false }).limit(200);
+        agencies = data || [];
+      }
+    }
+    return { agencies, categories: categories || [], specificCategory };
   } catch {
-    return { agencies: [], agencyCategories: [] };
+    return { agencies: [], categories: [], specificCategory: null };
   }
 }
 
@@ -58,14 +83,15 @@ export default async function DirectoryStaffingCategoryPage({ params }) {
     notFound();
     return null;
   }
-  const { agencies, agencyCategories } = await getInitialDirectoryData();
+  const { agencies, categories, specificCategory } = await getInitialDirectoryData(slug);
   return (
     <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full" /></div>}>
       <Directory
         initialCategorySlug={slug}
+        initialCategoryData={specificCategory || undefined}
         underStaffing
         initialAgencies={agencies}
-        initialAgencyCategories={agencyCategories}
+        initialCategories={categories}
       />
     </Suspense>
   );

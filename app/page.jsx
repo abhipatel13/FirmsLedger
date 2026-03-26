@@ -5,12 +5,12 @@ import { SITE_NAME, SEO_YEAR, SEO_COUNTRY, BASE_URL } from '@/lib/seo';
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
-  title: `Top Companies List in ${SEO_COUNTRY} ${SEO_YEAR} | Verified Service Providers | ${SITE_NAME}`,
-  description: `FirmsLedger delivers the definitive global top companies list. Discover verified staffing agencies, consultants, and business service providers worldwide. Browse by expertise, project needs, and pricing—all in one trusted directory.`,
+  title: `Top Companies List in ${SEO_COUNTRY} ${SEO_YEAR} | Products & Services Directory | ${SITE_NAME}`,
+  description: `FirmsLedger delivers the definitive global top companies list. Discover verified manufacturers, suppliers, staffing agencies, and service providers worldwide. Browse by products, expertise, project needs, and pricing—all in one trusted directory.`,
   alternates: { canonical: _BASE },
   openGraph: {
     title: `Top Companies List in ${SEO_COUNTRY} | ${SITE_NAME}`,
-    description: 'Discover verified business service providers and staffing agencies. Browse the top companies list by expertise, project needs, and pricing.',
+    description: 'Discover verified manufacturers, suppliers, and service providers. Browse the top companies list by products, expertise, and pricing.',
     type: 'website',
     url: _BASE,
   },
@@ -21,7 +21,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: SITE_NAME,
   url: _BASE,
-  description: "The trusted global platform to discover and connect with verified business service providers worldwide.",
+  description: "The trusted global platform to discover and connect with verified manufacturers, suppliers, and service providers worldwide.",
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -38,7 +38,7 @@ const organizationSchema = {
   name: SITE_NAME,
   url: _BASE,
   logo: `${_BASE}/icon.svg`,
-  description: "The trusted global platform to discover and connect with verified business service providers worldwide.",
+  description: "The trusted global platform to discover and connect with verified manufacturers, suppliers, and service providers worldwide.",
   areaServed: 'Worldwide',
   contactPoint: {
     '@type': 'ContactPoint',

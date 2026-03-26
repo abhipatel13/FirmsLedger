@@ -14,7 +14,6 @@ export default function robots() {
           '/InviteAgency',
           '/api/',
           '/join',
-          '/companies/',
         ],
       },
     ],

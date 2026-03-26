@@ -47,7 +47,7 @@ export default function CategoryPage({ searchParams }) {
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <Link href={createPageUrl('Home')} className="hover:text-orange-600 transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -58,7 +58,7 @@ export default function CategoryPage({ searchParams }) {
 
       {/* Hero */}
       <div className="bg-[#0D1B2A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-14">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
               <Briefcase className="w-5 h-5 text-white" />
@@ -71,7 +71,7 @@ export default function CategoryPage({ searchParams }) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-10">
         <div className="mb-5">
           <p className="text-slate-500 text-sm">
             <span className="font-semibold text-slate-900">{categoryAgencies.length}</span> agencies in this category

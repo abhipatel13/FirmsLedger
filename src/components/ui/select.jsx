@@ -8,6 +8,14 @@ import { cn } from '@/lib/utils';
 const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
+const SelectLabel = React.forwardRef(({ className, ...props }, ref) => (
+  <SelectPrimitive.Label ref={ref} className={cn('py-1.5 pl-8 pr-2 text-xs font-semibold text-muted-foreground', className)} {...props} />
+));
+SelectLabel.displayName = SelectPrimitive.Label.displayName;
+const SelectSeparator = React.forwardRef(({ className, ...props }, ref) => (
+  <SelectPrimitive.Separator ref={ref} className={cn('-mx-1 my-1 h-px bg-muted', className)} {...props} />
+));
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
 const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger ref={ref} className={cn('flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1', className)} {...props}>
@@ -42,4 +50,4 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
-export { Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectItem };
+export { Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectItem, SelectLabel, SelectSeparator };

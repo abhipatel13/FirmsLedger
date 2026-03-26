@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
         if (data?.[0]?.name) {
           companyName = data[0].name;
           const location = [data[0].hq_city, data[0].hq_country].filter(Boolean).join(', ');
-          description = `${companyName} is a verified business service provider${location ? ` based in ${location}` : ''} listed on FirmsLedger. View services, team size, and contact information.`;
+          description = `${companyName} is a verified business${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their products & services, team size, and contact information.`;
         }
       }
     }
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
   return {
     title: companyName,
     description,
-    robots: { index: false, follow: true },
+    robots: { index: true, follow: true },
     alternates: { canonical },
     openGraph: {
       title: `${companyName} | ${SITE_NAME}`,

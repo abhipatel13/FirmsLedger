@@ -34,17 +34,21 @@ export default function Home() {
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
       <section className="bg-[#0D1B2A] relative overflow-hidden">
-        {/* Subtle grid pattern */}
+        {/* Grid pattern */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.045]"
           style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }}
         />
+        {/* Glow orbs */}
+        <div className="absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full bg-orange-500/10 blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-indigo-600/10 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] rounded-full bg-orange-400/8 blur-[90px] pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-0">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-0">
           <div className="max-w-4xl mx-auto text-center">
 
             {/* Eyebrow pill */}
-            <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 tracking-wide">
+            <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 text-orange-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 tracking-wide backdrop-blur-sm">
               <Sparkles className="w-3.5 h-3.5" />
               AI-Powered B2B Matchmaking
             </div>
@@ -52,7 +56,7 @@ export default function Home() {
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight mb-5">
               Describe what you need.{' '}
-              <span className="text-orange-400">AI finds</span>{' '}
+              <span className="text-orange-400 drop-shadow-[0_0_30px_rgba(251,146,60,0.4)]">AI finds</span>{' '}
               your best match.
             </h1>
 
@@ -60,31 +64,36 @@ export default function Home() {
               Stop filtering endlessly. Just tell us what you're looking for — FirmsLedger AI matches you to the right verified agency in seconds.
             </p>
 
-            {/* AI Matchmaker Box */}
-            <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-2xl shadow-black/30 mb-8 text-left">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 rounded-lg bg-orange-500 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
+            {/* AI Matchmaker Box — gradient border wrapper */}
+            <div className="relative p-px rounded-3xl bg-gradient-to-b from-white/15 via-white/5 to-transparent mb-8 shadow-[0_0_60px_-10px_rgba(251,146,60,0.25)]">
+              <div className="bg-white/[0.97] backdrop-blur-md rounded-[calc(1.5rem-1px)] p-5 sm:p-6 text-left">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/30">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-800">AI Vendor Matchmaker</span>
+                  <span className="ml-auto flex items-center gap-1.5 bg-green-50 text-green-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200 uppercase tracking-wide">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    Live
+                  </span>
                 </div>
-                <span className="text-sm font-bold text-slate-800">AI Vendor Matchmaker</span>
-                <span className="ml-auto bg-green-50 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-200 uppercase tracking-wide">Live</span>
+                <AIMatchmaker />
               </div>
-              <AIMatchmaker />
             </div>
           </div>
         </div>
 
         {/* Stats bar */}
-        <div className="relative border-t border-white/10 mt-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div className="flex flex-wrap justify-center sm:justify-start gap-8 sm:gap-14">
+        <div className="relative border-t border-white/10 mt-4 bg-white/[0.02] backdrop-blur-sm">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
+            <div className="flex flex-wrap justify-center sm:justify-start gap-0">
               {[
                 { num: '50+', label: 'Verified Agencies' },
                 { num: '150+', label: 'Client Reviews' },
                 { num: '20+', label: 'Service Categories' },
                 { num: '4.8★', label: 'Avg Rating' },
-              ].map(({ num, label }) => (
-                <div key={label} className="text-center sm:text-left">
+              ].map(({ num, label }, i) => (
+                <div key={label} className={`text-center sm:text-left px-6 sm:px-10 ${i > 0 ? 'border-l border-white/10' : ''} ${i === 0 ? 'pl-0' : ''}`}>
                   <div className="text-xl font-extrabold text-white">{num}</div>
                   <div className="text-xs text-slate-500 mt-0.5">{label}</div>
                 </div>
@@ -96,7 +105,7 @@ export default function Home() {
 
       {/* ── HOW AI WORKS ─────────────────────────────────────────── */}
       <section className="py-16 sm:py-20 bg-[#F7F8FA]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">How It Works</p>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
@@ -146,14 +155,14 @@ export default function Home() {
 
       {/* ── SERVICE CATEGORIES ────────────────────────────────────── */}
       <section className="py-16 sm:py-20 bg-[#F7F8FA]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 sm:mb-12">
             <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Categories</p>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
-              Browse Service Categories
+              Browse Categories
             </h2>
             <p className="text-slate-500 text-sm mt-2 max-w-xl mx-auto">
-              Find verified companies specialising in staffing, IT services, marketing, and other key business services.
+              Find verified companies specialising in manufacturing, staffing, IT, marketing, and other key business products & services.
             </p>
           </div>
 
@@ -234,7 +243,7 @@ export default function Home() {
       {/* ── TOP RATED COMPANIES ───────────────────────────────────── */}
       {topRatedAgencies.length > 0 && (
         <section className="py-16 sm:py-20 bg-[#F7F8FA]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
                 <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Rankings</p>
@@ -293,7 +302,7 @@ export default function Home() {
 
       {/* ── WHY TRUST ─────────────────────────────────────────────── */}
       <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
               <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-3">Why FirmsLedger</p>
@@ -333,7 +342,7 @@ export default function Home() {
       {/* ── RECENT REVIEWS ────────────────────────────────────────── */}
       {recentReviews.length > 0 && (
         <section className="py-16 sm:py-20 bg-[#F7F8FA]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="w-full px-4 sm:px-6 lg:px-8">
             <div className="mb-8">
               <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Social Proof</p>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
@@ -372,7 +381,7 @@ export default function Home() {
 
       {/* ── COUNTRIES ─────────────────────────────────────────────── */}
       <section className="py-12 bg-white border-t border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 mb-5">
             <Globe className="w-4 h-4 text-slate-400" />
             <span className="text-sm font-bold text-slate-600">Available in 100+ Countries</span>
@@ -401,7 +410,7 @@ export default function Home() {
           className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }}
         />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
             <div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">

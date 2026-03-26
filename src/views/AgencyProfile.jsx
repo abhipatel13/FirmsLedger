@@ -181,7 +181,7 @@ export default function AgencyProfile({ companySlug }) {
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
             {agency.logo_url ? (
               <img src={agency.logo_url} alt={agency.name}
@@ -256,7 +256,7 @@ export default function AgencyProfile({ companySlug }) {
       </div>
 
       {/* ── Body ───────────────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
         {/* ── Overview ─────────────────────────────────────────────────────── */}
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">

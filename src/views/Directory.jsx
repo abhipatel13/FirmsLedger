@@ -16,7 +16,7 @@ import { debounce } from 'lodash';
 
 const PAGE_SIZE = 10;
 
-export default function Directory({ initialCategorySlug, underStaffing: underStaffingProp, initialAgencies, initialAgencyCategories }) {
+export default function Directory({ initialCategorySlug, initialCategoryData, underStaffing: underStaffingProp, initialAgencies, initialCategories }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -48,16 +48,21 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
   const { data: categoriesRaw = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: () => api.entities.Category.list(),
+    initialData: initialCategories?.length ? initialCategories : undefined,
   });
-  // Dedupe by slug so filter dropdown has unique options and doesn't cause URL flip
+  // Dedupe by slug, and ensure the specific page category is always present even if beyond the 10k fetch limit
   const categories = React.useMemo(() => {
     const seen = new Set();
-    return categoriesRaw.filter((c) => {
+    const deduped = categoriesRaw.filter((c) => {
       if (seen.has(c.slug)) return false;
       seen.add(c.slug);
       return true;
     });
-  }, [categoriesRaw]);
+    if (initialCategoryData && !seen.has(initialCategoryData.slug)) {
+      return [initialCategoryData, ...deduped];
+    }
+    return deduped;
+  }, [categoriesRaw, initialCategoryData]);
 
   const staffingParentId = React.useMemo(() => categories.find((c) => c.slug === 'staffing-companies')?.id, [categories]);
   const staffingSubcategorySlugs = React.useMemo(
@@ -66,17 +71,25 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
   );
   const useStaffingPath = isStaffingPath || (!!selectedService && staffingSubcategorySlugs.has(selectedService));
 
+  // Category > SubCategory navigation
+  const selectedCat = React.useMemo(() => categories.find((c) => c.slug === selectedService), [categories, selectedService]);
+  const subcategoriesOfSelected = React.useMemo(
+    () => selectedCat ? categories.filter((c) => (c.parent_id ?? c.parentId) === selectedCat.id) : [],
+    [categories, selectedCat]
+  );
+  const parentOfSelected = React.useMemo(
+    () => selectedCat?.parent_id ? categories.find((c) => c.id === selectedCat.parent_id) : null,
+    [categories, selectedCat]
+  );
+
   const { data: allAgencies = [], isLoading } = useQuery({
-    queryKey: ['agencies'],
-    queryFn: () => api.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
+    queryKey: ['agencies', selectedService || ''],
+    queryFn: () => selectedService
+      ? api.entities.Agency.filterByCategory(selectedService, '-avg_rating', 200)
+      : api.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
     initialData: initialAgencies?.length ? initialAgencies : undefined,
   });
 
-  const { data: agencyCategories = [] } = useQuery({
-    queryKey: ['agency-categories'],
-    queryFn: () => api.entities.AgencyCategory.list(),
-    initialData: initialAgencyCategories?.length ? initialAgencyCategories : undefined,
-  });
 
   // Debounce search input
   useEffect(() => {
@@ -138,7 +151,7 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
   }, [countryFromUrl, stateFromUrl, searchFromUrl, searchParams]);
 
   // Get selected category name
-  const selectedCategoryName = categories.find(c => c.slug === selectedService || c.id === selectedService)?.name || 'Business Service Providers';
+  const selectedCategoryName = categories.find(c => c.slug === selectedService || c.id === selectedService)?.name || 'Businesses';
 
   // Filter agencies with proper search logic
   const filteredAgencies = allAgencies.filter((agency) => {
@@ -154,29 +167,6 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
       
       if (!nameMatch && !descMatch && !cityMatch && !stateMatch && !countryMatch && !servicesMatch) {
         return false;
-      }
-    }
-
-    // Handle service/category filter (works with search)
-    if (selectedService) {
-      const selectedCat = categories.find(c => c.slug === selectedService);
-      if (selectedCat) {
-        // Check if agency has this category or any of its subcategories
-        const hasDirectCategory = agencyCategories.some(
-          (ac) => (ac.agency_id ?? ac.agencyId) === agency.id && (ac.category_id ?? ac.categoryId) === selectedCat.id
-        );
-        
-        if (selectedCat.is_parent ?? selectedCat.isParent) {
-          const subcategoryIds = categories
-            .filter(c => (c.parent_id ?? c.parentId) === selectedCat.id)
-            .map(c => c.id);
-          const hasSubcategory = agencyCategories.some(
-            (ac) => (ac.agency_id ?? ac.agencyId) === agency.id && subcategoryIds.includes(ac.category_id ?? ac.categoryId)
-          );
-          if (!hasDirectCategory && !hasSubcategory) return false;
-        } else {
-          if (!hasDirectCategory) return false;
-        }
       }
     }
 
@@ -220,8 +210,21 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Page Header */}
       <div className="bg-[#0D1B2A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-7">
-          <Breadcrumb items={selectedService ? [{ label: 'Directory', href: getDirectoryUrl() }, { label: selectedCategoryName }] : [{ label: 'Directory' }]} dark />
+        <div className="w-full px-4 sm:px-6 lg:px-10 pt-8 pb-7">
+          <Breadcrumb
+            items={
+              selectedService
+                ? parentOfSelected
+                  ? [
+                      { label: 'Directory', href: getDirectoryUrl() },
+                      { label: parentOfSelected.name, href: getDirectoryUrl(parentOfSelected.slug) },
+                      { label: selectedCategoryName },
+                    ]
+                  : [{ label: 'Directory', href: getDirectoryUrl() }, { label: selectedCategoryName }]
+                : [{ label: 'Directory' }]
+            }
+            dark
+          />
 
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-4 mb-2 text-white tracking-tight">
             Top {selectedCategoryName}
@@ -234,12 +237,42 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
             <span>·</span>
             <span>Rankings updated: Feb 15, 2026</span>
           </div>
+
+          {/* Subcategory pills */}
+          {subcategoriesOfSelected.length > 0 && (
+            <div className="mt-5 pt-4 border-t border-white/10">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Browse by Subcategory</p>
+              <div className="flex flex-wrap gap-2">
+                {subcategoriesOfSelected.map((sub) => (
+                  <button
+                    key={sub.slug}
+                    onClick={() => setSelectedService(sub.slug)}
+                    className="text-sm bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    {sub.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Parent category link */}
+          {parentOfSelected && (
+            <div className="mt-3">
+              <button
+                onClick={() => setSelectedService(parentOfSelected.slug)}
+                className="text-xs text-slate-400 hover:text-white transition-colors underline"
+              >
+                ← Back to {parentOfSelected.name}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Search Bar */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="w-full px-4 sm:px-6 lg:px-10 py-3">
           <div className="relative max-w-xl">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
@@ -268,11 +301,10 @@ export default function Directory({ initialCategorySlug, underStaffing: underSta
         setSelectedTeamSize={setSelectedTeamSize}
         selectedRating={selectedRating}
         setSelectedRating={setSelectedRating}
-        onApply={() => {}}
       />
 
       {/* Results */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full px-4 sm:px-6 lg:px-10 py-6">
         {/* Sort Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <p className="text-sm text-slate-500">

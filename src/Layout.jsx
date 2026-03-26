@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import {
-  Menu, X, Search, Facebook, Twitter, Linkedin, Instagram
+  Menu, X, Search, Facebook, Twitter, Linkedin, Instagram, ChevronRight, ChevronDown
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
@@ -15,6 +15,10 @@ export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [catDropdownOpen, setCatDropdownOpen] = useState(false);
+  const [mobileCatOpen, setMobileCatOpen] = useState(false);
+  const catDropdownRef = useRef(null);
+  const catTimeoutRef = useRef(null);
   const router = useRouter();
 
   React.useEffect(() => {
@@ -27,6 +31,46 @@ export default function Layout({ children }) {
     queryKey: ['categories'],
     queryFn: () => api.entities.Category.list(),
   });
+
+  const { parentCategories, standaloneCategories } = useMemo(() => {
+    const parents = categories.filter((c) => c.is_parent || c.isParent);
+    const standalone = categories.filter(
+      (c) => !(c.is_parent || c.isParent) && !(c.parent_id || c.parentId)
+    );
+    return { parentCategories: parents, standaloneCategories: standalone };
+  }, [categories]);
+
+  const getSubcategories = useCallback(
+    (parentId) => categories.filter((c) => (c.parent_id ?? c.parentId) === parentId),
+    [categories]
+  );
+
+  const getCategoryHref = useCallback((cat, parent) => {
+    if (cat.is_parent || cat.isParent) {
+      return cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug);
+    }
+    const isStaffing = parent?.slug === 'staffing-companies';
+    return getDirectoryUrl(cat.slug, { underStaffing: isStaffing });
+  }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e) {
+      if (catDropdownRef.current && !catDropdownRef.current.contains(e.target)) {
+        setCatDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleCatMouseEnter = () => {
+    clearTimeout(catTimeoutRef.current);
+    setCatDropdownOpen(true);
+  };
+  const handleCatMouseLeave = () => {
+    catTimeoutRef.current = setTimeout(() => setCatDropdownOpen(false), 200);
+  };
 
   const topLocations = [
     { label: 'United States', value: 'United States' },
@@ -41,7 +85,7 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="w-full px-3 sm:px-6 lg:px-10">
           <div className="flex justify-between items-center h-16 sm:h-20 gap-2 sm:gap-8 min-w-0">
             {/* Logo */}
             <Link href={createPageUrl('Home')} className="flex items-center flex-shrink-0">
@@ -50,9 +94,93 @@ export default function Layout({ children }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6 flex-1 justify-end">
-              <Link href="/Categories" className="text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm">
-                Browse Categories
-              </Link>
+              {/* Browse Categories with mega dropdown */}
+              <div
+                ref={catDropdownRef}
+                className="relative"
+                onMouseEnter={handleCatMouseEnter}
+                onMouseLeave={handleCatMouseLeave}
+              >
+                <button
+                  onClick={() => setCatDropdownOpen((v) => !v)}
+                  className="flex items-center gap-1 text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm"
+                >
+                  Browse Categories
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${catDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {catDropdownOpen && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 w-[700px] max-h-[70vh] overflow-y-auto p-5">
+                    {/* Parent categories with subcategories */}
+                    {parentCategories.length > 0 && (
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+                        {parentCategories.map((parent) => {
+                          const subs = getSubcategories(parent.id);
+                          return (
+                            <div key={parent.id}>
+                              <Link
+                                href={getCategoryHref(parent)}
+                                onClick={() => setCatDropdownOpen(false)}
+                                className="text-sm font-bold text-[#0D1B2A] hover:text-orange-600 transition-colors flex items-center gap-1.5"
+                              >
+                                {parent.name}
+                                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                              </Link>
+                              {subs.length > 0 && (
+                                <div className="mt-1.5 ml-0.5 flex flex-col gap-1">
+                                  {subs.map((sub) => (
+                                    <Link
+                                      key={sub.id}
+                                      href={getCategoryHref(sub, parent)}
+                                      onClick={() => setCatDropdownOpen(false)}
+                                      className="text-xs text-slate-500 hover:text-orange-600 transition-colors py-0.5 pl-2 border-l-2 border-transparent hover:border-orange-400"
+                                    >
+                                      {sub.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Standalone categories */}
+                    {standaloneCategories.length > 0 && (
+                      <>
+                        {parentCategories.length > 0 && <div className="border-t border-slate-100 my-4" />}
+                        <div>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Other Categories</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {standaloneCategories.map((cat) => (
+                              <Link
+                                key={cat.id}
+                                href={getDirectoryUrl(cat.slug)}
+                                onClick={() => setCatDropdownOpen(false)}
+                                className="text-xs px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-600 rounded-lg hover:bg-orange-50 hover:border-orange-300 hover:text-orange-700 transition-colors"
+                              >
+                                {cat.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* View All link */}
+                    <div className="border-t border-slate-100 mt-4 pt-3 text-center">
+                      <Link
+                        href="/Categories"
+                        onClick={() => setCatDropdownOpen(false)}
+                        className="inline-flex items-center gap-1 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors"
+                      >
+                        View All Categories <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <Link href={createPageUrl('Blogs')} className="text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm">
                 Resources
@@ -115,13 +243,67 @@ export default function Layout({ children }) {
           {mobileMenuOpen && (
             <div className="lg:hidden py-4 border-t border-slate-200 overflow-y-auto max-h-[calc(100vh-5rem)]">
               <div className="flex flex-col gap-1">
-                <Link
-                  href="/Categories"
-                  className="text-slate-700 hover:text-orange-600 py-3 px-3 font-semibold text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
-                  onClick={() => setMobileMenuOpen(false)}
+                {/* Mobile: Browse Categories with expandable subcategories */}
+                <button
+                  onClick={() => setMobileCatOpen((v) => !v)}
+                  className="flex items-center justify-between text-slate-700 hover:text-orange-600 py-3 px-3 font-semibold text-sm rounded-lg hover:bg-orange-50 touch-manipulation w-full text-left"
                 >
                   Browse Categories
-                </Link>
+                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${mobileCatOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileCatOpen && (
+                  <div className="pl-3 pb-2 flex flex-col gap-0.5">
+                    {parentCategories.map((parent) => {
+                      const subs = getSubcategories(parent.id);
+                      return (
+                        <div key={parent.id}>
+                          <Link
+                            href={getCategoryHref(parent)}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center gap-1.5 py-2 px-3 text-sm font-semibold text-[#0D1B2A] hover:text-orange-600 rounded-lg hover:bg-orange-50"
+                          >
+                            {parent.name}
+                          </Link>
+                          {subs.length > 0 && (
+                            <div className="pl-5 flex flex-col gap-0.5">
+                              {subs.map((sub) => (
+                                <Link
+                                  key={sub.id}
+                                  href={getCategoryHref(sub, parent)}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
+                                >
+                                  {sub.name}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {standaloneCategories.length > 0 && (
+                      <div className="mt-1 pt-1 border-t border-slate-100">
+                        {standaloneCategories.slice(0, 10).map((cat) => (
+                          <Link
+                            key={cat.id}
+                            href={getDirectoryUrl(cat.slug)}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50 block"
+                          >
+                            {cat.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    <Link
+                      href="/Categories"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-2 px-3 text-xs font-semibold text-orange-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
+                    >
+                      View All Categories →
+                    </Link>
+                  </div>
+                )}
                 <Link
                   href={getDirectoryUrl()}
                   className="text-slate-700 hover:text-orange-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
@@ -168,7 +350,7 @@ export default function Layout({ children }) {
 
       {/* Footer */}
       <footer className="bg-[#0D1B2A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        <div className="w-full px-4 sm:px-6 lg:px-10 py-10 sm:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12 mb-8 sm:mb-12">
             <div className="lg:col-span-2">
               <Link href={createPageUrl('Home')} className="flex items-center mb-6">

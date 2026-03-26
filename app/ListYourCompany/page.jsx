@@ -16,7 +16,7 @@ const BENEFITS = [
   {
     icon: TrendingUp,
     title: 'Reach More Clients',
-    desc: 'Get discovered by thousands of businesses actively searching for your services every month.',
+    desc: 'Get discovered by thousands of businesses actively searching for your products & services every month.',
   },
   {
     icon: Shield,
@@ -106,7 +106,7 @@ export default function ListYourCompanyPage() {
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <div className="bg-[#0D1B2A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-medium text-slate-300 mb-6">
               <Star className="w-3.5 h-3.5 text-[#F5A623]" /> Free to list · No credit card required
@@ -135,7 +135,7 @@ export default function ListYourCompanyPage() {
 
       {/* ── Process steps ─────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-wrap items-center gap-3 sm:gap-0">
             {STEPS.map((step, i) => (
               <React.Fragment key={step.n}>
@@ -155,7 +155,7 @@ export default function ListYourCompanyPage() {
       </div>
 
       {/* ── Body ──────────────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <div className="grid lg:grid-cols-[1fr_400px] gap-10 xl:gap-16 items-start">
 
           {/* ── Left: Benefits + form ──────────────────────────────────────── */}
@@ -247,7 +247,7 @@ export default function ListYourCompanyPage() {
                   <textarea
                     className={`${INPUT} resize-none`}
                     rows={4}
-                    placeholder="Describe the services you offer, industries you serve, and what makes your company stand out…"
+                    placeholder="Describe the products & services you offer, industries you serve, and what makes your company stand out…"
                     value={form.message}
                     onChange={e => set('message', e.target.value)}
                   />
@@ -288,7 +288,7 @@ export default function ListYourCompanyPage() {
                 {[
                   { title: 'We review your submission', desc: 'Our team checks your details within 1–2 business days.' },
                   { title: 'Profile goes live', desc: 'Your company appears in the directory and starts receiving visibility.' },
-                  { title: 'Clients find you', desc: 'Businesses searching for your services can discover and contact you.' },
+                  { title: 'Clients find you', desc: 'Businesses searching for your products & services can discover and contact you.' },
                   { title: 'Collect reviews', desc: 'Ask satisfied clients to leave reviews to boost your ranking.' },
                 ].map(({ title, desc }, i) => (
                   <div key={i} className="flex gap-3">

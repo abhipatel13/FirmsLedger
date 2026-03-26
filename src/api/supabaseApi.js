@@ -34,8 +34,26 @@ function mapOrder(orderKey) {
 }
 
 export async function fetchCategories() {
-  const { data, error } = await supabase.from('categories').select('*').order('order', { ascending: true });
+  const { data, error } = await supabase.from('categories').select('*').order('order', { ascending: true }).limit(10000);
   if (error) throw error;
+  return data || [];
+}
+
+export async function fetchAgenciesByCategory(categorySlug, orderKey = '-avg_rating', limit = 200) {
+  const { data: cat } = await supabase.from('categories').select('id, is_parent').eq('slug', categorySlug).maybeSingle();
+  if (!cat) return [];
+  let categoryIds = [cat.id];
+  if (cat.is_parent) {
+    const { data: subs } = await supabase.from('categories').select('id').eq('parent_id', cat.id);
+    if (subs?.length) categoryIds.push(...subs.map(s => s.id));
+  }
+  const { column, ascending } = mapOrder(orderKey);
+  const { data: acs } = await supabase.from('agency_categories').select('agency_id').in('category_id', categoryIds);
+  if (!acs?.length) return [];
+  const agencyIds = [...new Set(acs.map(ac => ac.agency_id))];
+  const { data } = await supabase.from('agencies')
+    .select('*').eq('approved', true).in('id', agencyIds)
+    .order(column, { ascending }).limit(limit);
   return data || [];
 }
 
@@ -66,7 +84,7 @@ export async function fetchAgencyCategories(where = {}) {
     const col = k.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
     if (v != null && v !== '') q = q.eq(col, v);
   });
-  const { data, error } = await q;
+  const { data, error } = await q.limit(10000);
   if (error) throw error;
   return data || [];
 }

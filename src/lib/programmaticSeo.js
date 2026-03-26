@@ -330,7 +330,7 @@ export function getSearchPageTitle(categoryName, locationName) {
 
 /** Page meta description */
 export function getSearchPageDescription(categoryName, locationName) {
-  return `Discover the top ${categoryName} companies in ${locationName} (${SEO_YEAR}). Browse verified ${categoryName.toLowerCase()} service providers, compare expertise, pricing, and reviews to find the best partner for your needs.`;
+  return `Discover the top ${categoryName} companies in ${locationName} (${SEO_YEAR}). Browse verified ${categoryName.toLowerCase()} suppliers and service providers, compare products, expertise, pricing, and reviews to find the best partner for your needs.`;
 }
 
 /** Total city count across all countries */

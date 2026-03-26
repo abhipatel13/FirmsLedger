@@ -50,7 +50,7 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-20 gap-8">
                 {/* Modern Logo */}
                 <Link to={createPageUrl('Home')} className="flex items-center gap-3 flex-shrink-0">
@@ -256,7 +256,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Modern Footer */}
       <footer className="bg-slate-900 text-white mt-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-slate-900"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-16 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
             <div className="lg:col-span-2">
               <Link to={createPageUrl('Home')} className="flex items-center gap-3 mb-6">
