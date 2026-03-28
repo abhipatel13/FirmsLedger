@@ -1118,9 +1118,1185 @@ const INDUSTRIES = [
     "Display & Exhibition","Exhibition Stands","Display Systems","Retail Fixtures","Mannequins","Display Lighting","Trade Show Displays",
   ]},
 
+  // ── CYBERSECURITY ──────────────────────────────────────────────────────
+  { parent: "Cybersecurity", children: [
+    "Network Security","Endpoint Security","Cloud Security","Application Security","Data Security",
+    "Identity & Access Management","Zero Trust Security","Firewall Solutions","Intrusion Detection Systems","Intrusion Prevention Systems",
+    "SIEM Solutions","SOC Services","Penetration Testing","Vulnerability Assessment","Threat Intelligence",
+    "Malware Protection","Ransomware Protection","Phishing Protection","DDoS Protection","Web Application Firewall",
+    "Email Security","DNS Security","VPN Services","Encryption Services","PKI Services",
+    "Security Awareness Training","Compliance Management","Risk Assessment","Incident Response","Digital Forensics",
+    "IoT Security","OT Security","SCADA Security","Industrial Cybersecurity","Mobile Security",
+    "DevSecOps","Container Security","API Security","Blockchain Security","Quantum Cryptography",
+    "Managed Security Services","Security Consulting","Security Auditing","Bug Bounty Platforms","Cyber Insurance",
+  ]},
+
+  // ── CLOUD COMPUTING & SaaS ────────────────────────────────────────────
+  { parent: "Cloud Computing & SaaS", children: [
+    "Public Cloud Services","Private Cloud Services","Hybrid Cloud Solutions","Multi Cloud Management","Cloud Migration",
+    "Infrastructure as a Service","Platform as a Service","Software as a Service","Function as a Service","Backend as a Service",
+    "Cloud Storage","Object Storage","Block Storage","File Storage","Cloud Backup","Disaster Recovery as a Service",
+    "Cloud Hosting","Web Hosting","Managed Hosting","Dedicated Servers","VPS Hosting","Serverless Computing",
+    "Content Delivery Network","Edge Computing","Cloud Load Balancing","Cloud DNS","Domain Registration",
+    "Cloud Database","Database as a Service","Managed PostgreSQL","Managed MySQL","Managed MongoDB","Cloud Data Warehouse",
+    "Cloud Networking","Virtual Private Cloud","Cloud Interconnect","SD WAN","Cloud Firewall",
+    "Cloud Monitoring","Cloud Logging","APM Solutions","Cloud Cost Management","FinOps",
+    "CRM Software","ERP Software","HRM Software","Accounting Software","Project Management Software",
+    "Collaboration Tools","Video Conferencing","Team Messaging","Document Management","Digital Workspace",
+    "Cloud AI Services","Machine Learning Platform","AI as a Service","Natural Language Processing","Computer Vision API",
+    "Low Code Platforms","No Code Platforms","Workflow Automation","Integration Platform as a Service",
+  ]},
+
+  // ── ARTIFICIAL INTELLIGENCE & MACHINE LEARNING ────────────────────────
+  { parent: "Artificial Intelligence & Machine Learning", children: [
+    // Core AI/ML Services
+    "Machine Learning Services","Deep Learning Services","Neural Network Development","AI Consulting","AI Strategy",
+    "AI Development Company","AI Software Development","Custom AI Solutions","AI Integration Services","AI Proof of Concept",
+    "AI Model Training","AI Fine Tuning","Transfer Learning Services","Reinforcement Learning","Federated Learning",
+    // NLP & Language AI
+    "Natural Language Processing","Chatbot Development","Virtual Assistant Development","Sentiment Analysis","Text Analytics",
+    "Named Entity Recognition","Text Classification","Language Translation AI","Document Understanding","Semantic Search AI",
+    "Conversational AI","AI Customer Service","Voice Bot Development","IVR AI","Dialogue Systems",
+    // Computer Vision
+    "Computer Vision","Image Recognition","Object Detection","Facial Recognition","Video Analytics",
+    "Optical Character Recognition","Document Digitization","Image Segmentation","Pose Estimation","Visual Inspection AI",
+    "Medical Image Analysis","Satellite Image Analysis","Autonomous Navigation Vision","Gesture Recognition","Scene Understanding",
+    // Speech & Audio AI
+    "Speech Recognition","Voice AI","Text to Speech","Speech to Text","Voice Cloning",
+    "Speaker Identification","Emotion Detection Voice","Audio Classification","Music AI","Sound Event Detection",
+    // Predictive & Decision AI
+    "Predictive Analytics","Recommendation Systems","Anomaly Detection","Fraud Detection AI","Risk Scoring AI",
+    "Demand Forecasting AI","Price Optimization AI","Churn Prediction","Lead Scoring AI","Predictive Maintenance AI",
+    "Decision Intelligence","Optimization AI","Simulation AI","Digital Twin AI","Scenario Planning AI",
+    // Automation & RPA
+    "Robotic Process Automation","Intelligent Automation","Process Mining","Cognitive Automation","Hyperautomation",
+    "Intelligent Document Processing","Workflow Automation AI","AI Data Entry","AI Invoice Processing","AI Email Automation",
+    // Generative AI
+    "Generative AI","Large Language Models","AI Content Generation","AI Image Generation","AI Video Generation",
+    "AI Code Generation","AI Music Generation","AI Voice Generation","AI 3D Model Generation","Synthetic Data Generation",
+    "AI Writing Assistant","AI Design Tool","AI Presentation Tool","AI Summarization","AI Translation Tool",
+    "GPT Integration","Claude Integration","LLM Fine Tuning","Prompt Engineering","RAG Development",
+    "AI Agent Development","Autonomous AI Agents","Multi Agent Systems","AI Workflow Agents","AI Copilot Development",
+    // Industry-Specific AI
+    "AI in Healthcare","AI Diagnostics","Drug Discovery AI","Medical Imaging AI","Clinical Trial AI",
+    "AI in Finance","Algorithmic Trading","Credit Scoring AI","Insurance AI","Wealth Management AI",
+    "AI in Manufacturing","Quality Inspection AI","Supply Chain AI","Predictive Quality AI","Process Optimization AI",
+    "AI in Retail","Dynamic Pricing AI","Customer Analytics AI","Inventory Optimization AI","Personalization AI",
+    "AI in Agriculture","Crop Monitoring AI","Precision Farming AI","Livestock AI","Soil Analysis AI",
+    "AI in Legal","Contract Analysis AI","Legal Research AI","Compliance AI","E-Discovery AI",
+    "AI in Education","Adaptive Learning AI","AI Tutoring System","Automated Grading","Student Analytics AI",
+    "AI in Real Estate","Property Valuation AI","Real Estate Analytics AI","AI Property Management","Smart Building AI",
+    "AI in Logistics","Route Optimization AI","Warehouse AI","Fleet Management AI","Delivery Prediction AI",
+    "AI in Energy","Grid Optimization AI","Energy Forecasting AI","Smart Meter AI","Carbon Tracking AI",
+    "AI in Media","Content Recommendation AI","Ad Targeting AI","Deepfake Detection","AI Video Editing",
+    "AI in HR","Resume Screening AI","Interview AI","Employee Analytics AI","Workforce Planning AI",
+    "AI in Cybersecurity","Threat Detection AI","Security Analytics AI","Phishing Detection AI","Behavioral Analysis AI",
+    "AI in Telecom","Network Optimization AI","Customer Churn AI Telecom","5G AI","Spectrum Management AI",
+    "AI in Automotive","Autonomous Driving AI","ADAS Development","Vehicle Perception AI","Connected Car AI",
+    "AI in Gaming","Game AI Development","Procedural Generation","NPC AI","Game Testing AI",
+    // AI Infrastructure & Tools
+    "AI Ethics","Explainable AI","AI Governance","Bias Detection","Responsible AI",
+    "AI Safety","AI Alignment","AI Red Teaming","AI Auditing","Trustworthy AI",
+    "MLOps","Model Deployment","Feature Engineering","Data Labeling","AI Training Data",
+    "ML Pipeline","Model Monitoring","Feature Store","Experiment Tracking","Model Registry",
+    "AI Infrastructure","GPU Cloud","AI Hardware","AI Accelerator","AI Cluster Management",
+    "Edge AI","Embedded AI","TinyML","AI Chips","Neural Processing Units",
+    "AI Data Platform","Data Annotation","Synthetic Data","Data Augmentation","Active Learning",
+    "Vector Database","Embedding Services","Knowledge Graph","Graph Neural Network","Semantic Layer AI",
+    "AI API Platform","AI Marketplace","Pre Trained Models","Model as a Service","AI SDK",
+    // AI Research & Consulting
+    "AI Research Lab","AI R&D Services","AI Patent","AI Benchmarking","AI Publications",
+    "AI Talent Recruitment","AI Training Programs","AI Bootcamp","AI Certification","AI Workshop",
+  ]},
+
+  // ── ROBOTICS & AUTOMATION ─────────────────────────────────────────────
+  { parent: "Robotics & Automation", children: [
+    "Industrial Robots","Collaborative Robots","Articulated Robots","SCARA Robots","Delta Robots","Cartesian Robots",
+    "Mobile Robots","Autonomous Mobile Robots","AGV Vehicles","Warehouse Robots","Delivery Robots",
+    "Service Robots","Cleaning Robots","Security Robots","Healthcare Robots","Agricultural Robots",
+    "Drone Technology","Commercial Drones","Agricultural Drones","Inspection Drones","Delivery Drones","Drone Software",
+    "Humanoid Robots","Social Robots","Companion Robots","Entertainment Robots","Educational Robots",
+    "Robotic Arms","Grippers","End Effectors","Robot Controllers","Robot Sensors",
+    "Automation Controllers","PLC Programming","SCADA Systems","HMI Systems","DCS Systems",
+    "Motion Control","Servo Motors","Stepper Motors","Linear Actuators","Motion Controllers",
+    "Machine Vision","Vision Systems","3D Vision","Barcode Readers","Vision Sensors",
+    "Conveyor Systems","Belt Conveyors","Roller Conveyors","Chain Conveyors","Pneumatic Conveyors",
+    "Pick and Place Systems","Palletizing Robots","Depalletizing","Bin Picking","Sorting Systems",
+    "Welding Robots","Painting Robots","Assembly Robots","Packaging Robots","Inspection Robots",
+    "Autonomous Vehicles","Self Driving Cars","Autonomous Trucks","Autonomous Ships","Autonomous Farming Equipment",
+    "Exoskeletons","Wearable Robots","Rehabilitation Robots","Assistive Robots","Prosthetics",
+  ]},
+
+  // ── 3D PRINTING & ADDITIVE MANUFACTURING ──────────────────────────────
+  { parent: "3D Printing & Additive Manufacturing", children: [
+    "FDM 3D Printing","SLA 3D Printing","SLS 3D Printing","DMLS 3D Printing","Metal 3D Printing",
+    "Resin 3D Printing","Multi Jet Fusion","Binder Jetting","Electron Beam Melting","Direct Energy Deposition",
+    "3D Printing Services","Rapid Prototyping","3D Printing On Demand","Custom Manufacturing","Batch Production 3D",
+    "3D Printing Materials","PLA Filament","ABS Filament","PETG Filament","Nylon Filament","TPU Filament",
+    "Metal Powders","Titanium Powder","Stainless Steel Powder","Aluminum Powder","Cobalt Chrome Powder",
+    "3D Printing Software","CAD Software","Slicing Software","3D Scanning","Reverse Engineering",
+    "Industrial 3D Printers","Desktop 3D Printers","Large Format 3D Printers","Bioprinters","Food 3D Printers",
+    "3D Printed Medical Devices","Dental 3D Printing","Orthopedic 3D Printing","Surgical Guides","Prosthetics 3D Printing",
+    "3D Printed Construction","Concrete 3D Printing","Architectural Models","Construction Automation",
+    "3D Printed Jewelry","3D Printed Fashion","3D Printed Footwear","3D Printed Eyewear",
+    "Aerospace 3D Printing","Automotive 3D Printing","Electronics 3D Printing","Tooling 3D Printing",
+  ]},
+
+  // ── BLOCKCHAIN & WEB3 ─────────────────────────────────────────────────
+  { parent: "Blockchain & Web3", children: [
+    "Blockchain Development","Smart Contract Development","DApp Development","Layer 1 Blockchain","Layer 2 Solutions",
+    "Cryptocurrency Exchange","Crypto Wallet","Crypto Custody","Crypto Payment Processing","Stablecoin",
+    "DeFi Development","DEX Development","Lending Protocol","Yield Farming","Liquidity Pool",
+    "NFT Development","NFT Marketplace","NFT Gaming","Digital Collectibles","Tokenization",
+    "Enterprise Blockchain","Supply Chain Blockchain","Healthcare Blockchain","Real Estate Blockchain","Government Blockchain",
+    "Blockchain Consulting","Blockchain Security Audit","Smart Contract Audit","Blockchain Analytics","Compliance Blockchain",
+    "Web3 Development","DAO Development","Metaverse Development","Web3 Gaming","Web3 Social",
+    "Blockchain Infrastructure","Blockchain Nodes","Blockchain API","Oracle Services","Cross Chain Bridge",
+    "Token Development","ICO Services","STO Services","Token Economics","Governance Token",
+    "Blockchain Identity","Self Sovereign Identity","Verifiable Credentials","Digital Identity","KYC Blockchain",
+  ]},
+
+  // ── IoT & CONNECTED DEVICES ───────────────────────────────────────────
+  { parent: "IoT & Connected Devices", children: [
+    "IoT Platform","IoT Gateway","IoT Middleware","IoT Cloud Platform","IoT Edge Platform",
+    "Industrial IoT","Smart Manufacturing IoT","Predictive Maintenance IoT","Asset Tracking IoT","Fleet Management IoT",
+    "Smart Home Devices","Smart Thermostat","Smart Lighting","Smart Lock","Smart Speaker","Smart Camera",
+    "Smart City Solutions","Smart Street Lighting","Smart Parking","Smart Waste Management","Smart Traffic Management",
+    "Wearable Technology","Smartwatches","Fitness Trackers","Smart Glasses","Health Monitors","Smart Clothing",
+    "IoT Sensors","Temperature Sensors","Humidity Sensors","Pressure Sensors","Motion Sensors","Proximity Sensors",
+    "IoT Connectivity","LoRaWAN","NB IoT","Zigbee","Z Wave","BLE","WiFi IoT","5G IoT",
+    "IoT Security","Device Authentication","IoT Encryption","Firmware Security","IoT Threat Detection",
+    "Smart Agriculture IoT","Soil Sensors","Weather Stations","Irrigation IoT","Greenhouse IoT","Livestock Tracking",
+    "Smart Energy IoT","Smart Meters","Energy Monitoring","Grid Management IoT","EV Charging IoT",
+    "Healthcare IoT","Remote Patient Monitoring","Medical IoT Devices","Hospital IoT","Elderly Care IoT",
+    "Retail IoT","Smart Shelves","Beacon Technology","RFID Solutions","Digital Signage IoT",
+    "Logistics IoT","Container Tracking","Cold Chain Monitoring","Warehouse IoT","Last Mile IoT",
+    "Connected Vehicles","V2X Communication","Telematics","OBD Devices","Fleet IoT",
+  ]},
+
+  // ── ELECTRIC VEHICLES & E-MOBILITY ────────────────────────────────────
+  { parent: "Electric Vehicles & E-Mobility", children: [
+    "Electric Cars","Electric SUV","Electric Sedan","Electric Hatchback","Electric Luxury Cars",
+    "Electric Trucks","Electric Vans","Electric Buses","Electric Commercial Vehicles","Electric Fleet Vehicles",
+    "Electric Two Wheelers","Electric Scooters","Electric Motorcycles","Electric Bicycles","E-Bikes",
+    "Electric Three Wheelers","Electric Rickshaws","Electric Auto","Electric Cargo Three Wheeler",
+    "EV Batteries","Lithium Ion Batteries","Solid State Batteries","Battery Management Systems","Battery Recycling","Battery Swapping",
+    "EV Charging Stations","Fast Charging","DC Fast Charging","AC Charging","Wireless EV Charging","Home EV Chargers",
+    "EV Charging Networks","Charging Station Management","EV Roaming","Smart Charging","Vehicle to Grid",
+    "EV Components","Electric Motors","Power Electronics","EV Controllers","Inverters","Converters",
+    "EV Software","Fleet Management EV","Route Optimization EV","Charging App","EV Telematics",
+    "Hydrogen Fuel Cell Vehicles","Fuel Cell Technology","Hydrogen Storage","Hydrogen Refueling","Green Hydrogen",
+    "EV Infrastructure","Charging Station Installation","EV Grid Integration","EV Parking Solutions",
+    "Micro Mobility","Electric Skateboards","Electric Unicycles","Hoverboards","Shared Mobility",
+  ]},
+
+  // ── AR VR & EXTENDED REALITY ──────────────────────────────────────────
+  { parent: "AR VR & Extended Reality", children: [
+    "Virtual Reality Development","VR App Development","VR Game Development","VR Simulation","VR Training",
+    "Augmented Reality Development","AR App Development","AR Marketing","AR Navigation","AR Retail",
+    "Mixed Reality Development","Spatial Computing","Holographic Displays","Volumetric Capture",
+    "Metaverse Development","Virtual Worlds","Avatar Creation","Virtual Commerce","Virtual Events Platform",
+    "VR Hardware","VR Headsets","VR Controllers","Haptic Devices","VR Treadmills","Eye Tracking VR",
+    "AR Hardware","AR Glasses","AR Headsets","Smart Helmets","AR Displays",
+    "3D Modeling & Animation","3D Asset Creation","Motion Capture","Photogrammetry","3D Scanning Services",
+    "VR in Healthcare","Surgical Simulation","Pain Management VR","Therapy VR","Medical Training VR",
+    "VR in Education","Virtual Classrooms","VR Lab Simulations","VR Field Trips","Immersive Learning",
+    "VR in Real Estate","Virtual Property Tours","Architecture Visualization","Interior Design VR","Construction VR",
+    "Industrial AR","AR Maintenance","AR Assembly","AR Quality Control","AR Remote Assistance",
+    "VR Entertainment","VR Theme Parks","VR Arcades","VR Cinema","VR Social Platforms",
+  ]},
+
+  // ── HOME SERVICES ─────────────────────────────────────────────────────
+  { parent: "Home Services", children: [
+    "Plumbing Services","Emergency Plumbing","Drain Cleaning","Pipe Repair","Water Heater Installation","Sewer Repair",
+    "Electrical Services","Wiring Installation","Electrical Repair","Panel Upgrade","Lighting Installation","Generator Installation",
+    "HVAC Services","AC Installation","AC Repair","Heating Installation","Furnace Repair","Duct Cleaning",
+    "Roofing Services","Roof Repair","Roof Replacement","Gutter Installation","Roof Inspection","Waterproofing",
+    "Painting Services","Interior Painting","Exterior Painting","Commercial Painting","Wallpaper Installation","Texture Painting",
+    "Flooring Services","Hardwood Flooring","Tile Installation","Carpet Installation","Vinyl Flooring","Laminate Flooring",
+    "Landscaping Services","Lawn Care","Garden Design","Tree Service","Irrigation Installation","Landscape Lighting",
+    "Pest Control Services","Termite Control","Rodent Control","Bed Bug Treatment","Mosquito Control","Wildlife Removal",
+    "Cleaning Services Residential","House Cleaning","Deep Cleaning Service","Move In Cleaning","Move Out Cleaning","Post Construction Cleaning",
+    "Handyman Services","Furniture Assembly","Door Repair","Drywall Repair","Caulking","Minor Repairs",
+    "Garage Door Services","Garage Door Installation","Garage Door Repair","Automatic Gate Installation","Gate Repair",
+    "Window Services","Window Installation","Window Repair","Window Tinting","Blinds Installation","Shutters Installation",
+    "Fencing Services","Wood Fence","Chain Link Fence","Vinyl Fence","Iron Fence","Privacy Fence",
+    "Locksmith Services","Emergency Locksmith","Lock Installation","Key Duplication","Smart Lock Installation","Safe Services",
+    "Pool Services","Pool Cleaning","Pool Repair","Pool Installation","Hot Tub Services","Pool Maintenance",
+    "Appliance Repair","Refrigerator Repair","Washer Repair","Dryer Repair","Oven Repair","Dishwasher Repair",
+    "Home Inspection","Property Inspection","Mold Inspection","Radon Testing","Energy Audit","Pre Purchase Inspection",
+    "Moving Services","Local Moving","Long Distance Moving","Packing Services","Storage Services","Junk Removal",
+  ]},
+
+  // ── INSURANCE ─────────────────────────────────────────────────────────
+  { parent: "Insurance", children: [
+    "Life Insurance","Term Life Insurance","Whole Life Insurance","Universal Life Insurance","Variable Life Insurance",
+    "Health Insurance","Individual Health Insurance","Family Health Insurance","Group Health Insurance","Medicare Plans","Dental Insurance","Vision Insurance",
+    "Auto Insurance","Car Insurance","Motorcycle Insurance","Commercial Vehicle Insurance","Fleet Insurance","Usage Based Insurance",
+    "Home Insurance","Homeowners Insurance","Renters Insurance","Landlord Insurance","Flood Insurance","Earthquake Insurance",
+    "Business Insurance","General Liability Insurance","Professional Liability Insurance","Product Liability Insurance","Directors & Officers Insurance",
+    "Workers Compensation","Employee Benefits Insurance","Key Person Insurance","Business Interruption Insurance",
+    "Commercial Property Insurance","Equipment Insurance","Inland Marine Insurance","Builders Risk Insurance",
+    "Cyber Insurance","Data Breach Insurance","Technology E&O Insurance","Media Liability Insurance",
+    "Travel Insurance","Trip Cancellation Insurance","Medical Travel Insurance","Adventure Travel Insurance",
+    "Marine Insurance","Cargo Insurance","Hull Insurance","P&I Insurance","Freight Insurance",
+    "Aviation Insurance","Aircraft Insurance","Drone Insurance","Airport Liability Insurance",
+    "Farm Insurance","Crop Insurance","Livestock Insurance","Farm Equipment Insurance","Agricultural Insurance",
+    "Pet Insurance Services","Dog Insurance","Cat Insurance","Exotic Pet Insurance",
+    "Insurance Brokerage","Insurance Consulting","Reinsurance","Actuarial Services","Claims Management",
+    "InsurTech Solutions","Insurance Platform","Insurance API","Digital Insurance","Insurance Analytics",
+  ]},
+
+  // ── DIGITAL MARKETING ─────────────────────────────────────────────────
+  { parent: "Digital Marketing", children: [
+    "SEO Services","Local SEO","Technical SEO","On Page SEO","Off Page SEO","E-Commerce SEO","Enterprise SEO",
+    "PPC Advertising","Google Ads Management","Bing Ads","Facebook Ads","Instagram Ads","LinkedIn Ads","TikTok Ads",
+    "Social Media Marketing","Social Media Management","Social Media Strategy","Community Management","Social Listening","Influencer Marketing",
+    "Content Marketing","Blog Writing","Article Writing","Copywriting","Content Strategy","Content Distribution",
+    "Email Marketing Services","Email Campaign Management","Email Automation","Newsletter Services","Drip Campaigns","Email Design",
+    "Affiliate Marketing","Affiliate Network","Affiliate Management","Performance Marketing","CPA Marketing",
+    "Video Marketing","YouTube Marketing","Video Production Services","Video SEO","Live Stream Marketing",
+    "App Store Optimization","Mobile App Marketing","App Advertising","App Analytics","User Acquisition",
+    "Conversion Rate Optimization","A B Testing","Landing Page Optimization","UX Optimization","Funnel Optimization",
+    "Marketing Automation","Lead Generation","Lead Nurturing","Marketing Analytics","Campaign Management",
+    "Brand Strategy","Brand Identity","Brand Positioning","Rebranding","Brand Guidelines",
+    "Public Relations Digital","Online Reputation Management","Press Release Distribution","Media Outreach","Crisis Communication",
+    "Web Analytics","Google Analytics Services","Data Analytics Marketing","Attribution Modeling","Marketing Dashboard",
+    "Programmatic Advertising","Display Advertising","Native Advertising","Retargeting","Connected TV Advertising",
+    "Voice Search Optimization","Featured Snippet Optimization","AI SEO","Semantic SEO",
+    "Ecommerce Marketing","Amazon Marketing","Shopify Marketing","Marketplace Optimization","Product Feed Management",
+  ]},
+
+  // ── WEB & SOFTWARE DEVELOPMENT ────────────────────────────────────────
+  { parent: "Web & Software Development", children: [
+    "Website Development","Custom Website Development","WordPress Development","Shopify Development","Wix Development","Webflow Development",
+    "Web Application Development","React Development","Angular Development","Vue.js Development","Next.js Development","Node.js Development",
+    "Mobile App Development","iOS App Development","Android App Development","Cross Platform App Development","Flutter Development","React Native Development",
+    "E-Commerce Development","Magento Development","WooCommerce Development","BigCommerce Development","Custom E-Commerce","Marketplace Development",
+    "Software Development","Custom Software Development","Enterprise Software","SaaS Development","Desktop Application Development",
+    "Backend Development","API Development","Microservices Development","Database Development","Server Side Development",
+    "Frontend Development","UI Development","Responsive Design","Progressive Web App","Single Page Application",
+    "DevOps Services","CI CD Pipeline","Infrastructure as Code","Kubernetes Services","Docker Services","Cloud DevOps",
+    "QA & Testing Services","Manual Testing","Automated Testing","Performance Testing","Security Testing","Mobile Testing",
+    "UI UX Design Services","User Interface Design","User Experience Design","Design Systems","Wireframing","Prototyping",
+    "CMS Development","Drupal Development","Joomla Development","Headless CMS","Custom CMS",
+    "Game Development","Unity Development","Unreal Engine Development","Mobile Game Development","PC Game Development","Web Game Development",
+    "Embedded Software","Firmware Development","RTOS Development","Embedded Linux","Driver Development",
+    "Legacy System Modernization","Code Migration","System Integration","API Integration","Data Migration",
+    "Technical Consulting","Software Architecture","Technology Assessment","Digital Transformation Consulting",
+  ]},
+
+  // ── DATA & ANALYTICS ──────────────────────────────────────────────────
+  { parent: "Data & Analytics", children: [
+    "Data Analytics Services","Business Intelligence","Data Visualization","Dashboard Development","Reporting Solutions",
+    "Big Data Services","Hadoop Services","Spark Services","Data Lake","Data Pipeline","Streaming Analytics",
+    "Data Engineering","ETL Services","Data Warehousing","Data Modeling","Data Architecture","Data Integration",
+    "Data Science Services","Statistical Analysis","Data Mining","Pattern Recognition","Quantitative Analysis",
+    "Database Management","SQL Database","NoSQL Database","Graph Database","Time Series Database","In Memory Database",
+    "Data Governance","Data Quality Management","Master Data Management","Data Catalog","Data Lineage","Metadata Management",
+    "Cloud Data Services","Snowflake Services","Databricks Services","BigQuery Services","Redshift Services",
+    "Business Analytics","Financial Analytics","Marketing Analytics Services","HR Analytics","Operations Analytics","Sales Analytics",
+    "Geospatial Analytics","Location Intelligence","GIS Services","Mapping Analytics","Spatial Analysis",
+    "Real Time Analytics","Stream Processing","Event Processing","IoT Analytics","Sensor Data Analytics",
+    "Data Privacy","Data Anonymization","GDPR Compliance","Data Protection","Privacy Engineering",
+    "Web Scraping Services","Data Collection","Survey Analytics","Market Data","Alternative Data",
+  ]},
+
+  // ── ACCOUNTING & TAX ──────────────────────────────────────────────────
+  { parent: "Accounting & Tax", children: [
+    "Bookkeeping Services","Online Bookkeeping","Virtual Bookkeeping","Small Business Bookkeeping","Payroll Bookkeeping",
+    "Tax Preparation","Individual Tax Filing","Business Tax Filing","Tax Planning","Tax Advisory","International Tax",
+    "Tax Compliance","GST Services","VAT Services","Sales Tax","Property Tax","Transfer Pricing",
+    "Auditing Services","Internal Audit","External Audit","Statutory Audit","Tax Audit","Forensic Audit",
+    "Payroll Services","Payroll Processing","Payroll Tax","Benefits Administration","Time & Attendance","HR Payroll",
+    "CFO Services","Virtual CFO","Fractional CFO","Financial Planning","Cash Flow Management","Budgeting Services",
+    "Financial Reporting","GAAP Reporting","IFRS Reporting","Management Reporting","Regulatory Reporting",
+    "Accounts Payable","Accounts Receivable","Invoice Processing","Expense Management","Vendor Management",
+    "Corporate Tax","Corporate Tax Planning","Tax Credits","R&D Tax Credits","Tax Incentives","Tax Exemptions",
+    "Estate Tax","Trust Accounting","Estate Planning","Inheritance Tax","Wealth Transfer",
+    "Nonprofit Accounting","Fund Accounting","Grant Accounting","Donor Management","Nonprofit Tax",
+    "Crypto Tax","Digital Asset Accounting","DeFi Tax","NFT Tax","Crypto Compliance",
+    "Accounting Software","QuickBooks Services","Xero Services","SAP Accounting","Oracle Financials",
+  ]},
+
+  // ── MANAGEMENT CONSULTING ─────────────────────────────────────────────
+  { parent: "Management Consulting", children: [
+    "Strategy Consulting","Business Strategy","Corporate Strategy","Growth Strategy","Market Entry Strategy","Competitive Strategy",
+    "Operations Consulting","Process Improvement","Lean Consulting","Six Sigma","Operational Excellence","Supply Chain Consulting",
+    "Digital Transformation","Digital Strategy","Technology Consulting","IT Consulting","Cloud Consulting","Innovation Consulting",
+    "Organization Consulting","Change Management","Organizational Design","Culture Transformation","Workforce Planning","Talent Strategy",
+    "Financial Advisory","M&A Advisory","Due Diligence","Valuation Services","Restructuring","Turnaround Consulting",
+    "Marketing Consulting","Go To Market Strategy","Customer Experience Consulting","Pricing Strategy","Market Research Consulting",
+    "Risk Consulting","Enterprise Risk Management","Business Continuity","Crisis Management Consulting","Regulatory Consulting",
+    "Sustainability Consulting","ESG Consulting","Carbon Footprint","Climate Strategy","Circular Economy Consulting","Green Business",
+    "Healthcare Consulting","Hospital Consulting","Pharma Consulting","Health IT Consulting","Population Health",
+    "Energy Consulting","Oil & Gas Consulting","Renewables Consulting","Utility Consulting","Energy Efficiency Consulting",
+    "Government Consulting","Public Sector Consulting","Defense Consulting","Policy Advisory","Regulatory Affairs",
+    "Startup Consulting","Business Plan Development","Pitch Deck Services","Fundraising Strategy","Accelerator Programs","Incubator Services",
+    "Real Estate Consulting","Property Advisory","Feasibility Studies","Asset Management Consulting","Investment Advisory",
+    "Supply Chain Strategy","Procurement Consulting","Logistics Consulting","Inventory Management Consulting","Demand Planning",
+  ]},
+
+  // ── HEALTHCARE & WELLNESS ─────────────────────────────────────────────
+  { parent: "Healthcare & Wellness", children: [
+    "Hospitals","Multi Specialty Hospital","Super Specialty Hospital","Childrens Hospital","Maternity Hospital","Rehabilitation Hospital",
+    "Clinics","Primary Care Clinic","Urgent Care Clinic","Walk In Clinic","Specialty Clinic","Outpatient Clinic",
+    "Dental Services","General Dentistry","Cosmetic Dentistry","Orthodontics Services","Endodontics","Periodontics","Pediatric Dentistry",
+    "Eye Care","Optometry","Ophthalmology","LASIK Surgery","Cataract Surgery","Vision Therapy",
+    "Mental Health Services","Psychiatry","Psychology","Counseling Services","Therapy Services","Substance Abuse Treatment",
+    "Physical Therapy","Sports Physical Therapy","Orthopedic Rehabilitation","Neurological Rehabilitation","Geriatric Physical Therapy",
+    "Chiropractic Services","Spinal Adjustment","Chiropractic Rehab","Sports Chiropractic","Pediatric Chiropractic",
+    "Dermatology","Medical Dermatology","Cosmetic Dermatology","Skin Cancer Treatment","Acne Treatment","Laser Dermatology",
+    "Cardiology Services","Heart Surgery","Interventional Cardiology","Cardiac Rehabilitation","Electrophysiology",
+    "Orthopedic Services","Joint Replacement","Sports Medicine","Spine Surgery","Hand Surgery","Foot & Ankle Surgery",
+    "Fertility Services","IVF Clinics","Reproductive Endocrinology","Egg Freezing","Surrogacy Services",
+    "Home Healthcare","Home Nursing","Home Physiotherapy","Home Lab Tests","Elderly Home Care","Palliative Care",
+    "Telemedicine","Online Doctor Consultation","Virtual Care Platform","Remote Monitoring","Telehealth Software",
+    "Wellness Centers","Spa Services","Meditation Centers","Yoga Studios","Ayurveda Centers","Naturopathy",
+    "Diagnostic Centers","Pathology Lab","Radiology Center","MRI Center","CT Scan Center","Ultrasound Center",
+    "Pharmacy Services","Online Pharmacy","Compounding Pharmacy","Specialty Pharmacy","Hospital Pharmacy",
+    "Nutrition & Dietetics","Clinical Nutrition","Sports Nutrition","Weight Management","Diet Planning","Nutritional Counseling",
+    "Alternative Medicine","Acupuncture","Homeopathy Services","Traditional Chinese Medicine","Unani Medicine",
+  ]},
+
+  // ── CHILDCARE & ELDERCARE ─────────────────────────────────────────────
+  { parent: "Childcare & Eldercare", children: [
+    "Daycare Centers","Infant Daycare","Toddler Daycare","Preschool","Montessori Schools","Waldorf Schools",
+    "After School Programs","Tutoring Services","Homework Help","STEM Programs","Art Programs","Music Lessons",
+    "Nanny Services","Full Time Nanny","Part Time Nanny","Live In Nanny","Night Nanny","Nanny Agency",
+    "Babysitting Services","Occasional Babysitting","Regular Babysitting","Event Babysitting","Babysitter Matching",
+    "Child Development","Speech Therapy Children","Occupational Therapy Children","Behavioral Therapy","Early Intervention",
+    "Summer Camps","Day Camp","Overnight Camp","Sports Camp","STEM Camp","Arts Camp","Adventure Camp",
+    "Senior Living","Independent Living","Assisted Living","Memory Care","Continuing Care Retirement","Senior Apartments",
+    "Home Care Services","Personal Care Aide","Home Health Aide","Companion Care","24 Hour Care","Live In Care",
+    "Nursing Home","Skilled Nursing Facility","Long Term Care","Short Term Rehabilitation","Respite Care",
+    "Hospice Care","Palliative Care Services","End of Life Care","Bereavement Support",
+    "Senior Transportation","Medical Transportation","Non Emergency Transport","Wheelchair Transport","Senior Ride Service",
+    "Meal Delivery Seniors","Senior Nutrition","Meals on Wheels","Dietary Services Elderly",
+    "Adult Day Care","Alzheimers Day Care","Social Day Services","Medical Adult Day Care",
+    "Geriatric Care Management","Care Coordination","Elder Law Services","Senior Advocacy","Aging Life Care",
+  ]},
+
+  // ── FOOD SERVICES & RESTAURANT ────────────────────────────────────────
+  { parent: "Food Services & Restaurant", children: [
+    "Restaurant","Fine Dining Restaurant","Casual Dining","Fast Casual Restaurant","Quick Service Restaurant","Family Restaurant",
+    "Fast Food","Burger Restaurant","Pizza Restaurant","Fried Chicken","Taco Restaurant","Sub Sandwich",
+    "Cafe & Coffee Shop","Specialty Coffee","Tea House","Bakery Cafe","Dessert Cafe","Brunch Cafe",
+    "Bar & Pub","Sports Bar","Cocktail Bar","Wine Bar","Brewery","Gastropub",
+    "Cloud Kitchen","Ghost Kitchen","Virtual Restaurant","Delivery Only Kitchen","Dark Kitchen",
+    "Catering Services","Corporate Catering","Wedding Catering","Event Catering","Buffet Catering","Meal Prep Catering",
+    "Food Truck","Mobile Catering","Street Food","Pop Up Restaurant","Food Cart",
+    "Franchise Restaurant","Restaurant Franchise","Fast Food Franchise","Coffee Franchise","Juice Bar Franchise",
+    "Restaurant Technology","POS Systems Restaurant","Online Ordering System","Restaurant Management Software","Kitchen Display System",
+    "Food Delivery","Meal Delivery Service","Grocery Delivery","Fresh Food Delivery","Subscription Meal Box",
+    "Vegan Restaurant","Vegetarian Restaurant","Organic Restaurant","Farm to Table","Health Food Restaurant",
+    "Ethnic Cuisine","Indian Restaurant","Chinese Restaurant","Japanese Restaurant","Italian Restaurant","Mexican Restaurant","Thai Restaurant",
+    "Seafood Restaurant","Steakhouse","BBQ Restaurant","Sushi Restaurant","Ramen Restaurant",
+    "Bakery","Artisan Bakery","Cake Shop","Patisserie","Donut Shop","Bagel Shop",
+    "Ice Cream Shop","Gelato Shop","Frozen Yogurt Shop","Smoothie Bar","Juice Bar",
+    "Food Safety Consulting","HACCP Consulting","Food Quality Testing","Restaurant Consulting","Menu Engineering",
+  ]},
+
+  // ── ARCHITECTURE & DESIGN ────────────────────────────────────────────
+  { parent: "Architecture & Design", children: [
+    "Architectural Design","Residential Architecture","Commercial Architecture","Industrial Architecture","Institutional Architecture",
+    "Interior Design","Residential Interior Design","Commercial Interior Design","Office Interior Design","Hospitality Interior Design","Retail Interior Design",
+    "Landscape Architecture","Urban Landscape","Garden Design Service","Park Design","Public Space Design","Green Roof Design",
+    "Urban Planning","City Planning","Town Planning","Master Planning","Zoning Consulting","Community Planning",
+    "Sustainable Architecture","Green Building Design","LEED Consulting","Passive House Design","Net Zero Design","Biophilic Design",
+    "Structural Engineering","Foundation Design","Steel Structure Design","Concrete Structure Design","Seismic Design",
+    "MEP Engineering","Mechanical Engineering Building","Electrical Engineering Building","Plumbing Engineering","Fire Protection Engineering",
+    "BIM Services","Revit Modeling","3D Building Modeling","BIM Coordination","BIM Consulting","Clash Detection",
+    "Architectural Visualization","3D Rendering","Architectural Animation","Virtual Tours Architecture","Photorealistic Rendering",
+    "Historic Preservation","Building Restoration","Heritage Conservation","Adaptive Reuse","Historic Assessment",
+    "Space Planning","Workplace Design","Retail Space Design","Healthcare Space Design","Educational Space Design",
+    "Furniture Design","Custom Furniture","Office Furniture Design","Residential Furniture Design","Modular Furniture",
+    "Lighting Design","Architectural Lighting","Interior Lighting","Landscape Lighting Service","Commercial Lighting Design",
+    "Acoustic Design","Soundproofing","Acoustic Consulting","Studio Design","Theater Design",
+    "Exhibition Design","Museum Design","Gallery Design","Trade Show Design","Showroom Design",
+  ]},
+
+  // ── GARDENING & OUTDOOR ───────────────────────────────────────────────
+  { parent: "Gardening & Outdoor", children: [
+    "Garden Centers","Plant Nursery","Tree Nursery","Flower Shop","Seed Store","Gardening Supplies",
+    "Lawn Care Services","Lawn Mowing","Lawn Fertilization","Lawn Aeration","Lawn Seeding","Lawn Weed Control",
+    "Tree Services","Tree Trimming","Tree Removal","Stump Grinding","Tree Planting","Arborist Services",
+    "Irrigation Services","Sprinkler Installation","Drip Irrigation","Irrigation Repair","Smart Irrigation","Commercial Irrigation",
+    "Hardscaping","Patio Installation","Walkway Construction","Retaining Walls","Stone Work","Outdoor Stairs",
+    "Outdoor Living","Deck Building","Pergola Construction","Gazebo Installation","Outdoor Kitchen","Fire Pit Installation",
+    "Greenhouse","Commercial Greenhouse","Hobby Greenhouse","Greenhouse Supplies","Greenhouse Automation",
+    "Hydroponics","Indoor Farming","Vertical Farming","Aquaponics","Grow Lights","Hydroponic Supplies",
+    "Garden Maintenance","Hedge Trimming","Mulching","Leaf Removal","Seasonal Cleanup","Garden Renovation",
+    "Artificial Turf","Synthetic Grass Installation","Sports Turf","Playground Turf","Pet Turf",
+    "Outdoor Furniture","Patio Furniture","Garden Furniture","Outdoor Lighting","Garden Decor","Planters",
+    "Snow Removal","Snow Plowing","De Icing","Sidewalk Clearing","Parking Lot Snow Removal",
+    "Erosion Control","Soil Stabilization","Slope Protection","Drainage Solutions","French Drain Installation",
+  ]},
+
+  // ── VETERINARY & ANIMAL SERVICES ──────────────────────────────────────
+  { parent: "Veterinary & Animal Services", children: [
+    "Veterinary Clinic","Small Animal Vet","Large Animal Vet","Exotic Pet Vet","Avian Vet","Reptile Vet",
+    "Emergency Vet","24 Hour Animal Hospital","Pet Emergency Care","Critical Care Vet","Animal Trauma Center",
+    "Veterinary Surgery","Orthopedic Surgery Pet","Soft Tissue Surgery","Neurosurgery Pet","Dental Surgery Pet",
+    "Veterinary Diagnostics","Pet X Ray","Pet Ultrasound","Pet Blood Test","Pet MRI","Pet CT Scan",
+    "Pet Grooming","Dog Grooming","Cat Grooming","Mobile Pet Grooming","Pet Spa","Pet Styling",
+    "Pet Boarding","Dog Boarding","Cat Boarding","Luxury Pet Hotel","Pet Daycare","Kennel Services",
+    "Dog Training","Puppy Training","Obedience Training","Behavior Modification","Agility Training","Service Dog Training",
+    "Pet Adoption","Animal Shelter","Rescue Organization","Foster Network","Pet Rehoming",
+    "Pet Supplies","Pet Food Store","Pet Toys","Pet Beds","Pet Carriers","Pet Health Products",
+    "Animal Breeding","Dog Breeding","Cat Breeding","Horse Breeding","Breeding Consultancy",
+    "Equine Services","Horse Vet","Farrier Services","Horse Training","Horse Boarding","Equestrian Center",
+    "Livestock Services","Cattle Services","Poultry Services","Swine Services","Sheep Services","Goat Services",
+    "Pet Insurance Company","Pet Health Plans","Veterinary Insurance","Pet Wellness Plans",
+    "Animal Physical Therapy","Pet Rehabilitation","Hydrotherapy Pet","Acupuncture Pet","Laser Therapy Pet",
+    "Wildlife Services","Wildlife Rehabilitation","Wildlife Control","Bird Control","Bat Removal","Snake Removal",
+  ]},
+
+  // ── RENEWABLE ENERGY ──────────────────────────────────────────────────
+  { parent: "Renewable Energy", children: [
+    "Solar Energy","Solar Panel Installation","Residential Solar","Commercial Solar","Solar Farm","Solar Panel Manufacturing",
+    "Solar Inverters","Solar Batteries","Solar Water Heater","Solar Street Light","Solar Pump","Floating Solar",
+    "Wind Energy","Wind Turbine Manufacturing","Onshore Wind Farm","Offshore Wind Farm","Small Wind Turbine","Wind Energy Consulting",
+    "Hydropower","Small Hydropower","Micro Hydropower","Hydroelectric Plant","Pumped Storage Hydropower","Run of River",
+    "Biomass Energy","Biogas Plant","Biomass Power Plant","Bioethanol","Biodiesel","Wood Pellets","Agricultural Waste Energy",
+    "Geothermal Energy","Geothermal Power Plant","Geothermal Heating","Ground Source Heat Pump","Geothermal Drilling",
+    "Tidal Energy","Wave Energy","Ocean Thermal Energy","Marine Energy","Blue Energy",
+    "Energy Storage","Battery Storage Systems","Grid Scale Battery","Flywheel Energy Storage","Compressed Air Energy Storage","Thermal Energy Storage",
+    "Solar EPC","Renewable Energy EPC","Wind EPC","Power Plant Construction","Balance of System",
+    "Renewable Energy Consulting","Energy Audit Services","Carbon Credit Consulting","Renewable Energy Finance","Green Bond",
+    "Microgrid","Off Grid Solutions","Hybrid Power Systems","Distributed Energy","Community Solar",
+    "Power Purchase Agreement","Renewable Energy Certificate","Net Metering","Feed In Tariff","Green Energy Trading",
+    "Solar Cleaning","Solar Panel Maintenance","Wind Turbine Maintenance","Renewable O&M","Asset Management Renewable",
+  ]},
+
+  // ── WASTE MANAGEMENT & RECYCLING ──────────────────────────────────────
+  { parent: "Waste Management & Recycling", children: [
+    "Waste Collection","Residential Waste Collection","Commercial Waste Collection","Municipal Waste","Roll Off Dumpster","Skip Hire",
+    "Recycling Services","Plastic Recycling","Paper Recycling","Glass Recycling","Metal Recycling","E-Waste Recycling",
+    "Waste Disposal","Landfill Management","Waste Incineration","Waste to Energy","Thermal Treatment","Sanitary Landfill",
+    "Hazardous Waste","Chemical Waste Disposal","Medical Waste Disposal","Radioactive Waste","Industrial Waste Management","Oil Waste",
+    "Organic Waste","Composting Services","Anaerobic Digestion","Food Waste Management","Green Waste","Vermicomposting",
+    "Construction Waste","Demolition Waste","Concrete Recycling","Wood Waste","Asphalt Recycling","Soil Remediation",
+    "Scrap Metal","Ferrous Scrap","Non Ferrous Scrap","Auto Salvage","Ship Breaking","Metal Shredding",
+    "Textile Waste","Clothing Recycling","Fabric Recycling","Textile Upcycling","Rag Recycling",
+    "Tire Recycling","Tire Shredding","Crumb Rubber","Tire Pyrolysis","Retreading",
+    "Battery Recycling Services","Lead Acid Battery Recycling","Lithium Battery Recycling","Electronic Battery Recycling",
+    "Waste Consulting","Waste Audit","Zero Waste Consulting","Circular Economy Services","Extended Producer Responsibility",
+    "Sewage Treatment","Wastewater Treatment","Effluent Treatment","Sludge Management","Water Recycling",
+    "Street Sweeping","Litter Collection","Public Area Cleaning","Beach Cleaning","Park Maintenance",
+  ]},
+
+  // ── FINTECH ───────────────────────────────────────────────────────────
+  { parent: "FinTech", children: [
+    "Digital Banking","Neobank","Mobile Banking","Banking as a Service","Core Banking Software","Open Banking",
+    "Payment Processing","Payment Gateway","Mobile Payment","Contactless Payment","QR Code Payment","Point of Sale",
+    "Digital Wallet","E Wallet","Prepaid Card","Virtual Card","Corporate Card","Expense Card",
+    "Lending Platform","Peer to Peer Lending","Digital Lending","Buy Now Pay Later","Micro Lending","Invoice Financing",
+    "Wealth Management Platform","Robo Advisory","Investment Platform","Stock Trading App","Crypto Trading Platform","Social Trading",
+    "RegTech","Compliance Software","AML Solutions","KYC Solutions","Transaction Monitoring","Regulatory Reporting Software",
+    "InsurTech","Digital Insurance Platform","Claims Automation","Underwriting AI","Insurance Comparison","Parametric Insurance",
+    "Remittance","Cross Border Payment","International Money Transfer","Foreign Exchange","Multi Currency Account",
+    "Accounting FinTech","Expense Management Software","Invoice Automation","Receipt Scanning","Financial Closing",
+    "Credit Scoring","Alternative Credit Scoring","Credit Monitoring","Credit Repair","Identity Verification Finance",
+    "Embedded Finance","Banking API","Payments API","Lending API","Insurance API",
+    "Treasury Management","Cash Management","Liquidity Management","Risk Management Software","FX Risk Management",
+    "PropTech Finance","Mortgage Technology","Real Estate Crowdfunding","Rental Payment Platform","Property Valuation Tech",
+    "Supply Chain Finance","Trade Finance","Factoring","Reverse Factoring","Letter of Credit",
+  ]},
+
+  // ── EDTECH ────────────────────────────────────────────────────────────
+  { parent: "EdTech", children: [
+    "Learning Management System","LMS Platform","Corporate LMS","Academic LMS","Open Source LMS","Mobile LMS",
+    "Online Course Platform","MOOC Platform","Course Marketplace","Video Course Platform","Live Class Platform",
+    "K-12 EdTech","Elementary Education Tech","Middle School Tech","High School Tech","Homework Help App","Parent Communication App",
+    "Higher Education Tech","University Platform","College Management System","Student Information System","Admissions Software",
+    "Test Preparation","SAT Prep","GRE Prep","GMAT Prep","IELTS Prep","Competitive Exam Prep",
+    "Language Learning","English Learning App","Spanish Learning","Mandarin Learning","Language Exchange","AI Language Tutor",
+    "Coding Education","Coding Bootcamp","Kids Coding","Online Coding Platform","Programming Courses","Coding Challenge Platform",
+    "STEM Education","Science Education Tech","Math Education Tech","Engineering Education","Robotics Education",
+    "Special Education Tech","Dyslexia Tools","Autism Learning","Assistive Technology Education","Inclusive Education",
+    "Skill Assessment","Proctoring Software","Online Examination","Question Bank","Grading Software","Plagiarism Detection",
+    "Virtual Classroom","Digital Whiteboard","Screen Sharing Education","Breakout Rooms","Virtual Lab","Classroom Management",
+    "Education Analytics","Learning Analytics","Student Performance Analytics","Curriculum Analytics","Attendance Tracking",
+    "Corporate Training Platform","Employee Training","Compliance Training Platform","Sales Training","Onboarding Platform",
+    "Tutoring Platform","Online Tutoring","In Person Tutoring","Group Tutoring","AI Tutoring","Peer Tutoring",
+    "Early Childhood Education","Preschool App","Early Learning","Phonics App","ABC Learning","Number Learning",
+  ]},
+
+  // ── HEALTHTECH & TELEMEDICINE ─────────────────────────────────────────
+  { parent: "HealthTech & Telemedicine", children: [
+    "Telemedicine Platform","Video Consultation Platform","Teleconsultation App","Virtual Clinic","Online Doctor Platform",
+    "Electronic Health Records","EHR Software","EMR Software","Patient Portal","Health Information Exchange","Clinical Documentation",
+    "Practice Management Software","Clinic Management","Hospital Management System","Dental Practice Software","Optometry Software",
+    "Health Monitoring","Remote Patient Monitoring Platform","Chronic Disease Management","Vital Signs Monitoring","Heart Rate Monitor","Blood Pressure Monitor",
+    "Mental Health Tech","Therapy App","Meditation App","Mental Wellness Platform","Cognitive Behavioral Therapy App","Stress Management App",
+    "Fitness Technology","Fitness App","Workout Tracker","Nutrition Tracker App","Calorie Counter","Personal Training App",
+    "Digital Therapeutics","Prescription Digital Therapeutics","Behavioral Health DTx","Pain Management App","Diabetes Management App",
+    "Clinical Trial Technology","Patient Recruitment","Trial Management","EDC System","Regulatory Submission Software",
+    "Genomics Technology","Genetic Testing","DNA Sequencing","Pharmacogenomics","Genetic Counseling Platform",
+    "Medical Imaging Technology","AI Radiology","PACS System","Imaging Analytics","Teleradiology","3D Medical Imaging",
+    "Lab Information System","LIMS Software","Lab Automation","Point of Care Testing","Diagnostic Software",
+    "Pharmacy Technology","E-Prescription","Medication Management","Drug Interaction Checker","Pharmacy Automation",
+    "Health Insurance Tech","Claims Processing Software","Benefits Administration Tech","Prior Authorization","Revenue Cycle Management",
+    "Population Health","Public Health Technology","Epidemiology Software","Disease Surveillance","Health Analytics Platform",
+    "Surgical Technology","Surgical Robotics","Surgical Planning Software","Operating Room Management","Surgical Navigation",
+  ]},
+
+  // ── SMART HOME & HOME AUTOMATION ──────────────────────────────────────
+  { parent: "Smart Home & Home Automation", children: [
+    "Home Automation Systems","Whole Home Automation","Smart Home Hub","Home Automation Controller","Z Wave Hub","Zigbee Hub",
+    "Smart Lighting Systems","Smart Bulbs","Smart Light Switches","LED Strip Controllers","Outdoor Smart Lighting","Smart Dimmer",
+    "Smart Security","Smart Doorbell","Security Camera System","Smart Alarm System","Video Surveillance Home","Smart Motion Detector",
+    "Smart Thermostat Systems","WiFi Thermostat","Learning Thermostat","Zoned Heating Control","Smart HVAC Control","Radiant Floor Control",
+    "Smart Lock Systems","Keypad Lock","Fingerprint Lock","Bluetooth Lock","WiFi Lock","Smart Deadbolt",
+    "Smart Kitchen","Smart Refrigerator","Smart Oven","Smart Coffee Maker","Smart Dishwasher","Connected Kitchen",
+    "Smart Entertainment","Home Theater System","Multi Room Audio","Smart TV","Streaming Device","Smart Projector",
+    "Smart Blinds","Motorized Shades","Automated Curtains","Smart Window Film","Solar Powered Blinds",
+    "Voice Control Systems","Amazon Alexa Integration","Google Home Integration","Apple HomeKit","Voice Automation","Smart Display",
+    "Smart Garage","Smart Garage Door","Connected Garage","Vehicle Detection","Garage Security",
+    "Home Energy Management","Smart Meter Home","Energy Monitor","Solar Monitoring","EV Home Charging","Battery Home",
+    "Smart Irrigation Home","WiFi Sprinkler Controller","Garden Sensor","Soil Monitor Home","Weather Based Irrigation",
+    "Smart Plumbing","Leak Detection","Water Monitor","Smart Water Valve","Pipe Freeze Alert",
+    "Home Network","Mesh WiFi","Smart Router","Network Security Home","Parental Controls","WiFi Extender",
+  ]},
+
+  // ── SPACE TECHNOLOGY ──────────────────────────────────────────────────
+  { parent: "Space Technology", children: [
+    "Satellite Manufacturing","Communication Satellite","Earth Observation Satellite","Navigation Satellite","Weather Satellite","CubeSat",
+    "Satellite Services","Satellite Internet","Satellite TV","Satellite Communication","Satellite Imaging","Satellite Data Analytics",
+    "Launch Services","Rocket Manufacturing","Small Satellite Launch","Reusable Rockets","Launch Vehicle","Spaceport Operations",
+    "Space Exploration","Mars Mission","Lunar Mission","Asteroid Mining","Deep Space Exploration","Planetary Science",
+    "Space Station","Commercial Space Station","Orbital Habitat","Space Tourism","Microgravity Research","Life Support Systems",
+    "Ground Station","Satellite Ground Station","Telemetry Tracking","Mission Control","Antenna Systems Space",
+    "Space Propulsion","Ion Propulsion","Solar Sail","Nuclear Propulsion","Chemical Propulsion","Electric Propulsion",
+    "Space Debris","Debris Tracking","Debris Removal","Space Sustainability","Collision Avoidance",
+    "Remote Sensing","Hyperspectral Imaging","Radar Imaging","LiDAR Satellite","Thermal Imaging Satellite",
+    "GNSS Services","GPS Services","Galileo Services","GLONASS","BeiDou","Precision Navigation",
+    "Space Software","Orbit Simulation","Mission Planning Software","Satellite Operations Software","Space Data Processing",
+    "In Space Manufacturing","3D Printing Space","In Orbit Assembly","Space Resources","Space Foundry",
+  ]},
+
+  // ── SEMICONDUCTOR & CHIP ──────────────────────────────────────────────
+  { parent: "Semiconductor & Chip", children: [
+    "Chip Design","ASIC Design","FPGA Design","SoC Design","Analog IC Design","Mixed Signal IC Design",
+    "Semiconductor Fabrication","Wafer Fabrication","Foundry Services","Semiconductor Packaging","Die Bonding","Wire Bonding",
+    "Memory Chips","DRAM","NAND Flash","NOR Flash","SRAM","MRAM","ReRAM",
+    "Processor Chips","CPU Manufacturing","GPU Manufacturing","TPU","DSP Chips","Microcontroller",
+    "Power Semiconductors","MOSFET","IGBT","Power Diode","Thyristor","GaN Power Device","SiC Power Device",
+    "RF Semiconductors","RF Amplifier","RF Filter","RF Switch","Antenna IC","mmWave IC",
+    "Semiconductor Equipment","Lithography Equipment","Etching Equipment","Deposition Equipment","Ion Implantation","Metrology Equipment",
+    "Semiconductor Materials","Silicon Wafer","Photoresist","Etch Chemicals","CMP Slurry","Semiconductor Gas",
+    "LED Chips","MicroLED","OLED Display","Mini LED","UV LED","Laser Diode",
+    "Sensor Chips","Image Sensor","MEMS Sensor","Hall Effect Sensor","LiDAR Chip","Radar Chip",
+    "EDA Software","Chip Simulation","Physical Design","Timing Analysis","DFT Design","Verification IP",
+    "Semiconductor Testing","Wafer Testing","Package Testing","Burn In Testing","Reliability Testing","Failure Analysis",
+    "Advanced Packaging","Chiplet","2.5D Packaging","3D IC Packaging","Fan Out Wafer Level","System in Package",
+  ]},
+
+  // ── QUANTUM COMPUTING ─────────────────────────────────────────────────
+  { parent: "Quantum Computing", children: [
+    "Quantum Hardware","Superconducting Qubits","Trapped Ion","Photonic Quantum","Topological Quantum","Neutral Atom Quantum",
+    "Quantum Software","Quantum Algorithms","Quantum Programming Language","Quantum SDK","Quantum Compiler","Quantum Simulator",
+    "Quantum Cloud","Quantum as a Service","Quantum Cloud Platform","Quantum API","Quantum Development Environment",
+    "Quantum Applications","Quantum Chemistry","Quantum Optimization","Quantum Machine Learning","Quantum Cryptography","Quantum Sensing",
+    "Quantum Networking","Quantum Internet","Quantum Key Distribution","Quantum Repeater","Entanglement Distribution",
+    "Quantum Error Correction","Fault Tolerant Quantum","Noise Mitigation","Quantum Decoherence","Error Correcting Codes",
+    "Quantum Consulting","Quantum Strategy","Quantum Readiness","Quantum Use Case Assessment","Quantum Workforce Training",
+    "Post Quantum Cryptography","Quantum Safe Encryption","Lattice Based Cryptography","Hash Based Signatures","Quantum Resistant VPN",
+  ]},
+
+  // ── PERSONAL CARE & COSMETICS ─────────────────────────────────────────
+  { parent: "Personal Care & Cosmetics", children: [
+    "Skincare Products","Face Cream","Moisturizer","Sunscreen","Anti Aging Cream","Acne Treatment Products","Face Serum",
+    "Haircare Products","Shampoo","Conditioner","Hair Oil","Hair Color","Hair Styling Products","Hair Treatment",
+    "Makeup & Cosmetics","Foundation","Lipstick","Mascara","Eyeshadow","Blush","Concealer","Setting Spray",
+    "Fragrance","Perfume","Cologne","Body Mist","Essential Oils Fragrance","Attar","Oud",
+    "Bath & Body","Body Wash","Shower Gel","Bath Bombs","Body Lotion","Body Scrub","Hand Cream",
+    "Men Grooming","Beard Oil","Shaving Cream","Aftershave","Men Skincare","Men Hair Products",
+    "Oral Care","Toothpaste","Toothbrush","Mouthwash","Teeth Whitening","Dental Floss","Electric Toothbrush",
+    "Baby Care Products","Baby Lotion","Baby Shampoo","Diaper Cream","Baby Powder","Baby Wipes",
+    "Nail Care","Nail Polish","Nail Art","Manicure Products","Pedicure Products","Nail Treatment",
+    "Organic Beauty","Natural Skincare","Vegan Cosmetics","Clean Beauty","Cruelty Free Products","Herbal Beauty",
+    "Salon Equipment","Salon Furniture","Salon Supplies","Barber Equipment","Spa Equipment","Beauty Tools",
+    "Cosmetic Surgery","Botox","Dermal Fillers","Rhinoplasty","Liposuction","Facelift","Breast Augmentation",
+    "Hair Removal","Laser Hair Removal","Waxing Products","Electrolysis","IPL Devices","Epilators",
+    "Tattoo & Piercing","Tattoo Supplies","Tattoo Ink","Tattoo Machine","Body Piercing Jewelry","Tattoo Removal",
+    "Deodorant","Antiperspirant","Natural Deodorant","Body Spray","Roll On Deodorant",
+  ]},
+
+  // ── GOVERNMENT & PUBLIC SERVICES ──────────────────────────────────────
+  { parent: "Government & Public Services", children: [
+    "E-Government","Digital Government Platform","Citizen Services Portal","Government Cloud","Smart Governance","GovTech",
+    "Public Safety","Emergency Services","911 Systems","Public Safety Communication","Disaster Management","Emergency Alert System",
+    "Law Enforcement Technology","Police Body Camera","Crime Analytics","Evidence Management","Criminal Database","Dispatch System",
+    "Court Technology","Case Management System","E-Filing","Video Arraignment","Jury Management","Court Recording",
+    "Tax Administration","Tax Collection System","Property Tax System","Revenue Management","Tax Compliance System",
+    "Land Records","Cadastral System","Land Registry","GIS Government","Property Registration","Survey & Mapping",
+    "Public Health System","Disease Surveillance System","Immunization Registry","Health Department Software","Vital Records",
+    "Social Services","Benefits Management","Welfare System","Child Welfare","Unemployment System","Housing Assistance",
+    "Education Administration","School Management System","Student Records","Grant Management Education","Accreditation Software",
+    "Elections Technology","Voting System","Voter Registration","Election Management","Ballot Tracking","Results Reporting",
+    "Government Procurement","E-Procurement","Bidding Platform","Vendor Management Government","Contract Management Government",
+    "Identity Management Government","National ID","Digital Identity Government","Biometric ID","Passport System","Visa System",
+    "Smart City Government","Urban Analytics","City Dashboard","Municipal IoT","Infrastructure Monitoring Government",
+    "Military Technology","Defense Communications","Military Simulation","Command & Control","Intelligence Analysis","Cybersecurity Defense",
+  ]},
+
+  // ── AGRICULTURE TECHNOLOGY ────────────────────────────────────────────
+  { parent: "Agriculture Technology", children: [
+    "Precision Agriculture","GPS Farming","Variable Rate Technology","Yield Mapping","Soil Sampling Technology","Prescription Mapping",
+    "Farm Management Software","Crop Planning Software","Farm Accounting Software","Livestock Management Software","Dairy Management Software",
+    "Agricultural Drones Services","Crop Spraying Drone","Aerial Survey Farming","Seed Planting Drone","Crop Health Monitoring Drone",
+    "Smart Irrigation Technology","Soil Moisture Sensor","Weather Based Irrigation System","Center Pivot IoT","Drip Irrigation IoT",
+    "Crop Monitoring","Satellite Crop Monitoring","Drone Crop Monitoring","Plant Disease Detection","Weed Detection AI","Growth Stage Monitoring",
+    "Greenhouse Technology","Climate Control Greenhouse","Automated Greenhouse","Greenhouse Sensors","Greenhouse Lighting",
+    "Vertical Farming Technology","Indoor Farming Systems","Vertical Farm Lighting","Vertical Farm Climate","Nutrient Film Technique",
+    "Aquaculture Technology","Fish Farm Management","Water Quality Monitoring Aquaculture","Feed Management Aquaculture","Shrimp Farm Technology",
+    "Livestock Technology","Cattle Tracking","Animal Health Monitoring","Automated Feeding","Milking Automation","Poultry Technology",
+    "Post Harvest Technology","Cold Storage Technology","Food Grading","Sorting Machine","Packaging Agriculture","Preservation Technology",
+    "Seed Technology","Seed Breeding","Seed Treatment","Seed Coating","Hybrid Seed","Genetically Modified Seed",
+    "Farm Robotics","Harvesting Robot","Weeding Robot","Planting Robot","Fruit Picking Robot","Farm Automation",
+    "Agricultural Marketplace","Farm to Consumer","Commodity Trading Platform","Input Marketplace","Produce Marketplace",
+    "Agricultural Finance","Farm Loans","Crop Insurance Technology","Agri FinTech","Farm Credit","Rural Banking",
+    "Soil Health","Soil Testing","Soil Amendment","Biofertilizer","Mycorrhiza","Soil Carbon Credit",
+  ]},
+
+  // ── SUPPLY CHAIN TECHNOLOGY ───────────────────────────────────────────
+  { parent: "Supply Chain Technology", children: [
+    "Supply Chain Management Software","Supply Chain Planning","Supply Chain Visibility","Control Tower","Supply Chain Analytics",
+    "Warehouse Management System","Inventory Management Software","Order Management System","Fulfillment Software","Pick Pack Ship",
+    "Transportation Management","Fleet Management Software","Route Optimization","Freight Management","Last Mile Delivery Software",
+    "Procurement Software","E-Procurement Platform","Supplier Management","Spend Analytics","Contract Management Procurement",
+    "Demand Planning Software","Demand Forecasting","Sales & Operations Planning","Inventory Optimization Software","Replenishment Planning",
+    "Trade Management","Global Trade Management","Customs Management","Import Export Software","Trade Compliance","Tariff Management",
+    "Cold Chain Technology","Temperature Monitoring","Cold Chain Logistics","Pharmaceutical Cold Chain","Food Cold Chain",
+    "Reverse Logistics","Returns Management","Refurbishment","Product Recall Management","Warranty Management",
+    "Supply Chain Finance Technology","Dynamic Discounting","Supply Chain Lending","Accounts Payable Automation","Working Capital",
+    "Logistics Marketplace","Freight Marketplace","Trucking Marketplace","Shipping Platform","Carrier Management",
+    "Robotics Warehouse","Autonomous Warehouse","Pick Robot","Sort Robot","Palletizing Robot Warehouse","Goods to Person",
+    "Barcode & RFID","Barcode Scanner","RFID Reader","RFID Tag","Asset Tracking","Inventory Counting",
+    "Packaging Technology","Smart Packaging","Sustainable Packaging Tech","Package Tracking","Label Printing","Packaging Automation",
+    "Dock Scheduling","Yard Management","Cross Docking","Load Planning","Trailer Tracking",
+  ]},
+
+  // ── HUMAN RESOURCES TECHNOLOGY ────────────────────────────────────────
+  { parent: "Human Resources Technology", children: [
+    "HRIS Software","Human Resource Information System","People Management Platform","Employee Database","HR Cloud Platform",
+    "Applicant Tracking System","Recruitment Software","Job Board Software","Resume Parsing","Candidate Management","Interview Scheduling",
+    "Onboarding Software","Employee Onboarding","Digital Onboarding","Onboarding Automation","New Hire Portal",
+    "Performance Management","Goal Setting Software","OKR Software","360 Degree Feedback","Performance Review Software","Continuous Feedback",
+    "Learning & Development Platform","Employee Training Software","Skill Development","Career Pathing","Mentoring Platform","Knowledge Management",
+    "Employee Engagement","Engagement Survey","Pulse Survey","Employee Recognition","Rewards Platform","Employee Wellness Platform",
+    "Payroll Software","Global Payroll","Payroll Compliance","Tax Filing Software","Pay Stub Software","Payroll Integration",
+    "Time & Attendance Software","Time Tracking","Shift Scheduling","Leave Management","Overtime Tracking","Workforce Scheduling",
+    "Benefits Administration Software","Benefits Enrollment","Health Benefits Platform","Retirement Benefits","Flexible Benefits",
+    "Compensation Management","Salary Benchmarking","Pay Equity","Total Rewards","Stock Option Management","Bonus Management",
+    "HR Analytics Software","People Analytics","Workforce Analytics","Attrition Prediction","Diversity Analytics","Headcount Planning",
+    "Background Check","Employment Verification","Criminal Background Check","Drug Testing","Reference Check","Credit Check Employment",
+    "Employer of Record","Global Employment","International Payroll Service","Contractor Management","Freelancer Management",
+    "Diversity & Inclusion Platform","DEI Software","Inclusive Hiring","Accessibility Workplace","Bias Reduction",
+    "Employee Communication","Internal Communication","Company Intranet","Employee App","Digital Workplace","Town Hall Platform",
+  ]},
+
+  // ── LEGAL TECHNOLOGY ──────────────────────────────────────────────────
+  { parent: "Legal Technology", children: [
+    "Legal Practice Management","Law Firm Software","Case Management Legal","Client Management Legal","Legal Billing","Trust Accounting",
+    "Contract Management Software","Contract Lifecycle Management","Contract Drafting","Contract Review AI","Contract Analytics","E-Signature Legal",
+    "Legal Research","Legal Database","Case Law Research","Statutory Research","Legal AI Research","Citation Analysis",
+    "E-Discovery","Document Review","Predictive Coding","Data Processing Legal","Litigation Hold","Forensic Collection",
+    "Compliance Software","Regulatory Compliance","Policy Management","Compliance Tracking","Audit Management","Whistleblower Platform",
+    "IP Management","Patent Management","Trademark Management","Copyright Management","IP Portfolio","Patent Analytics",
+    "Legal Document Automation","Document Assembly","Legal Templates","Court Filing Software","Legal Form Builder",
+    "Mediation & Arbitration","Online Dispute Resolution","Arbitration Platform","Mediation Software","Dispute Management",
+    "Corporate Legal","Entity Management","Board Management","Governance Software","Subsidiary Management","Legal Operations",
+    "Legal Marketplace","Lawyer Matching","Legal Freelance","Virtual Law Firm","Legal Outsourcing",
+    "Data Privacy Software","GDPR Software","CCPA Compliance","Privacy Impact Assessment","Cookie Consent","Data Mapping",
+    "Court Technology Legal","Courtroom Technology","Remote Hearing","Legal Video Conferencing","Court Reporting",
+    "Immigration Software","Visa Management","Immigration Case Management","Work Permit Management","Global Mobility",
+    "Legal Analytics","Litigation Analytics","Judge Analytics","Outcome Prediction","Legal Spend Analytics",
+  ]},
+
+  // ── PROPERTY TECHNOLOGY ───────────────────────────────────────────────
+  { parent: "Property Technology", children: [
+    "Property Management Software","Residential Property Management","Commercial Property Management","HOA Management","Vacation Rental Software",
+    "Real Estate CRM","Lead Management Real Estate","Agent CRM","Broker CRM","Referral Management","Pipeline Management Real Estate",
+    "Real Estate Marketplace","Property Listing Platform","MLS Software","Real Estate Portal","Rental Marketplace","Commercial Real Estate Marketplace",
+    "Virtual Tour Technology","3D Property Tour","360 Virtual Tour","Drone Photography Real Estate","Virtual Staging","Floor Plan Software",
+    "Mortgage Technology Software","Loan Origination System","Mortgage CRM","Underwriting Software","Closing Software","Title Insurance Tech",
+    "Construction Technology","Construction Management Software","Jobsite Management","Construction Estimating","Subcontractor Management","Blueprint Software",
+    "Building Management System","Smart Building","Building Automation","HVAC Management","Lighting Control Building","Energy Management Building",
+    "Tenant Experience","Tenant App","Community Management","Amenity Booking","Maintenance Request","Resident Portal",
+    "Real Estate Investment","REIT Platform","Real Estate Crowdfunding Platform","Syndication Software","Investment Analysis Real Estate","Portfolio Management Real Estate",
+    "Facilities Management","CAFM Software","CMMS","Space Management","Asset Management Facilities","Work Order Management",
+    "Co Working Management","Flex Space Software","Hot Desk Booking","Meeting Room Booking","Co Working Billing","Space Utilization",
+    "Land Development","Feasibility Software","Site Selection","Zoning Analysis","Permit Management","Development Finance",
+    "Home Buying","Home Search App","Real Estate Comparison","Home Valuation","Closing Coordination","Moving Coordination",
+    "Sustainability Real Estate","Green Building Certification","Energy Rating","Carbon Tracking Building","Sustainability Reporting Building",
+  ]},
+
+  // ── TRAVEL TECHNOLOGY ─────────────────────────────────────────────────
+  { parent: "Travel Technology", children: [
+    "Online Travel Agency","Flight Booking Platform","Hotel Booking Platform","Package Tour Platform","Multi City Booking","Group Travel Platform",
+    "Global Distribution System","Travel API","Booking Engine","Channel Manager","Rate Management","Inventory Distribution",
+    "Hotel Technology","Property Management System Hotel","Revenue Management Hotel","Hotel POS","Guest Experience Platform","Hotel CRM",
+    "Airline Technology","Airline Reservation System","Departure Control","Crew Management","Revenue Management Airline","Loyalty Program Airline",
+    "Travel Management Platform","Corporate Travel Management","Travel Expense Management","Travel Policy","TMC Software","Duty of Care",
+    "Tour Operator Software","Tour Management","Activity Booking","Experience Platform","Guide Management","Tour CRM",
+    "Vacation Rental Technology","Short Term Rental Software","Airbnb Management","Guest Communication","Dynamic Pricing Rental","Turnover Management",
+    "Car Rental Technology","Car Rental Software","Fleet Management Rental","Reservation System Car","Car Sharing Platform",
+    "Cruise Technology","Cruise Booking System","Onboard Systems","Port Management","Shore Excursion Management",
+    "Travel Payment","Multi Currency Payment Travel","Travel Card","B2B Travel Payment","Travel Insurance Platform",
+    "Travel Content","Travel Review Platform","Travel Blog Platform","Destination Content","Travel Influencer Platform",
+    "Airport Technology","Airport Management System","Passenger Processing","Baggage Handling","Airport Retail","Lounge Management",
+    "Visa Technology","Visa Application Platform","E-Visa","Travel Document Verification","Border Management",
+    "Sustainable Tourism","Eco Tourism Platform","Carbon Offset Travel","Responsible Tourism","Community Tourism",
+  ]},
+
+  // ── MUSIC & AUDIO ─────────────────────────────────────────────────────
+  { parent: "Music & Audio", children: [
+    "Music Production","Recording Studio","Mixing & Mastering","Beat Making","Music Arrangement","Sound Design",
+    "Music Distribution","Digital Music Distribution","Music Aggregator","Playlist Pitching","Music Licensing","Sync Licensing",
+    "Music Streaming","Music Streaming Platform","Podcast Hosting","Audio Streaming","Live Audio Platform",
+    "Musical Instruments Manufacturing","Guitar Manufacturing","Piano Manufacturing","Drum Manufacturing","Electronic Instruments","String Instruments",
+    "Audio Equipment","Studio Monitors","Audio Interface","Microphones","Headphones","Amplifiers",
+    "DJ Equipment","DJ Controller","Turntable","DJ Mixer","DJ Software","DJ Lighting",
+    "Sound Engineering","Live Sound","Concert Sound","Acoustic Engineering","Audio Calibration","Sound Testing",
+    "Podcast Production","Podcast Editing","Podcast Marketing","Podcast Analytics","Podcast Monetization","Podcast Network",
+    "Voice Over Services","Commercial Voice Over","E-Learning Voice Over","IVR Voice Over","Audiobook Narration","Character Voice",
+    "Music Education Technology","Online Music Lessons","Music Theory App","Instrument Learning App","Ear Training","Sight Reading App",
+    "Audio Post Production","Film Sound Design","Game Audio","Foley Art","ADR Services","Audio Restoration",
+    "Karaoke","Karaoke System","Karaoke App","Karaoke Equipment","Karaoke Licensing",
+    "Audio AI","AI Music Generation","Audio Transcription","Noise Cancellation","Audio Enhancement","Music Recognition",
+    "Pro Audio","PA System","Concert Equipment","Stage Monitor","Audio Cable","Audio Connector",
+  ]},
+
+  // ── FASHION TECHNOLOGY ────────────────────────────────────────────────
+  { parent: "Fashion Technology", children: [
+    "Fashion Design Software","Pattern Making Software","3D Fashion Design","CLO 3D","Fashion CAD","Virtual Prototyping Fashion",
+    "Fashion E-Commerce","Online Fashion Store","Fashion Marketplace","Fashion Subscription","Virtual Try On","Size Recommendation",
+    "Fashion PLM","Product Lifecycle Management Fashion","Collection Management","Tech Pack Software","Material Management Fashion",
+    "Sustainable Fashion Tech","Fabric Recycling Technology","Circular Fashion","Fashion Carbon Tracking","Sustainable Sourcing Fashion",
+    "Fashion AI","Trend Forecasting","Style Recommendation","Visual Search Fashion","Outfit Generator","Fashion Analytics",
+    "Fashion Supply Chain","Garment Tracking","Fashion ERP","Production Planning Fashion","Quality Control Fashion","Sourcing Platform Fashion",
+    "Custom Fashion","Made to Measure","Bespoke Tailoring","Custom Sneakers","Personalized Jewelry","Custom Printing Fashion",
+    "Fashion Rental","Clothing Rental","Accessory Rental","Luxury Rental","Kids Clothing Rental","Occasion Wear Rental",
+    "Resale Fashion","Secondhand Marketplace","Luxury Resale","Sneaker Resale","Vintage Clothing","Consignment Platform",
+    "Wearable Fashion Tech","Smart Clothing Technology","Heated Clothing","LED Clothing","Fitness Wearable","Health Monitoring Clothing",
+    "Fashion Influencer Platform","Fashion Creator","Lookbook Platform","Style Platform","Fashion Social Network",
+    "Textile Technology","Digital Textile Printing","Smart Textiles","Performance Fabrics","Nanotechnology Textiles","Antimicrobial Textiles",
+  ]},
+
+  // ── INDUSTRIAL EQUIPMENT & SUPPLIES ───────────────────────────────────
+  { parent: "Industrial Equipment & Supplies", children: [
+    "CNC Machines","CNC Milling","CNC Turning","CNC Lathe","CNC Router","CNC Plasma Cutter",
+    "Welding Equipment","MIG Welder","TIG Welder","Arc Welder","Spot Welder","Laser Welder","Welding Robot",
+    "Compressors","Air Compressor","Gas Compressor","Screw Compressor","Piston Compressor","Centrifugal Compressor",
+    "Pumps","Centrifugal Pump","Submersible Pump","Diaphragm Pump","Gear Pump","Peristaltic Pump","Vacuum Pump",
+    "Valves","Ball Valve","Gate Valve","Butterfly Valve","Check Valve","Control Valve","Safety Valve",
+    "Bearings","Ball Bearing","Roller Bearing","Thrust Bearing","Linear Bearing","Magnetic Bearing",
+    "Gears & Gearboxes","Spur Gear","Helical Gear","Bevel Gear","Worm Gear","Planetary Gearbox",
+    "Hydraulic Equipment","Hydraulic Press","Hydraulic Cylinder","Hydraulic Motor","Hydraulic Power Unit","Hydraulic Valve",
+    "Pneumatic Equipment","Pneumatic Cylinder","Pneumatic Valve","Air Preparation Unit","Pneumatic Actuator","Pneumatic Tools",
+    "Material Handling Equipment","Forklift","Crane","Hoist","Pallet Jack","Conveyor Belt","Dock Leveler",
+    "Industrial Fasteners","Bolts","Nuts","Screws","Washers","Rivets","Anchors",
+    "Power Tools","Drill Press","Angle Grinder","Circular Saw","Band Saw","Impact Wrench","Heat Gun",
+    "Measurement Instruments","Caliper","Micrometer","Coordinate Measuring Machine","Laser Measurement","Torque Wrench",
+    "Industrial Filtration","Air Filter Industrial","Oil Filter Industrial","Water Filter Industrial","HEPA Filter","Dust Collector",
+    "Lubricants & Coolants","Cutting Fluid","Machining Oil","Industrial Grease","Coolant System","Lubrication System",
+    "Safety Equipment Industrial","Safety Glasses","Ear Protection","Fall Protection","Respirator","Safety Shoes",
+  ]},
+
+  // ── CLEANING & SANITATION ─────────────────────────────────────────────
+  { parent: "Cleaning & Sanitation", children: [
+    "Commercial Cleaning Services","Office Cleaning","Retail Cleaning","Hospital Cleaning","School Cleaning","Warehouse Cleaning",
+    "Industrial Cleaning","Factory Cleaning","Tank Cleaning","Duct Cleaning Industrial","High Pressure Cleaning","Chemical Cleaning",
+    "Janitorial Services","Daily Janitorial","Night Cleaning","Restroom Services","Trash Removal","Floor Maintenance",
+    "Carpet Cleaning","Commercial Carpet Cleaning","Residential Carpet Cleaning","Carpet Stain Removal","Steam Cleaning","Rug Cleaning",
+    "Window Cleaning Commercial","High Rise Window Cleaning","Interior Window Cleaning","Skylight Cleaning","Glass Facade Cleaning",
+    "Floor Care","Floor Stripping","Floor Waxing","Floor Polishing","Concrete Floor Cleaning","Marble Floor Restoration",
+    "Pressure Washing","Building Washing","Parking Lot Cleaning","Graffiti Removal","Facade Cleaning","Sidewalk Cleaning",
+    "Biohazard Cleanup","Crime Scene Cleaning","Trauma Cleanup","Infectious Waste Cleanup","Mold Remediation","Asbestos Removal",
+    "Disaster Restoration","Water Damage Restoration","Fire Damage Restoration","Smoke Damage","Storm Damage","Flood Cleanup",
+    "Cleaning Supplies","Cleaning Chemicals","Disinfectant Products","Cleaning Equipment Supply","Paper Products Supply","Soap Dispensers",
+    "Green Cleaning","Eco Friendly Cleaning","Non Toxic Cleaning","Sustainable Cleaning Products","Organic Cleaning","Chemical Free Cleaning",
+    "Sanitation Services","Portable Toilet","Sanitation Equipment","Hand Sanitizer Supply","Touchless Dispensers","Sanitizing Services",
+    "Laundry Services Commercial","Linen Cleaning","Uniform Laundering","Hotel Laundry","Hospital Laundry","Restaurant Laundry",
+  ]},
+
+  // ── STAFFING BY INDUSTRY ──────────────────────────────────────────────
+  { parent: "Staffing By Industry", children: [
+    "Accounting Staffing","Finance Staffing","Banking Staffing","Insurance Staffing","Investment Banking Staffing",
+    "Legal Staffing","Paralegal Staffing","Attorney Staffing","Compliance Staffing","Legal Secretary Staffing",
+    "Engineering Staffing","Mechanical Engineering Staffing","Civil Engineering Staffing","Electrical Engineering Staffing","Chemical Engineering Staffing",
+    "Marketing Staffing","Creative Staffing","Advertising Staffing","Digital Marketing Staffing","PR Staffing",
+    "Sales Staffing","Retail Staffing","Customer Service Staffing","Call Center Staffing","Telemarketing Staffing",
+    "Manufacturing Staffing","Production Staffing","Warehouse Staffing","Assembly Staffing","Quality Control Staffing",
+    "Construction Staffing","Skilled Trades Staffing","Electrician Staffing","Plumber Staffing","Carpenter Staffing",
+    "Oil & Gas Staffing","Mining Staffing","Energy Staffing","Utility Staffing","Pipeline Staffing",
+    "Hospitality Staffing","Hotel Staffing","Restaurant Staffing","Event Staffing","Casino Staffing",
+    "Education Staffing","Teacher Staffing","Substitute Teacher","Professor Staffing","Tutor Staffing",
+    "Government Staffing","Federal Staffing","State Staffing","Municipal Staffing","Military Staffing",
+    "Nonprofit Staffing","Social Work Staffing","Fundraising Staffing","Program Management Staffing",
+    "Logistics Staffing","Transportation Staffing","Supply Chain Staffing","Trucking Staffing","Aviation Staffing",
+    "Pharmaceutical Staffing","Biotech Staffing","Clinical Research Staffing","Lab Staffing","Medical Device Staffing",
+    "Startup Staffing","Tech Startup Staffing","Venture Capital Staffing","Founder Services","Fractional Hiring",
+  ]},
+
+  // ── WEDDING & EVENTS SERVICES ─────────────────────────────────────────
+  { parent: "Wedding & Events Services", children: [
+    "Wedding Planning","Destination Wedding Planner","Day of Coordinator","Full Service Wedding Planner","Budget Wedding Planner",
+    "Wedding Venues","Banquet Halls","Outdoor Wedding Venue","Beach Wedding Venue","Garden Wedding Venue","Barn Wedding Venue",
+    "Wedding Photography","Bridal Photography","Engagement Photography","Wedding Videography","Drone Wedding Photography","Photo Booth Rental",
+    "Wedding Catering","Bridal Catering","Cocktail Reception Catering","Buffet Wedding Catering","Plated Dinner Catering",
+    "Wedding Florist","Bridal Bouquets","Wedding Centerpieces","Ceremony Flowers","Reception Flowers","Flower Wall Rental",
+    "Wedding DJ","Wedding Band","Live Music Wedding","Ceremony Music","Reception Entertainment",
+    "Bridal Wear","Wedding Dress Designer","Tuxedo Rental","Bridesmaid Dresses","Groom Attire","Wedding Alterations",
+    "Wedding Cake","Custom Wedding Cake","Dessert Table","Wedding Cookies","Cupcake Wedding","Cake Topper",
+    "Wedding Invitations","Save the Date","Wedding Stationery","Digital Invitations","Calligraphy Services",
+    "Wedding Decor","Event Decor Rental","Linen Rental","Chair Rental","Table Rental","Lighting Rental",
+    "Wedding Transportation","Limousine Service","Party Bus","Vintage Car Rental","Horse & Carriage",
+    "Bridal Makeup","Wedding Hair Stylist","Bridal Spa","Pre Wedding Grooming","Mehendi Artist",
+    "Wedding Registry","Gift Registry","Honeymoon Registry","Charity Registry",
+    "Event Management","Corporate Event Planning","Birthday Party Planning","Anniversary Party","Baby Shower Planning","Graduation Party",
+  ]},
+
+  // ── AUTOMOTIVE SERVICES ───────────────────────────────────────────────
+  { parent: "Automotive Services", children: [
+    "Auto Repair Shop","Brake Repair","Transmission Repair","Engine Repair","Suspension Repair","Exhaust Repair",
+    "Oil Change Service","Quick Lube","Synthetic Oil Change","Fleet Oil Change","Mobile Oil Change",
+    "Tire Shop","Tire Installation","Tire Rotation","Tire Balancing","Flat Tire Repair","Used Tires",
+    "Auto Body Shop","Collision Repair","Dent Repair","Paintless Dent Removal","Auto Painting","Frame Straightening",
+    "Car Wash","Hand Car Wash","Automatic Car Wash","Self Service Car Wash","Mobile Car Wash","Touchless Car Wash",
+    "Auto Detailing","Interior Detailing","Exterior Detailing","Ceramic Coating","Paint Protection Film","Window Tinting Auto",
+    "Towing Service","Emergency Towing","Flatbed Towing","Long Distance Towing","Motorcycle Towing","Roadside Assistance",
+    "Auto Glass","Windshield Repair","Windshield Replacement","Side Window Replacement","Rear Window Repair",
+    "Muffler Shop","Catalytic Converter","Exhaust System Repair","Custom Exhaust","Performance Exhaust",
+    "Auto Electrician","Car Battery Service","Alternator Repair","Starter Repair","Car Wiring","Auto AC Repair",
+    "Smog Check","Emissions Testing","Vehicle Inspection","State Inspection","Safety Inspection",
+    "Car Dealership","New Car Dealer","Used Car Dealer","Certified Pre Owned","Luxury Car Dealer","Truck Dealer",
+    "Auto Parts Store","OEM Parts","Aftermarket Parts","Salvage Yard","Junkyard","Auto Recycling",
+    "Motorcycle Repair","ATV Repair","Boat Repair","RV Repair","Trailer Repair",
+    "Key Fob Programming","Car Key Replacement","Ignition Repair","Transponder Key","Remote Start Installation",
+  ]},
+
+  // ── PHOTOGRAPHY & VIDEOGRAPHY ─────────────────────────────────────────
+  { parent: "Photography & Videography", children: [
+    "Portrait Photography","Family Photography","Headshot Photography","Senior Portraits","Maternity Photography","Newborn Photography",
+    "Commercial Photography","Product Photography","Food Photography","Fashion Photography","Architectural Photography","Real Estate Photography",
+    "Event Photography","Concert Photography","Corporate Event Photography","Birthday Photography","Graduation Photography",
+    "Video Production Company","Corporate Video Production","Promotional Video","Training Video","Testimonial Video","Brand Film",
+    "Aerial Photography Drone","Real Estate Drone Photography","Construction Drone","Event Drone","Mapping Drone Photography",
+    "Film Production","Documentary Production","Short Film Production","Music Video Production","TV Commercial Production",
+    "Animation Studio","2D Animation","3D Animation Studio","Motion Graphics","Whiteboard Animation","Character Animation",
+    "Photo Editing Service","Photo Retouching","Image Enhancement","Background Removal","Photo Restoration","Color Correction",
+    "Video Editing Service","Post Production","Color Grading","Visual Effects","Sound Design Video","Subtitle Service",
+    "Live Streaming Service","Webinar Production","Live Event Streaming","Virtual Event Production","Hybrid Event Production",
+    "360 Photography","Virtual Tour Photography","Panoramic Photography","VR Photography",
+    "Stock Photography","Stock Video","Royalty Free Images","Custom Stock","Microstock",
+    "Photo Printing","Canvas Print","Metal Print","Fine Art Print","Photo Album","Photo Book",
+  ]},
+
+  // ── SALON SPA & BEAUTY SERVICES ───────────────────────────────────────
+  { parent: "Salon Spa & Beauty Services", children: [
+    "Hair Salon","Mens Hair Salon","Womens Hair Salon","Kids Hair Salon","Curly Hair Specialist","Hair Extension Salon",
+    "Barber Shop","Traditional Barber","Modern Barber","Mobile Barber","Beard Trim","Hot Towel Shave",
+    "Nail Salon","Manicure","Pedicure","Gel Nails","Acrylic Nails","Nail Art Salon",
+    "Day Spa","Massage Spa","Facial Spa","Body Spa","Couples Spa","Medical Spa",
+    "Massage Therapy","Deep Tissue Massage","Swedish Massage","Sports Massage","Hot Stone Massage","Prenatal Massage",
+    "Facial Treatment","Anti Aging Facial","Hydrafacial","Chemical Peel","Microdermabrasion","LED Light Therapy",
+    "Waxing Salon","Brazilian Wax","Full Body Wax","Eyebrow Wax","Facial Wax",
+    "Eyelash Services","Lash Extension","Lash Lift","Lash Tint","Brow Lamination","Microblading",
+    "Makeup Artist","Bridal Makeup Artist","Special Effects Makeup","Airbrush Makeup","Editorial Makeup",
+    "Tanning Salon","Spray Tan","UV Tanning","Airbrush Tan","Self Tan Service",
+    "Hair Removal Salon","Laser Hair Removal Salon","Electrolysis Salon","Threading","Sugaring",
+    "Tattoo Parlor","Custom Tattoo","Fine Line Tattoo","Color Tattoo","Tattoo Cover Up","Tattoo Removal Salon",
+    "Body Piercing","Ear Piercing","Nose Piercing","Body Piercing Studio",
+    "Skincare Clinic","Acne Treatment Clinic","Botox Clinic","Dermal Filler Clinic","Skin Rejuvenation","Laser Skin Treatment",
+  ]},
+
+  // ── STORAGE & MOVING ──────────────────────────────────────────────────
+  { parent: "Storage & Moving", children: [
+    "Self Storage","Climate Controlled Storage","Drive Up Storage","Indoor Storage","Outdoor Storage","RV Storage",
+    "Business Storage","Document Storage","Inventory Storage","Equipment Storage","Office Storage","Warehouse Storage",
+    "Portable Storage","Container Storage","Pod Storage","Mobile Storage Unit","On Site Storage",
+    "Vehicle Storage","Car Storage","Boat Storage","Motorcycle Storage","Trailer Storage",
+    "Wine Storage","Art Storage","Furniture Storage","Seasonal Storage",
+    "Local Moving Company","Residential Moving","Apartment Moving","House Moving","Condo Moving","Senior Moving",
+    "Long Distance Moving Company","Interstate Moving","Cross Country Moving","State to State Moving",
+    "Commercial Moving","Office Moving","Corporate Relocation","Industrial Moving","Warehouse Moving",
+    "International Moving","Overseas Moving","International Shipping Household","Customs Clearance Moving","Expat Moving",
+    "Packing Service","Full Packing Service","Fragile Item Packing","Custom Crating","Moving Supplies",
+    "Junk Removal Service","Furniture Removal","Appliance Removal","Construction Debris Removal","Estate Cleanout","Hoarding Cleanup",
+    "Piano Moving","Hot Tub Moving","Pool Table Moving","Safe Moving","Specialty Item Moving",
+    "Moving Labor","Loading Help","Unloading Help","Furniture Assembly Moving","Truck Rental",
+  ]},
+
+  // ── REAL ESTATE AGENTS & BROKERS ──────────────────────────────────────
+  { parent: "Real Estate Agents & Brokers", children: [
+    "Residential Real Estate Agent","Buyers Agent","Sellers Agent","Listing Agent","Dual Agent","Luxury Real Estate Agent",
+    "Commercial Real Estate Broker","Office Space Broker","Retail Space Broker","Industrial Space Broker","Investment Property Broker",
+    "Property Management Company","Residential Property Manager","Commercial Property Manager","Vacation Property Manager","HOA Management Company",
+    "Real Estate Appraiser","Residential Appraiser","Commercial Appraiser","Land Appraiser","Estate Appraiser",
+    "Title Company","Title Insurance","Title Search","Escrow Service","Closing Service",
+    "Mortgage Broker","Home Loan Broker","Refinance Broker","FHA Loan Specialist","VA Loan Specialist","Commercial Mortgage Broker",
+    "Home Inspector","Pre Purchase Inspector","Pre Sale Inspector","New Construction Inspector","Condo Inspector",
+    "Land Surveyor","Boundary Survey","Topographic Survey","ALTA Survey","Construction Survey",
+    "Home Stager","Vacant Home Staging","Occupied Home Staging","Virtual Home Staging","Luxury Home Staging",
+    "Home Warranty Company","Home Protection Plan","Appliance Warranty","Systems Warranty","Builder Warranty",
+    "Auction Company","Real Estate Auctioneer","Estate Auctioneer","Commercial Auctioneer","Online Auction",
+    "Foreclosure Specialist","Short Sale Expert","REO Agent","Bank Owned Property","Distressed Property",
+    "New Construction Agent","Builder Agent","Development Sales","Pre Construction Sales","Model Home",
+    "Relocation Specialist","Corporate Relocation Agent","Military Relocation","International Relocation Agent",
+  ]},
+
+  // ── PRINTING & PROMOTIONAL ────────────────────────────────────────────
+  { parent: "Printing & Promotional", children: [
+    "Commercial Printer","Digital Printing","Offset Printing","Large Format Printing","Wide Format Printing",
+    "Business Card Printing","Letterhead Printing","Envelope Printing","Stationery Printing","Presentation Folder",
+    "Brochure Printing","Flyer Printing","Poster Printing","Banner Printing","Catalog Printing","Booklet Printing",
+    "Screen Printing","T Shirt Printing","Custom Screen Print","Bulk Screen Printing","Discharge Printing",
+    "Embroidery Service","Custom Embroidery","Logo Embroidery","Hat Embroidery","Jacket Embroidery",
+    "Promotional Products","Custom Merchandise","Branded Swag","Corporate Gifts","Trade Show Giveaways",
+    "Sign Making Company","Business Signs","Vehicle Wraps","Vinyl Lettering","Channel Letters","Monument Signs",
+    "Custom Apparel","Custom T Shirts","Custom Hoodies","Custom Hats","Custom Uniforms","Custom Workwear",
+    "Trophy & Award","Custom Trophy","Crystal Awards","Medal Manufacturing","Plaque Engraving","Recognition Awards",
+    "Sticker & Label Printing","Custom Stickers","Product Labels","Vinyl Decals","Bumper Stickers","Roll Labels",
+    "Direct Mail","Postcard Mailing","Every Door Direct Mail","Variable Data Printing","Mail Fulfillment",
+    "Packaging Printing","Custom Boxes","Product Packaging Design","Display Packaging","Corrugated Printing",
+    "Copy Shop","Print on Demand","Document Printing","Blueprint Printing","Thesis Printing",
+  ]},
+
+  // ── SUPPLIES & DISTRIBUTION ───────────────────────────────────────────
+  { parent: "Supplies & Distribution", children: [
+    "Restaurant Supply","Commercial Kitchen Supply","Food Service Equipment","Bar Supply","Bakery Supply","Pizza Supply",
+    "Hotel Supply","Hospitality Supply","Amenity Supply","Hotel Furniture Supply","Hotel Linen Supply",
+    "Medical Supply","Hospital Supply","Clinical Supply","Home Medical Supply","First Aid Supply","PPE Supply",
+    "Dental Supply","Dental Equipment Supply","Orthodontic Supply","Dental Lab Supply","Dental Instrument",
+    "Lab Supply","Laboratory Equipment","Lab Chemical","Lab Glassware","Lab Furniture","Scientific Instrument",
+    "Janitorial Supply","Commercial Cleaning Supply","Floor Care Supply","Restroom Supply","Trash Can Supply",
+    "Office Supply","Business Supply","Printer Supply","Office Furniture Supply","Office Technology",
+    "Safety Supply","PPE Supplier","Fire Safety Supply","Fall Protection Supply","First Responder Supply",
+    "Industrial Supply","MRO Supply","Fastener Supply","Abrasive Supply","Tool Supply","Cutting Tool Supply",
+    "Electrical Supply","Wire & Cable Supply","Lighting Supply","Electrical Component","Switch & Outlet Supply",
+    "Plumbing Supply","Pipe & Fitting","Plumbing Fixture","Valve Supply","Water Heater Supply",
+    "HVAC Supply","Air Conditioning Supply","Heating Supply","Duct Supply","Refrigeration Supply",
+    "Building Supply","Lumber Supply","Concrete Supply","Roofing Supply","Drywall Supply","Insulation Supply",
+    "Pool & Spa Supply","Pool Chemical","Pool Equipment","Hot Tub Supply","Pool Maintenance Supply",
+    "Art & Craft Supply","Fine Art Supply","Craft Material","Scrapbooking Supply","Sewing Supply","Knitting Supply",
+    "Party Supply","Balloon Supply","Decoration Supply","Disposable Tableware","Event Supply","Costume Supply",
+    "School Supply","Educational Supply","Classroom Supply","Teacher Supply","School Furniture",
+  ]},
+
+  // ── LAUNDRY DRY CLEANING & ALTERATION ─────────────────────────────────
+  { parent: "Laundry Dry Cleaning & Alteration", children: [
+    "Laundromat","Self Service Laundry","Coin Laundry","Card Operated Laundry","24 Hour Laundromat",
+    "Wash and Fold Service","Drop Off Laundry","Pickup Delivery Laundry","Same Day Laundry","Commercial Laundry Service",
+    "Dry Cleaning Service","Organic Dry Cleaning","Wedding Dress Cleaning","Suit Dry Cleaning","Leather Cleaning","Suede Cleaning",
+    "Tailor Shop","Custom Tailoring","Alteration Service","Suit Alterations","Dress Alterations","Hem Service",
+    "Shoe Repair","Cobbler","Shoe Restoration","Boot Repair","Heel Repair","Shoe Shine",
+    "Leather Repair","Handbag Repair","Jacket Repair","Luggage Repair","Furniture Leather Repair",
+    "Uniform Service","Uniform Rental","Uniform Laundering Service","Corporate Uniform","Industrial Uniform",
+    "Linen Service","Table Linen","Napkin Service","Towel Service","Bed Linen Service",
+    "Rug Cleaning Service","Oriental Rug Cleaning","Area Rug Cleaning","Carpet Cleaning Pickup","Rug Restoration",
+    "Curtain Cleaning","Drape Cleaning","Blind Cleaning Service","Upholstery Cleaning Service",
+  ]},
+
+  // ── IMMIGRATION & VISA SERVICES ───────────────────────────────────────
+  { parent: "Immigration & Visa Services", children: [
+    "Immigration Lawyer","Immigration Attorney","Immigration Consultant","Deportation Defense","Asylum Attorney",
+    "Work Visa","H1B Visa","L1 Visa","O1 Visa","TN Visa","E2 Visa","EB1 Visa","EB2 Visa","EB3 Visa",
+    "Green Card","Family Green Card","Employment Green Card","Green Card Lottery","Adjustment of Status","Consular Processing",
+    "Citizenship Service","Naturalization","Citizenship Test Prep","Dual Citizenship","Renunciation",
+    "Student Visa","F1 Visa","J1 Visa","M1 Visa","Student Visa Consulting","OPT CPT Service",
+    "Business Visa","Investor Visa","Startup Visa","Intracompany Transfer","Treaty Trader",
+    "Tourist Visa","B1 B2 Visa","Travel Visa","Visa Extension","Visa Renewal",
+    "Immigration Document","Passport Service","Visa Stamping","Document Translation","Apostille Service","Notarization",
+    "Global Mobility Service","Corporate Immigration","Employer Sponsorship","Immigration Compliance","I9 Verification",
+    "Refugee Service","DACA Service","TPS Service","Humanitarian Visa","U Visa","T Visa",
+  ]},
+
+  // ── FITNESS & GYM ─────────────────────────────────────────────────────
+  { parent: "Fitness & Gym", children: [
+    "Gym Membership","24 Hour Gym","Budget Gym","Premium Gym","Womens Only Gym","Coed Gym",
+    "CrossFit Box","CrossFit Gym","CrossFit Training","CrossFit Competition","CrossFit Kids",
+    "Yoga Studio","Hot Yoga","Vinyasa Yoga","Bikram Yoga","Restorative Yoga","Prenatal Yoga",
+    "Pilates Studio","Reformer Pilates","Mat Pilates","Clinical Pilates","Barre Class",
+    "Martial Arts Studio","Karate School","Taekwondo","Brazilian Jiu Jitsu","Muay Thai","Boxing Gym",
+    "MMA Gym","Mixed Martial Arts Training","Kickboxing Gym","Self Defense Class",
+    "Personal Trainer","Online Personal Trainer","In Home Personal Trainer","Group Training","Strength Coach",
+    "Boot Camp Fitness","Outdoor Boot Camp","Indoor Boot Camp","Military Fitness","HIIT Training",
+    "Spin Class","Indoor Cycling","Cycling Studio","Peloton Studio","Spin Instructor",
+    "Swimming Pool Facility","Swim Lessons","Aqua Fitness","Lap Swimming","Water Aerobics",
+    "Dance Studio","Ballet Class","Hip Hop Dance","Salsa Dance","Ballroom Dance","Zumba Class",
+    "Rock Climbing Gym","Bouldering Gym","Indoor Climbing","Climbing Instruction","Climbing Wall",
+    "Weight Loss Center","Diet Center","Medically Supervised Weight Loss","Nutrition Coaching Gym","Body Transformation",
+    "Sports Performance","Athletic Training Facility","Speed Training","Agility Training","Sports Conditioning",
+    "Senior Fitness","Silver Sneakers","Chair Fitness","Low Impact Exercise","Adaptive Fitness",
+    "Kids Fitness","Youth Sports Training","Kids Gym","Gymnastics Academy","Tumbling Class",
+  ]},
+
+  // ── KITCHEN BATH & HOME IMPROVEMENT ───────────────────────────────────
+  { parent: "Kitchen Bath & Home Improvement", children: [
+    "Kitchen Remodeling","Custom Kitchen","Kitchen Cabinet","Kitchen Countertop","Kitchen Backsplash","Kitchen Island",
+    "Bathroom Remodeling","Shower Remodel","Bathtub Replacement","Vanity Installation","Tile Installation Bathroom","Walk In Shower",
+    "Countertop Company","Granite Countertop","Quartz Countertop","Marble Countertop","Butcher Block Countertop","Concrete Countertop",
+    "Cabinet Company","Custom Cabinet","Kitchen Cabinet Refacing","Cabinet Painting","Cabinet Hardware","Closet System",
+    "Flooring Company","Hardwood Floor Company","Tile Flooring Company","Luxury Vinyl Plank","Carpet Company","Epoxy Floor",
+    "Window Company","Replacement Window","Vinyl Window","Wood Window","Energy Efficient Window","Bay Window Installation",
+    "Door Company","Entry Door","Interior Door","Sliding Door","French Door","Garage Door Company",
+    "Siding Company","Vinyl Siding","Fiber Cement Siding","Wood Siding","Metal Siding","Stone Veneer",
+    "Gutter Company","Gutter Installation","Gutter Guard","Seamless Gutter","Gutter Cleaning Company","Downspout Installation",
+    "Foundation Repair Company","Basement Waterproofing","Crawl Space Repair","Slab Foundation Repair","Pier Installation","Foundation Crack Repair",
+    "Basement Finishing","Basement Remodel","Basement Egress Window","Basement Bathroom","Basement Bar","Basement Theater",
+    "Deck Builder","Composite Deck","Wood Deck","Trex Deck","Deck Staining","Deck Repair",
+    "Sunroom Builder","Screen Room","Patio Enclosure","Four Season Room","Conservatory",
+    "Chimney Service","Chimney Sweep","Chimney Repair","Chimney Liner","Chimney Cap","Fireplace Installation",
+    "Insulation Company","Spray Foam Insulation","Blown In Insulation","Batt Insulation","Attic Insulation","Wall Insulation",
+    "Septic Service","Septic Tank Installation","Septic Pumping","Septic Repair","Drain Field","Septic Inspection",
+    "Well Drilling","Water Well","Well Pump Repair","Well Water Treatment","Well Inspection","Geothermal Well",
+  ]},
+
+  // ── NOTARY LEGAL DOCUMENT & TAX PREP ──────────────────────────────────
+  { parent: "Notary Legal Document & Tax Prep", children: [
+    "Notary Public","Mobile Notary","Remote Online Notary","Notary Signing Agent","Loan Signing","Apostille Notary",
+    "Tax Preparation Service","Personal Tax Prep","Small Business Tax Prep","Corporate Tax Prep","Freelancer Tax","Expat Tax Prep",
+    "Tax Resolution","IRS Tax Help","Back Tax Filing","Tax Lien","Tax Levy","Offer in Compromise",
+    "Registered Agent","Business Filing Service","LLC Formation","Corporation Formation","DBA Filing","Annual Report Filing",
+    "Process Server","Legal Document Delivery","Court Filing Service","Skip Tracing","Subpoena Service",
+    "Background Check Service","Tenant Screening","Employment Screening","Criminal Record Check","Credit Check Service",
+    "Fingerprinting Service","Live Scan","FBI Background Check","Ink Fingerprint","Electronic Fingerprint",
+    "Document Preparation","Legal Form Preparation","Deed Preparation","Trust Document","Power of Attorney Preparation",
+    "Translation & Interpretation","Certified Translation","Legal Translation","Medical Translation","Court Interpreter",
+    "Bail Bond Service","Surety Bond","Immigration Bond","Federal Bail Bond","24 Hour Bail Bond",
+  ]},
+
+  // ── FINANCIAL SERVICES LOCAL ──────────────────────────────────────────
+  { parent: "Financial Services Local", children: [
+    "Check Cashing","Money Order","Wire Transfer","Bill Payment Service","Currency Exchange",
+    "Pawn Shop","Gold Buyer","Silver Buyer","Jewelry Buyer","Electronics Pawn","Tool Pawn",
+    "Payday Loan","Title Loan","Installment Loan","Cash Advance","Emergency Loan",
+    "Credit Union","Community Bank","Online Bank","Savings Account","Checking Account",
+    "Financial Advisor","Wealth Advisor","Retirement Planner","Investment Advisor","Estate Planner",
+    "Credit Repair Service","Credit Counseling","Debt Management","Debt Consolidation","Bankruptcy Attorney",
+    "Mortgage Lender","Home Loan Lender","FHA Lender","VA Lender","Jumbo Loan","First Time Buyer Loan",
+    "Auto Loan","Car Financing","Used Car Loan","Auto Refinance","Lease Buyout",
+    "Small Business Loan","SBA Loan","Business Line of Credit","Equipment Financing","Invoice Factoring",
+    "Accounting Firm","CPA Firm","Bookkeeper","Payroll Company","QuickBooks Pro Advisor",
+    "Insurance Agent","Life Insurance Agent","Auto Insurance Agent","Home Insurance Agent","Health Insurance Agent","Business Insurance Agent",
+  ]},
+
 ];
 
 // ─── GENERATE SQL ─────────────────────────────────────────────────────────────
+
+// ─── UNIQUE DESCRIPTIONS PER CATEGORY ──────────────────────────────────────
+// Hand-crafted informative descriptions that explain what each category actually is.
+// Falls back to a smart generator for any category not listed here.
+
+const PARENT_DESCRIPTIONS = {
+  "Food & Beverage": "Food & beverage companies manufacture, process, distribute, and sell consumable products — from packaged foods and dairy to beverages, snacks, and specialty ingredients. Find verified suppliers, processors, and distributors worldwide.",
+  "Chemicals & Petrochemicals": "Chemical and petrochemical companies produce industrial chemicals, specialty compounds, polymers, solvents, and raw materials used across manufacturing, agriculture, and consumer goods. Compare verified chemical suppliers and manufacturers.",
+  "Pharmaceuticals & Healthcare": "Pharmaceutical and healthcare companies develop, manufacture, and distribute medicines, medical devices, diagnostics, and health supplements. Find verified pharma manufacturers, API suppliers, and healthcare product companies.",
+  "Electronics & Electrical": "Electronics and electrical companies design, manufacture, and supply electronic components, consumer electronics, industrial electrical equipment, and embedded systems. Browse verified OEMs, component suppliers, and electronics manufacturers.",
+  "Machinery & Manufacturing": "Machinery and manufacturing companies build, supply, and service industrial machines, production equipment, tooling, and automation systems. Compare verified equipment manufacturers and precision engineering firms.",
+  "Construction & Real Estate": "Construction and real estate companies handle building design, site development, civil engineering, property development, and infrastructure projects. Find verified contractors, builders, and construction material suppliers.",
+  "Textiles & Apparel": "Textile and apparel companies manufacture fabrics, yarns, garments, and fashion accessories — from raw fiber processing to finished clothing and home textiles. Browse verified textile mills, garment exporters, and fabric suppliers.",
+  "Automotive": "Automotive companies design, manufacture, and supply vehicles, auto parts, accessories, and aftermarket components — spanning passenger cars, commercial vehicles, and EV technology. Compare verified auto manufacturers and parts suppliers.",
+  "Agriculture & Farming": "Agriculture and farming companies produce crops, livestock, seeds, fertilizers, and farm equipment. Find verified agribusiness firms, farm input suppliers, and agricultural product exporters.",
+  "Metals & Mining": "Metals and mining companies extract, process, and trade ores, metals, alloys, and mineral resources. Browse verified mining operators, metal fabricators, steel suppliers, and commodity traders.",
+  "Energy": "Energy companies generate, transmit, distribute, and trade electricity, oil, gas, and alternative fuels. Compare verified power producers, fuel suppliers, and energy infrastructure providers.",
+  "Logistics & Supply Chain": "Logistics and supply chain companies provide freight transport, warehousing, customs brokerage, last-mile delivery, and end-to-end supply chain management. Find verified 3PL providers and logistics partners.",
+  "Information Technology": "IT companies deliver software development, cloud infrastructure, cybersecurity, data management, and digital transformation services. Browse verified technology firms, SaaS providers, and IT consulting companies.",
+  "Financial Services": "Financial services companies offer banking, lending, insurance, wealth management, and capital markets solutions. Compare verified financial institutions, fintech platforms, and advisory firms.",
+  "Healthcare Services": "Healthcare service providers operate hospitals, clinics, diagnostic centers, home care, and telemedicine platforms. Find verified healthcare facilities, medical staffing agencies, and health management companies.",
+  "Education & Training": "Education and training companies run schools, universities, e-learning platforms, corporate training programs, and certification courses. Browse verified edtech providers, training institutes, and curriculum developers.",
+  "Retail & E-Commerce": "Retail and e-commerce companies sell consumer and business products through physical stores, online marketplaces, and omnichannel platforms. Compare verified retailers, marketplace operators, and commerce technology providers.",
+  "Media & Marketing": "Media and marketing companies create content, run advertising campaigns, manage public relations, and build brand strategies across digital and traditional channels. Find verified agencies, publishers, and creative studios.",
+  "Hospitality & Tourism": "Hospitality and tourism companies operate hotels, restaurants, travel agencies, tour operators, and event venues. Browse verified hospitality brands, OTAs, and tourism service providers.",
+  "Environmental Services": "Environmental services companies handle pollution control, environmental testing, remediation, sustainability consulting, and ecological restoration. Compare verified environmental consultants and green service providers.",
+  "Professional Services": "Professional services firms provide consulting, legal, accounting, engineering, and advisory expertise to businesses. Find verified consultancies, advisory firms, and professional service providers.",
+  "Packaging": "Packaging companies design, manufacture, and supply packaging materials, containers, labels, and filling equipment for food, pharma, industrial, and consumer goods. Browse verified packaging suppliers and manufacturers.",
+  "Water & Sanitation": "Water and sanitation companies build treatment plants, supply purification systems, manage distribution networks, and deliver clean water and sewage solutions. Compare verified water technology providers.",
+  "Printing & Publishing": "Printing and publishing companies produce books, magazines, labels, packaging print, and digital publications. Find verified commercial printers, print-on-demand providers, and publishing houses.",
+  "Defense & Aerospace": "Defense and aerospace companies design, manufacture, and maintain military equipment, aircraft, satellites, and space systems. Browse verified defense contractors and aerospace manufacturers.",
+  "Telecom": "Telecom companies build and operate communication networks, provide mobile and broadband services, and supply networking equipment. Compare verified telecom operators, ISPs, and infrastructure vendors.",
+  "Beauty & Personal Care": "Beauty and personal care companies manufacture cosmetics, skincare, haircare, fragrances, and grooming products. Find verified beauty brands, contract manufacturers, and personal care suppliers.",
+  "Sports & Fitness": "Sports and fitness companies manufacture equipment, operate gyms, manage sports facilities, and provide fitness technology. Browse verified sports equipment makers and fitness service providers.",
+  "Furniture & Interior Design": "Furniture and interior design companies manufacture home and office furniture, provide interior design services, and supply decor products. Compare verified furniture makers and design studios.",
+  "Paper & Forest Products": "Paper and forest products companies produce pulp, paper, cardboard, timber, and wood-based products. Find verified paper mills, tissue manufacturers, and sustainable forestry companies.",
+  "Gems Jewelry & Watches": "Gems, jewelry, and watch companies mine gemstones, design and manufacture jewelry, and produce timepieces. Browse verified jewelers, gem dealers, and watchmakers.",
+  "Staffing & HR": "Staffing and HR companies provide recruitment, workforce management, payroll processing, and HR consulting services. Compare verified staffing agencies, RPO providers, and HR technology firms.",
+  "Legal & Compliance": "Legal and compliance companies provide law firm services, regulatory consulting, contract management, and corporate governance solutions. Find verified law firms, compliance consultants, and legal tech providers.",
+  "Events & Entertainment": "Events and entertainment companies organize conferences, concerts, exhibitions, and corporate events — supplying venues, production, and talent management. Browse verified event planners and entertainment companies.",
+  "Agricultural Commodities": "Agricultural commodity companies trade, process, and distribute grains, oilseeds, sugar, coffee, spices, and other farm produce on domestic and international markets. Compare verified commodity traders and processors.",
+  "Biotech & Life Sciences": "Biotech and life sciences companies develop biological products, conduct genomics research, create biopharmaceuticals, and provide laboratory services. Find verified biotech firms and life science researchers.",
+  "Fashion & Luxury": "Fashion and luxury companies design, produce, and retail high-end clothing, accessories, leather goods, and lifestyle products. Browse verified fashion houses, luxury brands, and designer labels.",
+  "Medical Equipment & Devices": "Medical equipment and device companies manufacture diagnostic instruments, surgical tools, patient monitors, and hospital infrastructure. Compare verified medtech manufacturers and device suppliers.",
+  "Real Estate Services": "Real estate service companies provide property brokerage, valuation, facility management, and real estate advisory. Find verified real estate agencies, property managers, and appraisal firms.",
+  "Consumer Goods": "Consumer goods companies manufacture and distribute everyday products — household items, personal care, cleaning supplies, and lifestyle goods. Browse verified FMCG brands, distributors, and private label manufacturers.",
+  "Social Impact & NGO": "Social impact and NGO organizations work on poverty alleviation, education access, healthcare delivery, environmental protection, and community development. Find verified nonprofits and social enterprises.",
+  "Marine & Shipping": "Marine and shipping companies operate cargo vessels, manage ports, provide shipbuilding, and deliver maritime logistics. Compare verified shipping lines, shipyards, and marine service providers.",
+  "Nuclear & Advanced Energy": "Nuclear and advanced energy companies operate reactors, develop fusion research, manage nuclear fuel, and pioneer next-generation energy technologies. Browse verified nuclear operators and advanced energy firms.",
+  "Miscellaneous Industries": "This category covers niche industries — toy manufacturing, musical instruments, office supplies, safety equipment, cleaning equipment, vending, sign making, and other specialized sectors.",
+  "Cybersecurity": "Cybersecurity companies protect organizations from digital threats through network security, endpoint protection, threat intelligence, penetration testing, and compliance management. Find verified cybersecurity firms and managed security providers.",
+  "Cloud Computing & SaaS": "Cloud computing and SaaS companies provide infrastructure, platforms, and software delivered over the internet — from hosting and storage to CRM, ERP, and collaboration tools. Compare verified cloud providers and SaaS platforms.",
+  "Artificial Intelligence & Machine Learning": "AI and machine learning companies build intelligent systems — from natural language processing and computer vision to predictive analytics and generative AI. Find verified AI solution providers and ML consulting firms.",
+  "Robotics & Automation": "Robotics and automation companies design, manufacture, and deploy industrial robots, cobots, autonomous vehicles, drones, and factory automation systems. Browse verified robotics manufacturers and automation integrators.",
+  "3D Printing & Additive Manufacturing": "3D printing and additive manufacturing companies provide rapid prototyping, on-demand production, and custom part manufacturing using FDM, SLA, SLS, and metal printing technologies. Compare verified 3D printing service bureaus.",
+  "Blockchain & Web3": "Blockchain and Web3 companies build decentralized applications, smart contracts, cryptocurrency platforms, NFT marketplaces, and enterprise blockchain solutions. Find verified blockchain developers and Web3 agencies.",
+  "IoT & Connected Devices": "IoT companies design connected devices, build IoT platforms, and deliver smart solutions for homes, factories, cities, agriculture, and healthcare. Browse verified IoT solution providers and device manufacturers.",
+  "Electric Vehicles & E-Mobility": "EV and e-mobility companies manufacture electric cars, buses, scooters, and bicycles — plus batteries, charging stations, and EV software. Compare verified EV makers, battery suppliers, and charging network operators.",
+  "AR VR & Extended Reality": "AR, VR, and extended reality companies create immersive experiences — from virtual reality training and augmented reality apps to metaverse platforms and 3D visualization. Find verified XR developers and hardware makers.",
+  "Home Services": "Home services companies provide plumbing, electrical, HVAC, roofing, painting, pest control, landscaping, and general handyman services for residential properties. Browse verified local home service providers.",
+  "Insurance": "Insurance companies underwrite and sell life, health, auto, property, business, and specialty insurance policies. Compare verified insurance carriers, brokers, and insurtech platforms.",
+  "Digital Marketing": "Digital marketing companies help businesses grow online through SEO, PPC advertising, social media marketing, content creation, email campaigns, and conversion optimization. Find verified digital marketing agencies.",
+  "Web & Software Development": "Web and software development companies build websites, mobile apps, enterprise software, e-commerce platforms, and custom digital products. Browse verified development agencies and software consultancies.",
+  "Data & Analytics": "Data and analytics companies provide business intelligence, data engineering, data science, visualization, and big data solutions. Compare verified data consultancies and analytics platform providers.",
+  "Accounting & Tax": "Accounting and tax companies provide bookkeeping, tax preparation, auditing, payroll processing, and CFO advisory services. Find verified accounting firms, CPAs, and tax consultants.",
+  "Management Consulting": "Management consulting firms advise businesses on strategy, operations, digital transformation, organizational change, and growth. Browse verified strategy consultancies and advisory firms.",
+  "Healthcare & Wellness": "Healthcare and wellness companies operate hospitals, clinics, dental practices, mental health services, pharmacies, and wellness centers. Compare verified healthcare providers and wellness brands.",
+  "Childcare & Eldercare": "Childcare and eldercare companies provide daycare, nannying, after-school programs, senior living, home care, and assisted living services. Find verified care providers and senior living communities.",
+  "Food Services & Restaurant": "Food service and restaurant companies operate restaurants, cafes, cloud kitchens, catering services, and food delivery platforms. Browse verified restaurant chains, caterers, and food tech providers.",
+  "Architecture & Design": "Architecture and design firms provide building design, interior design, landscape architecture, urban planning, and BIM services. Compare verified architecture studios and design consultancies.",
+  "Gardening & Outdoor": "Gardening and outdoor companies provide landscaping, lawn care, irrigation, tree services, hardscaping, and outdoor living solutions. Find verified landscapers, garden centers, and outdoor contractors.",
+  "Veterinary & Animal Services": "Veterinary and animal service companies provide pet healthcare, grooming, boarding, training, and livestock management. Browse verified veterinary clinics, pet care providers, and animal hospitals.",
+  "Renewable Energy": "Renewable energy companies develop solar, wind, hydro, biomass, and geothermal power projects — plus energy storage, EPC, and green consulting. Compare verified renewable energy developers and installers.",
+  "Waste Management & Recycling": "Waste management and recycling companies collect, process, recycle, and dispose of residential, commercial, and industrial waste. Find verified waste haulers, recyclers, and environmental remediation firms.",
+  "FinTech": "FinTech companies build digital banking, payment processing, lending, wealth management, and regulatory technology solutions. Browse verified fintech startups, neobanks, and payment platforms.",
+  "EdTech": "EdTech companies build learning management systems, online course platforms, tutoring apps, and educational content for K-12, higher education, and corporate training. Compare verified edtech providers.",
+  "HealthTech & Telemedicine": "HealthTech companies build telemedicine platforms, electronic health records, remote monitoring systems, and digital therapeutics. Find verified healthtech startups and telemedicine providers.",
+  "Smart Home & Home Automation": "Smart home companies provide home automation systems, smart lighting, security cameras, smart locks, thermostats, and voice-controlled devices. Browse verified smart home installers and device makers.",
+  "Space Technology": "Space technology companies build satellites, launch vehicles, ground stations, and space exploration systems. Compare verified space startups, satellite operators, and aerospace contractors.",
+  "Semiconductor & Chip": "Semiconductor companies design, fabricate, package, and test integrated circuits — from CPUs and GPUs to memory chips, sensors, and power devices. Find verified chip makers, foundries, and EDA providers.",
+  "Quantum Computing": "Quantum computing companies develop quantum hardware, software, algorithms, and cloud platforms for optimization, cryptography, and scientific simulation. Browse verified quantum startups and research firms.",
+  "Personal Care & Cosmetics": "Personal care and cosmetics companies manufacture skincare, haircare, makeup, fragrances, oral care, and grooming products. Compare verified beauty brands, contract manufacturers, and ingredient suppliers.",
+  "Government & Public Services": "Government and public services technology companies provide e-government platforms, public safety systems, election technology, and citizen service solutions. Find verified govtech providers.",
+  "Agriculture Technology": "AgriTech companies build precision farming tools, smart irrigation systems, crop monitoring drones, farm management software, and post-harvest technology. Browse verified agtech firms and farm robotics providers.",
+  "Supply Chain Technology": "Supply chain tech companies build warehouse management, transportation management, procurement, and demand planning software. Compare verified supply chain SaaS providers and logistics tech firms.",
+  "Human Resources Technology": "HR tech companies build applicant tracking, payroll, performance management, employee engagement, and workforce analytics software. Find verified HRIS providers and HR SaaS platforms.",
+  "Legal Technology": "Legal tech companies build practice management, contract lifecycle, e-discovery, compliance, and legal research software. Browse verified legaltech startups and law firm technology providers.",
+  "Property Technology": "PropTech companies build property management, real estate CRM, virtual tour, mortgage tech, and building management software. Compare verified proptech platforms and real estate technology firms.",
+  "Travel Technology": "Travel tech companies build booking engines, hotel PMS, airline reservation systems, travel management platforms, and tour operator software. Find verified travel technology providers and OTA platforms.",
+  "Music & Audio": "Music and audio companies provide recording, production, distribution, streaming, and live sound services — plus musical instruments and pro audio equipment. Browse verified music studios and audio technology firms.",
+  "Fashion Technology": "Fashion tech companies build design software, virtual try-on, PLM systems, sustainable fashion tools, and fashion e-commerce platforms. Compare verified fashion technology providers and apparel tech startups.",
+  "Industrial Equipment & Supplies": "Industrial equipment companies manufacture CNC machines, pumps, valves, compressors, welding equipment, and material handling systems. Find verified industrial suppliers and equipment manufacturers.",
+  "Cleaning & Sanitation": "Cleaning and sanitation companies provide commercial cleaning, janitorial services, disaster restoration, pressure washing, and sanitation solutions. Browse verified cleaning contractors and sanitation providers.",
+  "Staffing By Industry": "Industry-specific staffing companies provide specialized recruitment for accounting, legal, engineering, healthcare, construction, IT, and other sectors. Compare verified niche staffing agencies.",
+  "Wedding & Events Services": "Wedding and event service companies provide planning, venues, catering, photography, decor, entertainment, and coordination for weddings, corporate events, and celebrations. Find verified wedding planners and event professionals.",
+  "Automotive Services": "Automotive service companies provide auto repair, body work, oil changes, tire service, towing, detailing, smog checks, and vehicle sales. Browse verified auto shops, dealerships, and mobile mechanics near you.",
+  "Photography & Videography": "Photography and videography companies provide portrait, commercial, event, aerial, and product photography plus video production, editing, and live streaming. Compare verified studios and independent photographers.",
+  "Salon Spa & Beauty Services": "Salon, spa, and beauty service companies provide hair styling, nail care, massage, facials, waxing, lash extensions, makeup, and skincare treatments. Find verified salons, barbershops, and spas near you.",
+  "Storage & Moving": "Storage and moving companies provide self-storage units, portable containers, local and long-distance moving, packing services, and junk removal. Compare verified movers and storage facilities.",
+  "Real Estate Agents & Brokers": "Real estate agents and brokers help buy, sell, and lease residential and commercial property — including appraisal, title, mortgage, inspection, and staging services. Find verified real estate professionals.",
+  "Printing & Promotional": "Printing and promotional companies provide commercial printing, screen printing, embroidery, signage, custom apparel, trophies, stickers, and branded merchandise. Browse verified print shops and promo suppliers.",
+  "Supplies & Distribution": "Supply and distribution companies provide restaurant, hotel, medical, dental, lab, janitorial, office, industrial, plumbing, HVAC, and building supplies. Compare verified wholesale suppliers and distributors.",
+  "Laundry Dry Cleaning & Alteration": "Laundry, dry cleaning, and alteration companies provide wash-and-fold, professional dry cleaning, tailoring, shoe repair, and linen services. Find verified laundromats, cleaners, and tailors near you.",
+  "Immigration & Visa Services": "Immigration and visa service companies provide legal representation, work visa processing, green card applications, citizenship help, and corporate immigration solutions. Compare verified immigration attorneys and consultants.",
+  "Fitness & Gym": "Fitness and gym companies operate gyms, yoga studios, CrossFit boxes, martial arts schools, personal training studios, and wellness centers. Find verified fitness facilities and trainers near you.",
+  "Kitchen Bath & Home Improvement": "Kitchen, bath, and home improvement companies provide remodeling, countertops, cabinets, flooring, windows, doors, siding, foundation repair, and specialty trades. Browse verified contractors and renovation specialists.",
+  "Notary Legal Document & Tax Prep": "Notary, legal document, and tax preparation companies provide mobile notary, tax filing, business formation, process serving, background checks, and document preparation services. Find verified service providers.",
+  "Financial Services Local": "Local financial service companies provide check cashing, pawn services, credit repair, mortgage lending, insurance, tax preparation, and small business financing. Compare verified financial service providers near you.",
+};
 
 function generateSQL(industries) {
   const lines = [];
@@ -1129,16 +2305,21 @@ function generateSQL(industries) {
   lines.push('-- This uses ON CONFLICT DO NOTHING so it is safe to re-run\n');
 
   const usedSlugs = new Set();
+  let parentIdx = 0;
 
   for (const { parent, children } of industries) {
     const parentSlug = toSlug(parent);
     if (usedSlugs.has(parentSlug)) continue;
     usedSlugs.add(parentSlug);
 
+    const parentDesc = PARENT_DESCRIPTIONS[parent]
+      || `${parent} companies provide products and services across the ${parent.toLowerCase()} industry. Browse verified ${parent.toLowerCase()} providers, manufacturers, and service companies on FirmsLedger — rated by real client reviews.`;
+    parentIdx++;
+
     // Insert parent category
     lines.push(`-- ── ${parent.toUpperCase()} ──`);
     lines.push(`INSERT INTO categories (name, slug, description, is_parent, "order") VALUES`);
-    lines.push(`  ('${esc(parent)}', '${parentSlug}', 'Browse top ${esc(parent)} companies worldwide.', true, 0)`);
+    lines.push(`  ('${esc(parent)}', '${parentSlug}', '${esc(parentDesc)}', true, 0)`);
     lines.push(`ON CONFLICT (slug) DO NOTHING;\n`);
 
     // Insert children referencing parent
@@ -1157,7 +2338,18 @@ function generateSQL(industries) {
     lines.push(`  v.name, v.slug, v.description, false, c.id, v.ord`);
     lines.push(`FROM (VALUES`);
     uniqueChildren.forEach(({ name, slug }, i) => {
-      const desc = `Discover top ${esc(name)} companies worldwide. Find verified ${esc(name).toLowerCase()} service providers and manufacturers.`;
+      const n = esc(name);
+      const p = esc(parent);
+      const nl = n.toLowerCase();
+      // Rotate through 5 unique description patterns for variety
+      const descs = [
+        `${n} companies provide specialized ${nl} products and services within the ${p} industry. Find verified ${nl} providers, compare client reviews, and shortlist the right partner on FirmsLedger.`,
+        `Looking for ${n} companies? Browse verified ${nl} manufacturers, suppliers, and service providers in the ${p} sector. Compare by ratings, portfolio, team size, and pricing on FirmsLedger.`,
+        `Compare the best ${n} companies worldwide. ${n} is a key segment of ${p} — find trusted ${nl} providers with real client reviews, transparent pricing, and proven expertise on FirmsLedger.`,
+        `${n} companies specialize in ${nl} solutions within ${p}. Discover top-rated ${nl} service providers and manufacturers — verified profiles, authentic reviews, and direct contact on FirmsLedger.`,
+        `Find reliable ${n} companies for your business needs. Browse FirmsLedger's verified directory of ${nl} providers in the ${p} industry — ranked by client outcomes, expertise, and value.`,
+      ];
+      const desc = esc(descs[i % descs.length]);
       const comma = i < uniqueChildren.length - 1 ? ',' : '';
       lines.push(`  ('${esc(name)}', '${slug}', '${desc}', ${i + 1})${comma}`);
     });
@@ -1170,13 +2362,43 @@ function generateSQL(industries) {
 }
 
 const sql = generateSQL(INDUSTRIES);
-const outPath = path.join(__dirname, '..', 'supabase', 'seed-categories-5000.sql');
+const outDir = path.join(__dirname, '..', 'supabase');
+
+// Write the full file (for direct DB connection)
+const outPath = path.join(outDir, 'seed-categories-5000.sql');
 fs.writeFileSync(outPath, sql, 'utf8');
+
+// Split into smaller chunk files for Supabase SQL Editor
+// Each chunk ends at a blank line boundary (between parent blocks) to keep statements intact
+const allLines = sql.split('\n');
+const MAX_LINES_PER_CHUNK = 1500;
+const chunks = [];
+let currentChunk = [];
+
+for (const line of allLines) {
+  currentChunk.push(line);
+  // Split at blank lines between parent category blocks when chunk is large enough
+  if (line === '' && currentChunk.length >= MAX_LINES_PER_CHUNK) {
+    chunks.push(currentChunk.join('\n'));
+    currentChunk = ['-- FirmsLedger Category Seed (continued)\n'];
+  }
+}
+if (currentChunk.length > 1) {
+  chunks.push(currentChunk.join('\n'));
+}
+
+for (let i = 0; i < chunks.length; i++) {
+  const chunkPath = path.join(outDir, `seed-categories-part${i + 1}.sql`);
+  fs.writeFileSync(chunkPath, chunks[i], 'utf8');
+}
 
 // Count total categories
 let total = 0;
 for (const { children } of INDUSTRIES) total += children.length + 1;
 console.log(`✓ Generated ${total} categories across ${INDUSTRIES.length} industry verticals`);
-console.log(`✓ Output: supabase/seed-categories-5000.sql`);
+console.log(`✓ Output: supabase/seed-categories-5000.sql (full file)`);
+console.log(`✓ Split into ${chunks.length} chunk files (seed-categories-part1.sql … part${chunks.length}.sql)`);
+chunks.forEach((c, i) => console.log(`  Part ${i + 1}: ${c.split('\n').length} lines`));
+console.log(`\nRun each part file in Supabase SQL Editor in order (part1 → part2 → …)`);
 console.log(`\nProgrammatic SEO pages this will generate:`);
 console.log(`  ${total} categories × 15 countries = ${total * 15} unique indexed pages`);

@@ -3,6 +3,7 @@ import { MapPin, Users, Star, Filter, X, Globe, ChevronDown, ChevronRight, Searc
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
+import { CITIES_BY_STATE } from '@/lib/citiesByState';
 
 const COUNTRIES = [
   'United States',
@@ -260,6 +261,8 @@ export default function FilterPanel({
   setSelectedCountry,
   selectedState,
   setSelectedState,
+  selectedCity,
+  setSelectedCity,
   selectedService,
   setSelectedService,
   selectedTeamSize,
@@ -272,6 +275,7 @@ export default function FilterPanel({
   const handleReset = () => {
     setSelectedCountry('');
     setSelectedState('');
+    setSelectedCity('');
     setSelectedService('');
     setSelectedTeamSize('');
     setSelectedRating('');
@@ -280,9 +284,10 @@ export default function FilterPanel({
   const activeFiltersCount = [
     selectedCountry,
     selectedState,
+    selectedCity,
     selectedService,
     selectedTeamSize,
-    selectedRating
+    selectedRating,
   ].filter(Boolean).length;
 
   return (
@@ -307,7 +312,7 @@ export default function FilterPanel({
 
         {/* Desktop & Expanded Mobile Filters */}
         <div className={`${isExpanded ? 'block' : 'hidden'} lg:block`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-3">
             {/* Country */}
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-widest">Country</label>
@@ -316,6 +321,7 @@ export default function FilterPanel({
                 onValueChange={(val) => {
                   setSelectedCountry(val === '__all__' ? '' : val);
                   setSelectedState('');
+                  setSelectedCity('');
                 }}
               >
                 <SelectTrigger className="w-full bg-white border-slate-200 text-sm h-9 hover:border-orange-400 focus:border-orange-400">
@@ -337,7 +343,10 @@ export default function FilterPanel({
               {selectedCountry && STATES_BY_COUNTRY[selectedCountry]?.length > 0 ? (
                 <Select
                   value={selectedState}
-                  onValueChange={(val) => setSelectedState(val === '__all__' ? '' : val)}
+                  onValueChange={(val) => {
+                    setSelectedState(val === '__all__' ? '' : val);
+                    setSelectedCity('');
+                  }}
                 >
                   <SelectTrigger className="w-full bg-white border-slate-200 text-sm h-9 hover:border-orange-400">
                     <MapPin className="w-3.5 h-3.5 mr-2 text-slate-400 flex-shrink-0" />
@@ -362,6 +371,38 @@ export default function FilterPanel({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="__all__">All States</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            {/* City */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-widest">City</label>
+              {selectedState && CITIES_BY_STATE[selectedState]?.length > 0 ? (
+                <Select
+                  value={selectedCity}
+                  onValueChange={(val) => setSelectedCity(val === '__all__' ? '' : val)}
+                >
+                  <SelectTrigger className="w-full bg-white border-slate-200 text-sm h-9 hover:border-orange-400">
+                    <MapPin className="w-3.5 h-3.5 mr-2 text-slate-400 flex-shrink-0" />
+                    <SelectValue placeholder="All Cities" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">All Cities</SelectItem>
+                    {CITIES_BY_STATE[selectedState].map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Select disabled={!selectedState}>
+                  <SelectTrigger className="w-full bg-white border-slate-200 text-sm h-9 disabled:opacity-40">
+                    <MapPin className="w-3.5 h-3.5 mr-2 text-slate-400 flex-shrink-0" />
+                    <SelectValue placeholder={selectedState ? 'No cities available' : 'Select a state first'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__all__">All Cities</SelectItem>
                   </SelectContent>
                 </Select>
               )}

@@ -13,6 +13,7 @@ export default function robots() {
           '/AgencyProfile',
           '/InviteAgency',
           '/api/',
+          '/companies/',
           '/join',
         ],
       },

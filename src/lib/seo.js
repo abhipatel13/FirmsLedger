@@ -66,7 +66,8 @@ export function getCategoryMetaDescription(categoryName, slug, options = {}) {
   if (underStaffing && STAFFING_CATEGORY_DESCRIPTIONS[key]) {
     return STAFFING_CATEGORY_DESCRIPTIONS[key];
   }
-  return `Discover the top ${categoryName} companies at FirmsLedger. Browse verified service providers with proven expertise. Compare the most reliable providers worldwide by expertise, project needs, and pricing.`;
+  const name = categoryName || 'Business';
+  return `Find the best ${name} companies and service providers on FirmsLedger. Compare verified ${name.toLowerCase()} providers by real client reviews, team size, pricing, and expertise — updated for ${SEO_YEAR}.`;
 }
 
 /** Title for a category listing page: "Top [Category Name] Companies in 2026" */
@@ -75,7 +76,7 @@ export function getCategoryTitle(categoryName) {
 }
 
 /**
- * Location-aware title: "Top [Category] Companies in [State, Country] (2026)"
+ * Location-aware title: "Top [Category] Companies in [Location] (2026)"
  * Falls back to plain category title when no location provided.
  */
 export function getCategoryTitleWithLocation(categoryName, location) {
@@ -87,16 +88,17 @@ export function getCategoryTitleWithLocation(categoryName, location) {
 
 /**
  * Location-aware meta description.
- * Generates unique copy per category+location combo — prevents duplicate content
- * across the millions of programmatic geo pages.
+ * The DB description (set per-category) provides the unique informative part.
+ * This function adds location context on top for geo pages.
  */
 export function getCategoryMetaDescriptionWithLocation(categoryName, slug, location) {
   const key = (slug || '').trim().toLowerCase();
-  // Use hand-written staffing descriptions when no location filter
   if (!location && STAFFING_CATEGORY_DESCRIPTIONS[key]) {
     return STAFFING_CATEGORY_DESCRIPTIONS[key];
   }
-  const inLocation = location ? ` in ${location}` : '';
   const name = categoryName || 'Business';
-  return `Browse verified ${name} companies${inLocation} on FirmsLedger. Compare top-rated ${name.toLowerCase()} service providers${inLocation} by client reviews, pricing, team size, and expertise. Find the best ${name.toLowerCase()} partner for your needs${inLocation}.`;
+  if (location) {
+    return `Find the best ${name} companies in ${location}. Compare verified ${name.toLowerCase()} providers in ${location} by client reviews, pricing, and expertise. Browse top-rated ${name.toLowerCase()} service providers and manufacturers on FirmsLedger — ${SEO_YEAR} rankings.`;
+  }
+  return `Find the best ${name} companies and service providers on FirmsLedger. Compare verified ${name.toLowerCase()} providers by real client reviews, team size, pricing, and expertise — updated for ${SEO_YEAR}.`;
 }

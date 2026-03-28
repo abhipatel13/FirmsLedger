@@ -59,8 +59,22 @@ async function getCategoryBySlug(slug) {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
   const supabase = createClient(url, key, { auth: { persistSession: false } });
-  const { data } = await supabase.from('categories').select('name, description, slug').eq('slug', slug).maybeSingle();
+  const { data } = await supabase.from('categories').select('name, description, slug, is_parent, parent_id').eq('slug', slug).maybeSingle();
   return data;
+}
+
+/** Build a richer description by combining DB description with generated SEO copy */
+function buildDescription(category, location) {
+  const name = category.name;
+  const dbDesc = category.description || '';
+  const seoDesc = getCategoryMetaDescriptionWithLocation(name, category.slug, location);
+  // If DB has a meaningful description, prepend it for uniqueness
+  if (dbDesc && dbDesc.length > 20) {
+    // Truncate combined to ~155 chars for optimal SERP display
+    const combined = `${dbDesc} ${seoDesc}`;
+    return combined.length > 300 ? combined.slice(0, 297) + '...' : combined;
+  }
+  return seoDesc;
 }
 
 export async function generateMetadata({ params, searchParams }) {
@@ -71,7 +85,8 @@ export async function generateMetadata({ params, searchParams }) {
 
   const countryName = resolvedSearch?.country || '';
   const stateName = resolvedSearch?.state || '';
-  const location = [stateName, countryName].filter(Boolean).join(', ');
+  const cityName = resolvedSearch?.city || '';
+  const location = [cityName, stateName, countryName].filter(Boolean).join(', ');
 
   if (!categorySlug) {
     const baseTitle = `Top Companies List in ${location || SEO_COUNTRY} ${SEO_YEAR} | Browse Verified Agencies | ${SITE_NAME}`;
@@ -89,11 +104,12 @@ export async function generateMetadata({ params, searchParams }) {
   }
 
   const title = getCategoryTitleWithLocation(category.name, location);
-  const description = getCategoryMetaDescriptionWithLocation(category.name, category.slug, location);
+  const description = buildDescription(category, location);
   const base = `${BASE_URL.replace(/\/$/, '')}/directory/${categorySlug}`;
   const qp = new URLSearchParams();
   if (countryName) qp.set('country', countryName);
   if (stateName) qp.set('state', stateName);
+  if (cityName) qp.set('city', cityName);
   const canonical = qp.size ? `${base}?${qp.toString()}` : base;
 
   return {

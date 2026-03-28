@@ -30,11 +30,13 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
   const categorySlugFromUrl = initialCategorySlug || searchParams.get('category') || categoryFromPath || '';
   const countryFromUrl = searchParams.get('country') || '';
   const stateFromUrl = searchParams.get('state') || '';
+  const cityFromUrl = searchParams.get('city') || '';
   const searchFromUrl = searchParams.get('search') || '';
 
   const initialCategory = initialCategorySlug || categoryFromPath || '';
   const [selectedCountry, setSelectedCountry] = useState(countryFromUrl);
   const [selectedState, setSelectedState] = useState(stateFromUrl);
+  const [selectedCity, setSelectedCity] = useState(cityFromUrl);
   const [selectedService, setSelectedService] = useState(initialCategory);
   const [selectedRating, setSelectedRating] = useState('');
   const [selectedTeamSize, setSelectedTeamSize] = useState('');
@@ -107,7 +109,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
   // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedService, selectedCountry, selectedState, debouncedSearch, selectedRating, selectedTeamSize]);
+  }, [selectedService, selectedCountry, selectedState, selectedCity, debouncedSearch, selectedRating, selectedTeamSize]);
 
   // Update URL when filters or page change
   useEffect(() => {
@@ -118,6 +120,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
     const params = new URLSearchParams();
     if (selectedCountry) params.set('country', selectedCountry);
     if (selectedState) params.set('state', selectedState);
+    if (selectedCity) params.set('city', selectedCity);
     if (debouncedSearch) params.set('search', debouncedSearch);
     if (selectedRating) params.set('rating', selectedRating);
     if (selectedTeamSize) params.set('teamSize', selectedTeamSize);
@@ -127,7 +130,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
     if (typeof window !== 'undefined' && (window.location.pathname + window.location.search) !== newPath) {
       router.replace(newPath);
     }
-  }, [selectedService, selectedCountry, selectedState, debouncedSearch, selectedRating, selectedTeamSize, currentPage, useStaffingPath, router]);
+  }, [selectedService, selectedCountry, selectedState, selectedCity, debouncedSearch, selectedRating, selectedTeamSize, currentPage, useStaffingPath, router]);
 
   // Initialize filters from URL (only when URL has a category and state is not already in sync)
   useEffect(() => {
@@ -142,6 +145,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
   useEffect(() => {
     setSelectedCountry(countryFromUrl);
     setSelectedState(stateFromUrl);
+    setSelectedCity(cityFromUrl);
     setSearchQuery(searchFromUrl);
     setDebouncedSearch(searchFromUrl);
     const ratingParam = searchParams.get('rating');
@@ -150,8 +154,10 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
     if (teamSizeParam) setSelectedTeamSize(teamSizeParam);
   }, [countryFromUrl, stateFromUrl, searchFromUrl, searchParams]);
 
-  // Get selected category name
-  const selectedCategoryName = categories.find(c => c.slug === selectedService || c.id === selectedService)?.name || 'Businesses';
+  // Get selected category name and description
+  const selectedCat_ = categories.find(c => c.slug === selectedService || c.id === selectedService);
+  const selectedCategoryName = selectedCat_?.name || 'Businesses';
+  const selectedCategoryDesc = selectedCat_?.description || '';
 
   // Filter agencies with proper search logic
   const filteredAgencies = allAgencies.filter((agency) => {
@@ -181,6 +187,13 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
       const stateLower = selectedState.trim().toLowerCase();
       const stateMatch = agency.hq_state?.toLowerCase().includes(stateLower);
       if (!stateMatch) return false;
+    }
+
+    // Handle city filter
+    if (selectedCity) {
+      const cityLower = selectedCity.trim().toLowerCase();
+      const cityMatch = agency.hq_city?.toLowerCase().includes(cityLower);
+      if (!cityMatch) return false;
     }
 
     // Handle rating filter
@@ -227,10 +240,12 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
           />
 
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-4 mb-2 text-white tracking-tight">
-            Top {selectedCategoryName}
+            Top {selectedCategoryName} Companies
           </h1>
           <p className="text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed mb-4">
-            Discover verified {selectedCategoryName.toLowerCase()} — ranked by authentic client reviews and real outcomes.
+            {selectedCategoryDesc
+              ? selectedCategoryDesc
+              : `Find and compare the best ${selectedCategoryName.toLowerCase()} companies worldwide. Browse verified providers, read real client reviews, and shortlist the right ${selectedCategoryName.toLowerCase()} partner for your business.`}
           </p>
           <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
             <span><strong className="text-white">{filteredAgencies.length}</strong> Companies Listed</span>
@@ -295,6 +310,8 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
         setSelectedCountry={setSelectedCountry}
         selectedState={selectedState}
         setSelectedState={setSelectedState}
+        selectedCity={selectedCity}
+        setSelectedCity={setSelectedCity}
         selectedService={selectedService}
         setSelectedService={setSelectedService}
         selectedTeamSize={selectedTeamSize}

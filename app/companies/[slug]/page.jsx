@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
   return {
     title: companyName,
     description,
-    robots: { index: true, follow: true },
+    robots: { index: false, follow: false },
     alternates: { canonical },
     openGraph: {
       title: `${companyName} | ${SITE_NAME}`,

@@ -6,7 +6,7 @@ import { getDirectoryUrl, getDirectoryStaffingUrl, getCompanyProfileUrl } from '
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import AIMatchmaker from '@/components/AIMatchmaker';
+import AISearchBar from '@/components/AISearchBar';
 import {
   ArrowRight, Star, Shield, CheckCircle, Award,
   ChevronRight, Sparkles, Globe, Users, Zap,
@@ -33,7 +33,7 @@ export default function Home() {
     <div className="bg-white">
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section className="bg-[#0D1B2A] relative overflow-hidden">
+      <section className="bg-[#0D1B2A] relative overflow-hidden min-h-[calc(100vh-5rem)] flex flex-col">
         {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.045]"
@@ -44,57 +44,44 @@ export default function Home() {
         <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-indigo-600/10 blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] rounded-full bg-orange-400/8 blur-[90px] pointer-events-none" />
 
-        <div className="relative w-full px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-0">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 flex-1 flex items-center justify-center pb-8">
           <div className="max-w-4xl mx-auto text-center">
 
-            {/* Eyebrow pill */}
-            <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 text-orange-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 tracking-wide backdrop-blur-sm">
-              <Sparkles className="w-3.5 h-3.5" />
-              AI-Powered B2B Matchmaking
+            {/* Brand / Logo */}
+            <div className="mb-4">
+              <img src="/logo-white.svg" alt="FirmsLedger" className="h-16 sm:h-24 lg:h-32 w-auto mx-auto" />
             </div>
 
-            {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight mb-5">
-              Describe what you need.{' '}
-              <span className="text-orange-400 drop-shadow-[0_0_30px_rgba(251,146,60,0.4)]">AI finds</span>{' '}
-              your best match.
-            </h1>
-
-            <p className="text-slate-400 text-lg sm:text-xl mb-10 leading-relaxed max-w-2xl mx-auto">
-              Stop filtering endlessly. Just tell us what you're looking for — FirmsLedger AI matches you to the right verified agency in seconds.
+            <p className="text-slate-300 text-lg sm:text-xl mb-10 leading-relaxed max-w-2xl mx-auto">
+              The better way to find companies
             </p>
 
-            {/* AI Matchmaker Box — gradient border wrapper */}
-            <div className="relative p-px rounded-3xl bg-gradient-to-b from-white/15 via-white/5 to-transparent mb-8 shadow-[0_0_60px_-10px_rgba(251,146,60,0.25)]">
-              <div className="bg-white/[0.97] backdrop-blur-md rounded-[calc(1.5rem-1px)] p-5 sm:p-6 text-left">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/30">
-                    <Sparkles className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-sm font-bold text-slate-800">AI Vendor Matchmaker</span>
-                  <span className="ml-auto flex items-center gap-1.5 bg-green-50 text-green-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200 uppercase tracking-wide">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    Live
-                  </span>
-                </div>
-                <AIMatchmaker />
-              </div>
-            </div>
+            {/* Ensun-style AI Search Bar */}
+            <AISearchBar />
           </div>
         </div>
 
         {/* Stats bar */}
         <div className="relative border-t border-white/10 mt-4 bg-white/[0.02] backdrop-blur-sm">
           <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
-            <div className="flex flex-wrap justify-center sm:justify-start gap-0">
+            <div className="flex flex-wrap justify-center gap-0">
               {[
+                { num: '5,000+', label: 'Categories' },
+                { num: '2,300+', label: 'Cities Covered' },
                 { num: '50+', label: 'Verified Agencies' },
-                { num: '150+', label: 'Client Reviews' },
-                { num: '20+', label: 'Service Categories' },
-                { num: '4.8★', label: 'Avg Rating' },
-              ].map(({ num, label }, i) => (
-                <div key={label} className={`text-center sm:text-left px-6 sm:px-10 ${i > 0 ? 'border-l border-white/10' : ''} ${i === 0 ? 'pl-0' : ''}`}>
-                  <div className="text-xl font-extrabold text-white">{num}</div>
+                { num: '4.8', label: 'Avg Rating', stars: true },
+              ].map(({ num, label, stars }, i) => (
+                <div key={label} className={`text-center px-8 sm:px-12 ${i > 0 ? 'border-l border-white/10' : ''}`}>
+                  <div className="text-xl font-extrabold text-white flex items-center justify-center gap-1">
+                    {num}
+                    {stars && (
+                      <span className="flex items-center gap-0.5 ml-1">
+                        {[...Array(5)].map((_, j) => (
+                          <Star key={j} className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
+                        ))}
+                      </span>
+                    )}
+                  </div>
                   <div className="text-xs text-slate-500 mt-0.5">{label}</div>
                 </div>
               ))}
@@ -167,34 +154,15 @@ export default function Home() {
           </div>
 
           {(() => {
-            const parents = categories.filter(c => (c.is_parent ?? c.isParent));
-            const catIcons = {
-              'staffing-companies': '👥',
-              'it-staffing': '💻',
-              'healthcare-staffing': '🏥',
-              'digital-marketing': '📣',
-              'seo': '🔍',
-              'web-development': '🌐',
-              'mobile-app-development': '📱',
-              'accounting': '📊',
-              'legal': '⚖️',
-              'public-relations': '📰',
-              'graphic-design': '🎨',
-              'it-services': '🖥️',
-            };
-            const displayParents = parents.length > 0 ? parents : [
-              { id: '1', name: 'Staffing Companies', slug: 'staffing-companies', description: 'Recruitment and staffing services' },
-              { id: '2', name: 'IT Services', slug: 'it-services', description: 'Information technology solutions' },
-              { id: '3', name: 'Digital Marketing', slug: 'digital-marketing', description: 'Online marketing and advertising' },
-              { id: '4', name: 'Accounting', slug: 'accounting', description: 'Financial and accounting services' },
-            ];
+            const parents = categories
+              .filter(c => (c.is_parent ?? c.isParent))
+              .slice(0, 9);
             return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {displayParents.map((parent) => {
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {parents.map((parent) => {
                   const children = categories
                     .filter(c => (c.parent_id ?? c.parentId) === parent.id)
                     .slice(0, 6);
-                  const icon = catIcons[parent.slug] || '🏢';
                   const href = parent.slug === 'staffing-companies'
                     ? getDirectoryStaffingUrl()
                     : getDirectoryUrl(parent.slug);
@@ -202,7 +170,7 @@ export default function Home() {
                     <Link key={parent.id} href={href}>
                       <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-orange-300 hover:shadow-md transition-all duration-200 h-full flex flex-col cursor-pointer">
                         <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4 text-2xl">
-                          {icon}
+                          🏢
                         </div>
                         <h3 className="font-bold text-[#0D1B2A] text-base mb-3">{parent.name}</h3>
 

@@ -222,7 +222,7 @@ export default function Layout({ children }) {
 
               <Link href="/ListYourCompany">
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-5">
-                  Get Listed
+                  Get Listed — It's Free
                 </Button>
               </Link>
             </nav>
