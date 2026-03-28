@@ -288,9 +288,33 @@ async function getDbBlogSlugs() {
   } catch { return []; }
 }
 
-// ─── Sitemap ─────────────────────────────────────────────────────────────────
+// ─── Sitemap (split into multiple files for Vercel/Google limits) ────────────
+const URLS_PER_SITEMAP = 45000;
 
-export default async function sitemap() {
+export async function generateSitemaps() {
+  const categorySlugs = await getCategorySlugs();
+  const total = estimateUrlCount(categorySlugs.length);
+  const count = Math.ceil(total / URLS_PER_SITEMAP);
+  return Array.from({ length: count }, (_, i) => ({ id: i }));
+}
+
+function estimateUrlCount(catCount) {
+  const top500 = Math.min(catCount, 500);
+  const top300 = Math.min(catCount, 300);
+  const top150 = Math.min(catCount, 150);
+  const top100 = Math.min(catCount, 100);
+  const indiaCities = INDIA_CITY_ROUTES.reduce((s, r) => s + r.cities.length, 0);
+  const usaCities = USA_CITY_ROUTES.reduce((s, r) => s + r.cities.length, 0);
+  return 10 + BLOG_SLUGS.length + catCount + (top500 * TARGET_COUNTRIES.length)
+    + (top300 * KEY_STATES.length) + (top150 * KEY_CITIES.length)
+    + (top100 * indiaCities) + (top100 * usaCities)
+    + (top300 * 230) + (top300 * 228)  // CA + NY
+    + (top300 * 161) + (top300 * 138) + (top300 * 124)  // TX + FL + IL
+    + (top300 * 125) + (top300 * 153) + (top300 * 101)  // PA + MA + WA
+    + (top300 * 106) + (top300 * 165); // GA + NJ
+}
+
+export default async function sitemap({ id }) {
   const now = new Date();
 
   const [categorySlugs, dbPosts] = await Promise.all([
@@ -784,7 +808,7 @@ export default async function sitemap() {
   const georgiaRoutes = generateStateRoutes('Georgia', GEORGIA_CITIES);
   const newJerseyRoutes = generateStateRoutes('New Jersey', NEW_JERSEY_CITIES);
 
-  return [
+  const allRoutes = [
     ...staticRoutes,
     ...staffingRoutes,
     ...staticBlogRoutes,
@@ -806,4 +830,7 @@ export default async function sitemap() {
     ...georgiaRoutes,
     ...newJerseyRoutes,
   ];
+
+  const start = id * URLS_PER_SITEMAP;
+  return allRoutes.slice(start, start + URLS_PER_SITEMAP);
 }
