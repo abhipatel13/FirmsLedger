@@ -3,7 +3,21 @@ import { createPageUrl } from '@/utils';
 
 export const metadata = {
   title: 'Top Rankings – Coming Soon',
+  description:
+    'FirmsLedger Top Rankings — discover the highest-rated business service providers worldwide. Rankings based on verified reviews, expertise, and client satisfaction. Coming soon.',
   robots: { index: false, follow: true },
+  openGraph: {
+    title: 'Top Rankings – Coming Soon | FirmsLedger',
+    description:
+      'Discover the highest-rated business service providers worldwide. Rankings based on verified reviews, expertise, and client satisfaction.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Top Rankings – Coming Soon | FirmsLedger',
+    description:
+      'Discover the highest-rated business service providers worldwide. Rankings based on verified reviews, expertise, and client satisfaction.',
+  },
 };
 
 export default function TopRankingsPage() {

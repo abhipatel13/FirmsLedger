@@ -64,6 +64,13 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
+        {/* Supabase API — used for data fetching on most pages */}
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <>
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+          </>
+        )}
       </head>
       <body>
         <GoogleAnalytics />

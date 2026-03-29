@@ -64,7 +64,7 @@ function FaqItem({ question, answer }) {
   );
 }
 
-export default function DynamicBlogRenderer({ post }) {
+export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
   const directoryUrl = getDirectoryUrl();
   const { intro, why, services, how, trends, faq, conclusion } = normalise(post.content);
 
@@ -418,6 +418,29 @@ export default function DynamicBlogRenderer({ post }) {
                 </Link>
               </p>
             )}
+          </section>
+        )}
+
+        {/* Related Articles */}
+        {relatedPosts.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Related Articles</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {relatedPosts.map((rp) => (
+                <Link
+                  key={rp.slug}
+                  href={`/blogs/${rp.slug}`}
+                  className="group border border-slate-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-sm transition-all"
+                >
+                  <h3 className="font-semibold text-slate-900 group-hover:text-orange-600 transition-colors leading-snug mb-2">
+                    {rp.title}
+                  </h3>
+                  {rp.description && (
+                    <p className="text-sm text-slate-500 line-clamp-2">{rp.description}</p>
+                  )}
+                </Link>
+              ))}
+            </div>
           </section>
         )}
 

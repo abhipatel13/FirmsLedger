@@ -271,5 +271,28 @@ export default async function BlogArticlePage({ params }) {
   // 2. Fall back to AI-generated post from Supabase
   const dbPost = await getDbPost(slug);
   if (!dbPost) notFound();
-  return <DynamicBlogRenderer post={dbPost} />;
+
+  // Fetch related posts from the same category
+  let relatedPosts = [];
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      { auth: { persistSession: false } }
+    );
+    const { data } = await supabase
+      .from('blog_posts')
+      .select('slug, title, meta_description')
+      .eq('published', true)
+      .eq('category', dbPost.category)
+      .neq('slug', slug)
+      .limit(4);
+    relatedPosts = (data || []).map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      description: p.meta_description,
+    }));
+  } catch {}
+
+  return <DynamicBlogRenderer post={dbPost} relatedPosts={relatedPosts} />;
 }
