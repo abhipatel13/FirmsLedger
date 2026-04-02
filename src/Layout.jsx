@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import {
-  Menu, X, Search, Facebook, Twitter, Linkedin, Instagram, ChevronRight, ChevronDown
+  Menu, X, Search, ChevronRight, ChevronDown
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
@@ -200,7 +200,7 @@ export default function Layout({ children }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && searchQuery.trim() && router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)}
-                  className="bg-transparent border-none outline-none text-sm w-32 text-slate-700 placeholder:text-slate-400"
+                  className="bg-transparent border-none outline-none text-sm w-48 text-slate-700 placeholder:text-slate-400"
                 />
               </div>
 
@@ -243,6 +243,25 @@ export default function Layout({ children }) {
           {mobileMenuOpen && (
             <div className="lg:hidden py-4 border-t border-slate-200 overflow-y-auto max-h-[calc(100vh-5rem)]">
               <div className="flex flex-col gap-1">
+                {/* Mobile Search */}
+                <div className="px-3 mb-2">
+                  <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2.5 border border-slate-200">
+                    <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Search agencies..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && searchQuery.trim()) {
+                          router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                          setMobileMenuOpen(false);
+                        }
+                      }}
+                      className="bg-transparent border-none outline-none text-sm flex-1 text-slate-700 placeholder:text-slate-400"
+                    />
+                  </div>
+                </div>
                 {/* Mobile: Browse Categories with expandable subcategories */}
                 <button
                   onClick={() => setMobileCatOpen((v) => !v)}
@@ -359,20 +378,7 @@ export default function Layout({ children }) {
               <p className="text-slate-400 text-sm mb-6 leading-relaxed max-w-sm">
                 The trusted global platform to discover and connect with verified business service providers worldwide. Make confident decisions for your business growth.
               </p>
-              <div className="flex items-center gap-3">
-                <a href="#" className="w-9 h-9 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors">
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors">
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors">
-                  <Linkedin className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors">
-                  <Instagram className="w-4 h-4" />
-                </a>
-              </div>
+              {/* Social links — add real URLs when available */}
             </div>
 
             <div>
@@ -426,9 +432,9 @@ export default function Layout({ children }) {
                 © 2026 FirmsLedger. All rights reserved.
               </p>
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6 text-sm order-1 sm:order-2">
-                <a href="#" className="text-slate-400 hover:text-orange-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Terms of Service</a>
-                <a href="#" className="text-slate-400 hover:text-orange-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Privacy Policy</a>
-                <a href="#" className="text-slate-400 hover:text-orange-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Cookie Policy</a>
+                <Link href="/terms" className="text-slate-400 hover:text-orange-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Terms of Service</Link>
+                <Link href="/privacy" className="text-slate-400 hover:text-orange-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Privacy Policy</Link>
+                <Link href="/Contact" className="text-slate-400 hover:text-orange-400 transition-colors py-2 min-h-[44px] flex items-center touch-manipulation">Contact</Link>
               </div>
             </div>
           </div>

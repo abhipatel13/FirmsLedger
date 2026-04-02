@@ -109,7 +109,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
   // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedService, selectedCountry, selectedState, selectedCity, debouncedSearch, selectedRating, selectedTeamSize]);
+  }, [selectedService, selectedCountry, selectedState, selectedCity, debouncedSearch, selectedRating, selectedTeamSize, sortBy]);
 
   // Update URL when filters or page change
   useEffect(() => {
@@ -160,7 +160,17 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
   const selectedCategoryDesc = selectedCat_?.description || '';
 
   // Filter agencies with proper search logic
-  const filteredAgencies = allAgencies.filter((agency) => {
+  const sortedAgencies = [...allAgencies].sort((a, b) => {
+    if (sortBy === 'rating') return (b.avg_rating || 0) - (a.avg_rating || 0);
+    if (sortBy === 'reviews') return (b.review_count || 0) - (a.review_count || 0);
+    // 'sponsored' / default — featured first, then by rating
+    const aFeat = a.featured ? 1 : 0;
+    const bFeat = b.featured ? 1 : 0;
+    if (bFeat !== aFeat) return bFeat - aFeat;
+    return (b.avg_rating || 0) - (a.avg_rating || 0);
+  });
+
+  const filteredAgencies = sortedAgencies.filter((agency) => {
     // Handle search query across all fields
     if (debouncedSearch) {
       const searchLower = debouncedSearch.trim().toLowerCase();
@@ -250,7 +260,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
           <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
             <span><strong className="text-white">{filteredAgencies.length}</strong> Companies Listed</span>
             <span>·</span>
-            <span>Rankings updated: Feb 15, 2026</span>
+            <span>Rankings updated: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
           </div>
 
           {/* Subcategory pills */}

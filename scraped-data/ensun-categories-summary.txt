@@ -1,0 +1,105 @@
+
+ENSUN.IO CATEGORIES REPORT FOR FIRMSLEDGER
+============================================
+Date: 2026-03-29
+
+Total categories found: 55
+Already in FirmsLedger:  12
+New categories to add:   43
+
+NEW PARENT GROUPS CREATED:
+  - Healthcare & Medical
+  - Manufacturing & Industrial
+  - Energy & Utilities
+  - Electronics & Technology
+  - Construction & Infrastructure
+  - Chemicals & Materials
+  - Agriculture & Farming
+  - Textiles & Apparel
+  - Aerospace & Defense
+  - Transportation & Logistics
+  - Home & Lifestyle
+  - Financial Services
+
+NEW CATEGORIES BY GROUP:
+
+  Healthcare & Medical:
+    - Dental (Germany, Italy, China, Japan)
+    - Pharmaceutical (Canada, Germany)
+    - Stent (Global)
+    - Vitamin (Australia)
+    - Neurotechnology (Switzerland, Estonia)
+
+  Manufacturing & Industrial:
+    - Forging (China, Australia)
+    - Rotational Molding (Global)
+    - Pipe (Canada)
+    - Transformer (Pakistan)
+    - Gas Cylinder (Global)
+    - Automotive Glass (Global)
+    - Loudspeaker (Italy)
+
+  Energy & Utilities:
+    - Electricity (Poland)
+    - Propane (Canada)
+    - Biochar (Germany)
+    - Pyrolysis (Global)
+
+  Electronics & Technology:
+    - Semiconductor (Pakistan, Denmark)
+    - Computer (India)
+    - Printer (Japan)
+    - Satellite (India)
+    - Quantum Security (Global)
+    - ATM (Pakistan)
+
+  Construction & Infrastructure:
+    - Construction (Mexico)
+    - Elevator (Greece, Turkey)
+
+  Chemicals & Materials:
+    - Resin (Turkey)
+    - Lactose (Global)
+    - Biostimulant (Global)
+    - Cosmetics (Iran, Czechia)
+
+  Agriculture & Farming:
+    - Agriculture (Romania)
+    - Fertilizer (Egypt)
+    - Agrochemical (Pakistan, Poland)
+
+  Textiles & Apparel:
+    - Clothing (Egypt)
+    - Hosiery (China)
+
+  Aerospace & Defense:
+    - Aerospace (Norway)
+    - Ammunition (Spain)
+    - Gunpowder (Global)
+
+  Transportation & Logistics:
+    - Maritime (Germany)
+    - Shipping (Ghana)
+    - Delivery Drone (Global)
+
+  Home & Lifestyle:
+    - Lighting (India, Belgium)
+    - Refrigerator (India)
+    - Mattress (Italy)
+
+  Financial Services:
+    - Funding (Zimbabwe)
+
+ALREADY EXISTING:
+  - Coffee (Israel)
+  - Greenhouse (Germany, Netherlands)
+  - Butter (Pakistan)
+  - EdTech (Bangladesh)
+  - Lingerie (Brazil, Turkey)
+  - Dredging (Philippines)
+  - Gaming (Spain)
+  - Aircraft (Australia)
+  - Nanotechnology (Germany)
+  - Glass (Bangladesh)
+  - HVAC (Philippines)
+  - Fragrance (India)

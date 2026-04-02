@@ -18,6 +18,7 @@ const nextConfig = {
   },
   async rewrites() {
     return [
+      { source: '/sitemap.xml', destination: '/api/sitemap-index' },
       { source: '/directory', destination: '/Directory' },
       { source: '/directory/:path*', destination: '/Directory/:path*' },
       { source: '/blogs', destination: '/Blogs' },

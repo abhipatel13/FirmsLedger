@@ -10,7 +10,32 @@ import AISearchBar from '@/components/AISearchBar';
 import {
   ArrowRight, Star, Shield, CheckCircle, Award,
   ChevronRight, Sparkles, Globe, Users, Zap,
+  Building2, Cpu, Megaphone, Briefcase, HeartPulse,
+  Factory, GraduationCap, Truck, Wrench,
 } from 'lucide-react';
+
+const CATEGORY_ICONS = {
+  'staffing-companies': Users,
+  'it-services': Cpu,
+  'marketing-agencies': Megaphone,
+  'consulting': Briefcase,
+  'healthcare': HeartPulse,
+  'manufacturing': Factory,
+  'education': GraduationCap,
+  'logistics': Truck,
+  'maintenance': Wrench,
+};
+const CATEGORY_COLORS = {
+  'staffing-companies': 'bg-blue-50 border-blue-100 text-blue-600',
+  'it-services': 'bg-violet-50 border-violet-100 text-violet-600',
+  'marketing-agencies': 'bg-pink-50 border-pink-100 text-pink-600',
+  'consulting': 'bg-amber-50 border-amber-100 text-amber-600',
+  'healthcare': 'bg-emerald-50 border-emerald-100 text-emerald-600',
+  'manufacturing': 'bg-slate-50 border-slate-200 text-slate-600',
+  'education': 'bg-cyan-50 border-cyan-100 text-cyan-600',
+  'logistics': 'bg-orange-50 border-orange-100 text-orange-600',
+  'maintenance': 'bg-rose-50 border-rose-100 text-rose-600',
+};
 
 
 export default function Home() {
@@ -82,7 +107,7 @@ export default function Home() {
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5">{label}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{label}</div>
                 </div>
               ))}
             </div>
@@ -91,7 +116,7 @@ export default function Home() {
       </section>
 
       {/* ── HOW AI WORKS ─────────────────────────────────────────── */}
-      <section className="py-16 sm:py-20 bg-[#F7F8FA]">
+      <section className="py-16 sm:py-20 bg-white">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">How It Works</p>
@@ -143,14 +168,19 @@ export default function Home() {
       {/* ── SERVICE CATEGORIES ────────────────────────────────────── */}
       <section className="py-16 sm:py-20 bg-[#F7F8FA]">
         <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 sm:mb-12">
-            <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Categories</p>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
-              Browse Categories
-            </h2>
-            <p className="text-slate-500 text-sm mt-2 max-w-xl mx-auto">
-              Find verified companies specialising in manufacturing, staffing, IT, marketing, and other key business products & services.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 sm:mb-12">
+            <div>
+              <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Categories</p>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
+                Browse by Industry
+              </h2>
+              <p className="text-slate-500 text-sm mt-2 max-w-lg">
+                Find verified companies across manufacturing, staffing, IT, marketing, and more.
+              </p>
+            </div>
+            <Link href="/Categories" className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors whitespace-nowrap">
+              View all categories <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
 
           {(() => {
@@ -158,40 +188,49 @@ export default function Home() {
               .filter(c => (c.is_parent ?? c.isParent))
               .slice(0, 9);
             return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {parents.map((parent) => {
                   const children = categories
                     .filter(c => (c.parent_id ?? c.parentId) === parent.id)
-                    .slice(0, 6);
+                    .slice(0, 4);
                   const href = parent.slug === 'staffing-companies'
                     ? getDirectoryStaffingUrl()
                     : getDirectoryUrl(parent.slug);
-                  return (
-                    <Link key={parent.id} href={href}>
-                      <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-orange-300 hover:shadow-md transition-all duration-200 h-full flex flex-col cursor-pointer">
-                        <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4 text-2xl">
-                          🏢
-                        </div>
-                        <h3 className="font-bold text-[#0D1B2A] text-base mb-3">{parent.name}</h3>
+                  const IconComp = CATEGORY_ICONS[parent.slug] || Building2;
+                  const colorClass = CATEGORY_COLORS[parent.slug] || 'bg-amber-50 border-amber-100 text-amber-600';
 
+                  return (
+                    <Link key={parent.id} href={href} className="group">
+                      <div className="bg-white border border-slate-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-lg transition-all duration-200 h-full flex flex-col">
+                        {/* Header row: icon + title + arrow */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className={`w-10 h-10 rounded-lg border flex items-center justify-center flex-shrink-0 ${colorClass}`}>
+                            <IconComp className="w-5 h-5" />
+                          </div>
+                          <h3 className="font-bold text-[#0D1B2A] text-[15px] flex-1 group-hover:text-orange-600 transition-colors">
+                            {parent.name}
+                          </h3>
+                          <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                        </div>
+
+                        {/* Subcategory chips */}
                         {children.length > 0 && (
-                          <div className="mb-3">
-                            <span className="inline-block text-[10px] font-semibold bg-slate-100 text-slate-500 rounded px-2 py-0.5 mb-1.5 uppercase tracking-wide">Services</span>
-                            <p className="text-xs text-slate-500 leading-relaxed">
-                              {children.map((c, i) => (
-                                <React.Fragment key={c.id}>
-                                  {c.name}
-                                  {i < children.length - 1 && <span className="mx-1.5 text-slate-300">|</span>}
-                                </React.Fragment>
-                              ))}
-                            </p>
+                          <div className="flex flex-wrap gap-1.5 mt-auto">
+                            {children.map((c) => (
+                              <span
+                                key={c.id}
+                                className="text-[11px] text-slate-500 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md"
+                              >
+                                {c.name}
+                              </span>
+                            ))}
+                            {categories.filter(c => (c.parent_id ?? c.parentId) === parent.id).length > 4 && (
+                              <span className="text-[11px] text-orange-500 font-medium px-2 py-0.5">
+                                +{categories.filter(c => (c.parent_id ?? c.parentId) === parent.id).length - 4} more
+                              </span>
+                            )}
                           </div>
                         )}
-
-                        <div className="mt-auto pt-2">
-                          <span className="inline-block text-[10px] font-semibold bg-slate-100 text-slate-500 rounded px-2 py-0.5 mb-1.5 uppercase tracking-wide">Locations</span>
-                          <p className="text-xs text-slate-500">USA | UK | India | Canada | Australia</p>
-                        </div>
                       </div>
                     </Link>
                   );
@@ -199,18 +238,12 @@ export default function Home() {
               </div>
             );
           })()}
-
-          <div className="text-center mt-8">
-            <Link href="/Categories" className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-orange-600 transition-colors">
-              View all categories <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* ── TOP RATED COMPANIES ───────────────────────────────────── */}
       {topRatedAgencies.length > 0 && (
-        <section className="py-16 sm:py-20 bg-[#F7F8FA]">
+        <section className="py-16 sm:py-20 bg-white">
           <div className="w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
@@ -389,7 +422,7 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
-              <Link href={getDirectoryUrl()}>
+              <Link href="/ai-match?q=">
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-3 h-auto rounded-xl text-sm transition-colors">
                   Try AI Matchmaker <Sparkles className="w-4 h-4 ml-2" />
                 </Button>

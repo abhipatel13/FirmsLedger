@@ -46,24 +46,10 @@ export default function AISearchBar() {
         </div>
       </div>
 
-      {/* Stats row */}
-      <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 mt-5">
-        {[
-          '5,000+ categories',
-          '2,300+ cities covered',
-          'Free to use',
-          'All industries covered',
-        ].map((stat) => (
-          <span key={stat} className="flex items-center gap-2 text-sm text-slate-400">
-            <span className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
-              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </span>
-            {stat}
-          </span>
-        ))}
-      </div>
+      {/* Hint text */}
+      <p className="text-center text-sm text-slate-400 mt-4">
+        Try: "IT staffing agencies in New York" or "marketing firms under 50 employees"
+      </p>
     </form>
   );
 }
