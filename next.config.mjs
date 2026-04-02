@@ -19,6 +19,7 @@ const nextConfig = {
   async rewrites() {
     return [
       { source: '/sitemap.xml', destination: '/api/sitemap-index' },
+      { source: '/sitemap/:id.xml', destination: '/api/sitemap/:id' },
       { source: '/directory', destination: '/Directory' },
       { source: '/directory/:path*', destination: '/Directory/:path*' },
       { source: '/blogs', destination: '/Blogs' },

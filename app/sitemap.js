@@ -266,7 +266,7 @@ async function getSupabaseClient() {
   return createClient(url, key, { auth: { persistSession: false } });
 }
 
-async function getCategorySlugs() {
+export async function getCategorySlugs() {
   try {
     const supabase = await getSupabaseClient();
     if (!supabase) return [];
@@ -322,111 +322,73 @@ export default async function sitemap({ id }) {
     getDbBlogSlugs(),
   ]);
 
+  const start = id * URLS_PER_SITEMAP;
+  const end = start + URLS_PER_SITEMAP;
+
+  function* gen() {
+  const staticSlugsSet = new Set(BLOG_SLUGS);
+
   // ── Static pages ────────────────────────────────────────────────────────────
-  const staticRoutes = [
-    { url: `${BASE_URL}/`,                   lastModified: now, changeFrequency: 'daily',   priority: 1.0 },
-    { url: `${BASE_URL}/directory`,          lastModified: now, changeFrequency: 'daily',   priority: 0.9 },
-    { url: `${BASE_URL}/directory/staffing`, lastModified: now, changeFrequency: 'weekly',  priority: 0.8 },
-    { url: `${BASE_URL}/blogs`,              lastModified: now, changeFrequency: 'weekly',  priority: 0.8 },
-    { url: `${BASE_URL}/contact`,            lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${BASE_URL}/ListYourCompany`,    lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${BASE_URL}/Categories`,         lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
-  ];
+  yield { url: `${BASE_URL}/`,                   lastModified: now, changeFrequency: 'daily',   priority: 1.0 };
+  yield { url: `${BASE_URL}/directory`,          lastModified: now, changeFrequency: 'daily',   priority: 0.9 };
+  yield { url: `${BASE_URL}/directory/staffing`, lastModified: now, changeFrequency: 'weekly',  priority: 0.8 };
+  yield { url: `${BASE_URL}/blogs`,              lastModified: now, changeFrequency: 'weekly',  priority: 0.8 };
+  yield { url: `${BASE_URL}/contact`,            lastModified: now, changeFrequency: 'monthly', priority: 0.5 };
+  yield { url: `${BASE_URL}/ListYourCompany`,    lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
+  yield { url: `${BASE_URL}/Categories`,         lastModified: now, changeFrequency: 'weekly',  priority: 0.7 };
 
   // ── Staffing sub-pages ──────────────────────────────────────────────────────
-  const staffingRoutes = STAFFING_SLUGS.map((slug) => ({
-    url: `${BASE_URL}/directory/staffing/${slug}`,
-    lastModified: now, changeFrequency: 'weekly', priority: 0.7,
-  }));
+  for (const slug of STAFFING_SLUGS)
+    yield { url: `${BASE_URL}/directory/staffing/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 };
 
   // ── Blog pages ──────────────────────────────────────────────────────────────
-  const staticBlogRoutes = BLOG_SLUGS.map((slug) => ({
-    url: `${BASE_URL}/blogs/${slug}`,
-    lastModified: now, changeFrequency: 'monthly', priority: 0.7,
-  }));
-
-  const staticSlugsSet = new Set(BLOG_SLUGS);
-  const dbBlogRoutes = dbPosts
-    .filter((p) => !staticSlugsSet.has(p.slug))
-    .map((p) => ({
-      url: `${BASE_URL}/blogs/${p.slug}`,
-      lastModified: p.updated_at ? new Date(p.updated_at) : now,
-      changeFrequency: 'monthly', priority: 0.7,
-    }));
+  for (const slug of BLOG_SLUGS)
+    yield { url: `${BASE_URL}/blogs/${slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 };
+  for (const p of dbPosts)
+    if (!staticSlugsSet.has(p.slug))
+      yield { url: `${BASE_URL}/blogs/${p.slug}`, lastModified: p.updated_at ? new Date(p.updated_at) : now, changeFrequency: 'monthly', priority: 0.7 };
 
   // ── Category directory pages (all categories) ───────────────────────────────
-  const categoryRoutes = categorySlugs.map((slug) => ({
-    url: `${BASE_URL}/directory/${slug}`,
-    lastModified: now, changeFrequency: 'weekly', priority: 0.8,
-  }));
+  for (const slug of categorySlugs)
+    yield { url: `${BASE_URL}/directory/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
 
-  // ── /directory/[category]?country=[Name] — top 500 categories × all countries ─
-  const TOP_CATS = categorySlugs.slice(0, 500);
-  const searchRoutes = [];
-  for (const slug of TOP_CATS) {
+  // ── Country pages (top 500 × all countries) ───────────────────────────────
+  for (const slug of categorySlugs.slice(0, 500))
     for (const countrySlug of TARGET_COUNTRIES) {
       const countryName = COUNTRY_NAMES[countrySlug];
-      if (!countryName) continue;
-      searchRoutes.push({
-        url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}`,
-        lastModified: now, changeFrequency: 'weekly', priority: 0.8,
-      });
+      if (countryName)
+        yield { url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
     }
-  }
 
-  // ── /directory/[category]?country=[Name]&state=[Name] — top 300 categories × key states
-  const stateRoutes = [];
-  for (const slug of categorySlugs.slice(0, 300)) {
+  // ── State pages (top 300 × key states) ────────────────────────────────────
+  for (const slug of categorySlugs.slice(0, 300))
     for (const { country, state } of KEY_STATES) {
       const countryName = COUNTRY_NAMES[country];
       const stateName = STATE_NAMES[state];
-      if (!countryName || !stateName) continue;
-      stateRoutes.push({
-        url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`,
-        lastModified: now, changeFrequency: 'weekly', priority: 0.78,
-      });
+      if (countryName && stateName)
+        yield { url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 };
     }
-  }
 
-  // ── /directory/[category]?country=[Name]&state=[Name] — top 150 categories × key cities
-  const cityRoutes = [];
-  for (const slug of categorySlugs.slice(0, 150)) {
+  // ── City pages (top 150 × key cities) ─────────────────────────────────────
+  for (const slug of categorySlugs.slice(0, 150))
     for (const { country, state } of KEY_CITIES) {
       const countryName = COUNTRY_NAMES[country];
       const stateName = STATE_NAMES[state];
-      if (!countryName || !stateName) continue;
-      cityRoutes.push({
-        url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`,
-        lastModified: now, changeFrequency: 'weekly', priority: 0.75,
-      });
+      if (countryName && stateName)
+        yield { url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.75 };
     }
-  }
 
-  // ── India city-level pages: top 100 categories × all states × all cities ─────
-  const indiaCityRoutes = [];
-  for (const slug of categorySlugs.slice(0, 100)) {
-    for (const { stateName, cities } of INDIA_CITY_ROUTES) {
-      for (const city of cities) {
-        indiaCityRoutes.push({
-          url: `${BASE_URL}/directory/${slug}?country=India&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`,
-          lastModified: now, changeFrequency: 'weekly', priority: 0.72,
-        });
-      }
-    }
-  }
+  // ── India city pages (top 100 × all India cities) ─────────────────────────
+  for (const slug of categorySlugs.slice(0, 100))
+    for (const { stateName, cities } of INDIA_CITY_ROUTES)
+      for (const city of cities)
+        yield { url: `${BASE_URL}/directory/${slug}?country=India&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.72 };
 
-  // ── USA city-level pages: top 100 categories × all 50 states × all cities ───
-  const usaCityRoutes = [];
-  for (const slug of categorySlugs.slice(0, 100)) {
-    for (const { stateName, cities } of USA_CITY_ROUTES) {
-      for (const city of cities) {
-        usaCityRoutes.push({
-          url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`,
-          lastModified: now, changeFrequency: 'weekly', priority: 0.72,
-        });
-      }
-    }
-  }
+  // ── USA city pages (top 100 × all USA cities) ─────────────────────────────
+  for (const slug of categorySlugs.slice(0, 100))
+    for (const { stateName, cities } of USA_CITY_ROUTES)
+      for (const city of cities)
+        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.72 };
 
   // ── California deep coverage: ALL categories × all California cities/areas ──
   const CALIFORNIA_CITIES = [
@@ -482,15 +444,9 @@ export default async function sitemap({ id }) {
     'Pleasanton','Walnut Creek','San Ramon','Danville','Lafayette',
     'Orinda','Moraga','Brentwood','Antioch','Pittsburg',
   ];
-  const californiaRoutes = [];
-  for (const slug of categorySlugs.slice(0, 300)) {
-    for (const city of CALIFORNIA_CITIES) {
-      californiaRoutes.push({
-        url: `${BASE_URL}/directory/${slug}?country=United%20States&state=California&city=${encodeURIComponent(city)}`,
-        lastModified: now, changeFrequency: 'weekly', priority: 0.73,
-      });
-    }
-  }
+  for (const slug of categorySlugs.slice(0, 300))
+    for (const city of CALIFORNIA_CITIES)
+      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&state=California&city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
 
   // ── New York deep coverage: ALL categories × all New York cities/areas ──
   const NEW_YORK_CITIES = [
@@ -544,15 +500,9 @@ export default async function sitemap({ id }) {
     'Armonk','Purchase','White Plains','Tarrytown','Poughkeepsie',
     'Ithaca','Rochester','Albany','Syracuse',
   ];
-  const newYorkRoutes = [];
-  for (const slug of categorySlugs.slice(0, 300)) {
-    for (const city of NEW_YORK_CITIES) {
-      newYorkRoutes.push({
-        url: `${BASE_URL}/directory/${slug}?country=United%20States&state=New%20York&city=${encodeURIComponent(city)}`,
-        lastModified: now, changeFrequency: 'weekly', priority: 0.73,
-      });
-    }
-  }
+  for (const slug of categorySlugs.slice(0, 300))
+    for (const city of NEW_YORK_CITIES)
+      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&state=New%20York&city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
 
   // ── Texas deep coverage ──
   const TEXAS_CITIES = [
@@ -785,52 +735,23 @@ export default async function sitemap({ id }) {
     'Cape May','Wildwood','Ocean City NJ','Sea Isle City','Avalon','Stone Harbor',
   ];
 
-  // Helper to generate deep state routes
-  function generateStateRoutes(stateName, cities) {
-    const routes = [];
-    for (const slug of categorySlugs.slice(0, 300)) {
-      for (const city of cities) {
-        routes.push({
-          url: `${BASE_URL}/directory/${slug}?country=United%20States&state=${encodeURIComponent(stateName)}&city=${encodeURIComponent(city)}`,
-          lastModified: now, changeFrequency: 'weekly', priority: 0.73,
-        });
-      }
-    }
-    return routes;
+  // ── Deep state coverage ────────────────────────────────────────────────────
+  for (const [stateName, cities] of [
+    ['Texas', TEXAS_CITIES], ['Florida', FLORIDA_CITIES], ['Illinois', ILLINOIS_CITIES],
+    ['Pennsylvania', PENNSYLVANIA_CITIES], ['Massachusetts', MASSACHUSETTS_CITIES],
+    ['Washington', WASHINGTON_CITIES], ['Georgia', GEORGIA_CITIES], ['New Jersey', NEW_JERSEY_CITIES],
+  ])
+    for (const slug of categorySlugs.slice(0, 300))
+      for (const city of cities)
+        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&state=${encodeURIComponent(stateName)}&city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
+  } // end gen()
+
+  const routes = [];
+  let i = 0;
+  for (const route of gen()) {
+    if (i >= end) break;
+    if (i >= start) routes.push(route);
+    i++;
   }
-
-  const texasRoutes = generateStateRoutes('Texas', TEXAS_CITIES);
-  const floridaRoutes = generateStateRoutes('Florida', FLORIDA_CITIES);
-  const illinoisRoutes = generateStateRoutes('Illinois', ILLINOIS_CITIES);
-  const pennsylvaniaRoutes = generateStateRoutes('Pennsylvania', PENNSYLVANIA_CITIES);
-  const massachusettsRoutes = generateStateRoutes('Massachusetts', MASSACHUSETTS_CITIES);
-  const washingtonRoutes = generateStateRoutes('Washington', WASHINGTON_CITIES);
-  const georgiaRoutes = generateStateRoutes('Georgia', GEORGIA_CITIES);
-  const newJerseyRoutes = generateStateRoutes('New Jersey', NEW_JERSEY_CITIES);
-
-  const allRoutes = [
-    ...staticRoutes,
-    ...staffingRoutes,
-    ...staticBlogRoutes,
-    ...dbBlogRoutes,
-    ...categoryRoutes,
-    ...searchRoutes,
-    ...stateRoutes,
-    ...cityRoutes,
-    ...indiaCityRoutes,
-    ...usaCityRoutes,
-    ...californiaRoutes,
-    ...newYorkRoutes,
-    ...texasRoutes,
-    ...floridaRoutes,
-    ...illinoisRoutes,
-    ...pennsylvaniaRoutes,
-    ...massachusettsRoutes,
-    ...washingtonRoutes,
-    ...georgiaRoutes,
-    ...newJerseyRoutes,
-  ];
-
-  const start = id * URLS_PER_SITEMAP;
-  return allRoutes.slice(start, start + URLS_PER_SITEMAP);
+  return routes;
 }
