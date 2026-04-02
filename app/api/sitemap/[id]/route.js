@@ -1,4 +1,4 @@
-import sitemapFn, { generateSitemaps } from '../../../../sitemap';
+import sitemapFn from '../../../sitemap';
 
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
