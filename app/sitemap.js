@@ -288,24 +288,37 @@ async function getDbBlogSlugs() {
   } catch { return []; }
 }
 
+async function getAgencySlugs() {
+  try {
+    const supabase = await getSupabaseClient();
+    if (!supabase) return [];
+    const { data } = await supabase
+      .from('agencies')
+      .select('slug, updated_at')
+      .eq('approved', true)
+      .order('created_at', { ascending: false });
+    return (data || []).filter((r) => r.slug);
+  } catch { return []; }
+}
+
 // ─── Sitemap (split into multiple files for Vercel/Google limits) ────────────
 const URLS_PER_SITEMAP = 45000;
 
 export async function generateSitemaps() {
-  const categorySlugs = await getCategorySlugs();
-  const total = estimateUrlCount(categorySlugs.length);
+  const [categorySlugs, agencySlugs] = await Promise.all([getCategorySlugs(), getAgencySlugs()]);
+  const total = estimateUrlCount(categorySlugs.length, agencySlugs.length);
   const count = Math.ceil(total / URLS_PER_SITEMAP);
   return Array.from({ length: count }, (_, i) => ({ id: i }));
 }
 
-function estimateUrlCount(catCount) {
+function estimateUrlCount(catCount, agencyCount = 0) {
   const top500 = Math.min(catCount, 500);
   const top300 = Math.min(catCount, 300);
   const top150 = Math.min(catCount, 150);
   const top100 = Math.min(catCount, 100);
   const indiaCities = INDIA_CITY_ROUTES.reduce((s, r) => s + r.cities.length, 0);
   const usaCities = USA_CITY_ROUTES.reduce((s, r) => s + r.cities.length, 0);
-  return 10 + BLOG_SLUGS.length + catCount + (top500 * TARGET_COUNTRIES.length)
+  return 10 + BLOG_SLUGS.length + agencyCount + catCount + (top500 * TARGET_COUNTRIES.length)
     + (top300 * KEY_STATES.length) + (top150 * KEY_CITIES.length)
     + (top100 * indiaCities) + (top100 * usaCities)
     + (top300 * 230) + (top300 * 228)  // CA + NY
@@ -317,9 +330,10 @@ function estimateUrlCount(catCount) {
 export default async function sitemap({ id }) {
   const now = new Date();
 
-  const [categorySlugs, dbPosts] = await Promise.all([
+  const [categorySlugs, dbPosts, agencySlugs] = await Promise.all([
     getCategorySlugs(),
     getDbBlogSlugs(),
+    getAgencySlugs(),
   ]);
 
   const start = id * URLS_PER_SITEMAP;
@@ -336,6 +350,12 @@ export default async function sitemap({ id }) {
   yield { url: `${BASE_URL}/contact`,            lastModified: now, changeFrequency: 'monthly', priority: 0.5 };
   yield { url: `${BASE_URL}/ListYourCompany`,    lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
   yield { url: `${BASE_URL}/Categories`,         lastModified: now, changeFrequency: 'weekly',  priority: 0.7 };
+  yield { url: `${BASE_URL}/ai-match`,           lastModified: now, changeFrequency: 'monthly', priority: 0.7 };
+  yield { url: `${BASE_URL}/Compare`,            lastModified: now, changeFrequency: 'weekly',  priority: 0.6 };
+
+  // ── Company profile pages ───────────────────────────────────────────────────
+  for (const agency of agencySlugs)
+    yield { url: `${BASE_URL}/companies/${agency.slug}`, lastModified: agency.updated_at ? new Date(agency.updated_at) : now, changeFrequency: 'weekly', priority: 0.85 };
 
   // ── Staffing sub-pages ──────────────────────────────────────────────────────
   for (const slug of STAFFING_SLUGS)
