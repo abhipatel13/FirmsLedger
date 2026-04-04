@@ -12,6 +12,34 @@ const POSTS_PER_PAGE = 6;
 
 const ARTICLES_LIST = [
   {
+    slug: 'top-american-cruise-companies-2026',
+    title: 'Top American Cruise Companies: The Best of the US Cruise Industry in 2026',
+    excerpt: 'From Caribbean paradise to Alaskan glaciers — a complete guide to the best US cruise lines in 2026. Compare Carnival, Royal Caribbean, Disney, Viking, Regent Seven Seas & more by price, destinations, and onboard experience.',
+    readTime: '16 min read',
+    category: 'Travel & Cruises',
+    icon: FileText,
+    image: {
+      src: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1200&q=85',
+      alt: 'Top American cruise companies 2026 — luxury cruise ship at sea',
+      width: 1200,
+      height: 630,
+    },
+  },
+  {
+    slug: 'top-medical-ventilator-manufacturers-usa-2026',
+    title: 'Top Medical Ventilator Manufacturers in the USA: Leaders Powering Respiratory Care in 2026',
+    excerpt: 'A comprehensive guide to the top medical ventilator manufacturers in the USA — Medtronic, GE HealthCare, ResMed, Vyaire, ZOLL Medical, Hamilton Medical & more. Compare ICU, transport, and home care ventilator leaders.',
+    readTime: '14 min read',
+    category: 'Medical Devices',
+    icon: FileText,
+    image: {
+      src: 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&q=85',
+      alt: 'Top medical ventilator manufacturers in the USA 2026 — ICU ventilator and respiratory care equipment',
+      width: 1200,
+      height: 630,
+    },
+  },
+  {
     slug: 'top-cnc-manufacturers-nevada-2026',
     title: 'Top CNC Manufacturers in Nevada: Best Machine Shops for Precision Machining in 2026',
     excerpt: 'A comprehensive guide to the best CNC manufacturers in Nevada — CES Machine, Owens Industries, Frigate, CapableMachining & Tonza Making. Compared by capabilities, certifications, and industries served.',

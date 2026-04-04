@@ -2,6 +2,8 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 
 // ─── Static blog slugs ──────────────────────────────────────────────────────
 const BLOG_SLUGS = [
+  'top-american-cruise-companies-2026',
+  'top-medical-ventilator-manufacturers-usa-2026',
   'best-specialty-chemical-companies-australia-2026',
   'best-solar-panels-australia-2026',
   'top-10-stabilizer-brands-india-2026',

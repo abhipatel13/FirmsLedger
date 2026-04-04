@@ -40,8 +40,30 @@ import Top10StabilizerBrandsIndia2026Article from '@/views/blog/Top10StabilizerB
 import BestSolarPanelsAustralia2026Article from '@/views/blog/BestSolarPanelsAustralia2026Article';
 import BestSpecialtyChemicalCompaniesAustralia2026Article from '@/views/blog/BestSpecialtyChemicalCompaniesAustralia2026Article';
 import TopCNCManufacturersNevada2026Article from '@/views/blog/TopCNCManufacturersNevada2026Article';
+import TopMedicalVentilatorManufacturersUSA2026Article from '@/views/blog/TopMedicalVentilatorManufacturersUSA2026Article';
+import TopAmericanCruiseCompanies2026Article from '@/views/blog/TopAmericanCruiseCompanies2026Article';
 
 const ARTICLES = {
+  'top-american-cruise-companies-2026': {
+    title: 'Top American Cruise Companies: The Best of the US Cruise Industry in 2026',
+    description: 'A comprehensive guide to the top American cruise companies in 2026 — Carnival, Royal Caribbean, Norwegian, Celebrity, Disney, Viking, Regent Seven Seas, and more. Compare fleet, destinations, experiences, and who each line is best for.',
+    seoTitle: 'Top American Cruise Companies: Best US Cruise Lines in 2026 | FirmsLedger',
+    seoDescription: 'Discover the top American cruise companies in 2026. Compare Carnival, Royal Caribbean, Disney, Viking & more by destinations, price, and onboard experience.',
+    image: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top American cruise companies 2026 — luxury cruise ship at sea',
+    component: TopAmericanCruiseCompanies2026Article,
+  },
+  'top-medical-ventilator-manufacturers-usa-2026': {
+    title: 'Top Medical Ventilator Manufacturers in the USA: Leaders Powering Respiratory Care in 2026',
+    description:
+      'A comprehensive guide to the top medical ventilator manufacturers in the USA for 2026 — Medtronic, GE HealthCare, ResMed, Vyaire, ZOLL Medical, Hamilton Medical, Philips, Hill-Rom, and Spiritus Medical. Compared by ICU, home care, transport, and neonatal ventilation specialty.',
+    seoTitle: 'Top Medical Ventilator Manufacturers in the USA (2026) | Best ICU & Respiratory Care Brands | FirmsLedger',
+    seoDescription:
+      'Discover the top medical ventilator manufacturers in the USA for 2026 — from Medtronic to ResMed. Compare ICU, portable & home care ventilator leaders.',
+    image: 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top medical ventilator manufacturers in the USA 2026 — ICU ventilator and respiratory care equipment',
+    component: TopMedicalVentilatorManufacturersUSA2026Article,
+  },
   'top-cnc-manufacturers-nevada-2026': {
     title: 'Top CNC Manufacturers in Nevada: Best Machine Shops for Precision Machining in 2026',
     description: 'A comprehensive guide to the best CNC manufacturers in Nevada — CES Machine, Owens Industries, Frigate, CapableMachining, and Tonza Making. Compared by capabilities, certifications, and industries served.',
