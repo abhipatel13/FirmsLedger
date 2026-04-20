@@ -76,8 +76,8 @@ async function getPagesToAudit(): Promise<string[]> {
     .select('slug')
     .limit(4);
 
-  const blogUrls = (posts ?? []).map((p) => `${BASE_URL}/blogs/${p.slug}`);
-  const mdBlogUrls = (blogs ?? []).map((b) => `${BASE_URL}/blogs/${b.slug}`);
+  const blogUrls = (posts ?? []).map((p) => `${BASE_URL}/blog/${p.slug}`);
+  const mdBlogUrls = (blogs ?? []).map((b) => `${BASE_URL}/blog/${b.slug}`);
   const catUrls = (cats ?? []).map((c) => `${BASE_URL}/directory/${c.slug}`);
 
   const all = [...staticPages, ...blogUrls, ...mdBlogUrls, ...catUrls];

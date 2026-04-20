@@ -7,10 +7,10 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'FirmsLedger – Global Business Directory',
+    default: 'FirmsLedger – Global Business & Service Provider Directory',
     template: '%s | FirmsLedger',
   },
-  description: "The trusted global platform to discover and connect with verified business service providers worldwide.",
+  description: "Find and compare the best companies worldwide. Verified reviews, ratings, and direct contact for staffing, healthcare, travel, IT, education, and more across every industry.",
   openGraph: {
     type: 'website',
     locale: 'en',

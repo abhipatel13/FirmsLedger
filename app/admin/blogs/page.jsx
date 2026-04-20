@@ -445,8 +445,8 @@ export default function BlogsAdminPage() {
                       <p className="text-sm text-gray-100 truncate">{topic.prompt}</p>
                       {topic.error && <p className="text-xs text-red-400 mt-0.5 truncate">{topic.error}</p>}
                       {topic.slug && (
-                        <a href={`/blogs/${topic.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:underline flex items-center gap-1 mt-0.5">
-                          /blogs/{topic.slug} <ExternalLink className="w-2.5 h-2.5" />
+                        <a href={`/blog/${topic.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:underline flex items-center gap-1 mt-0.5">
+                          /blog/{topic.slug} <ExternalLink className="w-2.5 h-2.5" />
                         </a>
                       )}
                     </div>
@@ -502,7 +502,7 @@ export default function BlogsAdminPage() {
                       <tr key={post.id} className="border-b border-gray-800 hover:bg-gray-800/30">
                         <td className="px-4 py-3 font-medium text-gray-100 max-w-xs">
                           <p className="truncate">{post.title}</p>
-                          <p className="text-xs text-gray-500 truncate mt-0.5">/blogs/{post.slug}</p>
+                          <p className="text-xs text-gray-500 truncate mt-0.5">/blog/{post.slug}</p>
                         </td>
                         <td className="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">{post.category}</td>
                         <td className="px-4 py-3">
@@ -541,7 +541,7 @@ export default function BlogsAdminPage() {
                             {/* View */}
                             {post.published && (
                               <a
-                                href={`/blogs/${post.slug}`}
+                                href={`/blog/${post.slug}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-1 px-2 py-1 bg-blue-900/40 hover:bg-blue-900/60 text-blue-300 text-xs rounded transition-colors"

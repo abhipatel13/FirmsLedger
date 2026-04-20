@@ -17,7 +17,7 @@ import {
 
 // ─── Brand palette ────────────────────────────────────────────────────────────
 // Orange shades + navy accents — matches FirmsLedger brand
-const DONUT_COLORS = ['#F97316', '#0D1B2A', '#FB923C', '#1E3A5F', '#FDBA74', '#2E4E6E', '#FED7AA'];
+const DONUT_COLORS = ['#F97316', '#1A2E4A', '#FB923C', '#1E3A5F', '#FDBA74', '#2E4E6E', '#FED7AA'];
 
 // ─── Social media icons (inline SVGs — no extra dep) ─────────────────────────
 function LinkedInIcon() {
@@ -65,7 +65,7 @@ function DonutLabel({ viewBox, total }) {
   const { cx, cy } = viewBox;
   return (
     <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" className="fill-slate-700 font-bold text-base">
-      <tspan x={cx} dy="-6" fontSize="22" fontWeight="700" fill="#0D1B2A">{total}%</tspan>
+      <tspan x={cx} dy="-6" fontSize="22" fontWeight="700" fill="#1A2E4A">{total}%</tspan>
       <tspan x={cx} dy="20" fontSize="11" fill="#64748B">total</tspan>
     </text>
   );
@@ -187,14 +187,14 @@ export default function AgencyProfile({ companySlug }) {
               <img src={agency.logo_url} alt={agency.name}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-contain border border-slate-200 bg-white flex-shrink-0" />
             ) : (
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-[#0D1B2A] flex items-center justify-center text-white font-bold text-2xl sm:text-3xl flex-shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-[#1A2E4A] flex items-center justify-center text-white font-bold text-2xl sm:text-3xl flex-shrink-0">
                 {agency.name.charAt(0)}
               </div>
             )}
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0D1B2A] break-words tracking-tight">{agency.name}</h1>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A2E4A] break-words tracking-tight">{agency.name}</h1>
                 {agency.verified && (
                   <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2 py-1 rounded border border-green-200 mt-0.5">
                     <CheckCircle className="w-3 h-3" /> Verified
@@ -249,6 +249,13 @@ export default function AgencyProfile({ companySlug }) {
                     <MessageSquare className="w-4 h-4 mr-2" /> Write Review
                   </Button>
                 </Link>
+                {!agency.verified && (
+                  <Link href={`/claim-listing?agency=${agency.slug || agency.id}`} className="w-full sm:w-auto">
+                    <Button variant="outline" className="w-full sm:w-auto border-orange-200 text-orange-600 hover:border-orange-400 hover:bg-orange-50 font-semibold px-6 h-11 rounded-md transition-colors">
+                      <Crown className="w-4 h-4 mr-2" /> Claim This Listing
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -282,7 +289,7 @@ export default function AgencyProfile({ companySlug }) {
             {/* Address */}
             <div className="p-6 space-y-2">
               {agency.hq_country && (
-                <div className="flex items-center gap-2 font-semibold text-[#0D1B2A] text-sm">
+                <div className="flex items-center gap-2 font-semibold text-[#1A2E4A] text-sm">
                   <span className="text-lg">{countryFlag(agency.hq_country)}</span>
                   {agency.hq_country}
                 </div>
@@ -327,7 +334,7 @@ export default function AgencyProfile({ companySlug }) {
         {/* ── Service Focus ─────────────────────────────────────────────────── */}
         {serviceFocus.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h2 className="text-lg font-bold text-[#0D1B2A] mb-5">Service Focus</h2>
+            <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Service Focus</h2>
             <div className="grid md:grid-cols-[220px_1fr_1fr] gap-8 items-center">
               {/* Category tabs */}
               <div className="space-y-2">
@@ -383,7 +390,7 @@ export default function AgencyProfile({ companySlug }) {
               {/* Legend */}
               <div>
                 {activeCategory && (
-                  <p className="font-bold text-[#0D1B2A] text-sm mb-4">
+                  <p className="font-bold text-[#1A2E4A] text-sm mb-4">
                     Focus of {activeCategory}
                   </p>
                 )}
@@ -404,7 +411,7 @@ export default function AgencyProfile({ companySlug }) {
         {/* ── Industry Focus ────────────────────────────────────────────────── */}
         {industryFocus.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h2 className="text-lg font-bold text-[#0D1B2A] mb-4">Industry Focus</h2>
+            <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Industry Focus</h2>
             <div className="flex flex-wrap gap-2">
               {industryFocus.map((item, i) => (
                 <span key={i} className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 transition-colors">
@@ -420,7 +427,7 @@ export default function AgencyProfile({ companySlug }) {
         {/* ── Client Focus ──────────────────────────────────────────────────── */}
         {(clientFocus.small_business || clientFocus.medium_business || clientFocus.large_business) && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h2 className="text-lg font-bold text-[#0D1B2A] mb-6">Client Focus</h2>
+            <h2 className="text-lg font-bold text-[#1A2E4A] mb-6">Client Focus</h2>
             <div className="grid sm:grid-cols-3 gap-8">
               {[
                 { label: 'Small Business',  key: 'small_business' },
@@ -429,7 +436,7 @@ export default function AgencyProfile({ companySlug }) {
               ].filter(({ key }) => clientFocus[key]).map(({ label, key }) => (
                 <div key={key}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-[#0D1B2A]">{clientFocus[key]}%</span>
+                    <span className="text-sm font-semibold text-[#1A2E4A]">{clientFocus[key]}%</span>
                     <span className="text-xs text-slate-500">{label}</span>
                   </div>
                   <div className="w-full bg-slate-100 rounded-full h-2">
@@ -447,7 +454,7 @@ export default function AgencyProfile({ companySlug }) {
         {/* ── Review Analytics ──────────────────────────────────────────────── */}
         {reviews.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h2 className="text-lg font-bold text-[#0D1B2A] mb-5">
+            <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">
               Review Analytics of {agency.name}
             </h2>
 
@@ -458,7 +465,7 @@ export default function AgencyProfile({ companySlug }) {
                 { label: 'Overall Rating',  value: `${avgOverall.toFixed(1)}/5` },
                 { label: 'Recent Reviews',  value: Math.min(reviews.length, 80) },
               ].map(({ label, value }) => (
-                <div key={label} className="bg-[#0D1B2A] border-b-2 border-orange-500 rounded-lg p-5">
+                <div key={label} className="bg-[#1A2E4A] border-b-2 border-orange-500 rounded-lg p-5">
                   <p className="text-2xl font-extrabold text-white">{value}</p>
                   <p className="text-sm font-medium text-slate-400 mt-1">{label}</p>
                 </div>
@@ -468,7 +475,7 @@ export default function AgencyProfile({ companySlug }) {
             {/* User quotes */}
             {recentReviews.some(r => r.body) && (
               <>
-                <p className="text-sm font-semibold text-[#0D1B2A] mb-3">What Users Say</p>
+                <p className="text-sm font-semibold text-[#1A2E4A] mb-3">What Users Say</p>
                 <div className="space-y-4">
                   {recentReviews.filter(r => r.body).map((r) => (
                     <div key={r.id}>
@@ -493,19 +500,19 @@ export default function AgencyProfile({ companySlug }) {
           {reviews.length > 0 && (
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-extrabold text-[#0D1B2A]">{avgOverall.toFixed(1)}</span>
+                <span className="text-2xl font-extrabold text-[#1A2E4A]">{avgOverall.toFixed(1)}</span>
                 <Stars rating={avgOverall} />
                 <span className="text-slate-500 text-sm">{reviews.length} Reviews</span>
               </div>
               <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#0D1B2A] hover:bg-[#1a2e47] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Button className="bg-[#1A2E4A] hover:bg-[#1a2e47] text-white font-semibold px-5 h-9 rounded-md text-sm">
                   Write a Review
                 </Button>
               </Link>
             </div>
           )}
 
-          <h2 className="text-xl font-extrabold text-[#0D1B2A] mb-4">
+          <h2 className="text-xl font-extrabold text-[#1A2E4A] mb-4">
             Detailed Reviews of {agency.name}
           </h2>
 
@@ -575,7 +582,7 @@ function DetailedReviewCard({ review, expanded, onToggle }) {
             <User className="w-5 h-5 text-slate-400" />
           </div>
           <div>
-            <p className="font-semibold text-[#0D1B2A] text-sm">{review.company_name || 'Anonymous'}</p>
+            <p className="font-semibold text-[#1A2E4A] text-sm">{review.company_name || 'Anonymous'}</p>
             <p className="text-xs text-slate-500">Posted {ago}</p>
           </div>
         </div>
@@ -583,7 +590,7 @@ function DetailedReviewCard({ review, expanded, onToggle }) {
 
       {/* Quote */}
       {review.title && (
-        <p className="px-5 pb-3 font-semibold text-[#0D1B2A] text-base leading-snug">"{review.title}"</p>
+        <p className="px-5 pb-3 font-semibold text-[#1A2E4A] text-base leading-snug">"{review.title}"</p>
       )}
 
       {/* Body + rating breakdown */}

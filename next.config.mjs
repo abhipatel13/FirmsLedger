@@ -14,6 +14,9 @@ const nextConfig = {
       { source: '/Home', destination: '/', permanent: true },
       { source: '/list-your-company', destination: '/ListYourCompany', permanent: false },
       { source: '/join',              destination: '/ListYourCompany', permanent: false },
+      // Redirect old /Blogs URLs to /blog
+      { source: '/Blogs', destination: '/blog', permanent: true },
+      { source: '/Blogs/:slug', destination: '/blog/:slug', permanent: true },
     ];
   },
   async rewrites() {
@@ -22,8 +25,8 @@ const nextConfig = {
       { source: '/sitemap/:id.xml', destination: '/api/sitemap/:id' },
       { source: '/directory', destination: '/Directory' },
       { source: '/directory/:path*', destination: '/Directory/:path*' },
-      { source: '/blogs', destination: '/Blogs' },
-      { source: '/blogs/:path*', destination: '/Blogs/:path*' },
+      { source: '/blogs', destination: '/blog' },
+      { source: '/blogs/:path*', destination: '/blog/:path*' },
       { source: '/contact', destination: '/Contact' },
       { source: '/blog-automation', destination: '/BlogAutomation' },
       // Admin routes — served directly from app/admin/ (no rewrite needed)

@@ -6,7 +6,7 @@ import * as db from '@/api/supabaseApi';
 
 // Categories from Category_export.csv (fallback when no Supabase)
 const mockCategories = [
-  { id: '69925d108a86cc8e55f7e0f9', parent_id: '', name: 'Staffing Companies', slug: 'staffing-companies', description: 'Recruitment and staffing services', icon: 'users', order: 1, is_parent: true },
+  { id: '69925d108a86cc8e55f7e0f9', parent_id: '', name: 'Staffing & Recruiting', slug: 'staffing-recruiting', description: 'Find the best staffing and recruiting agencies across the United States', icon: 'users', order: 1, is_parent: true },
   { id: '69926debe8ad702015479f4d', parent_id: '', name: 'Healthcare Staffing', slug: 'healthcare-staffing', description: 'Healthcare and medical staffing agencies', icon: '', order: 1, is_parent: false },
   { id: '69926debe8ad702015479f4e', parent_id: '', name: 'IT Staffing', slug: 'it-staffing', description: 'Information technology staffing agencies', icon: '', order: 2, is_parent: false },
   { id: '69926debe8ad702015479f4f', parent_id: '', name: 'Temporary Staffing', slug: 'temporary-staffing', description: 'Temporary and short-term staffing solutions', icon: '', order: 3, is_parent: false },

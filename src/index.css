@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -84,11 +86,151 @@
 
   html {
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Urbanist', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* ── FirmsLedger brand tokens (from logo) ──────────────────── */
+:root {
+  --navy: #1A2E4A;           /* logo wordmark */
+  --navy-dark: #131F30;      /* shield gradient end */
+  --navy-mid: #243B58;       /* shield gradient start */
+  --gold: #F5A623;           /* logo checkmark + accent */
+  --gold-light: #FDCE6E;     /* lighter gold */
+  --gold-dark: #D48E1A;      /* hover gold */
+  --bg-light: #F7F8FA;
+  --star-color: #F5A623;
+  --max-width: 1340px;
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-delayed { animation: float 6s ease-in-out 2s infinite; }
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-marquee { animation: marquee 35s linear infinite; }
+.animate-dot-pulse { animation: dotPulse 3s ease-in-out infinite; }
+
+/* ── Glass morphism ─────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ── Card hover (SpotSaaS style) ────────────────────────────── */
+.card-hover {
+  transition: all 0.2s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  box-shadow: 4px 4px 12px 0px rgba(0, 0, 0, 0.08);
+}
+.card-hover:hover {
+  box-shadow: 0 8px 24px -8px rgba(26, 46, 74, 0.12);
+  border-color: var(--gold) !important;
+}
+
+/* ── Gradient button (orange→amber) ─────────────────────────── */
+.btn-gradient {
+  background: linear-gradient(135deg, #F5A623 0%, #FDCE6E 100%);
+  color: #1A2E4A;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #D48E1A 0%, #F5A623 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.35);
+}
+
+/* ── Premium button sweep ───────────────────────────────────── */
+.btn-premium {
+  position: relative;
+  overflow: hidden;
+}
+.btn-premium::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.btn-premium:hover::after {
+  transform: translateX(100%);
+}
+
+/* ── Gradient text ──────────────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, #F5A623, #FDCE6E);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-navy {
+  background: linear-gradient(135deg, #243B58, #1A2E4A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Mesh gradient background ───────────────────────────────── */
+.mesh-gradient {
+  background:
+    radial-gradient(at 20% 20%, rgba(245, 166, 35, 0.06) 0, transparent 50%),
+    radial-gradient(at 80% 80%, rgba(26, 46, 74, 0.03) 0, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(245, 166, 35, 0.03) 0, transparent 70%);
+}
+
+/* ── Dot grid background ────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(circle, #ccc 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Trust logo marquee fade edges ──────────────────────────── */
+.marquee-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 120px, black calc(100% - 120px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 120px, black calc(100% - 120px), transparent);
+}
+
+/* ── Star rating color ──────────────────────────────────────── */
+.star-filled {
+  color: var(--star-color);
+  fill: var(--star-color);
+}
+
+/* ── Category row hover (SpotSaaS browse style) ─────────────── */
+.category-row:hover {
+  background: var(--navy);
+  color: white;
+  border-radius: 8px;
 }

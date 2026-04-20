@@ -101,8 +101,8 @@ export async function getUnsubmittedUrls(limit = 20): Promise<string[]> {
     .limit(limit);
 
   const urls = [
-    ...(newBlogs ?? []).map((b) => `${BASE_URL}/blogs/${b.slug}`),
-    ...(legacyPosts ?? []).map((b) => `${BASE_URL}/blogs/${b.slug}`),
+    ...(newBlogs ?? []).map((b) => `${BASE_URL}/blog/${b.slug}`),
+    ...(legacyPosts ?? []).map((b) => `${BASE_URL}/blog/${b.slug}`),
   ];
 
   if (urls.length === 0) return [];

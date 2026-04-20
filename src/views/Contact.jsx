@@ -55,21 +55,21 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12">
+    <div className="min-h-screen bg-[#F7F8FA] py-12">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href={createPageUrl('Home')}
-          className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 text-sm font-medium mb-8"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-orange-600 text-sm font-medium mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Home
         </Link>
 
         <div className="text-center mb-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center mx-auto mb-4">
-            <Mail className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#243B58] to-[#1A2E4A] flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Mail className="w-8 h-8 text-orange-400" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">Contact us</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-[#1A2E4A]">Contact us</h1>
           <p className="text-slate-600 mt-2">
             Have a question or feedback? Send us a message and we&apos;ll get back to you.
           </p>
@@ -77,7 +77,7 @@ export default function Contact() {
 
         <Card className="border-slate-200 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-xl">Send a message</CardTitle>
+            <CardTitle className="text-xl text-[#1A2E4A]">Send a message</CardTitle>
             <p className="text-slate-600 text-sm">
               We typically respond within 1–2 business days.
             </p>
@@ -93,7 +93,7 @@ export default function Contact() {
                     placeholder="Your name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="bg-white"
+                    className="bg-white focus-visible:ring-orange-400 focus-visible:border-orange-400"
                     required
                   />
                 </div>
@@ -105,7 +105,7 @@ export default function Contact() {
                     placeholder="you@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="bg-white"
+                    className="bg-white focus-visible:ring-orange-400 focus-visible:border-orange-400"
                     required
                   />
                 </div>
@@ -118,7 +118,7 @@ export default function Contact() {
                   placeholder="What is this about?"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="bg-white"
+                  className="bg-white focus-visible:ring-orange-400 focus-visible:border-orange-400"
                 />
               </div>
               <div className="space-y-2">
@@ -128,14 +128,14 @@ export default function Contact() {
                   placeholder="Your message..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="min-h-[160px] bg-white resize-y"
+                  className="min-h-[160px] bg-white resize-y focus-visible:ring-orange-400 focus-visible:border-orange-400"
                   required
                 />
               </div>
               <Button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-semibold transition-colors"
               >
                 {submitting ? 'Sending...' : 'Send message'}
                 <Send className="w-4 h-4 ml-2 inline" />
@@ -146,7 +146,7 @@ export default function Contact() {
 
         <p className="text-center text-slate-500 text-sm mt-6">
           Or email us directly at{' '}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="text-blue-600 hover:underline font-medium">
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-orange-600 hover:underline font-medium">
             {CONTACT_EMAIL}
           </a>
         </p>

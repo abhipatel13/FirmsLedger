@@ -75,7 +75,7 @@ Your response MUST be valid JSON with exactly these keys:
     • An H1 matching "title"
     • An introduction paragraph (100+ words)
     • 4–6 H2 sections with detailed content (at least 150 words each)
-    • Internal links: [anchor text](/directory/category) or [anchor text](/blogs/slug)
+    • Internal links: [anchor text](/directory/category) or [anchor text](/blog/slug)
     • A FAQ section (H2 "Frequently Asked Questions") with 4–5 Q&A pairs formatted as:
         **Q: Question here?**
         A: Answer here.
@@ -195,7 +195,7 @@ export async function generateBlogPost(
     id: saved.id,
     slug: saved.slug,
     title: saved.title,
-    url: `${BASE_URL}/blogs/${saved.slug}`,
+    url: `${BASE_URL}/blog/${saved.slug}`,
   };
 }
 

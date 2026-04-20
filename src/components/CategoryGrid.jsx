@@ -45,10 +45,10 @@ export default function CategoryGrid({ categories }) {
              key={category.id}
              href={category.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(category.slug, { underStaffing })}
            >
-            <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer h-full border-blue-100">
+            <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer h-full border-slate-200 hover:border-orange-300">
               <CardContent className="p-6 text-center">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-3">
-                  <Icon className="w-7 h-7 text-blue-600" />
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center mx-auto mb-3">
+                  <Icon className="w-7 h-7 text-orange-600" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
                 <p className="text-xs text-gray-600">{category.description}</p>

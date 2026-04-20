@@ -75,14 +75,14 @@ export default function SearchBar() {
       seen.add(c.slug);
       return true;
     });
-    const staffingId = list.find((c) => c.slug === 'staffing-companies')?.id;
+    const staffingId = list.find((c) => c.slug === 'staffing-recruiting')?.id;
     const staffingSub = staffingId
       ? list
           .filter((c) => (c.parent_id ?? c.parentId) === staffingId)
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       : [];
     const others = list.filter(
-      (c) => (c.is_parent ?? c.isParent) && c.slug !== 'staffing-companies'
+      (c) => (c.is_parent ?? c.isParent) && c.slug !== 'staffing-recruiting'
     );
     const categoriesForDropdown = [
       ...(staffingId ? [list.find((c) => c.id === staffingId)].filter(Boolean) : []),
@@ -97,7 +97,7 @@ export default function SearchBar() {
     const slug = (selectedCategorySlug || '').trim();
     const base = !slug
       ? getDirectoryUrl()
-      : slug === 'staffing-companies'
+      : slug === 'staffing-recruiting'
         ? getDirectoryStaffingUrl()
         : getDirectoryUrl(slug, {
             underStaffing:

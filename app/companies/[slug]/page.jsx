@@ -28,7 +28,7 @@ async function getCompanyData(slug) {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   let companyName = 'Company Profile';
-  let description = `View this company profile on FirmsLedger – the global verified business directory.`;
+  let description = `View this company profile on FirmsLedger – the global directory of verified products and services.`;
 
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
         if (data?.[0]?.name) {
           companyName = data[0].name;
           const location = [data[0].hq_city, data[0].hq_country].filter(Boolean).join(', ');
-          description = `${companyName} is a verified business${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their products & services, team size, and contact information.`;
+          description = `${companyName} is a verified business${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their services, specializations, team size, reviews, and contact information.`;
         }
       }
     }
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }) {
   return {
     title: companyName,
     description,
-    robots: { index: false, follow: false },
+    robots: { index: true, follow: true },
     alternates: { canonical },
     openGraph: {
       title: `${companyName} | ${SITE_NAME}`,

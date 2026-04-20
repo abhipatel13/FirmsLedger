@@ -194,7 +194,7 @@ function ServiceProductSelect({ categories, selectedService, setSelectedService 
                       className={`flex-1 text-left px-2 py-1.5 text-sm font-semibold rounded-md transition-colors ${
                         selectedService === parent.slug
                           ? 'bg-orange-50 text-orange-700'
-                          : 'text-[#0D1B2A] hover:bg-slate-50'
+                          : 'text-[#1A2E4A] hover:bg-slate-50'
                       }`}
                     >
                       {parent.name}

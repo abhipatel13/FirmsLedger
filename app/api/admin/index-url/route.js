@@ -151,7 +151,7 @@ export async function POST(request) {
 
   // --- Update indexed_at in Supabase ---
   try {
-    const slug = url.split('/blogs/')[1];
+    const slug = url.split('/blog/')[1];
     if (slug) {
       const supabase = getServiceSupabase();
       await supabase

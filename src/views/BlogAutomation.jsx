@@ -87,7 +87,7 @@ export default function BlogAutomation() {
       });
       const data = await res.json();
       if (data.success) {
-        alert(`Published! /blogs/${data.slug}`);
+        alert(`Published! /blog/${data.slug}`);
         await fetchTopics();
         await fetchPosts();
       } else {
@@ -108,7 +108,7 @@ export default function BlogAutomation() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-extrabold text-[#0D1B2A]">Blog Automation</h1>
+          <h1 className="text-3xl font-extrabold text-[#1A2E4A]">Blog Automation</h1>
           <p className="text-slate-500 mt-1 text-sm">
             Queue prompts → AI writes the article → auto-publishes + pings Google daily at 8 AM UTC.
           </p>
@@ -191,7 +191,7 @@ export default function BlogAutomation() {
               onClick={() => setActiveTab(key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 activeTab === key
-                  ? 'bg-[#0D1B2A] text-white'
+                  ? 'bg-[#1A2E4A] text-white'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -228,11 +228,11 @@ export default function BlogAutomation() {
                             </span>
                             {topic.slug && (
                               <Link
-                                href={`/blogs/${topic.slug}`}
+                                href={`/blog/${topic.slug}`}
                                 target="_blank"
                                 className="text-xs text-orange-500 hover:underline flex items-center gap-1"
                               >
-                                /blogs/{topic.slug} <ExternalLink className="w-3 h-3" />
+                                /blog/{topic.slug} <ExternalLink className="w-3 h-3" />
                               </Link>
                             )}
                             {topic.error && (
@@ -309,7 +309,7 @@ export default function BlogAutomation() {
                         </p>
                       </div>
                       <Link
-                        href={`/blogs/${post.slug}`}
+                        href={`/blog/${post.slug}`}
                         target="_blank"
                         className="flex items-center gap-1 text-xs text-orange-500 hover:underline flex-shrink-0"
                       >
@@ -331,7 +331,7 @@ export default function BlogAutomation() {
               <li>Add prompts to the queue above (one per blog article)</li>
               <li>Every day at <strong>8 AM UTC</strong>, Vercel cron picks the oldest pending topic</li>
               <li>OpenAI <strong>GPT-4o</strong> generates a full 1,400-word structured article</li>
-              <li>Article is saved to <strong>Supabase</strong> and immediately live at <code className="bg-slate-200 px-1 rounded">/blogs/[slug]</code></li>
+              <li>Article is saved to <strong>Supabase</strong> and immediately live at <code className="bg-slate-200 px-1 rounded">/blog/[slug]</code></li>
               <li>Google is pinged via <strong>Indexing API + sitemap</strong> to request crawling</li>
               <li>Bing is notified via <strong>IndexNow</strong></li>
             </ol>

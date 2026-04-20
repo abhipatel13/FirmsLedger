@@ -11,12 +11,159 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
 
+// Parent category slugs treated as "products" (vs default "services").
+// Keep this in sync with admin category seeding until a DB-level type column exists.
+const PRODUCT_SLUGS = new Set([
+  'manufacturing',
+  'machinery-equipment',
+  'chemicals-materials',
+  'retail-e-commerce',
+  'retail-ecommerce',
+  'products',
+]);
+
+function MobileCategorySection({ label, parents, getSubs, getHref, onNavigate }) {
+  const [open, setOpen] = useState(false);
+  if (!parents.length) return null;
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center justify-between text-slate-700 hover:text-orange-600 py-3 px-3 font-semibold text-sm rounded-lg hover:bg-orange-50 touch-manipulation w-full text-left"
+      >
+        {label}
+        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="pl-3 pb-2 flex flex-col gap-0.5">
+          {parents.map((parent) => {
+            const subs = getSubs(parent.id);
+            return (
+              <div key={parent.id}>
+                <Link
+                  href={getHref(parent)}
+                  onClick={onNavigate}
+                  className="flex items-center gap-1.5 py-2 px-3 text-sm font-semibold text-[#1A2E4A] hover:text-orange-600 rounded-lg hover:bg-orange-50"
+                >
+                  {parent.name}
+                </Link>
+                {subs.length > 0 && (
+                  <div className="pl-5 flex flex-col gap-0.5">
+                    {subs.map((sub) => (
+                      <Link
+                        key={sub.id}
+                        href={getHref(sub, parent)}
+                        onClick={onNavigate}
+                        className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
+function MegaMenu({ parents, getSubs, getHref, onClose, rootHref }) {
+  const [activeId, setActiveId] = useState(parents[0]?.id ?? null);
+
+  useEffect(() => {
+    if (!activeId && parents[0]) setActiveId(parents[0].id);
+  }, [parents, activeId]);
+
+  const activeParent = parents.find((p) => p.id === activeId) || parents[0];
+  const subs = activeParent ? getSubs(activeParent.id) : [];
+
+  if (!parents.length) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-[420px] max-w-[95vw] p-6 text-sm text-slate-500">
+        No categories available yet.
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-[920px] max-w-[95vw] overflow-hidden">
+      <div className="grid grid-cols-[260px_1fr] min-h-[420px]">
+        {/* Left rail — parent categories */}
+        <div className="bg-slate-50/70 border-r border-slate-100 py-2 overflow-y-auto max-h-[480px]">
+          {parents.map((p) => {
+            const isActive = p.id === activeParent?.id;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onMouseEnter={() => setActiveId(p.id)}
+                onFocus={() => setActiveId(p.id)}
+                onClick={() => setActiveId(p.id)}
+                className={`w-full flex items-center justify-between gap-2 px-5 py-3 text-sm font-semibold text-left transition-colors ${
+                  isActive
+                    ? 'bg-orange-50 text-orange-600'
+                    : 'text-slate-700 hover:bg-white hover:text-[#1A2E4A]'
+                }`}
+              >
+                <span className="truncate">{p.name}</span>
+                <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-orange-500' : 'text-slate-400'}`} />
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right panel — subcategory cards */}
+        <div className="p-5 flex flex-col min-h-full">
+          {subs.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3 content-start flex-1 overflow-y-auto max-h-[440px] pr-1">
+              {subs.map((sub) => (
+                <Link
+                  key={sub.id}
+                  href={getHref(sub, activeParent)}
+                  onClick={onClose}
+                  className="group flex items-center gap-3 px-4 py-3 border border-slate-200 rounded-lg text-sm text-slate-700 hover:border-orange-400 hover:text-orange-600 hover:shadow-sm transition-all"
+                >
+                  <span className="w-8 h-8 bg-slate-100 group-hover:bg-orange-50 rounded-md flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-slate-500 group-hover:text-orange-600 transition-colors">
+                    {sub.name.charAt(0)}
+                  </span>
+                  <span className="font-medium truncate">{sub.name}</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-sm text-slate-400">
+              No subcategories yet. Click “Explore” to view {activeParent?.name}.
+            </div>
+          )}
+
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+            <p className="text-xs text-slate-500">
+              {activeParent?.name} · {subs.length} {subs.length === 1 ? 'category' : 'categories'}
+            </p>
+            <Link
+              href={activeParent ? getHref(activeParent) : (rootHref || '/directory')}
+              onClick={onClose}
+              className="inline-flex items-center gap-1.5 bg-[#F5A623] hover:bg-[#D48E1A] text-[#1A2E4A] font-semibold text-sm px-5 py-2.5 rounded-lg shadow-sm transition-colors"
+            >
+              Explore all categories
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [catDropdownOpen, setCatDropdownOpen] = useState(false);
-  const [mobileCatOpen, setMobileCatOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null); // null | 'services' | 'products'
   const catDropdownRef = useRef(null);
   const catTimeoutRef = useRef(null);
   const router = useRouter();
@@ -32,12 +179,13 @@ export default function Layout({ children }) {
     queryFn: () => api.entities.Category.list(),
   });
 
-  const { parentCategories, standaloneCategories } = useMemo(() => {
-    const parents = categories.filter((c) => c.is_parent || c.isParent);
-    const standalone = categories.filter(
-      (c) => !(c.is_parent || c.isParent) && !(c.parent_id || c.parentId)
-    );
-    return { parentCategories: parents, standaloneCategories: standalone };
+  const { parentCategories, serviceParents, productParents } = useMemo(() => {
+    const parents = categories
+      .filter((c) => c.is_parent ?? c.isParent)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const products = parents.filter((p) => PRODUCT_SLUGS.has(p.slug));
+    const services = parents.filter((p) => !PRODUCT_SLUGS.has(p.slug));
+    return { parentCategories: parents, serviceParents: services, productParents: products };
   }, [categories]);
 
   const getSubcategories = useCallback(
@@ -47,9 +195,9 @@ export default function Layout({ children }) {
 
   const getCategoryHref = useCallback((cat, parent) => {
     if (cat.is_parent || cat.isParent) {
-      return cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug);
+      return cat.slug === 'staffing-recruiting' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug);
     }
-    const isStaffing = parent?.slug === 'staffing-companies';
+    const isStaffing = parent?.slug === 'staffing-recruiting';
     return getDirectoryUrl(cat.slug, { underStaffing: isStaffing });
   }, []);
 
@@ -57,34 +205,37 @@ export default function Layout({ children }) {
   useEffect(() => {
     function handleClick(e) {
       if (catDropdownRef.current && !catDropdownRef.current.contains(e.target)) {
-        setCatDropdownOpen(false);
+        setOpenDropdown(null);
       }
     }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const handleCatMouseEnter = () => {
+  const openMenu = (which) => {
     clearTimeout(catTimeoutRef.current);
-    setCatDropdownOpen(true);
+    setOpenDropdown(which);
   };
-  const handleCatMouseLeave = () => {
-    catTimeoutRef.current = setTimeout(() => setCatDropdownOpen(false), 200);
+  const scheduleClose = () => {
+    catTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 200);
   };
+  const closeMenus = () => setOpenDropdown(null);
 
-  const topLocations = [
-    { label: 'United States', value: 'United States' },
+  const topCountries = [
+    { label: 'United States',  value: 'United States' },
     { label: 'United Kingdom', value: 'United Kingdom' },
-    { label: 'Canada', value: 'Canada' },
-    { label: 'Australia', value: 'Australia' },
-    { label: 'Singapore', value: 'Singapore' },
-    { label: 'UAE', value: 'United Arab Emirates' },
+    { label: 'Canada',         value: 'Canada' },
+    { label: 'Australia',      value: 'Australia' },
+    { label: 'India',          value: 'India' },
+    { label: 'Germany',        value: 'Germany' },
+    { label: 'France',         value: 'France' },
+    { label: 'UAE',            value: 'United Arab Emirates' },
   ];
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-50">
         <div className="w-full px-3 sm:px-6 lg:px-10">
           <div className="flex justify-between items-center h-16 sm:h-20 gap-2 sm:gap-8 min-w-0">
             {/* Logo */}
@@ -94,97 +245,53 @@ export default function Layout({ children }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6 flex-1 justify-end">
-              {/* Browse Categories with mega dropdown */}
+              {/* Find By Services / Find By Products mega menus — single menu container anchored to the shared wrapper's right edge so it never overflows the viewport */}
               <div
                 ref={catDropdownRef}
-                className="relative"
-                onMouseEnter={handleCatMouseEnter}
-                onMouseLeave={handleCatMouseLeave}
+                className="relative flex items-center gap-4"
+                onMouseLeave={scheduleClose}
               >
                 <button
-                  onClick={() => setCatDropdownOpen((v) => !v)}
-                  className="flex items-center gap-1 text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm"
+                  type="button"
+                  onMouseEnter={() => openMenu('services')}
+                  onFocus={() => openMenu('services')}
+                  onClick={() => setOpenDropdown((v) => (v === 'services' ? null : 'services'))}
+                  className={`flex items-center gap-1 font-semibold transition-colors text-sm ${
+                    openDropdown === 'services' ? 'text-orange-600' : 'text-slate-700 hover:text-orange-600'
+                  }`}
                 >
-                  Browse Categories
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${catDropdownOpen ? 'rotate-180' : ''}`} />
+                  Find By Services
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === 'services' ? 'rotate-180' : ''}`} />
                 </button>
 
-                {catDropdownOpen && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 w-[700px] max-h-[70vh] overflow-y-auto p-5">
-                    {/* Parent categories with subcategories */}
-                    {parentCategories.length > 0 && (
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-5">
-                        {parentCategories.map((parent) => {
-                          const subs = getSubcategories(parent.id);
-                          return (
-                            <div key={parent.id}>
-                              <Link
-                                href={getCategoryHref(parent)}
-                                onClick={() => setCatDropdownOpen(false)}
-                                className="text-sm font-bold text-[#0D1B2A] hover:text-orange-600 transition-colors flex items-center gap-1.5"
-                              >
-                                {parent.name}
-                                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                              </Link>
-                              {subs.length > 0 && (
-                                <div className="mt-1.5 ml-0.5 flex flex-col gap-1">
-                                  {subs.map((sub) => (
-                                    <Link
-                                      key={sub.id}
-                                      href={getCategoryHref(sub, parent)}
-                                      onClick={() => setCatDropdownOpen(false)}
-                                      className="text-xs text-slate-500 hover:text-orange-600 transition-colors py-0.5 pl-2 border-l-2 border-transparent hover:border-orange-400"
-                                    >
-                                      {sub.name}
-                                    </Link>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+                <button
+                  type="button"
+                  onMouseEnter={() => openMenu('products')}
+                  onFocus={() => openMenu('products')}
+                  onClick={() => setOpenDropdown((v) => (v === 'products' ? null : 'products'))}
+                  className={`flex items-center gap-1 font-semibold transition-colors text-sm ${
+                    openDropdown === 'products' ? 'text-orange-600' : 'text-slate-700 hover:text-orange-600'
+                  }`}
+                >
+                  Find By Products
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === 'products' ? 'rotate-180' : ''}`} />
+                </button>
 
-                    {/* Standalone categories */}
-                    {standaloneCategories.length > 0 && (
-                      <>
-                        {parentCategories.length > 0 && <div className="border-t border-slate-100 my-4" />}
-                        <div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Other Categories</p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {standaloneCategories.map((cat) => (
-                              <Link
-                                key={cat.id}
-                                href={getDirectoryUrl(cat.slug)}
-                                onClick={() => setCatDropdownOpen(false)}
-                                className="text-xs px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-600 rounded-lg hover:bg-orange-50 hover:border-orange-300 hover:text-orange-700 transition-colors"
-                              >
-                                {cat.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {/* View All link */}
-                    <div className="border-t border-slate-100 mt-4 pt-3 text-center">
-                      <Link
-                        href="/Categories"
-                        onClick={() => setCatDropdownOpen(false)}
-                        className="inline-flex items-center gap-1 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors"
-                      >
-                        View All Categories <ChevronRight className="w-4 h-4" />
-                      </Link>
-                    </div>
+                {openDropdown && (
+                  <div
+                    className="absolute top-full right-0 pt-5 z-50"
+                    onMouseEnter={() => openMenu(openDropdown)}
+                  >
+                    <MegaMenu
+                      parents={openDropdown === 'services' ? serviceParents : productParents}
+                      getSubs={getSubcategories}
+                      getHref={getCategoryHref}
+                      onClose={closeMenus}
+                      rootHref={getDirectoryUrl()}
+                    />
                   </div>
                 )}
               </div>
-
-              <Link href={createPageUrl('Blogs')} className="text-slate-700 hover:text-orange-600 font-semibold transition-colors text-sm">
-                Resources
-              </Link>
 
               <div className="flex items-center gap-2 bg-slate-50 rounded-md px-3 py-2 border border-slate-200 hover:border-orange-300 transition-colors">
                 <button
@@ -221,7 +328,7 @@ export default function Layout({ children }) {
               </Button>
 
               <Link href="/ListYourCompany">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-5">
+                <Button className="bg-[#F5A623] hover:bg-[#D48E1A] text-[#1A2E4A] font-semibold text-sm px-5 rounded-lg shadow-md shadow-[#F5A623]/25 btn-premium">
                   Get Listed — It's Free
                 </Button>
               </Link>
@@ -262,80 +369,27 @@ export default function Layout({ children }) {
                     />
                   </div>
                 </div>
-                {/* Mobile: Browse Categories with expandable subcategories */}
-                <button
-                  onClick={() => setMobileCatOpen((v) => !v)}
-                  className="flex items-center justify-between text-slate-700 hover:text-orange-600 py-3 px-3 font-semibold text-sm rounded-lg hover:bg-orange-50 touch-manipulation w-full text-left"
-                >
-                  Browse Categories
-                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${mobileCatOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {mobileCatOpen && (
-                  <div className="pl-3 pb-2 flex flex-col gap-0.5">
-                    {parentCategories.map((parent) => {
-                      const subs = getSubcategories(parent.id);
-                      return (
-                        <div key={parent.id}>
-                          <Link
-                            href={getCategoryHref(parent)}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="flex items-center gap-1.5 py-2 px-3 text-sm font-semibold text-[#0D1B2A] hover:text-orange-600 rounded-lg hover:bg-orange-50"
-                          >
-                            {parent.name}
-                          </Link>
-                          {subs.length > 0 && (
-                            <div className="pl-5 flex flex-col gap-0.5">
-                              {subs.map((sub) => (
-                                <Link
-                                  key={sub.id}
-                                  href={getCategoryHref(sub, parent)}
-                                  onClick={() => setMobileMenuOpen(false)}
-                                  className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
-                                >
-                                  {sub.name}
-                                </Link>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    {standaloneCategories.length > 0 && (
-                      <div className="mt-1 pt-1 border-t border-slate-100">
-                        {standaloneCategories.slice(0, 10).map((cat) => (
-                          <Link
-                            key={cat.id}
-                            href={getDirectoryUrl(cat.slug)}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50 block"
-                          >
-                            {cat.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                    <Link
-                      href="/Categories"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="py-2 px-3 text-xs font-semibold text-orange-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
-                    >
-                      View All Categories →
-                    </Link>
-                  </div>
-                )}
+                {/* Mobile: Find By Services / Find By Products */}
+                <MobileCategorySection
+                  label="Find By Services"
+                  parents={serviceParents}
+                  getSubs={getSubcategories}
+                  getHref={getCategoryHref}
+                  onNavigate={() => setMobileMenuOpen(false)}
+                />
+                <MobileCategorySection
+                  label="Find By Products"
+                  parents={productParents}
+                  getSubs={getSubcategories}
+                  getHref={getCategoryHref}
+                  onNavigate={() => setMobileMenuOpen(false)}
+                />
                 <Link
                   href={getDirectoryUrl()}
                   className="text-slate-700 hover:text-orange-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Browse Agencies
-                </Link>
-                <Link
-                  href={createPageUrl('Blogs')}
-                  className="text-slate-700 hover:text-orange-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Resources
                 </Link>
                 <Link
                   href={createPageUrl('WriteReview')}
@@ -368,15 +422,17 @@ export default function Layout({ children }) {
       <main className="min-w-0 overflow-x-hidden">{children}</main>
 
       {/* Footer */}
-      <footer className="bg-[#0D1B2A] text-white">
-        <div className="w-full px-4 sm:px-6 lg:px-10 py-10 sm:py-16">
+      <footer className="bg-[#1A2E4A] text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-orange-500/5 blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
+        <div className="relative w-full px-4 sm:px-6 lg:px-10 py-12 sm:py-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12 mb-8 sm:mb-12">
             <div className="lg:col-span-2">
               <Link href={createPageUrl('Home')} className="flex items-center mb-6">
                 <img src="/logo-white.svg" alt="FirmsLedger" className="h-11 w-auto" />
               </Link>
               <p className="text-slate-400 text-sm mb-6 leading-relaxed max-w-sm">
-                The trusted global platform to discover and connect with verified business service providers worldwide. Make confident decisions for your business growth.
+                The trusted global business directory. Find and compare verified companies across every industry, worldwide. Make confident hiring decisions.
               </p>
               {/* Social links — add real URLs when available */}
             </div>
@@ -385,38 +441,41 @@ export default function Layout({ children }) {
               <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Platform</h4>
               <div className="flex flex-col gap-3 text-sm">
                 <Link href={createPageUrl('Home')} className="text-slate-400 hover:text-orange-400 transition-colors">Home</Link>
-                <Link href={getDirectoryUrl()} className="text-slate-400 hover:text-orange-400 transition-colors">Browse Agencies</Link>
+                <Link href={getDirectoryUrl()} className="text-slate-400 hover:text-orange-400 transition-colors">Browse Companies</Link>
                 <Link href={createPageUrl('ListYourCompany')} className="text-slate-400 hover:text-orange-400 transition-colors">List your company</Link>
+                <Link href="/claim-listing" className="text-slate-400 hover:text-orange-400 transition-colors">Claim your listing</Link>
                 {isAdmin && (
                   <Link href="/admin" className="text-slate-400 hover:text-orange-400 transition-colors">Admin</Link>
                 )}
-                <Link href={createPageUrl('Blogs')} className="text-slate-400 hover:text-orange-400 transition-colors">Blog</Link>
                 <Link href={createPageUrl('Contact')} className="text-slate-400 hover:text-orange-400 transition-colors">Contact us</Link>
               </div>
             </div>
 
             <div>
-              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Top Categories</h4>
+              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Categories</h4>
               <div className="flex flex-col gap-3 text-sm">
-                {categories.slice(0, 5).map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={cat.slug === 'staffing-companies' ? getDirectoryStaffingUrl() : getDirectoryUrl(cat.slug, { underStaffing: cat.slug !== 'staffing-companies' && categories.some((p) => (p.is_parent ?? p.isParent) && p.slug === 'staffing-companies' && p.id === (cat.parent_id ?? cat.parentId)) })}
-                    className="text-slate-400 hover:text-orange-400 transition-colors"
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
+                {categories
+                  .filter((cat) => cat.is_parent ?? cat.isParent)
+                  .slice(0, 6)
+                  .map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={getDirectoryUrl(cat.slug)}
+                      className="text-slate-400 hover:text-orange-400 transition-colors"
+                    >
+                      {cat.name}
+                    </Link>
+                  ))}
               </div>
             </div>
 
             <div>
-              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Top Locations</h4>
+              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Top Countries</h4>
               <div className="flex flex-col gap-3 text-sm">
-                {topLocations.map(({ label, value }) => (
+                {topCountries.map(({ label, value }) => (
                   <Link
                     key={value}
-                    href={getDirectoryUrl() + '?country=' + encodeURIComponent(value)}
+                    href={`/CountryPage?country=${encodeURIComponent(value)}`}
                     className="text-slate-400 hover:text-orange-400 transition-colors"
                   >
                     {label}

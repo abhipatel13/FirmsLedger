@@ -15,7 +15,7 @@ export default function AgencyCard({ agency }) {
               className="w-14 h-14 rounded-md object-contain border border-slate-100 bg-white flex-shrink-0"
             />
           ) : (
-            <div className="w-14 h-14 rounded-md bg-[#0D1B2A] flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+            <div className="w-14 h-14 rounded-md bg-[#1A2E4A] flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
               {agency.name.charAt(0).toUpperCase()}
             </div>
           )}

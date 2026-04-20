@@ -56,7 +56,7 @@ function LoadingState({ query }) {
   return (
     <div className="min-h-screen bg-[#F7F8FA] flex flex-col">
       {/* Header */}
-      <div className="bg-[#0D1B2A] text-white py-12 px-4">
+      <div className="bg-[#1A2E4A] text-white py-12 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <div className="relative inline-flex mb-5">
             <div className="w-16 h-16 rounded-2xl bg-orange-500/15 flex items-center justify-center">
@@ -194,7 +194,7 @@ export default function AIMatchPage() {
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Hero */}
-      <div className="bg-[#0D1B2A] text-white">
+      <div className="bg-[#1A2E4A] text-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-7 h-7 rounded-lg bg-orange-500/20 flex items-center justify-center">
@@ -335,7 +335,7 @@ export default function AIMatchPage() {
                   {/* CTAs */}
                   <div className="flex flex-wrap gap-2">
                     <Link href={match.slug ? `/companies/${match.slug}` : '#'}>
-                      <button className="flex items-center gap-2 bg-[#0D1B2A] hover:bg-[#162840] text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
+                      <button className="flex items-center gap-2 bg-[#1A2E4A] hover:bg-[#162840] text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
                         View Full Profile <ChevronRight className="w-4 h-4" />
                       </button>
                     </Link>

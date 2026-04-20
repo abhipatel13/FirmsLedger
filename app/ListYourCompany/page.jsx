@@ -16,7 +16,7 @@ const BENEFITS = [
   {
     icon: TrendingUp,
     title: 'Reach More Clients',
-    desc: 'Get discovered by thousands of businesses actively searching for your products & services every month.',
+    desc: 'Get discovered by businesses actively searching for staffing solutions across the US every month.',
   },
   {
     icon: Shield,
@@ -31,9 +31,9 @@ const BENEFITS = [
 ];
 
 const STATS = [
-  { value: '10,000+', label: 'Companies Listed' },
-  { value: '50+',     label: 'Countries' },
-  { value: '200K+',   label: 'Monthly Visitors' },
+  { value: '30+',    label: 'Verified Companies' },
+  { value: 'Global', label: 'Countries Covered' },
+  { value: '15+',    label: 'Industry Categories' },
 ];
 
 const STEPS = [
@@ -78,14 +78,14 @@ export default function ListYourCompanyPage() {
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h1 className="text-2xl font-extrabold text-[#0D1B2A] mb-3">You're on the list!</h1>
+          <h1 className="text-2xl font-extrabold text-[#1A2E4A] mb-3">You're on the list!</h1>
           <p className="text-slate-500 mb-8 leading-relaxed">
             We've received your submission and will review your company profile within 1–2 business days.
             We'll reach out at <strong className="text-slate-700">{form.email}</strong> once your listing is live.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href={createPageUrl('Directory')}>
-              <button className="px-6 py-3 bg-[#0D1B2A] text-white text-sm font-semibold rounded-lg hover:bg-[#1a2e47] transition-colors">
+              <button className="px-6 py-3 bg-[#1A2E4A] text-white text-sm font-semibold rounded-lg hover:bg-[#1a2e47] transition-colors">
                 Browse Directory
               </button>
             </Link>
@@ -105,19 +105,21 @@ export default function ListYourCompanyPage() {
     <div className="min-h-screen bg-[#F7F8FA]">
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <div className="bg-[#0D1B2A] text-white">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+      <div className="bg-[#1A2E4A] text-white relative overflow-hidden">
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-indigo-500/8 blur-[100px] pointer-events-none" />
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-medium text-slate-300 mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-5 py-2 text-xs font-semibold text-orange-300 mb-6 uppercase tracking-widest">
               <Star className="w-3.5 h-3.5 text-[#F5A623]" /> Free to list · No credit card required
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight mb-4">
-              Get your company in front of<br />
-              <span className="text-[#F5A623]">thousands of buyers</span>
+              Get your business in front of<br />
+              <span className="text-[#F5A623]">buyers worldwide</span>
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-xl">
-              FirmsLedger is the global directory where businesses find verified service providers.
-              Submit your listing today and start winning new clients.
+              FirmsLedger is a global directory where companies find verified products and services across every industry.
+              Submit your listing today and start winning new clients worldwide.
             </p>
 
             {/* Stats */}
@@ -140,7 +142,7 @@ export default function ListYourCompanyPage() {
             {STEPS.map((step, i) => (
               <React.Fragment key={step.n}>
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-[#0D1B2A] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-[#1A2E4A] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
                     {step.n}
                   </div>
                   <span className="text-sm font-medium text-slate-700">{step.label}</span>
@@ -167,7 +169,7 @@ export default function ListYourCompanyPage() {
                   <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center mb-3">
                     <Icon className="w-5 h-5 text-orange-500" />
                   </div>
-                  <h3 className="font-bold text-[#0D1B2A] text-sm mb-1.5">{title}</h3>
+                  <h3 className="font-bold text-[#1A2E4A] text-sm mb-1.5">{title}</h3>
                   <p className="text-slate-500 text-xs leading-relaxed">{desc}</p>
                 </div>
               ))}
@@ -176,7 +178,7 @@ export default function ListYourCompanyPage() {
             {/* Form */}
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
               <div className="px-6 sm:px-8 py-6 border-b border-slate-100">
-                <h2 className="text-xl font-extrabold text-[#0D1B2A]">Tell us about your company</h2>
+                <h2 className="text-xl font-extrabold text-[#1A2E4A]">Tell us about your company</h2>
                 <p className="text-slate-500 text-sm mt-1">All fields marked * are required. We'll review your listing within 1–2 business days.</p>
               </div>
 
@@ -283,7 +285,7 @@ export default function ListYourCompanyPage() {
           <div className="space-y-5 lg:sticky lg:top-6">
             {/* What happens next */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6">
-              <h3 className="font-bold text-[#0D1B2A] mb-4">What happens next?</h3>
+              <h3 className="font-bold text-[#1A2E4A] mb-4">What happens next?</h3>
               <div className="space-y-4">
                 {[
                   { title: 'We review your submission', desc: 'Our team checks your details within 1–2 business days.' },
@@ -306,7 +308,7 @@ export default function ListYourCompanyPage() {
 
             {/* Included in free listing */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6">
-              <h3 className="font-bold text-[#0D1B2A] mb-4">Included in your free listing</h3>
+              <h3 className="font-bold text-[#1A2E4A] mb-4">Included in your free listing</h3>
               <ul className="space-y-2.5">
                 {[
                   'Company profile page',
@@ -325,7 +327,7 @@ export default function ListYourCompanyPage() {
             </div>
 
             {/* Trust note */}
-            <div className="bg-[#0D1B2A] rounded-2xl p-6 text-white">
+            <div className="bg-[#1A2E4A] rounded-2xl p-6 text-white">
               <div className="flex items-center gap-2 mb-3">
                 <Shield className="w-5 h-5 text-[#F5A623]" />
                 <span className="font-bold text-sm">Verified directory</span>

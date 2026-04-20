@@ -1,208 +1,108 @@
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
-// ─── Static blog slugs ──────────────────────────────────────────────────────
-const BLOG_SLUGS = [
-  'top-american-cruise-companies-2026',
-  'top-medical-ventilator-manufacturers-usa-2026',
-  'best-specialty-chemical-companies-australia-2026',
-  'best-solar-panels-australia-2026',
-  'top-10-stabilizer-brands-india-2026',
-  'top-10-switch-socket-brands-india-2026',
-  'best-solar-panel-brands-india-2026',
-  'top-10-led-light-brands-india-2026',
-  'top-10-water-pump-brands-india-2026',
-  'top-10-drilling-machine-brands-india-2026',
-  'top-10-milling-machine-manufacturers-india-2026',
-  'top-10-recruitment-agencies-india-2026',
-  'best-contract-staffing-agencies-india-2026',
-  'best-permanent-staffing-rpo-firms-india-2026',
-  'top-healthcare-staffing-agencies-ahmedabad-2026',
-  'top-10-it-staffing-companies-india-2026',
-  'top-industrial-staffing-companies-india-2026',
-  'top-staffing-agencies-delhi-ncr-2026',
-  'top-it-staffing-companies-bangalore-2026',
-];
 
 const STAFFING_SLUGS = [
-  'executive-search', 'healthcare-staffing', 'it-staffing', 'temporary-staffing',
-  'permanent-staffing', 'remote-staffing', 'contract-staffing',
-  'hr-recruitment-services', 'technical-staffing', 'industrial-staffing',
+  'it-technology-staffing', 'healthcare-staffing', 'industrial-manufacturing-staffing',
+  'construction-staffing', 'accounting-finance-staffing', 'administrative-office-staffing',
+  'executive-search-recruiting', 'legal-staffing', 'engineering-staffing',
+  'warehouse-logistics-staffing', 'temporary-staffing', 'remote-staffing',
+  'government-defense-staffing', 'hospitality-event-staffing', 'scientific-pharmaceutical-staffing',
 ];
 
-const TARGET_COUNTRIES = [
-  'india', 'united-states', 'united-kingdom', 'australia', 'canada',
-  'germany', 'france', 'uae', 'singapore', 'south-africa',
-  'netherlands', 'brazil', 'mexico', 'japan', 'new-zealand',
-  'italy', 'spain', 'china', 'south-korea', 'malaysia',
-  'indonesia', 'thailand', 'vietnam', 'philippines', 'nigeria',
-  'kenya', 'egypt', 'saudi-arabia', 'qatar', 'turkey',
-  'poland', 'sweden', 'switzerland', 'argentina', 'colombia',
-  'pakistan', 'bangladesh', 'israel', 'norway', 'denmark',
+const TARGET_STATES = [
+  'california', 'texas', 'new-york', 'florida', 'illinois',
+  'pennsylvania', 'ohio', 'georgia', 'virginia', 'north-carolina',
+  'michigan', 'maryland', 'massachusetts', 'washington', 'colorado',
+  'tennessee', 'arizona', 'minnesota', 'wisconsin', 'missouri',
+  'indiana', 'oregon', 'connecticut', 'new-jersey', 'south-carolina',
 ];
 
-// Slug → display name for building ?country= query params
-const COUNTRY_NAMES = {
-  'india': 'India', 'united-states': 'United States', 'united-kingdom': 'United Kingdom',
-  'australia': 'Australia', 'canada': 'Canada', 'germany': 'Germany', 'france': 'France',
-  'uae': 'UAE', 'singapore': 'Singapore', 'south-africa': 'South Africa',
-  'netherlands': 'Netherlands', 'brazil': 'Brazil', 'mexico': 'Mexico', 'japan': 'Japan',
-  'new-zealand': 'New Zealand', 'italy': 'Italy', 'spain': 'Spain', 'china': 'China',
-  'south-korea': 'South Korea', 'malaysia': 'Malaysia', 'indonesia': 'Indonesia',
-  'thailand': 'Thailand', 'vietnam': 'Vietnam', 'philippines': 'Philippines',
-  'nigeria': 'Nigeria', 'kenya': 'Kenya', 'egypt': 'Egypt', 'saudi-arabia': 'Saudi Arabia',
-  'qatar': 'Qatar', 'turkey': 'Turkey', 'poland': 'Poland', 'sweden': 'Sweden',
-  'switzerland': 'Switzerland', 'argentina': 'Argentina', 'colombia': 'Colombia',
-  'pakistan': 'Pakistan', 'bangladesh': 'Bangladesh', 'israel': 'Israel',
-  'norway': 'Norway', 'denmark': 'Denmark',
-};
-
-// State slug → display name (for key states)
+// US-focused: State slug → display name
 const STATE_NAMES = {
-  'gujarat': 'Gujarat', 'maharashtra': 'Maharashtra', 'karnataka': 'Karnataka',
-  'tamil-nadu': 'Tamil Nadu', 'delhi': 'Delhi', 'uttar-pradesh': 'Uttar Pradesh',
-  'rajasthan': 'Rajasthan', 'telangana': 'Telangana', 'andhra-pradesh': 'Andhra Pradesh',
-  'kerala': 'Kerala', 'west-bengal': 'West Bengal', 'punjab': 'Punjab',
   'california': 'California', 'texas': 'Texas', 'new-york': 'New York',
   'florida': 'Florida', 'illinois': 'Illinois', 'pennsylvania': 'Pennsylvania',
-  'massachusetts': 'Massachusetts', 'washington': 'Washington', 'georgia': 'Georgia',
-  'new-jersey': 'New Jersey',
-  'england': 'England', 'scotland': 'Scotland', 'wales': 'Wales',
-  'new-south-wales': 'New South Wales', 'victoria': 'Victoria',
-  'queensland': 'Queensland', 'western-australia': 'Western Australia',
-  'ontario': 'Ontario', 'british-columbia': 'British Columbia', 'quebec': 'Quebec',
-  'bavaria': 'Bavaria', 'north-rhine-westphalia': 'North Rhine-Westphalia',
-  'dubai': 'Dubai',
+  'ohio': 'Ohio', 'georgia': 'Georgia', 'virginia': 'Virginia',
+  'north-carolina': 'North Carolina', 'michigan': 'Michigan', 'maryland': 'Maryland',
+  'massachusetts': 'Massachusetts', 'washington': 'Washington', 'colorado': 'Colorado',
+  'tennessee': 'Tennessee', 'arizona': 'Arizona', 'minnesota': 'Minnesota',
+  'wisconsin': 'Wisconsin', 'missouri': 'Missouri', 'indiana': 'Indiana',
+  'oregon': 'Oregon', 'connecticut': 'Connecticut', 'new-jersey': 'New Jersey',
+  'south-carolina': 'South Carolina',
 };
 
-// Key states per country for state-level pages
+// Key US states for state-level pages
 const KEY_STATES = [
-  // India
-  { country: 'india', state: 'gujarat' },
-  { country: 'india', state: 'maharashtra' },
-  { country: 'india', state: 'karnataka' },
-  { country: 'india', state: 'tamil-nadu' },
-  { country: 'india', state: 'delhi' },
-  { country: 'india', state: 'uttar-pradesh' },
-  { country: 'india', state: 'rajasthan' },
-  { country: 'india', state: 'telangana' },
-  { country: 'india', state: 'andhra-pradesh' },
-  { country: 'india', state: 'kerala' },
-  { country: 'india', state: 'west-bengal' },
-  { country: 'india', state: 'punjab' },
-  // USA
   { country: 'united-states', state: 'california' },
   { country: 'united-states', state: 'texas' },
   { country: 'united-states', state: 'new-york' },
   { country: 'united-states', state: 'florida' },
   { country: 'united-states', state: 'illinois' },
   { country: 'united-states', state: 'pennsylvania' },
+  { country: 'united-states', state: 'ohio' },
+  { country: 'united-states', state: 'georgia' },
+  { country: 'united-states', state: 'virginia' },
+  { country: 'united-states', state: 'north-carolina' },
+  { country: 'united-states', state: 'michigan' },
+  { country: 'united-states', state: 'maryland' },
   { country: 'united-states', state: 'massachusetts' },
   { country: 'united-states', state: 'washington' },
-  { country: 'united-states', state: 'georgia' },
+  { country: 'united-states', state: 'colorado' },
+  { country: 'united-states', state: 'tennessee' },
+  { country: 'united-states', state: 'arizona' },
+  { country: 'united-states', state: 'minnesota' },
   { country: 'united-states', state: 'new-jersey' },
-  // UK
-  { country: 'united-kingdom', state: 'england' },
-  { country: 'united-kingdom', state: 'scotland' },
-  { country: 'united-kingdom', state: 'wales' },
-  // Australia
-  { country: 'australia', state: 'new-south-wales' },
-  { country: 'australia', state: 'victoria' },
-  { country: 'australia', state: 'queensland' },
-  { country: 'australia', state: 'western-australia' },
-  // Canada
-  { country: 'canada', state: 'ontario' },
-  { country: 'canada', state: 'british-columbia' },
-  { country: 'canada', state: 'quebec' },
-  // Germany
-  { country: 'germany', state: 'bavaria' },
-  { country: 'germany', state: 'north-rhine-westphalia' },
+  { country: 'united-states', state: 'indiana' },
+  { country: 'united-states', state: 'missouri' },
+  { country: 'united-states', state: 'wisconsin' },
+  { country: 'united-states', state: 'oregon' },
+  { country: 'united-states', state: 'connecticut' },
+  { country: 'united-states', state: 'south-carolina' },
 ];
 
-// Key cities for city-level pages
+// Key US cities for city-level pages
 const KEY_CITIES = [
-  // India
-  { country: 'india', state: 'gujarat',         city: 'ahmedabad' },
-  { country: 'india', state: 'gujarat',         city: 'surat' },
-  { country: 'india', state: 'gujarat',         city: 'vadodara' },
-  { country: 'india', state: 'gujarat',         city: 'rajkot' },
-  { country: 'india', state: 'maharashtra',     city: 'mumbai' },
-  { country: 'india', state: 'maharashtra',     city: 'pune' },
-  { country: 'india', state: 'maharashtra',     city: 'nagpur' },
-  { country: 'india', state: 'karnataka',       city: 'bangalore' },
-  { country: 'india', state: 'karnataka',       city: 'mysore' },
-  { country: 'india', state: 'tamil-nadu',      city: 'chennai' },
-  { country: 'india', state: 'tamil-nadu',      city: 'coimbatore' },
-  { country: 'india', state: 'telangana',       city: 'hyderabad' },
-  { country: 'india', state: 'delhi',           city: 'new-delhi' },
-  { country: 'india', state: 'uttar-pradesh',   city: 'lucknow' },
-  { country: 'india', state: 'uttar-pradesh',   city: 'noida' },
-  { country: 'india', state: 'west-bengal',     city: 'kolkata' },
-  { country: 'india', state: 'rajasthan',       city: 'jaipur' },
-  { country: 'india', state: 'kerala',          city: 'kochi' },
-  // USA
-  { country: 'united-states', state: 'california',  city: 'los-angeles' },
-  { country: 'united-states', state: 'california',  city: 'san-francisco' },
-  { country: 'united-states', state: 'texas',       city: 'houston' },
-  { country: 'united-states', state: 'texas',       city: 'dallas' },
-  { country: 'united-states', state: 'new-york',    city: 'new-york-city' },
-  { country: 'united-states', state: 'florida',     city: 'miami' },
-  { country: 'united-states', state: 'illinois',    city: 'chicago' },
-  // UK
-  { country: 'united-kingdom', state: 'england',    city: 'london' },
-  { country: 'united-kingdom', state: 'england',    city: 'manchester' },
-  { country: 'united-kingdom', state: 'england',    city: 'birmingham' },
-  // Australia
-  { country: 'australia', state: 'new-south-wales', city: 'sydney' },
-  { country: 'australia', state: 'victoria',        city: 'melbourne' },
-  { country: 'australia', state: 'queensland',      city: 'brisbane' },
-  // Canada
-  { country: 'canada', state: 'ontario',            city: 'toronto' },
-  { country: 'canada', state: 'british-columbia',   city: 'vancouver' },
-  // UAE
-  { country: 'uae', state: 'dubai',                 city: 'dubai' },
+  { country: 'united-states', state: 'california',      city: 'los-angeles' },
+  { country: 'united-states', state: 'california',      city: 'san-francisco' },
+  { country: 'united-states', state: 'california',      city: 'san-diego' },
+  { country: 'united-states', state: 'california',      city: 'san-jose' },
+  { country: 'united-states', state: 'texas',           city: 'houston' },
+  { country: 'united-states', state: 'texas',           city: 'dallas' },
+  { country: 'united-states', state: 'texas',           city: 'austin' },
+  { country: 'united-states', state: 'texas',           city: 'san-antonio' },
+  { country: 'united-states', state: 'new-york',        city: 'new-york-city' },
+  { country: 'united-states', state: 'florida',         city: 'miami' },
+  { country: 'united-states', state: 'florida',         city: 'tampa' },
+  { country: 'united-states', state: 'florida',         city: 'orlando' },
+  { country: 'united-states', state: 'florida',         city: 'jacksonville' },
+  { country: 'united-states', state: 'illinois',        city: 'chicago' },
+  { country: 'united-states', state: 'pennsylvania',    city: 'philadelphia' },
+  { country: 'united-states', state: 'pennsylvania',    city: 'pittsburgh' },
+  { country: 'united-states', state: 'ohio',            city: 'columbus' },
+  { country: 'united-states', state: 'ohio',            city: 'cleveland' },
+  { country: 'united-states', state: 'ohio',            city: 'cincinnati' },
+  { country: 'united-states', state: 'georgia',         city: 'atlanta' },
+  { country: 'united-states', state: 'virginia',        city: 'richmond' },
+  { country: 'united-states', state: 'north-carolina',  city: 'charlotte' },
+  { country: 'united-states', state: 'north-carolina',  city: 'raleigh' },
+  { country: 'united-states', state: 'michigan',        city: 'detroit' },
+  { country: 'united-states', state: 'maryland',        city: 'baltimore' },
+  { country: 'united-states', state: 'massachusetts',   city: 'boston' },
+  { country: 'united-states', state: 'washington',      city: 'seattle' },
+  { country: 'united-states', state: 'colorado',        city: 'denver' },
+  { country: 'united-states', state: 'tennessee',       city: 'nashville' },
+  { country: 'united-states', state: 'arizona',         city: 'phoenix' },
+  { country: 'united-states', state: 'minnesota',       city: 'minneapolis' },
+  { country: 'united-states', state: 'missouri',        city: 'kansas-city' },
+  { country: 'united-states', state: 'missouri',        city: 'st-louis' },
+  { country: 'united-states', state: 'indiana',         city: 'indianapolis' },
+  { country: 'united-states', state: 'oregon',          city: 'portland' },
+  { country: 'united-states', state: 'new-jersey',      city: 'newark' },
+  { country: 'united-states', state: 'wisconsin',       city: 'milwaukee' },
+  { country: 'united-states', state: 'connecticut',     city: 'hartford' },
+  { country: 'united-states', state: 'south-carolina',  city: 'charleston' },
 ];
 
-// India city-level data for sitemap — all states + union territories
-const INDIA_CITY_ROUTES = [
-  { stateName: 'Andhra Pradesh',  cities: ['Visakhapatnam','Vijayawada','Guntur','Tirupati','Nellore','Kurnool','Kakinada','Rajahmundry','Kadapa','Anantapur','Eluru','Ongole','Chittoor','Srikakulam','Vizianagaram','Proddatur','Hindupur','Tenali','Machilipatnam','Bhimavaram','Adoni','Nandyal','Narasaraopet','Tadipatri','Dharmavaram','Amaravati'] },
-  { stateName: 'Arunachal Pradesh', cities: ['Itanagar','Naharlagun','Pasighat','Tawang','Ziro','Bomdila','Tezu','Along','Aalo','Khonsa','Roing','Changlang','Namsai'] },
-  { stateName: 'Assam',           cities: ['Guwahati','Silchar','Dibrugarh','Jorhat','Nagaon','Tinsukia','Tezpur','Bongaigaon','Dhubri','Diphu','Goalpara','Karimganj','North Lakhimpur','Sivasagar','Golaghat','Barpeta','Nalbari','Hailakandi','Haflong','Kokrajhar','Lumding','Mangaldoi','Hojai','Biswanath Chariali'] },
-  { stateName: 'Bihar',           cities: ['Patna','Gaya','Bhagalpur','Muzaffarpur','Darbhanga','Purnia','Arrah','Bihar Sharif','Begusarai','Katihar','Munger','Chhapra','Bettiah','Motihari','Samastipur','Hajipur','Sitamarhi','Madhubani','Supaul','Kishanganj','Araria','Nawada','Jamui','Nalanda','Aurangabad','Gopalganj','Siwan','Vaishali','Madhepura','Saharsa','Khagaria','Buxar'] },
-  { stateName: 'Chhattisgarh',    cities: ['Raipur','Bhilai','Bilaspur','Durg','Korba','Rajnandgaon','Raigarh','Jagdalpur','Ambikapur','Dhamtari','Mahasamund','Kanker','Kawardha','Bemetara','Janjgir','Baloda Bazar','Kondagaon','Bastar'] },
-  { stateName: 'Goa',             cities: ['Panaji','Margao','Vasco da Gama','Mapusa','Ponda','Bicholim','Curchorem','Sanquelim','Mormugao','Calangute'] },
-  { stateName: 'Gujarat',         cities: ['Ahmedabad','Surat','Vadodara','Rajkot','Gandhinagar','Bhavnagar','Jamnagar','Junagadh','Anand','Mehsana','Nadiad','Morbi','Surendranagar','Bharuch','Navsari','Valsad','Botad','Porbandar','Amreli','Patan','Dahod','Palanpur','Godhra','Veraval','Gandhidham','Dwarka','Ankleshwar','Kalol','Mundra','Deesa','Gondal','Wankaner','Modasa','Visnagar','Unjha','Sidhpur','Sanand','Dholka','Dhoraji','Jetpur','Upleta','Mahuva','Palitana','Halol'] },
-  { stateName: 'Haryana',         cities: ['Gurgaon','Faridabad','Panipat','Hisar','Rohtak','Ambala','Karnal','Sonipat','Yamunanagar','Rewari','Bhiwani','Jhajjar','Sirsa','Jind','Kaithal','Kurukshetra','Palwal','Fatehabad','Panchkula','Narnaul','Bahadurgarh','Hansi','Tohana','Charkhi Dadri','Ballabhgarh','Manesar','Dharuhera'] },
-  { stateName: 'Himachal Pradesh', cities: ['Shimla','Manali','Dharamsala','Solan','Mandi','Kullu','Hamirpur','Una','Chamba','Bilaspur','Kangra','Nahan','Sundarnagar','Palampur','Baddi','Nurpur','Dalhousie','Kasauli','Parwanoo','Rampur'] },
-  { stateName: 'Jharkhand',       cities: ['Ranchi','Jamshedpur','Dhanbad','Bokaro','Deoghar','Hazaribagh','Giridih','Ramgarh','Medininagar','Gumla','Lohardaga','Simdega','Jamtara','Dumka','Pakur','Godda','Sahibganj','Latehar','Garhwa','Koderma','Khunti','Chaibasa','Phusro','Sindri','Chas'] },
-  { stateName: 'Karnataka',       cities: ['Bangalore','Mysore','Hubli','Mangalore','Belagavi','Kalaburagi','Davangere','Bellary','Shimoga','Tumkur','Raichur','Bidar','Vijayapura','Hassan','Udupi','Mandya','Chikkamagaluru','Chitradurga','Dharwad','Gadag','Haveri','Koppal','Bagalkot','Yadgir','Chamarajanagar','Kolar','Chikkaballapura','Ramanagara','Anekal','Hospet','Gangavati','Ranebennur','Bhadravati','Tiptur','Channapatna','Gundlupet','Puttur','Manipal','Sirsi','Karwar'] },
-  { stateName: 'Kerala',          cities: ['Kochi','Thiruvananthapuram','Kozhikode','Thrissur','Kollam','Kannur','Alappuzha','Palakkad','Malappuram','Kottayam','Idukki','Pathanamthitta','Wayanad','Kasaragod','Munnar','Guruvayur','Kayamkulam','Changanacherry','Tirur','Manjeri','Perinthalmanna','Ottappalam','Shoranur','Chalakudy','Irinjalakuda','Muvattupuzha','Perumbavoor','Aluva','Thalassery','Vatakara','Kanhangad','Payyanur','Punalur','Adoor','Thiruvalla','Haripad','Mavelikkara'] },
-  { stateName: 'Madhya Pradesh',  cities: ['Bhopal','Indore','Jabalpur','Gwalior','Ujjain','Sagar','Satna','Rewa','Ratlam','Dewas','Chhindwara','Singrauli','Burhanpur','Khandwa','Bhind','Morena','Guna','Shivpuri','Datia','Mandsaur','Neemuch','Hoshangabad','Sehore','Vidisha','Raisen','Betul','Balaghat','Mandla','Anuppur','Umaria','Shahdol','Sidhi','Katni','Damoh','Panna','Chhatarpur','Tikamgarh','Ashoknagar','Rajgarh','Shajapur','Alirajpur','Barwani','Dhar','Jhabua','Khargone'] },
-  { stateName: 'Maharashtra',     cities: ['Mumbai','Pune','Nagpur','Thane','Nashik','Aurangabad','Navi Mumbai','Solapur','Kolhapur','Amravati','Sangli','Satara','Jalgaon','Akola','Latur','Dhule','Ahmednagar','Chandrapur','Parbhani','Nanded','Osmanabad','Buldhana','Washim','Yavatmal','Wardha','Bhandara','Gondia','Gadchiroli','Ratnagiri','Sindhudurg','Raigad','Alibaug','Panvel','Mira-Bhayandar','Vasai-Virar','Kalyan','Dombivali','Ulhasnagar','Bhiwandi','Badlapur','Malegaon','Jalna','Hingoli','Nandurbar','Palghar','Ichalkaranji','Miraj','Barshi','Pandharpur','Baramati','Shirdi','Kopargaon'] },
-  { stateName: 'Manipur',         cities: ['Imphal','Thoubal','Bishnupur','Churachandpur','Ukhrul','Senapati','Tamenglong','Chandel','Jiribam','Kakching','Kangpokpi'] },
-  { stateName: 'Meghalaya',       cities: ['Shillong','Tura','Nongstoin','Williamnagar','Jowai','Baghmara','Resubelpara','Ampati','Nongpoh','Khliehriat','Cherrapunji'] },
-  { stateName: 'Mizoram',         cities: ['Aizawl','Lunglei','Serchhip','Kolasib','Champhai','Saiha','Mamit','Lawngtlai'] },
-  { stateName: 'Nagaland',        cities: ['Kohima','Dimapur','Mokokchung','Wokha','Tuensang','Mon','Zunheboto','Phek','Longleng','Kiphire','Peren'] },
-  { stateName: 'Odisha',          cities: ['Bhubaneswar','Cuttack','Rourkela','Brahmapur','Sambalpur','Puri','Balasore','Bhadrak','Baripada','Jharsuguda','Bargarh','Dhenkanal','Keonjhar','Phulbani','Rayagada','Koraput','Nabarangpur','Bolangir','Kendrapara','Paradip','Talcher','Angul','Jajpur','Jagatsinghpur','Khordha','Nayagarh','Berhampur','Sundargarh','Malkangiri','Nuapada','Sonepur','Kalahandi'] },
-  { stateName: 'Punjab',          cities: ['Ludhiana','Amritsar','Jalandhar','Patiala','Bathinda','Mohali','Hoshiarpur','Gurdaspur','Firozpur','Moga','Fatehgarh Sahib','Ropar','Sangrur','Barnala','Mansa','Faridkot','Muktsar','Fazilka','Pathankot','Kapurthala','Nawanshahr','Tarn Taran','Malerkotla','Khanna','Phagwara','Abohar','Rajpura','Zirakpur','Morinda','Samana'] },
-  { stateName: 'Rajasthan',       cities: ['Jaipur','Jodhpur','Udaipur','Kota','Ajmer','Bikaner','Alwar','Bhilwara','Bharatpur','Sikar','Jhunjhunu','Sri Ganganagar','Pali','Barmer','Jaisalmer','Chittorgarh','Tonk','Bundi','Sawai Madhopur','Nagaur','Jhalawar','Karauli','Dholpur','Dausa','Rajsamand','Dungarpur','Banswara','Pratapgarh','Sirohi','Hanumangarh','Churu','Jalor','Baran','Beawar','Kishangarh','Makrana','Sujangarh','Fatehpur','Balotra','Hindaun','Gangapur City'] },
-  { stateName: 'Sikkim',          cities: ['Gangtok','Namchi','Mangan','Gyalshing','Ravangla','Jorethang','Nayabazar','Singtam','Rangpo'] },
-  { stateName: 'Tamil Nadu',      cities: ['Chennai','Coimbatore','Madurai','Tiruchirappalli','Salem','Tiruppur','Erode','Vellore','Thoothukudi','Tirunelveli','Thanjavur','Dindigul','Kanchipuram','Cuddalore','Nagapattinam','Namakkal','Ariyalur','Perambalur','Pudukkottai','Ramanathapuram','Sivaganga','Theni','Virudhunagar','Krishnagiri','Dharmapuri','Tiruvannamalai','Villupuram','Tiruvarur','Karur','Kallakurichi','Ranipet','Chengalpattu','Tenkasi','Tirupattur','Mayiladuthurai','Hosur','Ooty','Kodaikanal','Kumbakonam','Karaikudi','Pollachi','Sivakasi','Ambattur','Avadi','Tambaram'] },
-  { stateName: 'Telangana',       cities: ['Hyderabad','Warangal','Nizamabad','Karimnagar','Khammam','Ramagundam','Mahbubnagar','Nalgonda','Adilabad','Suryapet','Miryalaguda','Siddipet','Mancherial','Jagtial','Kothagudem','Bhongir','Vikarabad','Sangareddy','Medak','Wanaparthy','Gadwal','Nagarkurnool','Narayanpet','Bhadradri','Mahabubabad','Jangaon','Hanamkonda','Secunderabad','Cyberabad'] },
-  { stateName: 'Tripura',         cities: ['Agartala','Udaipur','Dharmanagar','Kailasahar','Belonia','Ambassa','Bishalgarh','Kamalpur','Sabroom','Sonamura','Khowai','Teliamura'] },
-  { stateName: 'Uttar Pradesh',   cities: ['Lucknow','Kanpur','Agra','Varanasi','Prayagraj','Meerut','Noida','Ghaziabad','Bareilly','Aligarh','Moradabad','Saharanpur','Gorakhpur','Firozabad','Jhansi','Muzaffarnagar','Mathura','Shahjahanpur','Rampur','Sitapur','Bulandshahar','Hapur','Sambhal','Amroha','Etawah','Mainpuri','Hardoi','Unnao','Rae Bareli','Sultanpur','Ayodhya','Ambedkar Nagar','Bahraich','Barabanki','Gonda','Balrampur','Basti','Deoria','Kushinagar','Maharajganj','Siddharthnagar','Azamgarh','Mau','Ballia','Jaunpur','Ghazipur','Chandauli','Mirzapur','Sonbhadra','Hamirpur','Chitrakoot','Banda','Mahoba','Lalitpur','Jalaun','Orai','Etah','Kasganj','Hathras','Farrukhabad','Kannauj','Auraiya','Fatehpur','Pratapgarh','Lakhimpur Kheri','Pilibhit','Budaun','Bijnor','Shamli','Baghpat','Greater Noida'] },
-  { stateName: 'Uttarakhand',     cities: ['Dehradun','Haridwar','Roorkee','Haldwani','Rudrapur','Kashipur','Rishikesh','Kotdwar','Ramnagar','Almora','Nainital','Pithoragarh','Champawat','Bageshwar','Chamoli','Tehri','Uttarkashi','Pauri','Mussoorie','Ranikhet'] },
-  { stateName: 'West Bengal',     cities: ['Kolkata','Howrah','Durgapur','Asansol','Siliguri','Bardhaman','Malda','Murshidabad','Birbhum','Bankura','Purulia','Medinipur','Krishnanagar','Barasat','Jalpaiguri','Darjeeling','Alipurduar','Cooch Behar','Raiganj','Islampur','Balurghat','Suri','Rampurhat','Bolpur','Santiniketan','Berhampore','Jangipur','Kandi','Tamluk','Contai','Haldia','Baruipur','Diamond Harbour','Bishnupur','Kharagpur','Arambag','Chandernagore','Serampore','Barrackpore','Titagarh','Naihati','Habra'] },
-  // Union Territories
-  { stateName: 'Delhi',           cities: ['New Delhi','Dwarka','Rohini','Pitampura','Janakpuri','Laxmi Nagar','Shahdara','Saket','Vasant Kunj','Hauz Khas','Karol Bagh','Lajpat Nagar','Malviya Nagar','Nehru Place','Okhla','Narela','Najafgarh','Mehrauli'] },
-  { stateName: 'Jammu and Kashmir', cities: ['Srinagar','Jammu','Anantnag','Baramulla','Sopore','Kathua','Udhampur','Rajouri','Poonch','Doda','Pulwama','Shopian','Kulgam','Kupwara','Bandipora','Ganderbal','Budgam','Reasi','Ramban','Kishtwar','Samba','Akhnoor'] },
-  { stateName: 'Puducherry',      cities: ['Puducherry','Karaikal','Mahe','Yanam'] },
-  { stateName: 'Chandigarh',      cities: ['Chandigarh'] },
-  { stateName: 'Andaman and Nicobar Islands', cities: ['Port Blair','Mayabunder','Rangat','Diglipur'] },
-  { stateName: 'Dadra and Nagar Haveli and Daman and Diu', cities: ['Daman','Diu','Silvassa'] },
-  { stateName: 'Ladakh',          cities: ['Leh','Kargil'] },
-  { stateName: 'Lakshadweep',     cities: ['Kavaratti','Agatti','Minicoy'] },
-];
-
+// India city routes removed — US-only focus now
 // USA city-level data for sitemap — all 50 states + DC
 const USA_CITY_ROUTES = [
   { stateName: 'Alabama',        cities: ['Birmingham','Montgomery','Huntsville','Mobile','Tuscaloosa','Hoover','Dothan','Auburn','Decatur','Madison','Florence','Gadsden','Prattville','Phenix City','Alabaster','Bessemer','Enterprise','Daphne','Opelika','Northport'] },
@@ -277,18 +177,6 @@ export async function getCategorySlugs() {
   } catch { return []; }
 }
 
-async function getDbBlogSlugs() {
-  try {
-    const supabase = await getSupabaseClient();
-    if (!supabase) return [];
-    const { data } = await supabase
-      .from('blog_posts')
-      .select('slug, updated_at')
-      .eq('published', true)
-      .order('created_at', { ascending: false });
-    return data || [];
-  } catch { return []; }
-}
 
 async function getAgencySlugs() {
   try {
@@ -318,11 +206,10 @@ function estimateUrlCount(catCount, agencyCount = 0) {
   const top300 = Math.min(catCount, 300);
   const top150 = Math.min(catCount, 150);
   const top100 = Math.min(catCount, 100);
-  const indiaCities = INDIA_CITY_ROUTES.reduce((s, r) => s + r.cities.length, 0);
   const usaCities = USA_CITY_ROUTES.reduce((s, r) => s + r.cities.length, 0);
-  return 10 + BLOG_SLUGS.length + agencyCount + catCount + (top500 * TARGET_COUNTRIES.length)
+  return 10 + agencyCount + catCount + (top500 * TARGET_STATES.length)
     + (top300 * KEY_STATES.length) + (top150 * KEY_CITIES.length)
-    + (top100 * indiaCities) + (top100 * usaCities)
+    + (top100 * usaCities)
     + (top300 * 230) + (top300 * 228)  // CA + NY
     + (top300 * 161) + (top300 * 138) + (top300 * 124)  // TX + FL + IL
     + (top300 * 125) + (top300 * 153) + (top300 * 101)  // PA + MA + WA
@@ -332,9 +219,8 @@ function estimateUrlCount(catCount, agencyCount = 0) {
 export default async function sitemap({ id }) {
   const now = new Date();
 
-  const [categorySlugs, dbPosts, agencySlugs] = await Promise.all([
+  const [categorySlugs, agencySlugs] = await Promise.all([
     getCategorySlugs(),
-    getDbBlogSlugs(),
     getAgencySlugs(),
   ]);
 
@@ -342,18 +228,16 @@ export default async function sitemap({ id }) {
   const end = start + URLS_PER_SITEMAP;
 
   function* gen() {
-  const staticSlugsSet = new Set(BLOG_SLUGS);
 
   // ── Static pages ────────────────────────────────────────────────────────────
   yield { url: `${BASE_URL}/`,                   lastModified: now, changeFrequency: 'daily',   priority: 1.0 };
   yield { url: `${BASE_URL}/directory`,          lastModified: now, changeFrequency: 'daily',   priority: 0.9 };
   yield { url: `${BASE_URL}/directory/staffing`, lastModified: now, changeFrequency: 'weekly',  priority: 0.8 };
-  yield { url: `${BASE_URL}/blogs`,              lastModified: now, changeFrequency: 'weekly',  priority: 0.8 };
   yield { url: `${BASE_URL}/contact`,            lastModified: now, changeFrequency: 'monthly', priority: 0.5 };
   yield { url: `${BASE_URL}/ListYourCompany`,    lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
-  yield { url: `${BASE_URL}/Categories`,         lastModified: now, changeFrequency: 'weekly',  priority: 0.7 };
   yield { url: `${BASE_URL}/ai-match`,           lastModified: now, changeFrequency: 'monthly', priority: 0.7 };
   yield { url: `${BASE_URL}/Compare`,            lastModified: now, changeFrequency: 'weekly',  priority: 0.6 };
+  yield { url: `${BASE_URL}/claim-listing`,      lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
 
   // ── Company profile pages ───────────────────────────────────────────────────
   for (const agency of agencySlugs)
@@ -363,50 +247,35 @@ export default async function sitemap({ id }) {
   for (const slug of STAFFING_SLUGS)
     yield { url: `${BASE_URL}/directory/staffing/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 };
 
-  // ── Blog pages ──────────────────────────────────────────────────────────────
-  for (const slug of BLOG_SLUGS)
-    yield { url: `${BASE_URL}/blogs/${slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 };
-  for (const p of dbPosts)
-    if (!staticSlugsSet.has(p.slug))
-      yield { url: `${BASE_URL}/blogs/${p.slug}`, lastModified: p.updated_at ? new Date(p.updated_at) : now, changeFrequency: 'monthly', priority: 0.7 };
-
   // ── Category directory pages (all categories) ───────────────────────────────
   for (const slug of categorySlugs)
     yield { url: `${BASE_URL}/directory/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
 
-  // ── Country pages (top 500 × all countries) ───────────────────────────────
+  // ── US State pages (all categories × target states) ─────────────────────────
   for (const slug of categorySlugs.slice(0, 500))
-    for (const countrySlug of TARGET_COUNTRIES) {
-      const countryName = COUNTRY_NAMES[countrySlug];
-      if (countryName)
-        yield { url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
+    for (const stateSlug of TARGET_STATES) {
+      const stateName = STATE_NAMES[stateSlug];
+      if (stateName)
+        yield { url: `${BASE_URL}/directory/${slug}?location=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
     }
 
-  // ── State pages (top 300 × key states) ────────────────────────────────────
+  // ── US State detail pages (top 300 × key states) ──────────────────────────
   for (const slug of categorySlugs.slice(0, 300))
-    for (const { country, state } of KEY_STATES) {
-      const countryName = COUNTRY_NAMES[country];
+    for (const { state } of KEY_STATES) {
       const stateName = STATE_NAMES[state];
-      if (countryName && stateName)
-        yield { url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 };
+      if (stateName)
+        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 };
     }
 
-  // ── City pages (top 150 × key cities) ─────────────────────────────────────
+  // ── US City pages (top 150 × key cities) ──────────────────────────────────
   for (const slug of categorySlugs.slice(0, 150))
-    for (const { country, state } of KEY_CITIES) {
-      const countryName = COUNTRY_NAMES[country];
+    for (const { state, city } of KEY_CITIES) {
       const stateName = STATE_NAMES[state];
-      if (countryName && stateName)
-        yield { url: `${BASE_URL}/directory/${slug}?country=${encodeURIComponent(countryName)}&amp;state=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.75 };
+      if (stateName)
+        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.75 };
     }
 
-  // ── India city pages (top 100 × all India cities) ─────────────────────────
-  for (const slug of categorySlugs.slice(0, 100))
-    for (const { stateName, cities } of INDIA_CITY_ROUTES)
-      for (const city of cities)
-        yield { url: `${BASE_URL}/directory/${slug}?country=India&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.72 };
-
-  // ── USA city pages (top 100 × all USA cities) ─────────────────────────────
+  // ── USA city pages (all 50 states × all cities) ───────────────────────────
   for (const slug of categorySlugs.slice(0, 100))
     for (const { stateName, cities } of USA_CITY_ROUTES)
       for (const city of cities)

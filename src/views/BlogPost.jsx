@@ -57,7 +57,7 @@ export default function BlogPost({ searchParams }) {
 
       {/* Article Header */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl text-sm font-semibold mb-6">
+        <span className="inline-block bg-orange-500 text-white px-4 py-2 rounded-xl text-sm font-semibold mb-6">
           {post.category}
         </span>
         
@@ -103,19 +103,19 @@ export default function BlogPost({ searchParams }) {
         </div>
 
         {/* Article Content */}
-        <div 
-          className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-xl"
+        <div
+          className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-orange-600 prose-img:rounded-xl"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
         {/* CTA */}
-        <div className="mt-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl p-8 md:p-12 text-center text-white">
+        <div className="mt-16 bg-gradient-to-br from-[#243B58] to-[#1A2E4A] rounded-3xl p-8 md:p-12 text-center text-white">
           <h3 className="text-3xl font-extrabold mb-4">Ready to Find Your Perfect Partner?</h3>
-          <p className="text-blue-100 mb-6 text-lg">
+          <p className="text-slate-300 mb-6 text-lg">
             Browse verified providers and make confident business decisions
           </p>
           <Link href={getDirectoryUrl()}>
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-slate-100 px-8 py-6 text-lg font-bold rounded-xl">
+            <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg font-bold rounded-xl">
               Explore Providers
             </Button>
           </Link>

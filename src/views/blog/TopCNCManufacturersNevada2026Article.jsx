@@ -222,7 +222,7 @@ export default function TopCNCManufacturersNevada2026Article() {
       </div>
 
       {/* Hero */}
-      <header className="bg-[#0D1B2A] text-white py-16 md:py-20">
+      <header className="bg-[#1A2E4A] text-white py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-6">
             Manufacturing · Nevada · 2026
@@ -480,7 +480,7 @@ export default function TopCNCManufacturersNevada2026Article() {
         </section>
 
         {/* CTA */}
-        <div className="bg-[#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center">
+        <div className="bg-[#1A2E4A] text-white rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-bold mb-3">Looking for Verified Manufacturing Partners?</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6">
             Browse verified CNC machining, precision manufacturing, and engineering service providers on FirmsLedger. Compare by capabilities, certifications, reviews, and location.

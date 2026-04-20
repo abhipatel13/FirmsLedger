@@ -1,11 +1,9 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
 import { getDirectoryUrl, createPageUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
-import { Check, ChevronDown, ChevronUp } from 'lucide-react';
+import FaqItem from '@/components/FaqItem';
+import { Check } from 'lucide-react';
 
 function normalise(c) {
   if (!c) return {};
@@ -47,23 +45,6 @@ function normalise(c) {
   return { intro, why, services, how, trends, faq, conclusion };
 }
 
-// Collapsible FAQ item
-function FaqItem({ question, answer }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border-b border-slate-200 last:border-b-0">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-start justify-between gap-4 py-5 text-left"
-      >
-        <span className="font-semibold text-slate-900 text-base leading-snug">{question}</span>
-        {open ? <ChevronUp className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" /> : <ChevronDown className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />}
-      </button>
-      {open && <p className="text-slate-600 text-base leading-relaxed pb-5">{answer}</p>}
-    </div>
-  );
-}
-
 export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
   const directoryUrl = getDirectoryUrl();
   const { intro, why, services, how, trends, faq, conclusion } = normalise(post.content);
@@ -73,41 +54,8 @@ export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
   const keyTakeaways     = post.content?.key_takeaways || [];
   const buyingGuide      = post.content?.buying_guide;
 
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.title,
-    description: post.meta_description,
-    datePublished: post.created_at,
-    dateModified: post.updated_at || post.created_at,
-    author: { '@type': 'Organization', name: 'FirmsLedger' },
-    publisher: { '@type': 'Organization', name: 'FirmsLedger', url: 'https://firmsledger.com' },
-    ...(post.image_url && { image: { '@type': 'ImageObject', url: post.image_url, width: 1200, height: 630 } }),
-  };
-
-  const faqJsonLd = faq?.length
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: faq.map((item) => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: { '@type': 'Answer', text: item.answer },
-        })),
-      }
-    : null;
-
   return (
     <article className="min-h-screen bg-white">
-      <Script id="article-schema" type="application/ld+json" strategy="afterInteractive">
-        {JSON.stringify(articleJsonLd)}
-      </Script>
-      {faqJsonLd && (
-        <Script id="faq-schema" type="application/ld+json" strategy="afterInteractive">
-          {JSON.stringify(faqJsonLd)}
-        </Script>
-      )}
-
       {/* Breadcrumb */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -121,7 +69,7 @@ export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
       </div>
 
       {/* Hero */}
-      <header className="bg-[#0D1B2A] text-white">
+      <header className="bg-[#1A2E4A] text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10">
           <span className="inline-block bg-orange-500 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-5">
             {post.category}
@@ -202,7 +150,7 @@ export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
             <div className="overflow-x-auto rounded-xl border border-slate-200">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-[#0D1B2A] text-white">
+                  <tr className="bg-[#1A2E4A] text-white">
                     {(compTable.headers || []).map((h, i) => (
                       <th key={i} className="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide whitespace-nowrap">{h}</th>
                     ))}
@@ -325,7 +273,7 @@ export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
             <ol className="space-y-6">
               {how.steps.map((tip, i) => (
                 <li key={i} className="flex gap-4">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#0D1B2A] text-white text-sm font-bold flex items-center justify-center mt-0.5">
+                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1A2E4A] text-white text-sm font-bold flex items-center justify-center mt-0.5">
                     {i + 1}
                   </span>
                   <div className="flex-1">
@@ -429,7 +377,7 @@ export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
               {relatedPosts.map((rp) => (
                 <Link
                   key={rp.slug}
-                  href={`/blogs/${rp.slug}`}
+                  href={`/blog/${rp.slug}`}
                   className="group border border-slate-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-sm transition-all"
                 >
                   <h3 className="font-semibold text-slate-900 group-hover:text-orange-600 transition-colors leading-snug mb-2">
@@ -445,7 +393,7 @@ export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
         )}
 
         {/* CTA block */}
-        <div className="bg-[#0D1B2A] text-white rounded-2xl p-8 md:p-10 text-center mb-12">
+        <div className="bg-[#1A2E4A] text-white rounded-2xl p-8 md:p-10 text-center mb-12">
           <h2 className="text-2xl font-bold mb-3">Find Verified Service Providers</h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-6 leading-relaxed">
             Browse verified manufacturing, engineering, and business service providers on FirmsLedger.

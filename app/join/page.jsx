@@ -124,7 +124,7 @@ export default function JoinPage() {
           <h1 className="text-xl font-bold text-slate-900 mb-2">{title}</h1>
           <p className="text-slate-600 mb-6">{message}</p>
           <Link href={createPageUrl('ListYourCompany')}>
-            <Button className="bg-blue-600 hover:bg-blue-700">List your company</Button>
+            <Button className="bg-orange-500 hover:bg-orange-600">List your company</Button>
           </Link>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function JoinPage() {
           <h1 className="text-xl font-bold text-slate-900 mb-2">Thank you</h1>
           <p className="text-slate-600 mb-6">Your company details have been submitted. We’ll review and add your listing soon.</p>
           <Link href={createPageUrl('Home')}>
-            <Button className="bg-blue-600 hover:bg-blue-700">Back to Home</Button>
+            <Button className="bg-orange-500 hover:bg-orange-600">Back to Home</Button>
           </Link>
         </div>
       </div>
@@ -149,8 +149,8 @@ export default function JoinPage() {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12 px-4">
       <div className="max-w-xl mx-auto">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-            <Building2 className="w-6 h-6 text-blue-600" />
+          <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
+            <Building2 className="w-6 h-6 text-orange-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">You’re invited to list your company</h1>
@@ -183,7 +183,7 @@ export default function JoinPage() {
             <Label htmlFor="message">About your company</Label>
             <Textarea id="message" value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} placeholder="Services, industries..." rows={3} />
           </div>
-          <Button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 hover:bg-blue-700">
+          <Button type="submit" disabled={isSubmitting} className="w-full bg-orange-500 hover:bg-orange-600">
             {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
         </form>

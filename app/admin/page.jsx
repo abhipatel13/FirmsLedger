@@ -182,7 +182,7 @@ export default function AdminOverview() {
                     </p>
                   </div>
                   <a
-                    href={`/blogs/${post.slug}`}
+                    href={`/blog/${post.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-600 hover:text-blue-400 transition-colors shrink-0"

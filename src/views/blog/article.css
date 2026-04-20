@@ -2,7 +2,7 @@
 
 .blog-article {
   --bg: #F7F8FA;
-  --ink: #0D1B2A;
+  --ink: #1A2E4A;
   --accent: #F97316;
   --accent-light: #FFF0E6;
   --muted: #64748B;
@@ -200,7 +200,7 @@
 }
 
 .blog-article .badge-national {
-  background: #0D1B2A;
+  background: #1A2E4A;
   color: #ffffff;
 }
 

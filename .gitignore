@@ -31,3 +31,6 @@ dist-ssr
 # Google Cloud service account keys — never commit
 firmsledger-*.json
 *-credentials.json
+.vercel
+.env*.local
+supabase/.temp/

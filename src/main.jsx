@@ -87,7 +87,7 @@ export default function Layout({ children, currentPageName }) {
                               <div className="grid grid-cols-1 gap-4">
                                 {/* Staffing Companies with Subcategories */}
                                 {categories
-                                  .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug === 'staffing-companies')
+                                  .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug === 'staffing-recruiting')
                                   .map((parent) => {
                                     const subcats = categories.filter(c => (c.parent_id ?? c.parentId) === parent.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
                                     return (
@@ -129,38 +129,9 @@ export default function Layout({ children, currentPageName }) {
                                     );
                                   })}
 
-                                {/* Other Parent Categories */}
-                                <div className="grid grid-cols-2 gap-2">
-                                  {categories
-                                    .filter(cat => (cat.is_parent ?? cat.isParent) && cat.slug !== 'staffing-companies')
-                                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                                    .map((cat) => (
-                                      <Link
-                                        key={cat.id}
-                                        to={createPageUrl('Directory') + `?category=${cat.slug}`}
-                                        className="flex items-start gap-3 px-3 py-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                        onClick={(e) => {
-                                          e.currentTarget.blur();
-                                          document.activeElement?.blur();
-                                        }}
-                                      >
-                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0">
-                                          <span className="text-xs font-bold text-blue-600">{cat.name.charAt(0)}</span>
-                                        </div>
-                                        <div className="flex flex-col">
-                                          <span className="font-semibold text-slate-900">{cat.name}</span>
-                                          <span className="text-xs text-slate-500 line-clamp-1">{cat.description}</span>
-                                        </div>
-                                      </Link>
-                                    ))}
-                                </div>
                               </div>
                             </DropdownMenuContent>
                           </DropdownMenu>
-
-                  <Link to={createPageUrl('Blogs')} className="text-slate-700 hover:text-blue-600 font-semibold transition-colors text-sm">
-                    Resources
-                  </Link>
 
                   <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
                     <Search className="w-4 h-4 text-slate-400" />
@@ -294,7 +265,6 @@ export default function Layout({ children, currentPageName }) {
               <div className="flex flex-col gap-3 text-sm">
                 <Link to={createPageUrl('Home')} className="text-slate-400 hover:text-blue-400 transition-colors">Home</Link>
                 <Link to={createPageUrl('Directory')} className="text-slate-400 hover:text-blue-400 transition-colors">Browse Agencies</Link>
-                <Link to={createPageUrl('Blogs')} className="text-slate-400 hover:text-blue-400 transition-colors">Blog</Link>
               </div>
             </div>
 

@@ -10,6 +10,29 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       },
       colors: {
+        // Brand tokens from logo
+        brand: {
+          navy:     '#1A2E4A',
+          'navy-dark':'#131F30',
+          'navy-mid': '#243B58',
+          gold:     '#F5A623',
+          'gold-light': '#FDCE6E',
+          'gold-dark':  '#D48E1A',
+        },
+        // Remap Tailwind `orange-*` to the logo's gold palette so existing
+        // `bg-orange-500`, `text-orange-600`, etc. automatically become on-brand.
+        orange: {
+          50:  '#FFF8EC',
+          100: '#FDECC8',
+          200: '#FBD993',
+          300: '#F9C55F',
+          400: '#F7B640',
+          500: '#F5A623',
+          600: '#D48E1A',
+          700: '#A46D14',
+          800: '#7A5210',
+          900: '#523607',
+        },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

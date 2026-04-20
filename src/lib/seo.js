@@ -5,56 +5,42 @@
 
 export const SITE_NAME = 'FirmsLedger';
 
-/**
- * All published blog article slugs.
- * Keep in sync with app/Blogs/[slug]/page.jsx ARTICLES keys
- * and app/sitemap.js BLOG_SLUGS.
- */
-export const BLOG_SLUGS = [
-  'top-10-stabilizer-brands-india-2025',
-  'top-10-switch-socket-brands-india-2025',
-  'best-solar-panel-brands-india-2025',
-  'top-10-led-light-brands-india-2025',
-  'top-10-water-pump-brands-india-2025',
-  'top-10-drilling-machine-brands-india-2026',
-  'top-10-milling-machine-manufacturers-india-2026',
-  'top-10-recruitment-agencies-india-2026',
-  'best-contract-staffing-agencies-india-2026',
-  'best-permanent-staffing-rpo-firms-india-2026',
-  'top-healthcare-staffing-agencies-ahmedabad-2026',
-  'top-10-it-staffing-companies-india-2026',
-  'top-industrial-staffing-companies-india-2026',
-  'top-staffing-agencies-delhi-ncr-2026',
-  'top-it-staffing-companies-bangalore-2026',
-  'best-solar-panels-australia-2026',
-  'top-cnc-manufacturers-nevada-2026',
-];
 export const SEO_YEAR = 2026;
-export const SEO_COUNTRY = process.env.NEXT_PUBLIC_SEO_COUNTRY || 'Global';
+export const SEO_COUNTRY = process.env.NEXT_PUBLIC_SEO_COUNTRY || 'United States';
 export const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://firmsledger.com';
 
 /** Unique meta descriptions for staffing subcategories (slug → description) */
 export const STAFFING_CATEGORY_DESCRIPTIONS = {
-  'executive-search':
-    'Discover the top executive search firms at FirmsLedger. Browse verified providers for C-level and senior leadership hiring. Compare the most reliable executive search agencies worldwide by expertise, project needs, and pricing.',
+  'it-technology-staffing':
+    'Find the best IT staffing agencies in the US. Compare verified tech recruiters for software engineers, data scientists, cybersecurity, cloud, and DevOps roles on FirmsLedger.',
   'healthcare-staffing':
-    'Discover the top healthcare staffing companies at FirmsLedger. Browse verified medical and healthcare staffing agencies with proven expertise. Find the most reliable healthcare staffing providers worldwide by specialty, project needs, and pricing.',
-  'it-staffing':
-    'Discover the top IT staffing companies at FirmsLedger. Browse verified technology and software staffing providers with proven expertise. Compare the most reliable IT staffing agencies worldwide by expertise, project needs, and pricing.',
+    'Find leading healthcare staffing companies across the US. Compare travel nursing, allied health, physician, and medical staffing agencies with verified reviews on FirmsLedger.',
+  'industrial-manufacturing-staffing':
+    'Find the best industrial and manufacturing staffing agencies in the US. Compare skilled trades, warehouse, production, and factory workforce providers on FirmsLedger.',
+  'construction-staffing':
+    'Find top construction staffing companies in the US. Compare electricians, pipefitters, welders, laborers, and project management staffing agencies on FirmsLedger.',
+  'accounting-finance-staffing':
+    'Find the best accounting and finance staffing agencies in the US. Compare CPAs, controllers, bookkeepers, and financial analyst recruiters on FirmsLedger.',
+  'administrative-office-staffing':
+    'Find top administrative and office staffing agencies in the US. Compare receptionists, executive assistants, and office manager recruiters on FirmsLedger.',
+  'executive-search-recruiting':
+    'Find leading executive search firms in the US. Compare C-suite, VP, and director-level retained and contingency search agencies on FirmsLedger.',
+  'legal-staffing':
+    'Find top legal staffing agencies in the US. Compare paralegals, legal assistants, contract attorneys, and law firm support recruiters on FirmsLedger.',
+  'engineering-staffing':
+    'Find the best engineering staffing companies in the US. Compare mechanical, electrical, civil, and aerospace engineer recruiters on FirmsLedger.',
+  'warehouse-logistics-staffing':
+    'Find top warehouse and logistics staffing agencies in the US. Compare warehouse workers, forklift operators, drivers, and supply chain recruiters on FirmsLedger.',
   'temporary-staffing':
-    'Discover the top temporary staffing agencies at FirmsLedger. Browse verified short-term and contract staffing providers. Find the most reliable temporary staffing solutions worldwide for your project needs and budget.',
-  'permanent-staffing':
-    'Discover the top permanent staffing and placement firms at FirmsLedger. Browse verified full-time hiring and recruitment providers. Compare the most reliable permanent staffing agencies worldwide by expertise and pricing.',
+    'Find the best temporary staffing agencies in the US. Compare short-term, seasonal, and temp-to-hire workforce solutions across all industries on FirmsLedger.',
   'remote-staffing':
-    'Discover the top remote staffing companies at FirmsLedger. Browse verified providers for distributed and remote teams. Find the most reliable remote staffing agencies worldwide by expertise, project needs, and pricing.',
-  'contract-staffing':
-    'Discover the top contract staffing firms at FirmsLedger. Browse verified project-based and contract staffing providers. Compare the most reliable contract staffing agencies worldwide by expertise, project needs, and pricing.',
-  'hr-recruitment-services':
-    'Discover the top HR and recruitment service providers at FirmsLedger. Browse verified HR outsourcing and recruitment process outsourcing (RPO) agencies. Find the most reliable HR and recruitment partners worldwide.',
-  'technical-staffing':
-    'Discover the top technical staffing companies at FirmsLedger. Browse verified engineering and technical staffing providers. Compare the most reliable technical staffing agencies worldwide by expertise, project needs, and pricing.',
-  'industrial-staffing':
-    'Discover the top industrial staffing companies at FirmsLedger. Browse verified manufacturing and industrial staffing providers. Find the most reliable industrial staffing agencies worldwide for your workforce needs.',
+    'Find top remote staffing companies in the US. Compare distributed teams, remote workers, and virtual assistant providers on FirmsLedger.',
+  'government-defense-staffing':
+    'Find leading government and defense staffing agencies in the US. Compare security-cleared professionals for federal, state, and military contracts on FirmsLedger.',
+  'hospitality-event-staffing':
+    'Find top hospitality and event staffing agencies in the US. Compare servers, bartenders, event coordinators, and hotel staffing providers on FirmsLedger.',
+  'scientific-pharmaceutical-staffing':
+    'Find the best scientific and pharmaceutical staffing agencies in the US. Compare lab technicians, researchers, QA specialists, and clinical trial recruiters on FirmsLedger.',
 };
 
 /**
@@ -66,13 +52,13 @@ export function getCategoryMetaDescription(categoryName, slug, options = {}) {
   if (underStaffing && STAFFING_CATEGORY_DESCRIPTIONS[key]) {
     return STAFFING_CATEGORY_DESCRIPTIONS[key];
   }
-  const name = categoryName || 'Business';
-  return `Find the best ${name} companies and service providers on FirmsLedger. Compare verified ${name.toLowerCase()} providers by real client reviews, team size, pricing, and expertise — updated for ${SEO_YEAR}.`;
+  const name = categoryName || 'Service';
+  return `Find the best ${name} companies worldwide on FirmsLedger. Compare verified ${name.toLowerCase()} providers by real client reviews, team size, pricing, and expertise — updated for ${SEO_YEAR}.`;
 }
 
-/** Title for a category listing page: "Top [Category Name] Companies in 2026" */
+/** Title for a category listing page: "Top [Category Name] Companies (2026)" */
 export function getCategoryTitle(categoryName) {
-  return `Top ${categoryName} Companies in ${SEO_YEAR}`;
+  return `Top ${categoryName} Companies (${SEO_YEAR})`;
 }
 
 /**

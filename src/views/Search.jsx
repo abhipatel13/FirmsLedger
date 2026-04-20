@@ -24,11 +24,11 @@ function highlight(text, query) {
 }
 
 const POPULAR_CATEGORIES = [
-  { label: 'Staffing Companies', slug: 'staffing-companies', staffing: true },
-  { label: 'IT Services', slug: 'it-services' },
-  { label: 'Business Consulting', slug: 'business-consulting' },
-  { label: 'Legal Services', slug: 'legal-services' },
-  { label: 'Marketing Agencies', slug: 'marketing-agencies' },
+  { label: 'Staffing & Recruiting', slug: 'staffing-recruiting', staffing: true },
+  { label: 'IT & Technology Staffing', slug: 'it-technology-staffing', staffing: true },
+  { label: 'Healthcare Staffing', slug: 'healthcare-staffing', staffing: true },
+  { label: 'Construction Staffing', slug: 'construction-staffing', staffing: true },
+  { label: 'Executive Search', slug: 'executive-search-recruiting', staffing: true },
 ];
 
 export default function SearchPage() {
@@ -118,7 +118,7 @@ export default function SearchPage() {
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Hero Search Bar */}
-      <div className="bg-[#0D1B2A] text-white">
+      <div className="bg-[#1A2E4A] text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
           <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-2">Search Results</p>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-6 tracking-tight">
@@ -275,7 +275,7 @@ export default function SearchPage() {
                       <div className="flex gap-4">
                         {/* Rank + Logo */}
                         <div className="flex items-start gap-3 flex-shrink-0">
-                          <div className="w-6 h-6 rounded bg-[#0D1B2A] flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-6 h-6 rounded bg-[#1A2E4A] flex items-center justify-center flex-shrink-0 mt-0.5">
                             <span className="text-[9px] font-black text-white">{index + 1}</span>
                           </div>
                           {agency.logo_url ? (

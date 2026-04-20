@@ -157,7 +157,7 @@ export default function Compare({ searchParams }) {
                             className="w-16 h-16 rounded-lg object-cover mx-auto mb-3"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl mx-auto mb-3">
+                          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#243B58] to-[#1A2E4A] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-3">
                             {agency.name.charAt(0)}
                           </div>
                         )}

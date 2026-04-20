@@ -5,12 +5,12 @@ import { SITE_NAME, SEO_YEAR, SEO_COUNTRY, BASE_URL } from '@/lib/seo';
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
-  title: `Top Companies List in ${SEO_COUNTRY} ${SEO_YEAR} | Products & Services Directory | ${SITE_NAME}`,
-  description: `FirmsLedger delivers the definitive global top companies list. Discover verified manufacturers, suppliers, staffing agencies, and service providers worldwide. Browse by products, expertise, project needs, and pricing—all in one trusted directory.`,
+  title: `Best Companies & Service Providers ${SEO_YEAR} | Global Business Directory | ${SITE_NAME}`,
+  description: `FirmsLedger is the trusted global business directory. Find and compare verified companies across staffing, healthcare, travel, IT, education, and every other industry. Read real client reviews and get matched with the right partner.`,
   alternates: { canonical: _BASE },
   openGraph: {
-    title: `Top Companies List in ${SEO_COUNTRY} | ${SITE_NAME}`,
-    description: 'Discover verified manufacturers, suppliers, and service providers. Browse the top companies list by products, expertise, and pricing.',
+    title: `Best Companies Worldwide | ${SITE_NAME}`,
+    description: 'Find and compare the best companies worldwide. Verified reviews, ratings, and direct contact across every industry.',
     type: 'website',
     url: _BASE,
   },
@@ -21,7 +21,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: SITE_NAME,
   url: _BASE,
-  description: "The trusted global platform to discover and connect with verified manufacturers, suppliers, and service providers worldwide.",
+  description: "The trusted global business directory. Find and compare verified companies across every industry, worldwide.",
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -38,7 +38,7 @@ const organizationSchema = {
   name: SITE_NAME,
   url: _BASE,
   logo: `${_BASE}/icon.svg`,
-  description: "The trusted global platform to discover and connect with verified manufacturers, suppliers, and service providers worldwide.",
+  description: "The trusted global business directory. Find and compare verified companies across every industry, worldwide.",
   areaServed: 'Worldwide',
   contactPoint: {
     '@type': 'ContactPoint',

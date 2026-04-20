@@ -82,7 +82,7 @@ export default function InviteAgencyPage() {
   if (!adminChecked) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
       </div>
     );
   }
@@ -100,15 +100,15 @@ export default function InviteAgencyPage() {
       <div className="max-w-lg mx-auto">
         <Link
           href={createPageUrl('Home')}
-          className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-8"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-orange-600 mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Home
         </Link>
 
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-            <Mail className="w-6 h-6 text-blue-600" />
+          <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
+            <Mail className="w-6 h-6 text-orange-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Invite an agency</h1>
@@ -159,7 +159,7 @@ export default function InviteAgencyPage() {
               <Plus className="w-4 h-4" />
               Add another agency
             </Button>
-            <Button type="submit" disabled={sending} className="bg-blue-600 hover:bg-blue-700 gap-2">
+            <Button type="submit" disabled={sending} className="bg-orange-500 hover:bg-orange-600 gap-2">
               <Send className="w-4 h-4" />
               {sending ? 'Sending...' : `Send invite${rows.some((r) => r.email.trim()) ? ` (${rows.filter((r) => r.email.trim()).length})` : ''}`}
             </Button>

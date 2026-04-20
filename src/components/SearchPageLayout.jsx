@@ -23,7 +23,7 @@ function CompanyListItem({ company, rank }) {
         <div className="flex flex-col sm:flex-row gap-5">
           {/* Rank + Logo */}
           <div className="flex items-start gap-3 flex-shrink-0">
-            <div className="w-7 h-7 rounded bg-[#0D1B2A] flex items-center justify-center flex-shrink-0 mt-0.5">
+            <div className="w-7 h-7 rounded bg-[#1A2E4A] flex items-center justify-center flex-shrink-0 mt-0.5">
               <span className="text-[10px] font-black text-white">{rank}</span>
             </div>
             {company.logo_url ? (
@@ -145,7 +145,7 @@ export default function SearchPageLayout({
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Dark header — matches Directory */}
-      <div className="bg-[#0D1B2A] text-white">
+      <div className="bg-[#1A2E4A] text-white">
         <div className="w-full px-4 sm:px-6 lg:px-10 pt-8 pb-7">
           {/* Breadcrumb */}
           {breadcrumbs.length > 0 && (
@@ -245,7 +245,7 @@ export default function SearchPageLayout({
         {children}
 
         {/* CTA banner */}
-        <div className="mt-10 bg-[#0D1B2A] text-white rounded-xl p-8 text-center">
+        <div className="mt-10 bg-[#1A2E4A] text-white rounded-xl p-8 text-center">
           <h2 className="text-2xl font-bold mb-2">{ctaTitle}</h2>
           <p className="text-slate-300 mb-5">{ctaDescription}</p>
           <Link

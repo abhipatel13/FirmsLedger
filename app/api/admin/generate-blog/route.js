@@ -319,7 +319,7 @@ export async function POST(request) {
     success: true,
     slug:    content.slug,
     title:   content.title,
-    url:     `${BASE_URL}/blogs/${content.slug}`,
+    url:     `${BASE_URL}/blog/${content.slug}`,
     post:    saved,
   });
 }

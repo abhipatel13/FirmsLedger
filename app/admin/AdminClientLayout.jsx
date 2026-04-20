@@ -4,13 +4,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, FileText, Search, Globe, Mail, Building2,
+  LayoutDashboard, FileText, Search, Globe, Mail, Building2, FolderTree,
   LogOut, X, ChevronRight, Loader2,
 } from 'lucide-react';
 
 const NAV = [
   { label: 'Overview',        href: '/admin',             icon: LayoutDashboard },
   { label: 'Agencies',        href: '/admin/agencies',    icon: Building2 },
+  { label: 'Categories',      href: '/admin/categories',  icon: FolderTree },
   { label: 'Blog Automation', href: '/admin/blogs',       icon: FileText },
   { label: 'SEO Audit',       href: '/admin/seo-audit',  icon: Search },
   { label: 'URL Submissions', href: '/admin/submissions', icon: Globe },
@@ -65,7 +66,7 @@ function LoginForm({ onLogin }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:border-[#0D1B2A] focus:ring-1 focus:ring-[#0D1B2A]"
+                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:border-[#1A2E4A] focus:ring-1 focus:ring-[#1A2E4A]"
                 placeholder="admin@firmsledger.com"
               />
             </div>
@@ -76,14 +77,14 @@ function LoginForm({ onLogin }) {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:border-[#0D1B2A] focus:ring-1 focus:ring-[#0D1B2A]"
+                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:border-[#1A2E4A] focus:ring-1 focus:ring-[#1A2E4A]"
                 placeholder="••••••••"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#0D1B2A] hover:bg-[#162336] disabled:opacity-50 text-white font-medium py-2.5 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[#1A2E4A] hover:bg-[#162336] disabled:opacity-50 text-white font-medium py-2.5 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {loading ? 'Signing in…' : 'Sign in'}
@@ -102,7 +103,7 @@ function Sidebar({ onLogout, collapsed, setCollapsed }) {
   const pathname = usePathname();
 
   return (
-    <aside className={`fixed top-0 left-0 h-full bg-[#0D1B2A] flex flex-col transition-all duration-200 z-30 ${collapsed ? 'w-16' : 'w-60'}`}>
+    <aside className={`fixed top-0 left-0 h-full bg-[#1A2E4A] flex flex-col transition-all duration-200 z-30 ${collapsed ? 'w-16' : 'w-60'}`}>
       {/* Header */}
       <div className="flex items-center px-4 py-4 border-b border-white/10 gap-2">
         {collapsed ? (
@@ -175,7 +176,7 @@ export default function AdminLayout({ children }) {
   if (authState === 'loading') {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="w-7 h-7 animate-spin text-[#0D1B2A]" />
+        <Loader2 className="w-7 h-7 animate-spin text-[#1A2E4A]" />
       </div>
     );
   }
