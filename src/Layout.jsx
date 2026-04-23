@@ -22,9 +22,49 @@ const PRODUCT_SLUGS = new Set([
   'products',
 ]);
 
-function MobileCategorySection({ label, parents, getSubs, getHref, onNavigate }) {
+function MobileCategorySection({ label, serviceParents, productParents, getSubs, getHref, onNavigate }) {
   const [open, setOpen] = useState(false);
-  if (!parents.length) return null;
+  if (!serviceParents.length && !productParents.length) return null;
+
+  const renderParent = (parent) => {
+    const subs = getSubs(parent.id);
+    return (
+      <div key={parent.id}>
+        <Link
+          href={getHref(parent)}
+          onClick={onNavigate}
+          className="flex items-center gap-1.5 py-2 px-3 text-sm font-semibold text-[#1A2E4A] hover:text-orange-600 rounded-lg hover:bg-orange-50"
+        >
+          {parent.name}
+        </Link>
+        {subs.length > 0 && (
+          <div className="pl-5 flex flex-col gap-0.5">
+            {subs.map((sub) => (
+              <Link
+                key={sub.id}
+                href={getHref(sub, parent)}
+                onClick={onNavigate}
+                className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
+              >
+                {sub.name}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderGroup = (title, parents) => {
+    if (!parents.length) return null;
+    return (
+      <div className="pt-2 first:pt-0">
+        <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">{title}</div>
+        {parents.map(renderParent)}
+      </div>
+    );
+  };
+
   return (
     <>
       <button
@@ -37,60 +77,59 @@ function MobileCategorySection({ label, parents, getSubs, getHref, onNavigate })
       </button>
       {open && (
         <div className="pl-3 pb-2 flex flex-col gap-0.5">
-          {parents.map((parent) => {
-            const subs = getSubs(parent.id);
-            return (
-              <div key={parent.id}>
-                <Link
-                  href={getHref(parent)}
-                  onClick={onNavigate}
-                  className="flex items-center gap-1.5 py-2 px-3 text-sm font-semibold text-[#1A2E4A] hover:text-orange-600 rounded-lg hover:bg-orange-50"
-                >
-                  {parent.name}
-                </Link>
-                {subs.length > 0 && (
-                  <div className="pl-5 flex flex-col gap-0.5">
-                    {subs.map((sub) => (
-                      <Link
-                        key={sub.id}
-                        href={getHref(sub, parent)}
-                        onClick={onNavigate}
-                        className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {renderGroup('Services', serviceParents)}
+          {renderGroup('Products', productParents)}
         </div>
       )}
     </>
   );
 }
 
-function MegaMenu({ parents, getSubs, getHref, onClose, rootHref }) {
+function MegaMenu({ serviceParents, productParents, getSubs, getHref, onClose, rootHref }) {
+  const [activeTab, setActiveTab] = useState('services');
+  const parents = activeTab === 'services' ? serviceParents : productParents;
   const [activeId, setActiveId] = useState(parents[0]?.id ?? null);
 
   useEffect(() => {
-    if (!activeId && parents[0]) setActiveId(parents[0].id);
+    if (!parents.length) { setActiveId(null); return; }
+    if (!parents.find((p) => p.id === activeId)) setActiveId(parents[0].id);
   }, [parents, activeId]);
 
   const activeParent = parents.find((p) => p.id === activeId) || parents[0];
   const subs = activeParent ? getSubs(activeParent.id) : [];
 
-  if (!parents.length) {
-    return (
-      <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-[420px] max-w-[95vw] p-6 text-sm text-slate-500">
-        No categories available yet.
-      </div>
-    );
-  }
+  const hasAny = serviceParents.length + productParents.length > 0;
+
+  const tabButton = (key, label, count) => (
+    <button
+      type="button"
+      onClick={() => setActiveTab(key)}
+      className={`px-5 py-3 text-sm font-semibold transition-colors relative ${
+        activeTab === key
+          ? 'text-orange-600 bg-white'
+          : 'text-slate-600 hover:text-[#1A2E4A]'
+      }`}
+    >
+      {label}
+      <span className="ml-1.5 text-xs text-slate-400">{count}</span>
+      {activeTab === key && (
+        <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-orange-500 rounded-full" />
+      )}
+    </button>
+  );
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-[920px] max-w-[95vw] overflow-hidden">
+      <div className="flex items-center border-b border-slate-100 bg-slate-50/70">
+        {tabButton('services', 'Services', serviceParents.length)}
+        {tabButton('products', 'Products', productParents.length)}
+      </div>
+
+      {!hasAny ? (
+        <div className="p-6 text-sm text-slate-500">No categories available yet.</div>
+      ) : parents.length === 0 ? (
+        <div className="p-6 text-sm text-slate-500">No {activeTab} categories yet.</div>
+      ) : (
       <div className="grid grid-cols-[260px_1fr] min-h-[420px]">
         {/* Left rail — parent categories */}
         <div className="bg-slate-50/70 border-r border-slate-100 py-2 overflow-y-auto max-h-[480px]">
@@ -155,6 +194,7 @@ function MegaMenu({ parents, getSubs, getHref, onClose, rootHref }) {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -163,7 +203,7 @@ export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null); // null | 'services' | 'products'
+  const [openDropdown, setOpenDropdown] = useState(null); // null | 'categories'
   const catDropdownRef = useRef(null);
   const catTimeoutRef = useRef(null);
   const router = useRouter();
@@ -245,45 +285,33 @@ export default function Layout({ children }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6 flex-1 justify-end">
-              {/* Find By Services / Find By Products mega menus — single menu container anchored to the shared wrapper's right edge so it never overflows the viewport */}
+              {/* Combined Services + Products mega menu — tabs switch between the two groups */}
               <div
                 ref={catDropdownRef}
-                className="relative flex items-center gap-4"
+                className="relative flex items-center"
                 onMouseLeave={scheduleClose}
               >
                 <button
                   type="button"
-                  onMouseEnter={() => openMenu('services')}
-                  onFocus={() => openMenu('services')}
-                  onClick={() => setOpenDropdown((v) => (v === 'services' ? null : 'services'))}
+                  onMouseEnter={() => openMenu('categories')}
+                  onFocus={() => openMenu('categories')}
+                  onClick={() => setOpenDropdown((v) => (v === 'categories' ? null : 'categories'))}
                   className={`flex items-center gap-1 font-semibold transition-colors text-sm ${
-                    openDropdown === 'services' ? 'text-orange-600' : 'text-slate-700 hover:text-orange-600'
+                    openDropdown === 'categories' ? 'text-orange-600' : 'text-slate-700 hover:text-orange-600'
                   }`}
                 >
-                  Find By Services
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === 'services' ? 'rotate-180' : ''}`} />
+                  Browse Categories
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === 'categories' ? 'rotate-180' : ''}`} />
                 </button>
 
-                <button
-                  type="button"
-                  onMouseEnter={() => openMenu('products')}
-                  onFocus={() => openMenu('products')}
-                  onClick={() => setOpenDropdown((v) => (v === 'products' ? null : 'products'))}
-                  className={`flex items-center gap-1 font-semibold transition-colors text-sm ${
-                    openDropdown === 'products' ? 'text-orange-600' : 'text-slate-700 hover:text-orange-600'
-                  }`}
-                >
-                  Find By Products
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === 'products' ? 'rotate-180' : ''}`} />
-                </button>
-
-                {openDropdown && (
+                {openDropdown === 'categories' && (
                   <div
                     className="absolute top-full right-0 pt-5 z-50"
-                    onMouseEnter={() => openMenu(openDropdown)}
+                    onMouseEnter={() => openMenu('categories')}
                   >
                     <MegaMenu
-                      parents={openDropdown === 'services' ? serviceParents : productParents}
+                      serviceParents={serviceParents}
+                      productParents={productParents}
                       getSubs={getSubcategories}
                       getHref={getCategoryHref}
                       onClose={closeMenus}
@@ -292,6 +320,13 @@ export default function Layout({ children }) {
                   </div>
                 )}
               </div>
+
+              <Link
+                href="/blog"
+                className="text-slate-700 hover:text-orange-600 font-semibold text-sm transition-colors"
+              >
+                Blog
+              </Link>
 
               <div className="flex items-center gap-2 bg-slate-50 rounded-md px-3 py-2 border border-slate-200 hover:border-orange-300 transition-colors">
                 <button
@@ -369,17 +404,11 @@ export default function Layout({ children }) {
                     />
                   </div>
                 </div>
-                {/* Mobile: Find By Services / Find By Products */}
+                {/* Mobile: combined Services + Products */}
                 <MobileCategorySection
-                  label="Find By Services"
-                  parents={serviceParents}
-                  getSubs={getSubcategories}
-                  getHref={getCategoryHref}
-                  onNavigate={() => setMobileMenuOpen(false)}
-                />
-                <MobileCategorySection
-                  label="Find By Products"
-                  parents={productParents}
+                  label="Browse Categories"
+                  serviceParents={serviceParents}
+                  productParents={productParents}
                   getSubs={getSubcategories}
                   getHref={getCategoryHref}
                   onNavigate={() => setMobileMenuOpen(false)}
@@ -390,6 +419,13 @@ export default function Layout({ children }) {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Browse Agencies
+                </Link>
+                <Link
+                  href="/blog"
+                  className="text-slate-700 hover:text-orange-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Blog
                 </Link>
                 <Link
                   href={createPageUrl('WriteReview')}
