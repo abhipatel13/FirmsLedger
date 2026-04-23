@@ -11,59 +11,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
 
-// Parent category slugs treated as "products" (vs default "services").
-// Keep this in sync with admin category seeding until a DB-level type column exists.
-const PRODUCT_SLUGS = new Set([
-  'manufacturing',
-  'machinery-equipment',
-  'chemicals-materials',
-  'retail-e-commerce',
-  'retail-ecommerce',
-  'products',
-]);
-
-function MobileCategorySection({ label, serviceParents, productParents, getSubs, getHref, onNavigate }) {
+function MobileCategorySection({ label, parents, getSubs, getHref, onNavigate }) {
   const [open, setOpen] = useState(false);
-  if (!serviceParents.length && !productParents.length) return null;
-
-  const renderParent = (parent) => {
-    const subs = getSubs(parent.id);
-    return (
-      <div key={parent.id}>
-        <Link
-          href={getHref(parent)}
-          onClick={onNavigate}
-          className="flex items-center gap-1.5 py-2 px-3 text-sm font-semibold text-[#1A2E4A] hover:text-orange-600 rounded-lg hover:bg-orange-50"
-        >
-          {parent.name}
-        </Link>
-        {subs.length > 0 && (
-          <div className="pl-5 flex flex-col gap-0.5">
-            {subs.map((sub) => (
-              <Link
-                key={sub.id}
-                href={getHref(sub, parent)}
-                onClick={onNavigate}
-                className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
-              >
-                {sub.name}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderGroup = (title, parents) => {
-    if (!parents.length) return null;
-    return (
-      <div className="pt-2 first:pt-0">
-        <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">{title}</div>
-        {parents.map(renderParent)}
-      </div>
-    );
-  };
+  if (!parents.length) return null;
 
   return (
     <>
@@ -77,17 +27,41 @@ function MobileCategorySection({ label, serviceParents, productParents, getSubs,
       </button>
       {open && (
         <div className="pl-3 pb-2 flex flex-col gap-0.5">
-          {renderGroup('Services', serviceParents)}
-          {renderGroup('Products', productParents)}
+          {parents.map((parent) => {
+            const subs = getSubs(parent.id);
+            return (
+              <div key={parent.id}>
+                <Link
+                  href={getHref(parent)}
+                  onClick={onNavigate}
+                  className="flex items-center gap-1.5 py-2 px-3 text-sm font-semibold text-[#1A2E4A] hover:text-orange-600 rounded-lg hover:bg-orange-50"
+                >
+                  {parent.name}
+                </Link>
+                {subs.length > 0 && (
+                  <div className="pl-5 flex flex-col gap-0.5">
+                    {subs.map((sub) => (
+                      <Link
+                        key={sub.id}
+                        href={getHref(sub, parent)}
+                        onClick={onNavigate}
+                        className="py-1.5 px-3 text-xs text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </>
   );
 }
 
-function MegaMenu({ serviceParents, productParents, getSubs, getHref, onClose, rootHref }) {
-  const [activeTab, setActiveTab] = useState('services');
-  const parents = activeTab === 'services' ? serviceParents : productParents;
+function MegaMenu({ parents, getSubs, getHref, onClose, rootHref }) {
   const [activeId, setActiveId] = useState(parents[0]?.id ?? null);
 
   useEffect(() => {
@@ -98,38 +72,16 @@ function MegaMenu({ serviceParents, productParents, getSubs, getHref, onClose, r
   const activeParent = parents.find((p) => p.id === activeId) || parents[0];
   const subs = activeParent ? getSubs(activeParent.id) : [];
 
-  const hasAny = serviceParents.length + productParents.length > 0;
-
-  const tabButton = (key, label, count) => (
-    <button
-      type="button"
-      onClick={() => setActiveTab(key)}
-      className={`px-5 py-3 text-sm font-semibold transition-colors relative ${
-        activeTab === key
-          ? 'text-orange-600 bg-white'
-          : 'text-slate-600 hover:text-[#1A2E4A]'
-      }`}
-    >
-      {label}
-      <span className="ml-1.5 text-xs text-slate-400">{count}</span>
-      {activeTab === key && (
-        <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-orange-500 rounded-full" />
-      )}
-    </button>
-  );
+  if (!parents.length) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-[420px] max-w-[95vw] p-6 text-sm text-slate-500">
+        No categories available yet.
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-[920px] max-w-[95vw] overflow-hidden">
-      <div className="flex items-center border-b border-slate-100 bg-slate-50/70">
-        {tabButton('services', 'Services', serviceParents.length)}
-        {tabButton('products', 'Products', productParents.length)}
-      </div>
-
-      {!hasAny ? (
-        <div className="p-6 text-sm text-slate-500">No categories available yet.</div>
-      ) : parents.length === 0 ? (
-        <div className="p-6 text-sm text-slate-500">No {activeTab} categories yet.</div>
-      ) : (
       <div className="grid grid-cols-[260px_1fr] min-h-[420px]">
         {/* Left rail — parent categories */}
         <div className="bg-slate-50/70 border-r border-slate-100 py-2 overflow-y-auto max-h-[480px]">
@@ -194,7 +146,6 @@ function MegaMenu({ serviceParents, productParents, getSubs, getHref, onClose, r
           </div>
         </div>
       </div>
-      )}
     </div>
   );
 }
@@ -219,14 +170,13 @@ export default function Layout({ children }) {
     queryFn: () => api.entities.Category.list(),
   });
 
-  const { parentCategories, serviceParents, productParents } = useMemo(() => {
-    const parents = categories
-      .filter((c) => c.is_parent ?? c.isParent)
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    const products = parents.filter((p) => PRODUCT_SLUGS.has(p.slug));
-    const services = parents.filter((p) => !PRODUCT_SLUGS.has(p.slug));
-    return { parentCategories: parents, serviceParents: services, productParents: products };
-  }, [categories]);
+  const parentCategories = useMemo(
+    () =>
+      categories
+        .filter((c) => c.is_parent ?? c.isParent)
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    [categories]
+  );
 
   const getSubcategories = useCallback(
     (parentId) => categories.filter((c) => (c.parent_id ?? c.parentId) === parentId),
@@ -310,8 +260,7 @@ export default function Layout({ children }) {
                     onMouseEnter={() => openMenu('categories')}
                   >
                     <MegaMenu
-                      serviceParents={serviceParents}
-                      productParents={productParents}
+                      parents={parentCategories}
                       getSubs={getSubcategories}
                       getHref={getCategoryHref}
                       onClose={closeMenus}
@@ -404,11 +353,9 @@ export default function Layout({ children }) {
                     />
                   </div>
                 </div>
-                {/* Mobile: combined Services + Products */}
                 <MobileCategorySection
                   label="Browse Categories"
-                  serviceParents={serviceParents}
-                  productParents={productParents}
+                  parents={parentCategories}
                   getSubs={getSubcategories}
                   getHref={getCategoryHref}
                   onNavigate={() => setMobileMenuOpen(false)}
