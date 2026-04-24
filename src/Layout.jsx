@@ -3,10 +3,10 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getBlogArticleUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import {
-  Menu, X, Search, ChevronRight, ChevronDown
+  Menu, X, Search, ChevronRight, ChevronDown, BookOpen, Sparkles
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
@@ -61,7 +61,7 @@ function MobileCategorySection({ label, parents, getSubs, getHref, onNavigate })
   );
 }
 
-function MegaMenu({ parents, getSubs, getHref, onClose, rootHref }) {
+function MegaMenu({ parents, getSubs, getHref, onClose, rootHref, recentPosts = [] }) {
   const [activeId, setActiveId] = useState(parents[0]?.id ?? null);
 
   useEffect(() => {
@@ -81,66 +81,120 @@ function MegaMenu({ parents, getSubs, getHref, onClose, rootHref }) {
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-[920px] max-w-[95vw] overflow-hidden">
-      <div className="grid grid-cols-[260px_1fr] min-h-[420px]">
+    <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-[740px] max-w-[calc(100vw-1.5rem)] overflow-hidden">
+      <div className="grid grid-cols-[220px_1fr]">
         {/* Left rail — parent categories */}
-        <div className="bg-slate-50/70 border-r border-slate-100 py-2 overflow-y-auto max-h-[480px]">
-          {parents.map((p) => {
-            const isActive = p.id === activeParent?.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onMouseEnter={() => setActiveId(p.id)}
-                onFocus={() => setActiveId(p.id)}
-                onClick={() => setActiveId(p.id)}
-                className={`w-full flex items-center justify-between gap-2 px-5 py-3 text-sm font-semibold text-left transition-colors ${
-                  isActive
-                    ? 'bg-orange-50 text-orange-600'
-                    : 'text-slate-700 hover:bg-white hover:text-[#1A2E4A]'
-                }`}
+        <div className="bg-slate-50 border-r border-slate-200 py-3 max-h-[480px] overflow-y-auto flex flex-col">
+          <div className="px-5 pb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Industries
+          </div>
+          <div className="flex-1">
+            {parents.map((p) => {
+              const isActive = p.id === activeParent?.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onMouseEnter={() => setActiveId(p.id)}
+                  onFocus={() => setActiveId(p.id)}
+                  onClick={() => setActiveId(p.id)}
+                  className={`relative w-full flex items-center justify-between gap-2 px-5 py-2.5 text-sm font-medium text-left transition-colors ${
+                    isActive
+                      ? 'bg-white text-[#1A2E4A] font-semibold shadow-[inset_2px_0_0_#F5A623]'
+                      : 'text-slate-600 hover:bg-white/70 hover:text-[#1A2E4A]'
+                  }`}
+                >
+                  <span className="truncate">{p.name}</span>
+                  <ChevronRight className={`w-3.5 h-3.5 flex-shrink-0 transition-colors ${isActive ? 'text-[#F5A623]' : 'text-slate-300'}`} />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Resources / latest posts at bottom of rail */}
+          {recentPosts.length > 0 && (
+            <div className="mx-3 mt-3 mb-2 p-3 rounded-lg bg-gradient-to-br from-[#1A2E4A] to-[#0F1E33] text-white">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[#F5A623] mb-2">
+                <Sparkles className="w-3 h-3" /> Latest Resources
+              </div>
+              <div className="flex flex-col gap-2">
+                {recentPosts.slice(0, 3).map((post) => (
+                  <Link
+                    key={post.slug}
+                    href={getBlogArticleUrl(post.slug)}
+                    onClick={onClose}
+                    className="group/post block"
+                  >
+                    <p className="text-[11px] font-semibold leading-snug text-white group-hover/post:text-[#F5A623] transition-colors line-clamp-2">
+                      {post.title}
+                    </p>
+                    {post.category && (
+                      <span className="text-[10px] text-slate-400 group-hover/post:text-slate-300 transition-colors">
+                        {post.category}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+              <Link
+                href="/blog"
+                onClick={onClose}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#F5A623] hover:gap-1.5 transition-all mt-2"
               >
-                <span className="truncate">{p.name}</span>
-                <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-orange-500' : 'text-slate-400'}`} />
-              </button>
-            );
-          })}
+                View all resources <ChevronRight className="w-3 h-3" />
+              </Link>
+            </div>
+          )}
         </div>
 
-        {/* Right panel — subcategory cards */}
-        <div className="p-5 flex flex-col min-h-full">
+        {/* Right panel — subcategory list */}
+        <div className="p-6 flex flex-col min-h-[420px]">
+          {activeParent && (
+            <div className="mb-3 flex items-baseline justify-between">
+              <h3 className="text-sm font-bold text-[#1A2E4A]">
+                {activeParent.name}
+              </h3>
+              <span className="text-[11px] text-slate-400">
+                {subs.length} {subs.length === 1 ? 'category' : 'categories'}
+              </span>
+            </div>
+          )}
+
           {subs.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 content-start flex-1 overflow-y-auto max-h-[440px] pr-1">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 content-start flex-1 overflow-y-auto max-h-[360px] pr-1">
               {subs.map((sub) => (
                 <Link
                   key={sub.id}
                   href={getHref(sub, activeParent)}
                   onClick={onClose}
-                  className="group flex items-center gap-3 px-4 py-3 border border-slate-200 rounded-lg text-sm text-slate-700 hover:border-orange-400 hover:text-orange-600 hover:shadow-sm transition-all"
+                  className="group flex items-center justify-between gap-2 px-3 py-2 rounded-md text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                 >
-                  <span className="w-8 h-8 bg-slate-100 group-hover:bg-orange-50 rounded-md flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-slate-500 group-hover:text-orange-600 transition-colors">
-                    {sub.name.charAt(0)}
-                  </span>
                   <span className="font-medium truncate">{sub.name}</span>
+                  <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-slate-300 group-hover:text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               ))}
             </div>
           ) : (
             <div className="flex-1 flex items-center justify-center text-sm text-slate-400">
-              No subcategories yet. Click “Explore” to view {activeParent?.name}.
+              No subcategories yet for {activeParent?.name}.
             </div>
           )}
 
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
-            <p className="text-xs text-slate-500">
-              {activeParent?.name} · {subs.length} {subs.length === 1 ? 'category' : 'categories'}
-            </p>
+            <Link
+              href="/blog"
+              onClick={onClose}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-orange-600 transition-colors"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              Resources
+            </Link>
             <Link
               href={activeParent ? getHref(activeParent) : (rootHref || '/directory')}
               onClick={onClose}
-              className="inline-flex items-center gap-1.5 bg-[#F5A623] hover:bg-[#D48E1A] text-[#1A2E4A] font-semibold text-sm px-5 py-2.5 rounded-lg shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 bg-[#F5A623] hover:bg-[#D48E1A] text-[#1A2E4A] font-semibold text-sm px-4 py-2 rounded-lg shadow-sm transition-colors"
             >
-              Explore all categories
+              View all in {activeParent?.name || 'directory'}
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -155,7 +209,9 @@ export default function Layout({ children }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null); // null | 'categories'
+  const [menuPos, setMenuPos] = useState(null);
   const catDropdownRef = useRef(null);
+  const catButtonRef = useRef(null);
   const catTimeoutRef = useRef(null);
   const router = useRouter();
 
@@ -168,6 +224,12 @@ export default function Layout({ children }) {
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: () => api.entities.Category.list(),
+  });
+
+  const { data: recentPosts = [] } = useQuery({
+    queryKey: ['blog-posts', 'recent'],
+    queryFn: () => fetch('/api/blog-posts').then((r) => (r.ok ? r.json() : [])),
+    staleTime: 5 * 60 * 1000,
   });
 
   const parentCategories = useMemo(
@@ -201,6 +263,35 @@ export default function Layout({ children }) {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  // Position mega menu relative to the button, clamped to viewport
+  useEffect(() => {
+    if (openDropdown !== 'categories') { setMenuPos(null); return; }
+
+    const computePosition = () => {
+      if (!catButtonRef.current) return;
+      const rect = catButtonRef.current.getBoundingClientRect();
+      const menuWidth = 740;
+      const gutter = 12;
+      const viewportWidth = window.innerWidth;
+
+      let left = rect.left;
+      if (left + menuWidth > viewportWidth - gutter) {
+        left = viewportWidth - menuWidth - gutter;
+      }
+      left = Math.max(gutter, left);
+
+      setMenuPos({ top: rect.bottom + 8, left });
+    };
+
+    computePosition();
+    window.addEventListener('resize', computePosition);
+    window.addEventListener('scroll', computePosition, true);
+    return () => {
+      window.removeEventListener('resize', computePosition);
+      window.removeEventListener('scroll', computePosition, true);
+    };
+  }, [openDropdown]);
 
   const openMenu = (which) => {
     clearTimeout(catTimeoutRef.current);
@@ -242,6 +333,7 @@ export default function Layout({ children }) {
                 onMouseLeave={scheduleClose}
               >
                 <button
+                  ref={catButtonRef}
                   type="button"
                   onMouseEnter={() => openMenu('categories')}
                   onFocus={() => openMenu('categories')}
@@ -254,9 +346,10 @@ export default function Layout({ children }) {
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === 'categories' ? 'rotate-180' : ''}`} />
                 </button>
 
-                {openDropdown === 'categories' && (
+                {openDropdown === 'categories' && menuPos && (
                   <div
-                    className="absolute top-full right-0 pt-5 z-50"
+                    className="fixed z-50"
+                    style={{ top: menuPos.top, left: menuPos.left }}
                     onMouseEnter={() => openMenu('categories')}
                   >
                     <MegaMenu
@@ -265,6 +358,7 @@ export default function Layout({ children }) {
                       getHref={getCategoryHref}
                       onClose={closeMenus}
                       rootHref={getDirectoryUrl()}
+                      recentPosts={recentPosts}
                     />
                   </div>
                 )}
@@ -274,7 +368,7 @@ export default function Layout({ children }) {
                 href="/blog"
                 className="text-slate-700 hover:text-orange-600 font-semibold text-sm transition-colors"
               >
-                Blog
+                Resources
               </Link>
 
               <div className="flex items-center gap-2 bg-slate-50 rounded-md px-3 py-2 border border-slate-200 hover:border-orange-300 transition-colors">
@@ -372,7 +466,7 @@ export default function Layout({ children }) {
                   className="text-slate-700 hover:text-orange-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-orange-50 touch-manipulation"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Blog
+                  Resources
                 </Link>
                 <Link
                   href={createPageUrl('WriteReview')}
