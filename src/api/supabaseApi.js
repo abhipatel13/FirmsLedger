@@ -34,9 +34,24 @@ function mapOrder(orderKey) {
 }
 
 export async function fetchCategories() {
-  const { data, error } = await supabase.from('categories').select('*').order('order', { ascending: true }).limit(10000);
-  if (error) throw error;
-  return data || [];
+  // Supabase caps single requests at 1000 rows server-side regardless of
+  // the .limit() you pass — page through with .range() so all 8K+ categories
+  // are loaded into the filter dropdown.
+  const PAGE = 1000;
+  let all = [];
+  let from = 0;
+  while (true) {
+    const { data, error } = await supabase
+      .from('categories').select('*')
+      .order('order', { ascending: true }).order('name', { ascending: true })
+      .range(from, from + PAGE - 1);
+    if (error) throw error;
+    if (!data?.length) break;
+    all = all.concat(data);
+    if (data.length < PAGE) break;
+    from += PAGE;
+  }
+  return all;
 }
 
 export async function fetchAgenciesByCategory(categorySlug, orderKey = '-avg_rating', limit = 200) {

@@ -13,6 +13,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import FilterPanel from '@/components/FilterPanel';
 import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { debounce } from 'lodash';
+import { getOverriddenCategoryTitle } from '@/lib/seo';
 
 const PAGE_SIZE = 10;
 
@@ -260,20 +261,15 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
             dark
           />
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-4 mb-2 text-white tracking-tight">
-            {/* Allowlisted categories get the dynamic "Top N … in <Location> (Year)"
-                heading; everything else keeps the original "Top <Category> Companies". */}
-            {['artificial-turf'].includes(selectedService) ? (
-              <>
-                Top {filteredAgencies.length > 0 ? `${filteredAgencies.length} ` : ''}{selectedCategoryName} Companies
-                {selectedCity || selectedState || selectedCountry
-                  ? ` in ${[selectedCity, selectedState, selectedCountry].filter(Boolean).join(', ')}`
-                  : ''}
-                {' '}({new Date().getFullYear()})
-              </>
-            ) : (
-              <>Top {selectedCategoryName} Companies</>
-            )}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mt-4 mb-3 text-white tracking-tight leading-tight">
+            {/* Reads the same per-slug overrides as the SEO <title>. Add new
+                categories by editing CATEGORY_TITLE_OVERRIDES in src/lib/seo.js. */}
+            {getOverriddenCategoryTitle(
+              selectedService,
+              selectedCategoryName,
+              [selectedCity, selectedState, selectedCountry].filter(Boolean).join(', '),
+              selectedCountry,
+            ) || `Top ${selectedCategoryName} Companies`}
           </h1>
           <p className="text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed mb-4">
             {selectedCategoryDesc
@@ -357,8 +353,8 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
       <div className="w-full px-4 sm:px-6 lg:px-10 py-6">
         {/* Sort Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-          <p className="text-sm text-slate-500">
-            Showing <strong className="text-slate-800">{(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filteredAgencies.length)}</strong> of <strong className="text-slate-800">{filteredAgencies.length}</strong> {selectedCategoryName}
+          <p className="text-base text-slate-600">
+            Showing <strong className="text-slate-900">{(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filteredAgencies.length)}</strong> of <strong className="text-slate-900">{filteredAgencies.length}</strong> {selectedCategoryName}
           </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500 font-medium">Sort:</span>
@@ -418,7 +414,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
                             <Link href={getCompanyProfileUrl(agency)}>
-                              <h3 className="text-base font-bold text-slate-900 hover:text-orange-600 transition-colors">
+                              <h3 className="text-lg sm:text-xl font-bold text-slate-900 hover:text-orange-600 transition-colors">
                                 {agency.name}
                               </h3>
                             </Link>
@@ -430,38 +426,38 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
                           </div>
 
                           {/* Rating row */}
-                          <div className="flex items-center gap-2 mb-2.5">
+                          <div className="flex items-center gap-2 mb-3">
                             <div className="flex items-center gap-0.5">
                               {[...Array(5)].map((_, i) => (
-                                <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(agency.avg_rating || 0) ? 'fill-orange-400 text-orange-400' : 'text-slate-200'}`} />
+                                <Star key={i} className={`w-4 h-4 ${i < Math.floor(agency.avg_rating || 0) ? 'fill-orange-400 text-orange-400' : 'text-slate-200'}`} />
                               ))}
                             </div>
-                            <span className="text-sm font-bold text-slate-900">{(agency.avg_rating || 0).toFixed(1)}</span>
-                            <Link href={getCompanyProfileUrl(agency) + '#reviews'} className="text-xs text-slate-500 hover:underline">
+                            <span className="text-base font-bold text-slate-900">{(agency.avg_rating || 0).toFixed(1)}</span>
+                            <Link href={getCompanyProfileUrl(agency) + '#reviews'} className="text-sm text-slate-500 hover:underline">
                               {agency.review_count || 0} Reviews
                             </Link>
                           </div>
 
                           {/* Description */}
-                          <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-3">
+                          <p className="text-slate-600 text-base leading-relaxed line-clamp-2 mb-3">
                             {agency.description || `${agency.name} is a verified service provider${agency.hq_city ? ` based in ${agency.hq_city}` : ''}. Connect to learn about their expertise, pricing, and client outcomes.`}
                           </p>
 
                           {/* Meta chips */}
                           <div className="flex flex-wrap gap-2">
                             {agency.team_size && (
-                              <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
-                                <Users className="w-3 h-3" /> {agency.team_size}
+                              <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded">
+                                <Users className="w-3.5 h-3.5" /> {agency.team_size}
                               </span>
                             )}
                             {agency.founded_year && (
-                              <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
-                                <Calendar className="w-3 h-3" /> Est. {agency.founded_year}
+                              <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded">
+                                <Calendar className="w-3.5 h-3.5" /> Est. {agency.founded_year}
                               </span>
                             )}
                             {(agency.hq_city || agency.hq_country) && (
-                              <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
-                                <MapPin className="w-3 h-3" />
+                              <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded">
+                                <MapPin className="w-3.5 h-3.5" />
                                 {[agency.hq_city, agency.hq_country].filter(Boolean).join(', ')}
                               </span>
                             )}
@@ -471,14 +467,14 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
                         {/* Right: Actions */}
                         <div className="flex flex-row lg:flex-col gap-2 lg:w-36 flex-shrink-0">
                           <Link href={getCompanyProfileUrl(agency)} className="flex-1 lg:flex-none">
-                            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold h-9 rounded-md transition-colors">
+                            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold h-10 rounded-md transition-colors">
                               View Profile
                             </Button>
                           </Link>
                           {agency.website && (
                             <a href={agency.website} target="_blank" rel="noopener noreferrer" className="flex-1 lg:flex-none">
-                              <Button variant="outline" className="w-full border-slate-200 text-slate-700 hover:border-slate-300 text-xs font-semibold h-9 rounded-md">
-                                Website <ExternalLink className="w-3 h-3 ml-1" />
+                              <Button variant="outline" className="w-full border-slate-200 text-slate-700 hover:border-slate-300 text-sm font-semibold h-10 rounded-md">
+                                Website <ExternalLink className="w-3.5 h-3.5 ml-1" />
                               </Button>
                             </a>
                           )}

@@ -57,6 +57,114 @@ export function getCategoryMetaDescription(categoryName, slug, options = {}) {
 }
 
 /** Title for a category listing page: "Top [Category Name] Companies (2026)" */
+/**
+ * Per-slug, per-country title overrides for the "Top N <Category> <Noun> in
+ * <Location> (<Year>)" format. ONE source of truth — used by both the SEO
+ * <title> and the on-page H1.
+ *
+ * Structure:
+ *   slug → { '<Country>': { top, noun, name, description } }
+ * Use '*' as the country key to apply to ALL locations of that slug
+ * (or to a slug with no country filter at all).
+ *
+ * Per-entry options:
+ *   top:         number shown in the title ("Top 10 …"). Omit for plain "Top …".
+ *   noun:        word after the category name (default 'Companies').
+ *   name:        override the displayed category name (e.g. show "Transformer"
+ *                even though the DB slug is "transformers").
+ *   description: SEO meta description override (use for keyword targeting).
+ */
+export const CATEGORY_TITLE_OVERRIDES = {
+  'artificial-turf':           { 'South Korea':    { top: 10, noun: 'Companies' } },
+  'transformers':              { 'United States':  { top: 8,  noun: 'Manufacturers', name: 'Transformer' } },
+  'mushroom-producers':        { 'United States':  { top: 10, noun: 'Producers',     name: 'Mushroom' } },
+  'vinyl-flooring':            { 'Philippines':    { top: 6,  noun: 'Manufacturers' } },
+  'construction-companies':    { 'Mexico':         { top: 7,  noun: 'Companies',     name: 'Construction' } },
+  'gold':                      { 'Philippines':    { top: 11, noun: 'Companies' } },
+  'loudspeaker-manufacturers': { 'Denmark':        { top: 5,  noun: 'Manufacturers', name: 'Loudspeaker' } },
+  'pumps':                     { 'China':          { top: 4,  noun: 'Manufacturers', name: 'Pump' } },
+  'flexible-packaging':        { 'Canada':         { top: 5,  noun: 'Companies' } },
+  'glass':                     { 'United Kingdom': { top: 3,  noun: 'Manufacturers', name: 'Glass' } },
+  'plastic-recycling':         { 'India':          { top: 5,  noun: 'Companies' } },
+  'embedded-systems':          { 'Singapore':      {           noun: 'Companies' } },
+  'toy-manufacturing':         {
+    'Singapore':     { top: 5, noun: 'Companies' },
+    'India':         { top: 5, noun: 'Companies' },
+    'United States': { top: 5, noun: 'Companies' },
+    'Canada':        { top: 5, noun: 'Companies' },
+    'Germany':       { top: 5, noun: 'Companies' },
+    'France':        { top: 5, noun: 'Companies' },
+  },
+
+  // Global pages (no country filter) — use '*' key.
+  'underwater-welding': { '*': { top: 10, noun: 'Companies' } },
+  'cryogenic':          { '*': { top: 10, noun: 'Companies' } },
+
+  // Clotted Cream — keyword-rich description (kept under 160 chars for SERP).
+  // Targets: clotted cream, recipe, scones, fudge, cookie, near me.
+  'clotted-cream': {
+    '*': {
+      top: 10,
+      noun: 'Manufacturers',
+      description:
+        'Top 10 clotted cream manufacturers and brands for 2026. Find Devon and Cornish clotted cream for scones, recipes, fudge, cookies, and shops near you.',
+    },
+  },
+
+  'seasoning':           { 'Greece':        { top: 5, noun: 'Companies' } },
+  'accounting-software': { 'Kenya':         { top: 5, noun: 'Companies' } },
+  'airlines':            { 'Saudi Arabia':  {         noun: 'Companies', name: 'Airline' } }, // no top → "Top Airline Companies in Saudi Arabia (2026)"
+  'cell-phone-companies':{ 'United States': { top: 7, noun: 'Companies', name: 'Cell Phone' } },
+};
+
+/**
+ * Build the "Top N <Category> <Noun> in <Location> (<Year>)" title for an
+ * allowlisted slug+country combo. Returns null when no override matches —
+ * callers fall back to the plain "Top <Category> Companies" title.
+ *
+ * `country` is matched against the keys; '*' acts as a wildcard fallback.
+ */
+export function getOverriddenCategoryTitle(slug, categoryName, location, country) {
+  const override = getOverrideEntry(slug, country);
+  if (!override) return null;
+  const name = override.name || categoryName;
+  const n = override.top ? `${override.top} ` : '';
+  const noun = override.noun || 'Companies';
+  const where = location ? ` in ${location}` : '';
+  return `Top ${n}${name} ${noun}${where} (${SEO_YEAR})`;
+}
+
+/**
+ * Returns the SEO meta description for this slug+country override.
+ *
+ *   1. Use the explicit `description` field if set (keyword-targeted copy).
+ *   2. Else auto-generate a unique description from the override fields,
+ *      so every curated page has its own meta description without forcing
+ *      a hand-written one.
+ *
+ * Returns null only when there is no override at all — callers fall back
+ * to the default category-level description.
+ */
+export function getOverriddenCategoryDescription(slug, country, categoryName, location) {
+  const override = getOverrideEntry(slug, country);
+  if (!override) return null;
+  if (override.description) return override.description;
+
+  // Auto-generated keyword-rich fallback. Kept under ~160 chars so Google
+  // doesn't truncate it in search results.
+  const name = override.name || categoryName || 'Business';
+  const noun = override.noun || 'Companies';
+  const where = location ? ` in ${location}` : '';
+  const n = override.top ? `Top ${override.top} ` : 'Leading ';
+  return `${n}${name} ${noun}${where} for ${SEO_YEAR}. Compare verified ${name.toLowerCase()} ${noun.toLowerCase()} by reviews, pricing, and location on FirmsLedger.`;
+}
+
+function getOverrideEntry(slug, country) {
+  const slugMap = CATEGORY_TITLE_OVERRIDES[slug];
+  if (!slugMap) return null;
+  return slugMap[country] || slugMap['*'] || null;
+}
+
 export function getCategoryTitle(categoryName, count) {
   const n = Number(count) > 0 ? `${count} ` : '';
   return `Top ${n}${categoryName} Companies (${SEO_YEAR})`;

@@ -253,6 +253,47 @@ export default async function sitemap({ id }) {
   for (const slug of categorySlugs)
     yield { url: `${BASE_URL}/directory/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
 
+  // ── Hand-curated location-specific category pages ───────────────────────────
+  // Used to push individual high-value SEO pages into the sitemap so Google
+  // discovers the country-filtered variant (e.g. artificial-turf in South Korea).
+  const CURATED_LOCATION_PAGES = [
+    { slug: 'artificial-turf',           country: 'South Korea' },
+    { slug: 'transformers',              country: 'United States' },
+    { slug: 'mushroom-producers',        country: 'United States' },
+    { slug: 'vinyl-flooring',            country: 'Philippines' },
+    { slug: 'construction-companies',    country: 'Mexico' },
+    { slug: 'gold',                      country: 'Philippines' },
+    { slug: 'loudspeaker-manufacturers', country: 'Denmark' },
+    { slug: 'pumps',                     country: 'China' },
+    { slug: 'flexible-packaging',        country: 'Canada' },
+    { slug: 'glass',                     country: 'United Kingdom' },
+    { slug: 'plastic-recycling',         country: 'India' },
+    { slug: 'embedded-systems',          country: 'Singapore' },
+    { slug: 'toy-manufacturing',         country: 'Singapore' },
+    { slug: 'toy-manufacturing',         country: 'India' },
+    { slug: 'toy-manufacturing',         country: 'United States' },
+    { slug: 'toy-manufacturing',         country: 'Canada' },
+    { slug: 'toy-manufacturing',         country: 'Germany' },
+    { slug: 'toy-manufacturing',         country: 'France' },
+    // Global pages (no country filter)
+    { slug: 'underwater-welding' },
+    { slug: 'clotted-cream' },
+    { slug: 'cryogenic' },
+    // More country-targeted pages
+    { slug: 'seasoning',             country: 'Greece' },
+    { slug: 'accounting-software',   country: 'Kenya' },
+    { slug: 'airlines',              country: 'Saudi Arabia' },
+    { slug: 'cell-phone-companies',  country: 'United States' },
+  ];
+  for (const { slug, country, state, city } of CURATED_LOCATION_PAGES) {
+    const qp = new URLSearchParams();
+    if (country) qp.set('country', country);
+    if (state)   qp.set('state', state);
+    if (city)    qp.set('city', city);
+    const qs = qp.toString();
+    yield { url: qs ? `${BASE_URL}/directory/${slug}?${qs}` : `${BASE_URL}/directory/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 };
+  }
+
   // ── US State pages (all categories × target states) ─────────────────────────
   for (const slug of categorySlugs.slice(0, 500))
     for (const stateSlug of TARGET_STATES) {

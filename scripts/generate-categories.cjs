@@ -1,4 +1,343 @@
 /**
+ * Rebuild split SQL chunks for the full category seed.
+ *
+ * Source:
+ *   supabase/seed-categories-5000.sql
+ *
+ * Outputs:
+ *   supabase/seed-categories-part1.sql ... partN.sql
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const outDir = path.join(__dirname, '..', 'supabase');
+const fullPath = path.join(outDir, 'seed-categories-5000.sql');
+const MAX_LINES_PER_CHUNK = 1500;
+
+if (!fs.existsSync(fullPath)) {
+  throw new Error(
+    'Missing supabase/seed-categories-5000.sql. Keep this file in repo and run this script again.'
+  );
+}
+
+const sql = fs.readFileSync(fullPath, 'utf8');
+const allLines = sql.split('\n');
+
+// Delete existing chunk files.
+for (let i = 1; ; i += 1) {
+  const chunk = path.join(outDir, `seed-categories-part${i}.sql`);
+  if (!fs.existsSync(chunk)) break;
+  fs.unlinkSync(chunk);
+}
+
+const chunks = [];
+let current = [];
+
+for (const line of allLines) {
+  current.push(line);
+  // Split at blank boundaries so SQL statements stay intact.
+  if (line === '' && current.length >= MAX_LINES_PER_CHUNK) {
+    chunks.push(current.join('\n'));
+    current = ['-- FirmsLedger Category Seed (continued)\n'];
+  }
+}
+
+if (current.length > 1) chunks.push(current.join('\n'));
+
+for (let i = 0; i < chunks.length; i += 1) {
+  const target = path.join(outDir, `seed-categories-part${i + 1}.sql`);
+  fs.writeFileSync(target, chunks[i], 'utf8');
+}
+
+console.log('Full category chunks rebuilt successfully.');
+console.log(`Source: ${path.relative(path.join(__dirname, '..'), fullPath)}`);
+console.log(`Parts: ${chunks.length}`);
+/**
+ * Rebuilds split SQL chunks for the full category seed.
+ *
+ * Expected source:
+ *   supabase/seed-categories-5000.sql
+ *
+ * Output:
+ *   supabase/seed-categories-part1.sql ... partN.sql
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const outDir = path.join(__dirname, '..', 'supabase');
+const fullPath = path.join(outDir, 'seed-categories-5000.sql');
+const MAX_LINES_PER_CHUNK = 1500;
+
+if (!fs.existsSync(fullPath)) {
+  throw new Error(
+    'Missing supabase/seed-categories-5000.sql. Keep this file in repo, then re-run this script.'
+  );
+}
+
+const sql = fs.readFileSync(fullPath, 'utf8');
+const allLines = sql.split('\n');
+
+// Remove old part files first.
+for (let i = 1; ; i += 1) {
+  const p = path.join(outDir, `seed-categories-part${i}.sql`);
+  if (!fs.existsSync(p)) break;
+  fs.unlinkSync(p);
+}
+
+const chunks = [];
+let currentChunk = [];
+
+for (const line of allLines) {
+  currentChunk.push(line);
+  // Split at blank line boundaries to avoid breaking SQL blocks.
+  if (line === '' && currentChunk.length >= MAX_LINES_PER_CHUNK) {
+    chunks.push(currentChunk.join('\n'));
+    currentChunk = ['-- FirmsLedger Category Seed (continued)\n'];
+  }
+}
+
+if (currentChunk.length > 1) {
+  chunks.push(currentChunk.join('\n'));
+}
+
+for (let i = 0; i < chunks.length; i += 1) {
+  const chunkPath = path.join(outDir, `seed-categories-part${i + 1}.sql`);
+  fs.writeFileSync(chunkPath, chunks[i], 'utf8');
+}
+
+console.log('Rebuilt full category SQL chunks successfully.');
+console.log(`Source: ${path.relative(path.join(__dirname, '..'), fullPath)}`);
+console.log(`Parts: ${chunks.length}`);
+chunks.forEach((c, i) => console.log(`  part${i + 1}: ${c.split('\n').length} lines`));
+/**
+ * Generates a lean SQL seed file for categories.
+ * - Removes current categories (and category links) first
+ * - Inserts a focused set of parent + sub categories
+ * - Excludes IT / Web Services for now
+ *
+ * Run: node scripts/generate-categories.cjs
+ * Output: supabase/seed-categories-lean.sql
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+function toSlug(name) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+}
+
+function esc(str) {
+  return str.replace(/'/g, "''");
+}
+
+const INDUSTRIES = [
+  {
+    parent: 'Staffing & Recruiting',
+    children: [
+      'Healthcare Staffing',
+      'Industrial Staffing',
+      'Executive Search',
+      'Temporary Staffing',
+      'Permanent Staffing',
+      'Remote Staffing',
+    ],
+  },
+  {
+    parent: 'Construction',
+    children: [
+      'Commercial Construction',
+      'Residential Construction',
+      'Civil Contractors',
+      'MEP Contractors',
+      'Interior Fit Out',
+      'Construction Equipment Rental',
+    ],
+  },
+  {
+    parent: 'Healthcare',
+    children: [
+      'Hospitals',
+      'Clinics',
+      'Diagnostic Centers',
+      'Medical Devices',
+      'Pharmaceutical Manufacturers',
+      'Telemedicine',
+    ],
+  },
+  {
+    parent: 'Finance & Accounting',
+    children: [
+      'Accounting Firms',
+      'Tax Consultants',
+      'Audit Services',
+      'Payroll Services',
+      'Bookkeeping',
+      'CFO Advisory',
+    ],
+  },
+  {
+    parent: 'Legal Services',
+    children: [
+      'Corporate Law Firms',
+      'Litigation Firms',
+      'IP Law Firms',
+      'Contract Management',
+      'Compliance Consulting',
+      'Trademark Services',
+    ],
+  },
+  {
+    parent: 'Marketing & Advertising',
+    children: [
+      'Digital Marketing',
+      'SEO Services',
+      'Performance Marketing',
+      'Branding Agencies',
+      'Social Media Marketing',
+      'Content Marketing',
+    ],
+  },
+  {
+    parent: 'Logistics & Transportation',
+    children: [
+      'Freight Forwarding',
+      'Warehousing',
+      'Last Mile Delivery',
+      'Cold Chain Logistics',
+      'Customs Clearance',
+      '3PL Services',
+    ],
+  },
+  {
+    parent: 'Real Estate',
+    children: [
+      'Residential Brokerage',
+      'Commercial Brokerage',
+      'Property Management',
+      'Facility Management',
+      'Real Estate Developers',
+      'Valuation Services',
+    ],
+  },
+  // Product-focused parents to keep "Find By Products" populated.
+  {
+    parent: 'Manufacturing',
+    children: [
+      'Industrial Manufacturing',
+      'CNC Manufacturing',
+      'Metal Fabrication',
+      'Plastic Components',
+      'Automotive Components',
+      'Contract Manufacturing',
+    ],
+  },
+  {
+    parent: 'Machinery & Equipment',
+    children: [
+      'CNC Machines',
+      'Milling Machines',
+      'Drilling Machines',
+      'Welding Equipment',
+      'Packaging Machinery',
+      'Material Handling Equipment',
+    ],
+  },
+  {
+    parent: 'Chemicals & Materials',
+    children: [
+      'Specialty Chemicals',
+      'Industrial Chemicals',
+      'Polymers',
+      'Coatings',
+      'Adhesives & Sealants',
+      'Water Treatment Chemicals',
+    ],
+  },
+  {
+    parent: 'Retail & E-commerce',
+    children: [
+      'D2C Brands',
+      'Online Marketplaces',
+      'B2B E-commerce',
+      'Retail Chains',
+      'E-commerce Fulfillment',
+      'Marketplace Operations',
+    ],
+  },
+];
+
+function buildParentDescription(parent) {
+  return `${parent} companies listed on FirmsLedger. Compare verified providers, check reviews, and find trusted partners.`;
+}
+
+function buildChildDescription(child, parent) {
+  const c = child.toLowerCase();
+  return `${child} companies in ${parent}. Browse verified ${c} providers and shortlist the right partner on FirmsLedger.`;
+}
+
+function generateSQL(industries) {
+  const lines = [];
+  lines.push('-- FirmsLedger: Lean Category Seed');
+  lines.push('-- Purpose: replace all current categories with a focused, storage-light set');
+  lines.push('-- Excludes IT / Web Services for now\n');
+  lines.push('BEGIN;');
+  lines.push('');
+  lines.push('-- Remove category links first to satisfy foreign keys');
+  lines.push('DELETE FROM agency_categories');
+  lines.push('WHERE category_id IN (SELECT id FROM categories);');
+  lines.push('');
+  lines.push('-- Remove all current categories');
+  lines.push('DELETE FROM categories;');
+  lines.push('');
+
+  let parentOrder = 1;
+  for (const { parent, children } of industries) {
+    const parentSlug = toSlug(parent);
+    const parentDesc = buildParentDescription(parent);
+
+    lines.push(`-- ${parent}`);
+    lines.push(
+      `INSERT INTO categories (name, slug, description, is_parent, parent_id, "order") VALUES ` +
+        `('${esc(parent)}', '${parentSlug}', '${esc(parentDesc)}', true, NULL, ${parentOrder});`
+    );
+
+    const uniqueChildren = [...new Set(children)];
+    uniqueChildren.forEach((child, idx) => {
+      const childSlug = toSlug(child);
+      const childDesc = buildChildDescription(child, parent);
+      lines.push('INSERT INTO categories (name, slug, description, is_parent, parent_id, "order")');
+      lines.push(`SELECT '${esc(child)}', '${childSlug}', '${esc(childDesc)}', false, c.id, ${idx + 1}`);
+      lines.push(`FROM categories c WHERE c.slug = '${parentSlug}';`);
+    });
+    lines.push('');
+
+    parentOrder += 1;
+  }
+
+  lines.push('COMMIT;');
+  lines.push('');
+  return lines.join('\n');
+}
+
+const sql = generateSQL(INDUSTRIES);
+const outDir = path.join(__dirname, '..', 'supabase');
+const outPath = path.join(outDir, 'seed-categories-lean.sql');
+fs.writeFileSync(outPath, sql, 'utf8');
+
+let total = 0;
+for (const { children } of INDUSTRIES) total += children.length + 1;
+
+console.log(`Generated ${total} categories across ${INDUSTRIES.length} parent categories`);
+console.log('Output: supabase/seed-categories-lean.sql');
+console.log('This SQL deletes all current categories, then inserts the new set.');
+/**
  * Generates a SQL seed file with 5000+ industry categories for programmatic SEO.
  * Run: node scripts/generate-categories.js
  * Output: supabase/seed-categories-5000.sql

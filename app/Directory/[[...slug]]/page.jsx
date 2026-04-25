@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Directory from '@/views/Directory';
 import { notFound } from 'next/navigation';
-import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle, getCategoryMetaDescription, getCategoryTitleWithLocation, getCategoryMetaDescriptionWithLocation } from '@/lib/seo';
+import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle, getCategoryMetaDescription, getCategoryTitleWithLocation, getCategoryMetaDescriptionWithLocation, CATEGORY_TITLE_OVERRIDES, getOverriddenCategoryTitle, getOverriddenCategoryDescription } from '@/lib/seo';
 
 function getServerSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -129,14 +129,14 @@ export async function generateMetadata({ params, searchParams }) {
     return { title: `${SITE_NAME} – Directory` };
   }
 
-  // Dynamic "Top N …" count is only enabled for an allowlist of category
-  // slugs — every other category keeps the original "Top … Companies" title.
-  const COUNT_IN_TITLE_SLUGS = new Set(['artificial-turf']);
-  const count = COUNT_IN_TITLE_SLUGS.has(categorySlug)
-    ? await countAgenciesForCategory(category.id, { country: countryName, state: stateName, city: cityName })
-    : 0;
-  const title = getCategoryTitleWithLocation(category.name, location, count);
-  const description = buildDescription(category, location);
+  // Single source of truth for per-slug title overrides lives in src/lib/seo.js.
+  // Add new categories there (slug → { top, noun }) — both the SEO <title>
+  // and the on-page H1 read from the same config.
+  const title = getOverriddenCategoryTitle(categorySlug, category.name, location, countryName)
+    || getCategoryTitleWithLocation(category.name, location);
+  // Override description wins (used for keyword-targeted pages like clotted cream).
+  const description = getOverriddenCategoryDescription(categorySlug, countryName, category.name, location)
+    || buildDescription(category, location);
   const base = `${BASE_URL.replace(/\/$/, '')}/directory/${categorySlug}`;
   const qp = new URLSearchParams();
   if (countryName) qp.set('country', countryName);

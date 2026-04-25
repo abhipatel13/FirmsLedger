@@ -151,8 +151,8 @@ export default function Home() {
           <div className="max-w-[800px] mx-auto text-center animate-fade-in-up">
 
             <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-bold text-white leading-tight lg:leading-[1.2] mb-6 tracking-tight">
-              Discover, Compare & Choose the{' '}
-              <span className="text-gradient">Best Products & Services</span>
+              Discover and Compare the{' '}
+              <span className="text-gradient">Best Products and Services</span>
             </h1>
 
             <p className="text-slate-300 text-lg sm:text-xl mb-10 leading-relaxed max-w-2xl mx-auto">

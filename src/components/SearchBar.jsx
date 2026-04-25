@@ -43,6 +43,7 @@ const COUNTRIES = [
   'Australia',
   'Singapore',
   'United Arab Emirates',
+  'Qatar',
   'India',
   'Germany',
   'France',

@@ -79,6 +79,28 @@ function ServiceProductSelect({ categories, selectedService, setSelectedService 
 
   const searchLower = search.toLowerCase();
 
+  // When searching, build a FLAT ranked list of every matching category so
+  // direct hits (e.g. "Transformers") aren't buried behind a parent's expand
+  // toggle. Ranking: exact match → prefix match → substring match → alphabetical.
+  const flatResults = useMemo(() => {
+    if (!search) return [];
+    const matches = categories
+      .filter((c) => (c.name || '').toLowerCase().includes(searchLower))
+      .map((c) => {
+        const name = (c.name || '').toLowerCase();
+        let rank = 3;
+        if (name === searchLower) rank = 0;
+        else if (name.startsWith(searchLower)) rank = 1;
+        else if (name.split(/\s+/).some((w) => w.startsWith(searchLower))) rank = 2;
+        const parent = (c.parent_id || c.parentId)
+          ? categories.find((p) => p.id === (c.parent_id || c.parentId))
+          : null;
+        return { cat: c, rank, parent };
+      });
+    matches.sort((a, b) => a.rank - b.rank || a.cat.name.localeCompare(b.cat.name));
+    return matches;
+  }, [search, categories, searchLower]);
+
   // Filter: show parents that match or have matching children
   const filteredParents = parentCategories.filter((p) => {
     if (!search) return true;
@@ -153,19 +175,48 @@ function ServiceProductSelect({ categories, selectedService, setSelectedService 
 
           {/* Options list */}
           <div className="overflow-y-auto flex-1 p-1">
-            {/* All Businesses option */}
-            <button
-              type="button"
-              onClick={() => selectValue('')}
-              className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                !selectedService ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-              }`}
-            >
-              All Businesses
-            </button>
+            {/* All Businesses option (hidden during search to keep matches focused) */}
+            {!search && (
+              <button
+                type="button"
+                onClick={() => selectValue('')}
+                className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
+                  !selectedService ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                All Businesses
+              </button>
+            )}
 
-            {/* Parent categories with collapsible subcategories */}
-            {filteredParents.map((parent) => {
+            {/* Flat ranked search results — every match shown directly */}
+            {search && flatResults.length > 0 && (
+              <>
+                {flatResults.map(({ cat, parent }) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => selectValue(cat.slug)}
+                    className={`w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors ${
+                      selectedService === cat.slug
+                        ? 'bg-orange-50 text-orange-700 font-medium'
+                        : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="font-medium">{cat.name}</span>
+                    {parent && (
+                      <span className="text-slate-400 text-xs"> · {parent.name}</span>
+                    )}
+                  </button>
+                ))}
+              </>
+            )}
+
+            {search && flatResults.length === 0 && (
+              <p className="text-center text-sm text-slate-400 py-4">No categories found</p>
+            )}
+
+            {/* Hierarchical view — only when NOT searching */}
+            {!search && filteredParents.map((parent) => {
               const subs = getSubcategories(parent.id);
               const isExpanded = effectiveExpanded.has(parent.id);
               const filteredSubs = search
@@ -226,8 +277,8 @@ function ServiceProductSelect({ categories, selectedService, setSelectedService 
               );
             })}
 
-            {/* Standalone categories */}
-            {filteredStandalone.length > 0 && (
+            {/* Standalone categories — hierarchy view only */}
+            {!search && filteredStandalone.length > 0 && (
               <>
                 {filteredParents.length > 0 && <div className="border-t border-slate-100 my-1.5" />}
                 {filteredStandalone.map((cat) => (
@@ -247,7 +298,7 @@ function ServiceProductSelect({ categories, selectedService, setSelectedService 
               </>
             )}
 
-            {filteredParents.length === 0 && filteredStandalone.length === 0 && (
+            {!search && filteredParents.length === 0 && filteredStandalone.length === 0 && (
               <p className="text-center text-sm text-slate-400 py-4">No categories found</p>
             )}
           </div>
