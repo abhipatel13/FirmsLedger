@@ -84,11 +84,22 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
     [categories, selectedCat]
   );
 
+  // Push location filters to the server query so we don't depend on the top-100
+  // slice when no category is selected. Without this, a city like "San Francisco"
+  // can come up empty even when a matching agency exists in the DB.
+  const locationWhere = React.useMemo(() => {
+    const w = { approved: true };
+    if (selectedCountry) w.hq_country = selectedCountry;
+    if (selectedState)   w.hq_state   = selectedState;
+    if (selectedCity)    w.hq_city    = selectedCity;
+    return w;
+  }, [selectedCountry, selectedState, selectedCity]);
+
   const { data: allAgencies = [], isLoading } = useQuery({
-    queryKey: ['agencies', selectedService || ''],
+    queryKey: ['agencies', selectedService || '', selectedCountry || '', selectedState || '', selectedCity || ''],
     queryFn: () => selectedService
       ? api.entities.Agency.filterByCategory(selectedService, '-avg_rating', 200)
-      : api.entities.Agency.filter({ approved: true }, '-avg_rating', 100),
+      : api.entities.Agency.filter(locationWhere, '-avg_rating', 500),
     initialData: initialAgencies?.length ? initialAgencies : undefined,
   });
 
