@@ -57,19 +57,22 @@ export function getCategoryMetaDescription(categoryName, slug, options = {}) {
 }
 
 /** Title for a category listing page: "Top [Category Name] Companies (2026)" */
-export function getCategoryTitle(categoryName) {
-  return `Top ${categoryName} Companies (${SEO_YEAR})`;
+export function getCategoryTitle(categoryName, count) {
+  const n = Number(count) > 0 ? `${count} ` : '';
+  return `Top ${n}${categoryName} Companies (${SEO_YEAR})`;
 }
 
 /**
- * Location-aware title: "Top [Category] Companies in [Location] (2026)"
- * Falls back to plain category title when no location provided.
+ * Location-aware title: "Top [N] [Category] Companies in [Location] (2026)".
+ * The count is included only when > 0 so the title remains correct on
+ * categories with no listings yet.
  */
-export function getCategoryTitleWithLocation(categoryName, location) {
+export function getCategoryTitleWithLocation(categoryName, location, count) {
+  const n = Number(count) > 0 ? `${count} ` : '';
   if (location) {
-    return `Top ${categoryName} Companies in ${location} (${SEO_YEAR})`;
+    return `Top ${n}${categoryName} Companies in ${location} (${SEO_YEAR})`;
   }
-  return `Top ${categoryName} Companies in ${SEO_YEAR}`;
+  return `Top ${n}${categoryName} Companies in ${SEO_YEAR}`;
 }
 
 /**

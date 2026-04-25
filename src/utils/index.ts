@@ -53,3 +53,21 @@ export function getCompanyProfileUrl(agency: { slug?: string | null; id?: string
   if (agency.id) return `/AgencyProfile?id=${encodeURIComponent(agency.id)}`;
   return '/directory';
 }
+
+/**
+ * Resolve a logo URL for a company. We deliberately skip Google's favicon API
+ * — it always returns a generic globe placeholder for unknown domains, which
+ * onError can't detect. Default to ui-avatars so every card shows clean
+ * brand-colored initials when no real logo is curated.
+ *   1. agency.logo_url   (curator-supplied)
+ *   2. ui-avatars with the company name
+ */
+export function getAgencyLogoUrl(agency: {
+  logo_url?: string | null;
+  name?: string | null;
+} | null | undefined): string {
+  if (!agency) return '';
+  if (agency.logo_url) return agency.logo_url;
+  const name = encodeURIComponent(agency.name || '?');
+  return `https://ui-avatars.com/api/?name=${name}&background=1A2E4A&color=fff&size=128&bold=true`;
+}

@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getCompanyProfileUrl, getAgencyLogoUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import RatingDisplay from '@/components/RatingDisplay';
+import AIInsights from '@/components/AIInsights';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   MapPin, Users, Calendar, Globe, CheckCircle, Crown, Star,
@@ -112,6 +113,20 @@ export default function AgencyProfile({ companySlug }) {
       return allCats.filter(c => catIds.includes(c.id));
     },
     enabled: !!agencyId,
+  });
+
+  // Similar companies — same primary category, same country, exclude self.
+  const primaryCategorySlug = categories[0]?.slug;
+  const { data: similarCompanies = [] } = useQuery({
+    queryKey: ['similar-agencies', primaryCategorySlug, agency?.hq_country, agencyId],
+    queryFn: async () => {
+      const list = await api.entities.Agency.filterByCategory(primaryCategorySlug, '-avg_rating', 30);
+      return list
+        .filter(a => a.id !== agencyId)
+        .filter(a => !agency?.hq_country || a.hq_country === agency.hq_country)
+        .slice(0, 4);
+    },
+    enabled: !!primaryCategorySlug && !!agencyId,
   });
 
   // Canonical redirect
@@ -330,6 +345,110 @@ export default function AgencyProfile({ companySlug }) {
             </div>
           </div>
         </div>
+
+        {/* ── AI Insights ──────────────────────────────────────────────────── */}
+        <AIInsights agencyId={agency.id} agencyName={agency.name} />
+
+        {/* ── Services Offered (from linked categories) ────────────────────── */}
+        {categories.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-lg p-6">
+            <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Services Offered</h2>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={getDirectoryUrl(cat.slug)}
+                  className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3.5 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                >
+                  <CheckCircle className="w-3.5 h-3.5 text-orange-500" />
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── At a Glance ──────────────────────────────────────────────────── */}
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">About {agency.name}</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              { Icon: MapPin,    label: 'Headquarters', value: [agency.hq_city, agency.hq_state, agency.hq_country].filter(Boolean).join(', ') },
+              { Icon: Calendar,  label: 'Founded',      value: agency.founded_year ? String(agency.founded_year) : null },
+              { Icon: Users,     label: 'Team Size',    value: agency.team_size },
+              { Icon: DollarSign,label: 'Hourly Rate',  value: agency.hourly_rate },
+              { Icon: Phone,     label: 'Phone',        value: agency.phone },
+              { Icon: Globe,     label: 'Website',      value: agency.website ? agency.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : null, href: agency.website },
+              { Icon: Star,      label: 'Rating',       value: (agency.avg_rating || 0) > 0 ? `${(+agency.avg_rating).toFixed(1)} / 5` : null },
+              { Icon: MessageSquare, label: 'Reviews',  value: (agency.review_count || 0) > 0 ? String(agency.review_count) : null },
+            ].filter(item => item.value).map(({ Icon, label, value, href }) => (
+              <div key={label} className="border border-slate-100 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wide mb-1.5">
+                  <Icon className="w-3.5 h-3.5 text-orange-500" />
+                  {label}
+                </div>
+                {href ? (
+                  <a href={href} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-[#1A2E4A] break-words hover:text-orange-600">
+                    {value}
+                  </a>
+                ) : (
+                  <p className="text-sm font-semibold text-[#1A2E4A] break-words">{value}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+        <FAQSection agency={agency} categoryName={categories[0]?.name} />
+
+        {/* ── Similar Companies ───────────────────────────────────────────── */}
+        {similarCompanies.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-[#1A2E4A]">
+                Similar {categories[0]?.name || 'Companies'}{agency.hq_country ? ` in ${agency.hq_country}` : ''}
+              </h2>
+              {primaryCategorySlug && (
+                <Link href={getDirectoryUrl(primaryCategorySlug)} className="text-sm font-semibold text-orange-500 hover:text-orange-600 inline-flex items-center gap-1">
+                  View all <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {similarCompanies.map((c) => (
+                <Link
+                  key={c.id}
+                  href={getCompanyProfileUrl(c)}
+                  className="flex items-center gap-3 border border-slate-200 rounded-lg p-4 hover:border-orange-300 hover:shadow-sm transition-all"
+                >
+                  <img
+                    src={getAgencyLogoUrl(c)}
+                    alt={c.name}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
+                    }}
+                    className="w-12 h-12 rounded-md object-contain border border-slate-100 bg-white flex-shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-[#1A2E4A] text-sm truncate">{c.name}</p>
+                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                      {(c.avg_rating || 0) > 0 && (
+                        <span className="inline-flex items-center gap-0.5">
+                          <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
+                          {(+c.avg_rating).toFixed(1)}
+                        </span>
+                      )}
+                      {c.hq_city && <span className="truncate">{c.hq_city}</span>}
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Service Focus ─────────────────────────────────────────────────── */}
         {serviceFocus.length > 0 && (
@@ -635,6 +754,68 @@ function timeAgo(dateStr) {
   if (months < 12) return `${months} month${months !== 1 ? 's' : ''} ago`;
   const years = Math.floor(months / 12);
   return `${years} year${years !== 1 ? 's' : ''} ago`;
+}
+
+// ─── FAQ section (auto-generated from agency + category) ─────────────────────
+function FAQSection({ agency, categoryName }) {
+  const [openIdx, setOpenIdx] = useState(0);
+  const cat = categoryName || 'business services';
+  const where = [agency.hq_city, agency.hq_country].filter(Boolean).join(', ') || 'their service area';
+  const faqs = [
+    {
+      q: `What does ${agency.name} do?`,
+      a: agency.description || `${agency.name} provides ${cat.toLowerCase()} to clients across ${where}. Reach out via the contact options above to learn more about their services.`,
+    },
+    {
+      q: `Where is ${agency.name} located?`,
+      a: agency.address
+        ? `${agency.name} is headquartered at ${agency.address}.`
+        : `${agency.name} is headquartered in ${where}${agency.phone ? ` and can be reached at ${agency.phone}` : ''}.`,
+    },
+    {
+      q: `How do I request a quote from ${agency.name}?`,
+      a: `Use the "Request Proposal" button at the top of this page to share your project details. ${agency.name} will respond directly with pricing and next steps. ${agency.website ? `You can also visit their website at ${agency.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}.` : ''}`,
+    },
+    {
+      q: `Is ${agency.name} a verified company?`,
+      a: agency.verified
+        ? `Yes — ${agency.name} has been verified by FirmsLedger. The team has confirmed company details, contact information, and service offerings.`
+        : `${agency.name} is currently listed but not yet verified. If you own this company, you can claim the listing using the button above to verify and unlock additional features.`,
+    },
+    {
+      q: `How can I leave a review for ${agency.name}?`,
+      a: `Click the "Write Review" button at the top of this page to share your experience. Reviews help other businesses make informed decisions and help ${agency.name} build credibility on FirmsLedger.`,
+    },
+  ];
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-lg p-6">
+      <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Frequently Asked Questions</h2>
+      <div className="divide-y divide-slate-100">
+        {faqs.map((faq, i) => {
+          const open = openIdx === i;
+          return (
+            <div key={i}>
+              <button
+                onClick={() => setOpenIdx(open ? -1 : i)}
+                className="w-full flex items-start justify-between gap-4 py-4 text-left"
+              >
+                <span className="font-semibold text-[#1A2E4A] text-sm sm:text-base">{faq.q}</span>
+                {open ? (
+                  <ChevronUp className="w-4 h-4 text-slate-400 flex-shrink-0 mt-1" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0 mt-1" />
+                )}
+              </button>
+              {open && (
+                <p className="text-slate-600 text-sm leading-relaxed pb-4 pr-8">{faq.a}</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function countryFlag(country) {

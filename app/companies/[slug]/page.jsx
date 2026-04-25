@@ -58,7 +58,9 @@ export async function generateMetadata({ params }) {
   return {
     title: companyName,
     description,
-    robots: { index: true, follow: true },
+    // Per product decision: do not index individual company profile pages.
+    // Crawlers may still follow links to surface category/directory pages.
+    robots: { index: false, follow: true },
     alternates: { canonical },
     openGraph: {
       title: `${companyName} | ${SITE_NAME}`,
@@ -74,13 +76,15 @@ export default async function CompanyProfilePage({ params }) {
   const slug = typeof resolved?.slug === 'string' ? resolved.slug.trim() : '';
   const company = await getCompanyData(slug);
 
+  const profileUrl = `${_BASE}/companies/${slug}`;
+
   const localBusinessJsonLd = company
     ? {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
         name: company.name,
-        url: `${_BASE}/companies/${slug}`,
-        ...(company.logo_url && { logo: company.logo_url }),
+        url: profileUrl,
+        ...(company.logo_url && { logo: company.logo_url, image: company.logo_url }),
         ...(company.description && { description: company.description }),
         ...(company.website && { sameAs: [company.website] }),
         ...(company.phone && { telephone: company.phone }),
@@ -104,9 +108,67 @@ export default async function CompanyProfilePage({ params }) {
       }
     : null;
 
+  // BreadcrumbList — helps Google show the breadcrumb path in SERPs.
+  const breadcrumbJsonLd = company
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE },
+          { '@type': 'ListItem', position: 2, name: 'Directory', item: `${_BASE}/directory` },
+          { '@type': 'ListItem', position: 3, name: company.name, item: profileUrl },
+        ],
+      }
+    : null;
+
+  // FAQPage — mirrors the in-page FAQ component so Google can surface rich
+  // FAQ snippets. Keep questions identical to what the user actually sees.
+  const faqJsonLd = company
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: `What does ${company.name} do?`,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: company.description || `${company.name} is a verified business listed on FirmsLedger. View their services and contact information on this page.`,
+            },
+          },
+          {
+            '@type': 'Question',
+            name: `Where is ${company.name} located?`,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: `${company.name} is headquartered in ${[company.hq_city, company.hq_country].filter(Boolean).join(', ') || 'their service area'}${company.phone ? ` and can be reached at ${company.phone}` : ''}.`,
+            },
+          },
+          {
+            '@type': 'Question',
+            name: `How do I request a quote from ${company.name}?`,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: `Use the "Request Proposal" button on their FirmsLedger profile page to share your project details. ${company.name} will respond directly with pricing and next steps.`,
+            },
+          },
+          {
+            '@type': 'Question',
+            name: `How can I leave a review for ${company.name}?`,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: `Click the "Write Review" button on the ${company.name} FirmsLedger profile to share your experience and help other businesses make informed decisions.`,
+            },
+          },
+        ],
+      }
+    : null;
+
   return (
     <>
       {localBusinessJsonLd && <JsonLd data={localBusinessJsonLd} />}
+      {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>}>
         <AgencyProfile companySlug={slug || undefined} />
       </Suspense>

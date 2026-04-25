@@ -383,6 +383,16 @@ function makeDescription(name, categoryName, city, country) {
   return `${name} is a leading ${categoryName} company based in ${city}, ${country}. They provide professional ${categoryName.toLowerCase()} services to businesses and clients across the region.`;
 }
 
+// Pick a logo URL for a company. Skip favicon services (Google's returns a
+// generic globe for any unknown domain, which is impossible to detect via
+// onError on the client). Always fall back to a clean ui-avatars initials
+// avatar so cards render consistently — curators can replace with real logos
+// later via the admin / DB.
+function pickLogoUrl(name, _website) {
+  const initials = encodeURIComponent(name);
+  return `https://ui-avatars.com/api/?name=${initials}&background=1A2E4A&color=fff&size=128&bold=true`;
+}
+
 // ─── FETCH CATEGORIES THAT NEED MORE COMPANIES ────────────────────────────────
 
 async function fetchAllPaged(table, select, order) {
@@ -540,6 +550,7 @@ async function importCategory(category, currentCount) {
           slug,
           description: makeDescription(name, category.name, city, country),
           website: place.website || null,
+          logo_url: pickLogoUrl(name, place.website),
           phone: place.formatted_phone_number || null,
           hq_city: city,
           hq_state: state || null,

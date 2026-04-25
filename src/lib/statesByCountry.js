@@ -78,6 +78,12 @@ export const STATES_BY_COUNTRY = {
     'Wakayama', 'Yamagata', 'Yamaguchi', 'Yamanashi',
   ],
 
+  'South Korea': [
+    'Seoul', 'Busan', 'Daegu', 'Incheon', 'Gwangju', 'Daejeon', 'Ulsan',
+    'Sejong', 'Gyeonggi', 'Gangwon', 'North Chungcheong', 'South Chungcheong',
+    'North Jeolla', 'South Jeolla', 'North Gyeongsang', 'South Gyeongsang', 'Jeju',
+  ],
+
   'Sweden': [
     'Blekinge', 'Dalarna', 'Gävleborg', 'Gotland', 'Halland',
     'Jämtland', 'Jönköping', 'Kalmar', 'Kronoberg', 'Norrbotten',

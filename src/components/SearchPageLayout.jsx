@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle } from 'lucide-react';
-import { getCompanyProfileUrl } from '@/utils';
+import { getCompanyProfileUrl, getAgencyLogoUrl } from '@/utils';
 
 function RatingStars({ rating }) {
   return (
@@ -26,17 +26,15 @@ function CompanyListItem({ company, rank }) {
             <div className="w-7 h-7 rounded bg-[#1A2E4A] flex items-center justify-center flex-shrink-0 mt-0.5">
               <span className="text-[10px] font-black text-white">{rank}</span>
             </div>
-            {company.logo_url ? (
-              <img
-                src={company.logo_url}
-                alt={company.name}
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white"
-              />
-            ) : (
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-slate-100 rounded-md flex items-center justify-center border border-slate-200 flex-shrink-0">
-                <span className="text-xl font-bold text-slate-400">{company.name.charAt(0)}</span>
-              </div>
-            )}
+            <img
+              src={getAgencyLogoUrl(company)}
+              alt={company.name}
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
+              }}
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white"
+            />
           </div>
 
           {/* Main Content */}

@@ -13,27 +13,89 @@ import {
   Building2, Cpu, Megaphone, Briefcase, HeartPulse,
   Factory, GraduationCap, Truck, Wrench, Plane, Ship,
   ShoppingBag, Home as HomeIcon, Scale, Palette,
+  Leaf, Printer, Brain, Dumbbell, FlaskConical, Anchor,
+  Camera, Music, Film, Utensils, Car, Hammer, TreePine,
+  Sprout, Building, Bitcoin, CreditCard, Stethoscope,
+  Dna, Atom, Radio, Tv, Newspaper, BookOpen, Pen,
+  Database, Cloud, Lock, Bug, Smartphone, Wifi, Box,
+  Package, Warehouse, Train, Bus, Bike, Rocket, Satellite,
+  Landmark, Gavel, Coins, TrendingUp, Tractor, Wheat,
+  Droplet, Flame, Sun, Wind, Beaker, Microscope,
 } from 'lucide-react';
 
-const CATEGORY_ICONS = {
-  'staffing-recruiting': Users,
-  'it-technology-staffing': Cpu,
-  'healthcare-staffing': HeartPulse,
-  'industrial-manufacturing-staffing': Factory,
-  'construction-staffing': Wrench,
-  'accounting-finance-staffing': Briefcase,
-  'executive-search-recruiting': Building2,
-  'engineering-staffing': Zap,
-  'warehouse-logistics-staffing': Truck,
-  'travel-cruises': Ship,
-  'education': GraduationCap,
-  'marketing': Megaphone,
-  'legal': Scale,
-  'real-estate': HomeIcon,
-  'retail': ShoppingBag,
-  'design': Palette,
-  'aviation': Plane,
-};
+// Pick a Lucide icon by keyword pattern on the category name/slug.
+// Order matters — more specific patterns first so e.g. "aerospace" hits Plane
+// before falling back to Building2.
+function pickCategoryIcon(cat) {
+  const text = `${cat?.name || ''} ${cat?.slug || ''}`.toLowerCase();
+  const rules = [
+    [/aerospace|aviation|airline|aircraft|drone/, Plane],
+    [/space|satellite|rocket|orbital/,            Rocket],
+    [/marine|shipping|maritime|naval|port|harbor/, Ship],
+    [/automotive|auto|car |vehicle/,              Car],
+    [/train|rail/,                                Train],
+    [/transit|bus /,                              Bus],
+    [/cycle|bike|bicycle/,                        Bike],
+    [/logistics|freight|warehous|supply|courier|trucking/, Truck],
+    [/3d print|additive manufactur|printing/,     Printer],
+    [/manufactur|fabricat|industr|factory|assembly|machining|foundry|mill/, Factory],
+    [/construct|contractor|builder|carpentry|masonry|roofing|paving/, Hammer],
+    [/plumb|hvac|electric|repair|maintenance/,    Wrench],
+    [/ai\b|artificial intelligence|machine learning|deep learning|neural/, Brain],
+    [/cyber|security|infosec|firewall|defense soft/, Lock],
+    [/cloud|saas|devops|hosting|server/,          Cloud],
+    [/data |database|analytics|big data|warehouse data/, Database],
+    [/software|app |mobile|ios |android|sdk/,     Smartphone],
+    [/network|telecom|5g|4g|wifi|wireless|broadband/, Wifi],
+    [/it |technology|tech |software|platform/,    Cpu],
+    [/defense|military|weapon|tactical|combat/,   Shield],
+    [/biotech|life science|genom|dna|cell/,       Dna],
+    [/pharma|drug|chemistry|chemical/,            FlaskConical],
+    [/lab |laboratory|research|microscop/,        Microscope],
+    [/health|medical|clinic|hospital|dental|veterinary|telemedicine|wellness|therapy/, Stethoscope],
+    [/sports|fitness|gym|athletic|exercise/,      Dumbbell],
+    [/food|restaurant|cafe|catering|bakery|culinary/, Utensils],
+    [/agri|farm|crop|wheat|grain/,                Wheat],
+    [/agro|seed|fertilizer|cultivation/,          Sprout],
+    [/forest|timber|lumber|wood/,                 TreePine],
+    [/environment|sustain|recycl|waste|green |eco /, Leaf],
+    [/water|hydro|plumb|irrigat/,                 Droplet],
+    [/oil|gas |petroleum|fuel|combustion/,        Flame],
+    [/solar|photovoltaic/,                        Sun],
+    [/wind |turbine|renewable/,                   Wind],
+    [/energy|power |utility|electric/,            Zap],
+    [/real estate|property|housing|residential/,  HomeIcon],
+    [/commercial real|building|architecture|interior design/, Building],
+    [/legal|law|attorney|paralegal|notary/,       Scale],
+    [/court|judicial|litigation|judge/,           Gavel],
+    [/government|public sector|municipal|civic|policy/, Landmark],
+    [/account|audit|tax|bookkeeping|cpa|payroll/, Briefcase],
+    [/bank|finance|investment|wealth|capital/,    Coins],
+    [/credit|payment|fintech|loan|mortgage/,      CreditCard],
+    [/crypto|blockchain|bitcoin|web3|nft/,        Bitcoin],
+    [/trading|broker|stock|market |hedge/,        TrendingUp],
+    [/marketing|advertis|seo|sem|brand|pr |creative agency/, Megaphone],
+    [/media|news|journalism|publish|magazine|newspaper/, Newspaper],
+    [/tv|television|broadcast/,                   Tv],
+    [/radio|podcast|audio /,                      Radio],
+    [/film|movie|cinema|video production/,        Film],
+    [/music|audio|sound /,                        Music],
+    [/photography|photo /,                        Camera],
+    [/design|graphic|ux|ui/,                      Palette],
+    [/writing|content|copywrit|editor /,          Pen],
+    [/book|library|literature/,                   BookOpen],
+    [/education|school|academy|training|tutor|university|edtech/, GraduationCap],
+    [/retail|store|shop |boutique|outlet|ecommerce|e-commerce/, ShoppingBag],
+    [/consumer|goods|fmcg|household/,             Package],
+    [/staffing|recruit|hr |human resources|talent|hiring/, Users],
+    [/travel|tourism|hotel|hospitality|cruise/,   Globe],
+    [/agro chem|pesticide|herbicide/,             Beaker],
+  ];
+  for (const [rx, Icon] of rules) {
+    if (rx.test(text)) return Icon;
+  }
+  return Building2;
+}
 const COLOR_POOL = [
   'bg-blue-50 border-blue-100 text-blue-600',
   'bg-violet-50 border-violet-100 text-violet-600',
@@ -213,7 +275,7 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {parentCategories.map((cat) => {
                   const href = getDirectoryUrl(cat.slug);
-                  const IconComp = CATEGORY_ICONS[cat.slug] || Building2;
+                  const IconComp = pickCategoryIcon(cat);
                   const colorClass = colorFor(cat.slug);
 
                   return (
@@ -388,8 +450,8 @@ export default function Home() {
             {[
               'United States', 'United Kingdom', 'Canada', 'Australia',
               'Germany', 'France', 'India', 'Singapore',
-              'Netherlands', 'Ireland', 'United Arab Emirates', 'Spain',
-              'Japan', 'Brazil', 'Sweden', 'Switzerland',
+              'Netherlands', 'Ireland', 'United Arab Emirates', 'Qatar',
+              'Spain', 'Japan', 'Brazil', 'Sweden', 'Switzerland',
             ].map((country) => (
               <Link
                 key={country}

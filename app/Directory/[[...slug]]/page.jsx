@@ -59,8 +59,34 @@ async function getCategoryBySlug(slug) {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
   const supabase = createClient(url, key, { auth: { persistSession: false } });
-  const { data } = await supabase.from('categories').select('name, description, slug, is_parent, parent_id').eq('slug', slug).maybeSingle();
+  const { data } = await supabase.from('categories').select('id, name, description, slug, is_parent, parent_id').eq('slug', slug).maybeSingle();
   return data;
+}
+
+/**
+ * Count approved agencies linked to a category, optionally constrained by
+ * country/state/city. Used to put a real number in the SEO title:
+ *   "Top 3 Artificial Turf Companies in South Korea (2026)"
+ */
+async function countAgenciesForCategory(categoryId, { country, state, city } = {}) {
+  if (!categoryId) return 0;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return 0;
+  const supabase = createClient(url, key, { auth: { persistSession: false } });
+
+  const { data: links } = await supabase
+    .from('agency_categories').select('agency_id').eq('category_id', categoryId).limit(5000);
+  const ids = (links || []).map((l) => l.agency_id);
+  if (ids.length === 0) return 0;
+
+  let q = supabase.from('agencies').select('id', { count: 'exact', head: true })
+    .eq('approved', true).in('id', ids.slice(0, 1000));
+  if (country) q = q.ilike('hq_country', country);
+  if (state)   q = q.ilike('hq_state',   state);
+  if (city)    q = q.ilike('hq_city',    `%${city}%`);
+  const { count } = await q;
+  return count || 0;
 }
 
 /** Build a richer description by combining DB description with generated SEO copy */
@@ -103,7 +129,13 @@ export async function generateMetadata({ params, searchParams }) {
     return { title: `${SITE_NAME} – Directory` };
   }
 
-  const title = getCategoryTitleWithLocation(category.name, location);
+  // Dynamic "Top N …" count is only enabled for an allowlist of category
+  // slugs — every other category keeps the original "Top … Companies" title.
+  const COUNT_IN_TITLE_SLUGS = new Set(['artificial-turf']);
+  const count = COUNT_IN_TITLE_SLUGS.has(categorySlug)
+    ? await countAgenciesForCategory(category.id, { country: countryName, state: stateName, city: cityName })
+    : 0;
+  const title = getCategoryTitleWithLocation(category.name, location, count);
   const description = buildDescription(category, location);
   const base = `${BASE_URL.replace(/\/$/, '')}/directory/${categorySlug}`;
   const qp = new URLSearchParams();

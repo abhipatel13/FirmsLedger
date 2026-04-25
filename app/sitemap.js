@@ -240,8 +240,10 @@ export default async function sitemap({ id }) {
   yield { url: `${BASE_URL}/claim-listing`,      lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
 
   // ── Company profile pages ───────────────────────────────────────────────────
-  for (const agency of agencySlugs)
-    yield { url: `${BASE_URL}/companies/${agency.slug}`, lastModified: agency.updated_at ? new Date(agency.updated_at) : now, changeFrequency: 'weekly', priority: 0.85 };
+  // Intentionally NOT emitted: per product decision, individual /companies/:slug
+  // pages are noindex'd. Removing them from the sitemap prevents Google from
+  // discovering them as canonical entry points; users still reach them via the
+  // directory pages (which ARE indexed).
 
   // ── Staffing sub-pages ──────────────────────────────────────────────────────
   for (const slug of STAFFING_SLUGS)

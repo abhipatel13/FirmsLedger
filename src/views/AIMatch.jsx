@@ -208,9 +208,22 @@ export default function AIMatchPage() {
           </h1>
 
           {result?.summary && (
-            <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-2xl border-l-2 border-orange-500 pl-3">
+            <p className="text-slate-300 text-sm leading-relaxed mb-3 max-w-2xl border-l-2 border-orange-500 pl-3">
               {result.summary}
             </p>
+          )}
+          {result?.meta && (
+            <div className="flex flex-wrap items-center gap-2 mb-6 text-[11px] text-slate-400">
+              <span className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
+                <Sparkles className="w-3 h-3 text-orange-400" />
+                Searched {result.meta.candidates_searched} verified companies
+              </span>
+              {result.meta.categories_matched?.slice(0, 3).map((c) => (
+                <span key={c} className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
+                  {c}
+                </span>
+              ))}
+            </div>
           )}
 
           {/* Re-search */}
