@@ -4,10 +4,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  Sparkles, Star, MapPin, Users, Building2,
-  ChevronRight, RotateCcw, CheckCircle2, AlertCircle,
-  ArrowUp, ExternalLink, FileText,
+  Sparkles, Star, MapPin, Users, Calendar,
+  RotateCcw, CheckCircle2, CheckCircle, AlertCircle,
+  ArrowUp, ExternalLink,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { getAgencyLogoUrl, getCompanyProfileUrl } from '@/utils';
 
 /* ── Loading steps ─────────────────────────────────── */
 const STEPS = [
@@ -16,35 +18,6 @@ const STEPS = [
   { label: 'Calculating match scores...', sub: 'Running AI relevance analysis' },
   { label: 'Preparing results...', sub: 'Almost there' },
 ];
-
-/* ── Score ring ─────────────────────────────────────── */
-function ScoreRing({ score }) {
-  const color = score >= 85 ? '#22c55e' : score >= 70 ? '#f97316' : '#94a3b8';
-  const label = score >= 85 ? 'Excellent' : score >= 70 ? 'Good' : 'Fair';
-  const r = 26;
-  const circ = 2 * Math.PI * r;
-  const fill = (score / 100) * circ;
-  return (
-    <div className="flex flex-col items-center gap-1 flex-shrink-0">
-      <div className="relative flex items-center justify-center w-20 h-20">
-        <svg className="w-20 h-20 -rotate-90" viewBox="0 0 60 60">
-          <circle cx="30" cy="30" r={r} fill="none" stroke="#f1f5f9" strokeWidth="4" />
-          <circle
-            cx="30" cy="30" r={r} fill="none"
-            stroke={color} strokeWidth="4"
-            strokeDasharray={`${fill} ${circ}`}
-            strokeLinecap="round"
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-black text-slate-900 leading-none">{score}</span>
-          <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wide mt-0.5">/ 100</span>
-        </div>
-      </div>
-      <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color }}>{label}</span>
-    </div>
-  );
-}
 
 /* ── Loading screen ─────────────────────────────────── */
 function LoadingState({ query }) {
@@ -252,124 +225,151 @@ export default function AIMatchPage() {
         </div>
       </div>
 
-      {/* Cards */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-5">
-        {result?.matches?.map((match, index) => (
-          <div
-            key={match.id}
-            className={`bg-white rounded-2xl border overflow-hidden transition-all ${
-              index === 0
-                ? 'border-orange-200 shadow-md shadow-orange-500/10'
-                : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
-            }`}
-          >
-            {/* Best match banner */}
-            {index === 0 && (
-              <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-5 py-2 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-white" />
-                <span className="text-xs font-black text-white uppercase tracking-widest">Best Match</span>
-                <span className="ml-auto text-[10px] text-white/80 font-medium">Highest AI score</span>
-              </div>
-            )}
-            {index === 1 && (
-              <div className="bg-slate-700 px-5 py-2 flex items-center gap-2">
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest"># 2 · Runner Up</span>
-              </div>
-            )}
-            {index === 2 && (
-              <div className="bg-slate-100 px-5 py-2 flex items-center gap-2">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest"># 3 · Also Consider</span>
-              </div>
-            )}
-
-            <div className="p-5 sm:p-6">
-              <div className="flex flex-col sm:flex-row gap-5">
-                {/* Score ring */}
-                <div className="flex-shrink-0">
-                  <ScoreRing score={match.score} />
+      {/* Cards — mirror the Directory listing card with AI score + reason */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-3">
+        {result?.matches?.map((match, index) => {
+          const profileUrl = getCompanyProfileUrl(match);
+          const locationText = [match.hq_city, match.hq_country].filter(Boolean).join(', ');
+          const scoreColor = match.score >= 85 ? 'bg-green-50 text-green-700 border-green-200'
+            : match.score >= 70 ? 'bg-orange-50 text-orange-700 border-orange-200'
+            : 'bg-slate-50 text-slate-600 border-slate-200';
+          return (
+            <div
+              key={match.id}
+              className={`bg-white rounded-2xl border overflow-hidden card-hover ${
+                index === 0 ? 'border-orange-200 shadow-md shadow-orange-500/10' : 'border-slate-100'
+              }`}
+            >
+              {/* Rank banner */}
+              {index === 0 && (
+                <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-5 py-2 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                  <span className="text-xs font-black text-white uppercase tracking-widest">Best Match</span>
+                  <span className="ml-auto text-[10px] text-white/80 font-medium">Highest AI score</span>
                 </div>
+              )}
+              {index === 1 && (
+                <div className="bg-slate-700 px-5 py-2 flex items-center gap-2">
+                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest"># 2 · Runner Up</span>
+                </div>
+              )}
+              {index === 2 && (
+                <div className="bg-slate-100 px-5 py-2 flex items-center gap-2">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest"># 3 · Also Consider</span>
+                </div>
+              )}
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  {/* Name + highlight badge */}
-                  <div className="flex flex-wrap items-start gap-2 mb-2">
-                    <Link
-                      href={match.slug ? `/companies/${match.slug}` : '#'}
-                      className="text-lg font-extrabold text-slate-900 hover:text-orange-600 transition-colors leading-tight"
-                    >
-                      {match.name}
-                    </Link>
-                    <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-orange-100 flex-shrink-0 mt-0.5">
-                      <Sparkles className="w-2.5 h-2.5" />
-                      {match.highlight}
-                    </span>
-                  </div>
-
-                  {/* Rating */}
-                  {match.avg_rating > 0 && (
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <div className="flex items-center gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(match.avg_rating) ? 'fill-orange-400 text-orange-400' : 'fill-slate-100 text-slate-200'}`} />
-                        ))}
-                      </div>
-                      <span className="text-sm font-bold text-slate-800">{Number(match.avg_rating).toFixed(1)}</span>
-                      <span className="text-xs text-slate-400">· {match.review_count} reviews</span>
+              <div className="p-5 sm:p-6">
+                <div className="flex flex-col sm:flex-row gap-5">
+                  {/* Rank + Logo (Directory style) */}
+                  <div className="flex items-start gap-3 flex-shrink-0">
+                    <div className={`px-2 py-0.5 rounded border text-[11px] font-black flex-shrink-0 mt-0.5 ${scoreColor}`}>
+                      {match.score}
                     </div>
-                  )}
-
-                  {/* AI Reason */}
-                  <div className="bg-orange-50 border border-orange-100 rounded-xl px-4 py-3 mb-4">
-                    <p className="text-[11px] font-bold text-orange-600 uppercase tracking-widest mb-1 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> Why this match
-                    </p>
-                    <p className="text-sm text-slate-700 leading-relaxed">{match.reason}</p>
+                    <img
+                      src={getAgencyLogoUrl(match)}
+                      alt={match.name}
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(match.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
+                      }}
+                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white"
+                    />
                   </div>
 
-                  {/* Meta chips */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {match.location && (
-                      <span className="inline-flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" /> {match.location}
-                      </span>
-                    )}
-                    {match.team_size && (
-                      <span className="inline-flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
-                        <Users className="w-3.5 h-3.5 text-slate-400" /> {match.team_size} employees
-                      </span>
-                    )}
-                    {match.services?.slice(0, 2).map(s => (
-                      <span key={s} className="inline-flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
-                        <Building2 className="w-3.5 h-3.5 text-slate-400" /> {s}
-                      </span>
-                    ))}
-                  </div>
+                  {/* Main */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                      {/* Left info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <Link href={profileUrl}>
+                            <h3 className="text-lg sm:text-xl font-bold text-slate-900 hover:text-orange-600 transition-colors">
+                              {match.name}
+                            </h3>
+                          </Link>
+                          {match.verified && (
+                            <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[10px] font-semibold px-1.5 py-0.5 rounded border border-green-200">
+                              <CheckCircle className="w-2.5 h-2.5" /> Verified
+                            </span>
+                          )}
+                          {match.highlight && (
+                            <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded border border-orange-100">
+                              <Sparkles className="w-2.5 h-2.5" /> {match.highlight}
+                            </span>
+                          )}
+                        </div>
 
-                  {/* CTAs */}
-                  <div className="flex flex-wrap gap-2">
-                    <Link href={match.slug ? `/companies/${match.slug}` : '#'}>
-                      <button className="flex items-center gap-2 bg-[#1A2E4A] hover:bg-[#162840] text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
-                        View Full Profile <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </Link>
-                    <Link href={match.slug ? `/RequestProposal?agency=${match.slug}` : '#'}>
-                      <button className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
-                        <FileText className="w-4 h-4" /> Get Proposal
-                      </button>
-                    </Link>
-                    {match.website && (
-                      <a href={match.website} target="_blank" rel="noopener noreferrer">
-                        <button className="flex items-center gap-2 border border-slate-200 hover:border-slate-300 text-slate-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
-                          Website <ExternalLink className="w-3.5 h-3.5" />
-                        </button>
-                      </a>
-                    )}
+                        {/* Rating row */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center gap-0.5">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className={`w-4 h-4 ${i < Math.floor(match.avg_rating || 0) ? 'fill-orange-400 text-orange-400' : 'text-slate-200'}`} />
+                            ))}
+                          </div>
+                          <span className="text-base font-bold text-slate-900">{(match.avg_rating || 0).toFixed(1)}</span>
+                          <Link href={profileUrl + '#reviews'} className="text-sm text-slate-500 hover:underline">
+                            {match.review_count || 0} Reviews
+                          </Link>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-slate-600 text-base leading-relaxed line-clamp-2 mb-3">
+                          {match.description || `${match.name} is a verified service provider${match.hq_city ? ` based in ${match.hq_city}` : ''}.`}
+                        </p>
+
+                        {/* AI reason */}
+                        {match.reason && (
+                          <div className="bg-orange-50 border border-orange-100 rounded-lg px-3 py-2 mb-3">
+                            <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest mb-0.5 flex items-center gap-1">
+                              <Sparkles className="w-3 h-3" /> Why this match
+                            </p>
+                            <p className="text-sm text-slate-700 leading-relaxed">{match.reason}</p>
+                          </div>
+                        )}
+
+                        {/* Meta chips */}
+                        <div className="flex flex-wrap gap-2">
+                          {match.team_size && (
+                            <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded">
+                              <Users className="w-3.5 h-3.5" /> {match.team_size}
+                            </span>
+                          )}
+                          {match.founded_year && (
+                            <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded">
+                              <Calendar className="w-3.5 h-3.5" /> Est. {match.founded_year}
+                            </span>
+                          )}
+                          {locationText && (
+                            <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded">
+                              <MapPin className="w-3.5 h-3.5" /> {locationText}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Right: Actions (no Get Proposal — matches Directory) */}
+                      <div className="flex flex-row lg:flex-col gap-2 lg:w-36 flex-shrink-0">
+                        <Link href={profileUrl} className="flex-1 lg:flex-none">
+                          <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold h-10 rounded-md transition-colors">
+                            View Profile
+                          </Button>
+                        </Link>
+                        {match.website && (
+                          <a href={match.website} target="_blank" rel="noopener noreferrer" className="flex-1 lg:flex-none">
+                            <Button variant="outline" className="w-full border-slate-200 text-slate-700 hover:border-slate-300 text-sm font-semibold h-10 rounded-md">
+                              Website <ExternalLink className="w-3.5 h-3.5 ml-1" />
+                            </Button>
+                          </a>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* Footer */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">

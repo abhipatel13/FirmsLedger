@@ -4,6 +4,48 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Generic words that, on their own, match nearly every agency name or
+// description. Stripped from the keyword `ilike` fallback so we don't drag in
+// 60 unrelated companies just because the query said "manufacturers".
+const STOPWORDS = new Set([
+  'best', 'top', 'verified', 'leading', 'good', 'great',
+  'company', 'companies', 'firm', 'firms', 'agency', 'agencies',
+  'manufacturer', 'manufacturers', 'manufacturing',
+  'supplier', 'suppliers', 'vendor', 'vendors',
+  'provider', 'providers', 'service', 'services',
+  'business', 'businesses', 'corporation', 'corporations',
+  'inc', 'llc', 'ltd', 'corp', 'pte', 'pvt',
+  'the', 'and', 'for', 'with', 'from', 'into', 'that', 'this',
+  'us', 'usa', 'uk', 'uae', 'eu',
+  // Country/region words — already covered by the dedicated country filter,
+  // and will trash the keyword `ilike` if left in (matches half the table).
+  'united', 'states', 'kingdom', 'america',
+  'india', 'china', 'japan', 'korea', 'singapore', 'germany', 'france',
+  'canada', 'australia', 'mexico', 'brazil', 'spain', 'italy',
+  'denmark', 'sweden', 'norway', 'finland', 'ireland',
+  'philippines', 'indonesia', 'thailand', 'vietnam',
+  'kenya', 'nigeria', 'qatar', 'saudi', 'arabia', 'emirates',
+]);
+
+// Strip stopwords/short tokens from inside each keyword phrase. A multi-word
+// LLM keyword like "toy manufacturers" becomes "toy" — we don't want
+// "manufacturers" leaking back into the ilike filter.
+function meaningfulKeywords(keywords) {
+  const out = [];
+  for (const raw of keywords || []) {
+    const cleaned = String(raw || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]+/g, ' ')
+      .split(/\s+/)
+      .filter((t) => t.length >= 3 && !STOPWORDS.has(t))
+      .join(' ')
+      .trim();
+    if (cleaned && !out.includes(cleaned)) out.push(cleaned);
+    if (out.length >= 4) break;
+  }
+  return out;
+}
+
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -18,19 +60,42 @@ function getSupabase() {
 async function extractIntent(query, knownCategoryNames) {
   const systemPrompt = `You convert a user's natural-language description of a B2B vendor need into a structured filter spec for searching a directory of business service providers. Return ONLY valid JSON, no commentary.`;
 
-  // Send a sample of category names so the AI can map intent to real categories.
-  // We sample 200 to keep tokens bounded; the AI can also infer free-text keywords.
-  const sample = knownCategoryNames.slice(0, 200).join(', ');
+  // Pre-filter the catalog by token overlap with the query. The catalog has
+  // thousands of entries; a blind alphabetical slice misses the tail (a query
+  // for "artificial turf" never sees "Artificial Turf" if it sorts past 200).
+  // Substring overlap (not exact) so "transformer" matches "Transformers".
+  const queryTokens = query
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, ' ')
+    .split(/\s+/)
+    .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
+  const overlap = [];
+  for (const n of knownCategoryNames) {
+    const toks = n.toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length > 2);
+    let s = 0;
+    for (const qt of queryTokens) {
+      for (const ct of toks) {
+        if (ct === qt || ct.startsWith(qt) || qt.startsWith(ct)) { s++; break; }
+      }
+    }
+    if (s > 0) overlap.push({ n, s });
+  }
+  overlap.sort((a, b) => b.s - a.s);
+  const overlapNames = overlap.slice(0, 150).map((o) => o.n);
+  // Pad with an alphabetical tail so the LLM still has a small browsable
+  // sample if the user query had no token hits at all.
+  const padding = knownCategoryNames.slice(0, Math.max(0, 200 - overlapNames.length));
+  const sample = [...new Set([...overlapNames, ...padding])].join(', ');
 
   const userPrompt = `User query: "${query}"
 
-Known service categories (sample): ${sample}
+Known service categories (pre-filtered for this query): ${sample}
 
 Return JSON in this exact format:
 {
-  "categories": ["category name 1", "category name 2"],   // up to 5 categories from the sample list that match the user's need; empty if none match
-  "keywords":   ["keyword1", "keyword2"],                  // up to 6 free-text keywords describing the service (used for fuzzy matching when no category matches)
-  "country":    "Country name or null",
+  "categories": ["category name 1", "category name 2"],   // up to 5 EXACT category names from the list above that the user's query maps to. Match liberally on synonyms and word forms (e.g. "toy manufacturers" → "Toy Manufacturing", "transformer makers" → "Transformers"). Empty only if truly nothing in the list applies.
+  "keywords":   ["keyword1", "keyword2"],                  // up to 4 specific service-related keywords from the query. NEVER include country names, "United States", "manufacturers", "companies", "best", "top".
+  "country":    "Country name or null",                    // expand abbreviations: "US"/"USA"/"the US" → "United States", "UK" → "United Kingdom", "UAE" → "United Arab Emirates"
   "state":      "State/region name or null",
   "city":       "City name or null",
   "min_rating": null,                                       // 0-5 number, or null
@@ -79,11 +144,23 @@ async function fetchCandidates(supabase, intent, allCategories, agencyCategories
   // Build the agency query with location + rating filters layered on top.
   let q = supabase
     .from('agencies')
-    .select('id, name, slug, description, hq_city, hq_state, hq_country, team_size, founded_year, avg_rating, review_count, website')
+    .select('id, name, slug, description, hq_city, hq_state, hq_country, team_size, founded_year, avg_rating, review_count, website, logo_url, verified')
     .eq('approved', true);
 
   if (candidateIds && candidateIds.length > 0) {
     q = q.in('id', candidateIds.slice(0, 1000));
+  }
+  // When the LLM didn't pick any category, narrow by keyword over name/desc
+  // so the ranker doesn't get fed every approved agency in the country.
+  // Generic words ("manufacturers", "US") are stripped — they OR-match
+  // nearly every row and turn a focused search into noise.
+  const noCategoryMatch = !candidateIds || candidateIds.length === 0;
+  const usefulKeywords = meaningfulKeywords(intent.keywords);
+  if (noCategoryMatch && usefulKeywords.length > 0) {
+    const ors = usefulKeywords
+      .flatMap((kw) => [`name.ilike.%${kw}%`, `description.ilike.%${kw}%`])
+      .join(',');
+    q = q.or(ors);
   }
   if (intent.country) q = q.ilike('hq_country', intent.country);
   if (intent.state)   q = q.ilike('hq_state',   intent.state);
@@ -95,16 +172,15 @@ async function fetchCandidates(supabase, intent, allCategories, agencyCategories
   let { data: candidates } = await q;
   candidates = candidates || [];
 
-  // Fallback: if structured filters returned nothing, try keyword search across
-  // name + description so we always have something to rank.
-  if (candidates.length === 0 && Array.isArray(intent.keywords) && intent.keywords.length > 0) {
-    const ors = intent.keywords
-      .slice(0, 4)
+  // Last-resort fallback: drop the location filter and try keywords alone.
+  // Useful when the user names a country we have no agencies in yet.
+  if (candidates.length === 0 && usefulKeywords.length > 0) {
+    const ors = usefulKeywords
       .flatMap((kw) => [`name.ilike.%${kw}%`, `description.ilike.%${kw}%`])
       .join(',');
     const { data: kwHits } = await supabase
       .from('agencies')
-      .select('id, name, slug, description, hq_city, hq_state, hq_country, team_size, founded_year, avg_rating, review_count, website')
+      .select('id, name, slug, description, hq_city, hq_state, hq_country, team_size, founded_year, avg_rating, review_count, website, logo_url, verified')
       .eq('approved', true)
       .or(ors)
       .order('avg_rating', { ascending: false })
@@ -243,11 +319,18 @@ export async function POST(request) {
       return {
         ...match,
         slug: agency.slug,
+        description: agency.description,
+        hq_city: agency.hq_city,
+        hq_state: agency.hq_state,
+        hq_country: agency.hq_country,
         location: [agency.hq_city, agency.hq_state, agency.hq_country].filter(Boolean).join(', ') || 'Global',
         avg_rating: agency.avg_rating,
         review_count: agency.review_count || 0,
         team_size: agency.team_size,
+        founded_year: agency.founded_year,
         website: agency.website,
+        logo_url: agency.logo_url,
+        verified: agency.verified,
         services: (agencyCatMap[agency.id] || []).map((id) => categoryMap[id]).filter(Boolean),
       };
     }).filter(Boolean);
