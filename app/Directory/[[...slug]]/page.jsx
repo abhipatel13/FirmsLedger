@@ -1,8 +1,11 @@
 import { Suspense } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Directory from '@/views/Directory';
+import JsonLd from '@/components/JsonLd';
 import { notFound } from 'next/navigation';
-import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle, getCategoryMetaDescription, getCategoryTitleWithLocation, getCategoryMetaDescriptionWithLocation, CATEGORY_TITLE_OVERRIDES, getOverriddenCategoryTitle, getOverriddenCategoryDescription } from '@/lib/seo';
+import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle, getCategoryMetaDescription, getCategoryTitleWithLocation, getCategoryMetaDescriptionWithLocation, CATEGORY_TITLE_OVERRIDES, getOverriddenCategoryTitle, getOverriddenCategoryDescription, getOverrideEntry } from '@/lib/seo';
+
+const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 function getServerSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -152,8 +155,9 @@ export async function generateMetadata({ params, searchParams }) {
   };
 }
 
-export default async function DirectoryRoute({ params }) {
+export default async function DirectoryRoute({ params, searchParams }) {
   const resolved = await params;
+  const resolvedSearch = (await searchParams) || {};
   const slugArr = resolved?.slug;
   const categorySlug = Array.isArray(slugArr) && slugArr.length === 1 ? slugArr[0]?.trim() : null;
 
@@ -164,14 +168,105 @@ export default async function DirectoryRoute({ params }) {
 
   const { agencies, categories, specificCategory } = await getInitialDirectoryData(categorySlug);
 
+  // ── Build JSON-LD: ItemList of companies + BreadcrumbList ───────────────────
+  let itemListJsonLd = null;
+  let breadcrumbJsonLd = null;
+
+  if (specificCategory) {
+    const countryName = resolvedSearch?.country || '';
+    const stateName   = resolvedSearch?.state   || '';
+    const cityName    = resolvedSearch?.city    || '';
+    const location    = [cityName, stateName, countryName].filter(Boolean).join(', ');
+
+    // Filter SSR agencies to match what the user sees after country/state/city.
+    const lc = (s) => (s || '').toString().toLowerCase();
+    const filtered = (agencies || []).filter((a) => {
+      if (countryName && lc(a.hq_country) !== lc(countryName)) return false;
+      if (stateName   && lc(a.hq_state)   !== lc(stateName))   return false;
+      if (cityName    && !lc(a.hq_city).includes(lc(cityName))) return false;
+      return true;
+    });
+
+    // If a per-slug override caps the count (e.g. Top 5), trim ItemList to match.
+    const override = getOverrideEntry(categorySlug, countryName);
+    const cap = override?.top || filtered.length;
+    const items = filtered.slice(0, cap);
+
+    if (items.length > 0) {
+      const canonical = (() => {
+        const qp = new URLSearchParams();
+        if (countryName) qp.set('country', countryName);
+        if (stateName)   qp.set('state',   stateName);
+        if (cityName)    qp.set('city',    cityName);
+        const base = `${_BASE}/directory/${categorySlug}`;
+        return qp.size ? `${base}?${qp.toString()}` : base;
+      })();
+
+      const listName = getOverriddenCategoryTitle(categorySlug, specificCategory.name, location, countryName)
+        || getCategoryTitleWithLocation(specificCategory.name, location);
+
+      itemListJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: listName,
+        url: canonical,
+        numberOfItems: items.length,
+        itemListElement: items.map((a, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Organization',
+            name: a.name,
+            ...(a.website && { url: a.website }),
+            ...(a.logo_url && { logo: a.logo_url }),
+            ...(a.description && { description: a.description }),
+            ...((a.hq_city || a.hq_state || a.hq_country) && {
+              address: {
+                '@type': 'PostalAddress',
+                ...(a.hq_city    && { addressLocality: a.hq_city }),
+                ...(a.hq_state   && { addressRegion:   a.hq_state }),
+                ...(a.hq_country && { addressCountry:  a.hq_country }),
+              },
+            }),
+          },
+        })),
+      };
+    }
+
+    // Breadcrumbs: Home → Directory → [Parent] → Category
+    const parent = specificCategory.parent_id
+      ? (categories || []).find((c) => c.id === specificCategory.parent_id)
+      : null;
+    const crumbs = [
+      { name: 'Home',      url: _BASE },
+      { name: 'Directory', url: `${_BASE}/directory` },
+    ];
+    if (parent) crumbs.push({ name: parent.name, url: `${_BASE}/directory/${parent.slug}` });
+    crumbs.push({ name: specificCategory.name, url: `${_BASE}/directory/${specificCategory.slug}` });
+    breadcrumbJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    };
+  }
+
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full" /></div>}>
-      <Directory
-        initialCategorySlug={categorySlug || undefined}
-        initialCategoryData={specificCategory || undefined}
-        initialAgencies={agencies}
-        initialCategories={categories}
-      />
-    </Suspense>
+    <>
+      {itemListJsonLd  && <JsonLd data={itemListJsonLd} />}
+      {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
+      <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full" /></div>}>
+        <Directory
+          initialCategorySlug={categorySlug || undefined}
+          initialCategoryData={specificCategory || undefined}
+          initialAgencies={agencies}
+          initialCategories={categories}
+        />
+      </Suspense>
+    </>
   );
 }

@@ -210,7 +210,7 @@ export function getOverriddenCategoryDescription(slug, country, categoryName, lo
   return `${n}${name} ${noun}${where} for ${SEO_YEAR}. Compare verified ${name.toLowerCase()} ${noun.toLowerCase()} by reviews, pricing, and location on FirmsLedger.`;
 }
 
-function getOverrideEntry(slug, country) {
+export function getOverrideEntry(slug, country) {
   const slugMap = CATEGORY_TITLE_OVERRIDES[slug];
   if (!slugMap) return null;
   return slugMap[country] || slugMap['*'] || null;
