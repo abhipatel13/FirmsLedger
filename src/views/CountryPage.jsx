@@ -112,8 +112,8 @@ export default function CountryPage({ searchParams }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredAgencies.slice(0, 10).map((agency) => (
-              <AgencyCard key={agency.id} agency={agency} />
+            {filteredAgencies.slice(0, 10).map((agency, i) => (
+              <AgencyCard key={agency.id} agency={agency} rank={i + 1} />
             ))}
           </div>
         )}

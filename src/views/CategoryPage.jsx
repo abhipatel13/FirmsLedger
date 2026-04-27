@@ -89,8 +89,8 @@ export default function CategoryPage({ searchParams }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {categoryAgencies.map(agency => (
-              <AgencyCard key={agency.id} agency={agency} />
+            {categoryAgencies.map((agency, i) => (
+              <AgencyCard key={agency.id} agency={agency} rank={i + 1} />
             ))}
           </div>
         )}

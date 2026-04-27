@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getDirectoryUrlWithParams, getCompanyProfileUrl, getAgencyLogoUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getDirectoryStaffingUrl, getDirectoryUrlWithParams, getCompanyProfileUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 import FilterPanel from '@/components/FilterPanel';
 import { MapPin, Users, Calendar, ExternalLink, Star, CheckCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { pickAgencyIcon, colorFor } from '@/lib/categoryIcon';
 import { debounce } from 'lodash';
 import { getOverriddenCategoryTitle } from '@/lib/seo';
 
@@ -243,9 +244,9 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
-      {/* Page Header */}
-      <div className="bg-[#1A2E4A] text-white">
-        <div className="w-full px-4 sm:px-6 lg:px-10 pt-8 pb-7">
+      {/* Page Header — slim, near-white surface */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="w-full px-4 sm:px-6 lg:px-10 pt-4 pb-4">
           <Breadcrumb
             items={
               selectedService
@@ -258,57 +259,44 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
                   : [{ label: 'Directory', href: getDirectoryUrl() }, { label: selectedCategoryName }]
                 : [{ label: 'Directory' }]
             }
-            dark
           />
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mt-4 mb-3 text-white tracking-tight leading-tight">
-            {/* Reads the same per-slug overrides as the SEO <title>. Add new
-                categories by editing CATEGORY_TITLE_OVERRIDES in src/lib/seo.js. */}
-            {getOverriddenCategoryTitle(
-              selectedService,
-              selectedCategoryName,
-              [selectedCity, selectedState, selectedCountry].filter(Boolean).join(', '),
-              selectedCountry,
-            ) || `Top ${selectedCategoryName} Companies`}
-          </h1>
-          <p className="text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed mb-4">
-            {selectedCategoryDesc
-              ? selectedCategoryDesc
-              : `Find and compare the best ${selectedCategoryName.toLowerCase()} companies worldwide. Browse verified providers, read real client reviews, and shortlist the right ${selectedCategoryName.toLowerCase()} partner for your business.`}
-          </p>
-          <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
-            <span><strong className="text-white">{filteredAgencies.length}</strong> Companies Listed</span>
-            <span>·</span>
-            <span>Rankings updated: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-          </div>
-
-          {/* Subcategory pills */}
-          {subcategoriesOfSelected.length > 0 && (
-            <div className="mt-5 pt-4 border-t border-white/10">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Browse by Subcategory</p>
-              <div className="flex flex-wrap gap-2">
-                {subcategoriesOfSelected.map((sub) => (
-                  <button
-                    key={sub.slug}
-                    onClick={() => setSelectedService(sub.slug)}
-                    className="text-sm bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1.5 rounded-lg transition-colors"
-                  >
-                    {sub.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Parent category link */}
-          {parentOfSelected && (
-            <div className="mt-3">
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A2E4A] tracking-tight leading-tight">
+              {/* Reads the same per-slug overrides as the SEO <title>. Add new
+                  categories by editing CATEGORY_TITLE_OVERRIDES in src/lib/seo.js. */}
+              {getOverriddenCategoryTitle(
+                selectedService,
+                selectedCategoryName,
+                [selectedCity, selectedState, selectedCountry].filter(Boolean).join(', '),
+                selectedCountry,
+              ) || `Top ${selectedCategoryName} Companies`}
+            </h1>
+            <span className="inline-flex items-center bg-slate-100 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded">
+              {filteredAgencies.length} listed
+            </span>
+            {parentOfSelected && (
               <button
                 onClick={() => setSelectedService(parentOfSelected.slug)}
-                className="text-xs text-slate-400 hover:text-white transition-colors underline"
+                className="text-xs text-slate-400 hover:text-orange-600 transition-colors"
               >
-                ← Back to {parentOfSelected.name}
+                ← {parentOfSelected.name}
               </button>
+            )}
+          </div>
+
+          {/* Subcategory pills — only render when present, no extra divider */}
+          {subcategoriesOfSelected.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {subcategoriesOfSelected.map((sub) => (
+                <button
+                  key={sub.slug}
+                  onClick={() => setSelectedService(sub.slug)}
+                  className="text-xs bg-slate-50 hover:bg-orange-50 text-slate-700 hover:text-orange-700 border border-slate-200 hover:border-orange-200 px-2.5 py-1 rounded-full transition-colors"
+                >
+                  {sub.name}
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -382,7 +370,12 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
           </div>
         ) : (
           <div className="space-y-3">
-            {pagedAgencies.map((agency, index) => (
+            {pagedAgencies.map((agency, index) => {
+              const rank = (safePage - 1) * PAGE_SIZE + index + 1;
+              const Icon = pickAgencyIcon(agency);
+              const tileColor = colorFor(agency.slug || agency.name || '');
+              const isTopThree = rank <= 3;
+              return (
               <div
                 key={agency.id}
                 className="bg-white border border-slate-100 rounded-2xl card-hover"
@@ -392,18 +385,27 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
 
                     {/* Rank + Logo */}
                     <div className="flex items-start gap-3 flex-shrink-0">
-                      <div className="w-7 h-7 rounded bg-[#1A2E4A] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[10px] font-black text-white">{(safePage - 1) * PAGE_SIZE + index + 1}</span>
+                      <div className={`w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mt-0.5 text-[11px] font-black ${
+                        isTopThree ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-500'
+                      }`}>
+                        {rank}
                       </div>
-                      <img
-                        src={getAgencyLogoUrl(agency)}
-                        alt={agency.name}
-                        loading="lazy"
-                        onError={(e) => {
-                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(agency.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
-                        }}
-                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white"
-                      />
+                      {agency.logo_url ? (
+                        <img
+                          src={agency.logo_url}
+                          alt=""
+                          loading="lazy"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white"
+                        />
+                      ) : (
+                        <div
+                          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-md border flex items-center justify-center ${tileColor}`}
+                          aria-hidden="true"
+                        >
+                          <Icon className="w-7 h-7" />
+                        </div>
+                      )}
                     </div>
 
                     {/* Main Content */}
@@ -485,7 +487,8 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
