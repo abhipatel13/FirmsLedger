@@ -178,36 +178,23 @@ export async function getCategorySlugs() {
 }
 
 
-async function getAgencySlugs() {
-  try {
-    const supabase = await getSupabaseClient();
-    if (!supabase) return [];
-    const { data } = await supabase
-      .from('agencies')
-      .select('slug, updated_at')
-      .eq('approved', true)
-      .order('created_at', { ascending: false });
-    return (data || []).filter((r) => r.slug);
-  } catch { return []; }
-}
-
 // ─── Sitemap (split into multiple files for Vercel/Google limits) ────────────
 const URLS_PER_SITEMAP = 45000;
 
 export async function generateSitemaps() {
-  const [categorySlugs, agencySlugs] = await Promise.all([getCategorySlugs(), getAgencySlugs()]);
-  const total = estimateUrlCount(categorySlugs.length, agencySlugs.length);
+  const categorySlugs = await getCategorySlugs();
+  const total = estimateUrlCount(categorySlugs.length);
   const count = Math.ceil(total / URLS_PER_SITEMAP);
   return Array.from({ length: count }, (_, i) => ({ id: i }));
 }
 
-function estimateUrlCount(catCount, agencyCount = 0) {
+function estimateUrlCount(catCount) {
   const top500 = Math.min(catCount, 500);
   const top300 = Math.min(catCount, 300);
   const top150 = Math.min(catCount, 150);
   const top100 = Math.min(catCount, 100);
   const usaCities = USA_CITY_ROUTES.reduce((s, r) => s + r.cities.length, 0);
-  return 10 + agencyCount + catCount + (top500 * TARGET_STATES.length)
+  return 10 + catCount + (top500 * TARGET_STATES.length)
     + (top300 * KEY_STATES.length) + (top150 * KEY_CITIES.length)
     + (top100 * usaCities)
     + (top300 * 230) + (top300 * 228)  // CA + NY
@@ -219,10 +206,7 @@ function estimateUrlCount(catCount, agencyCount = 0) {
 export default async function sitemap({ id }) {
   const now = new Date();
 
-  const [categorySlugs, agencySlugs] = await Promise.all([
-    getCategorySlugs(),
-    getAgencySlugs(),
-  ]);
+  const categorySlugs = await getCategorySlugs();
 
   const start = id * URLS_PER_SITEMAP;
   const end = start + URLS_PER_SITEMAP;
@@ -429,7 +413,7 @@ export default async function sitemap({ id }) {
   ];
   for (const slug of categorySlugs.slice(0, 300))
     for (const city of CALIFORNIA_CITIES)
-      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&state=California&city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
+      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=California&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
 
   // ── New York deep coverage: ALL categories × all New York cities/areas ──
   const NEW_YORK_CITIES = [
@@ -485,7 +469,7 @@ export default async function sitemap({ id }) {
   ];
   for (const slug of categorySlugs.slice(0, 300))
     for (const city of NEW_YORK_CITIES)
-      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&state=New%20York&city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
+      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=New%20York&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
 
   // ── Texas deep coverage ──
   const TEXAS_CITIES = [
@@ -726,7 +710,7 @@ export default async function sitemap({ id }) {
   ])
     for (const slug of categorySlugs.slice(0, 300))
       for (const city of cities)
-        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&state=${encodeURIComponent(stateName)}&city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
+        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
   } // end gen()
 
   const routes = [];
