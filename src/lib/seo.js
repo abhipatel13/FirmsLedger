@@ -166,6 +166,7 @@ export const CATEGORY_TITLE_OVERRIDES = {
   'acting':                    { 'Turkey':        { top: 8,  noun: 'Companies', name: 'Acting' } },
   'mro':                       { '*':             { top: 5,  noun: 'Companies', name: 'Maintenance Repair and Operations (MRO)' } },
   'paints':                    { 'United States': { top: 10, noun: 'Manufacturers', name: 'Paint' } },
+  'environmental-services':    { 'United States': { top: 10, noun: 'Companies', name: 'Environmental' } },
 };
 
 /**

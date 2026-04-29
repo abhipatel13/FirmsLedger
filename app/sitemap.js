@@ -317,6 +317,7 @@ export default async function sitemap({ id }) {
     { slug: 'acting',                    country: 'Turkey' },
     { slug: 'mro' },
     { slug: 'paints',                    country: 'United States' },
+    { slug: 'environmental-services',    country: 'United States' },
   ];
   for (const { slug, country, state, city } of CURATED_LOCATION_PAGES) {
     const qp = new URLSearchParams();
