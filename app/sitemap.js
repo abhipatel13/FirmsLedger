@@ -177,6 +177,110 @@ export async function getCategorySlugs() {
   } catch { return []; }
 }
 
+// ─── Live-agency count index ────────────────────────────────────────────────
+// Build once per sitemap render. Skips URL emission for (slug × location)
+// combos with < MIN_LIVE_AGENCIES — these would otherwise be soft-404 risks
+// that waste Google's crawl budget on pages that can't rank.
+const MIN_LIVE_AGENCIES = 3;
+
+async function pageAll(supabase, table, select) {
+  const PAGE = 1000;
+  const all = [];
+  let from = 0;
+  while (true) {
+    const { data, error } = await supabase.from(table).select(select).range(from, from + PAGE - 1);
+    if (error) break;
+    if (!data?.length) break;
+    all.push(...data);
+    if (data.length < PAGE) break;
+    from += PAGE;
+  }
+  return all;
+}
+
+const lc = (s) => (s || '').toString().trim().toLowerCase();
+
+/**
+ * Build an in-memory index of live agency counts, keyed by category slug
+ * with optional country/state/city dimensions. Parent categories roll up
+ * counts from their children so /directory/digital-marketing reflects the
+ * total of seo + ppc + content-marketing etc.
+ *
+ * Returns { count(slug, { country, state, city }) → number }.
+ */
+async function buildLiveCountIndex() {
+  try {
+    const supabase = await getSupabaseClient();
+    if (!supabase) return { count: () => Number.MAX_SAFE_INTEGER };
+
+    const [categories, links, agencies] = await Promise.all([
+      pageAll(supabase, 'categories', 'id, slug, parent_id, is_parent'),
+      pageAll(supabase, 'agency_categories', 'agency_id, category_id'),
+      pageAll(supabase, 'agencies', 'id, hq_country, hq_state, hq_city, approved'),
+    ]);
+
+    const approved = agencies.filter((a) => a.approved === true);
+    const agencyById = new Map(approved.map((a) => [a.id, a]));
+
+    const catById = new Map(categories.map((c) => [c.id, c]));
+    const childrenByParent = new Map();
+    for (const c of categories) {
+      if (c.parent_id) {
+        if (!childrenByParent.has(c.parent_id)) childrenByParent.set(c.parent_id, []);
+        childrenByParent.get(c.parent_id).push(c.id);
+      }
+    }
+
+    // (catId → Set<agencyId>) including transitive children for parent cats.
+    const direct = new Map();
+    for (const link of links) {
+      if (!agencyById.has(link.agency_id)) continue;
+      if (!direct.has(link.category_id)) direct.set(link.category_id, new Set());
+      direct.get(link.category_id).add(link.agency_id);
+    }
+
+    const slugToAgencies = new Map();
+    for (const c of categories) {
+      const agSet = new Set();
+      const stack = [c.id];
+      while (stack.length) {
+        const id = stack.pop();
+        const own = direct.get(id);
+        if (own) for (const a of own) agSet.add(a);
+        const kids = childrenByParent.get(id);
+        if (kids) stack.push(...kids);
+      }
+      if (c.slug) slugToAgencies.set(c.slug, agSet);
+    }
+
+    function count(slug, opts = {}) {
+      const ids = slugToAgencies.get(slug);
+      if (!ids || !ids.size) return 0;
+      const country = opts.country ? lc(opts.country) : null;
+      const state = opts.state ? lc(opts.state) : null;
+      const city = opts.city ? lc(opts.city) : null;
+      if (!country && !state && !city) return ids.size;
+
+      let n = 0;
+      for (const id of ids) {
+        const a = agencyById.get(id);
+        if (!a) continue;
+        if (country && lc(a.hq_country) !== country) continue;
+        if (state && lc(a.hq_state) !== state) continue;
+        if (city && !lc(a.hq_city).includes(city)) continue;
+        n++;
+      }
+      return n;
+    }
+
+    return { count };
+  } catch {
+    // Fail-open: if index build fails, emit everything so we don't break the
+    // sitemap. The noindex meta on thin pages still protects rankings.
+    return { count: () => Number.MAX_SAFE_INTEGER };
+  }
+}
+
 
 // ─── Sitemap (split into multiple files for Vercel/Google limits) ────────────
 const URLS_PER_SITEMAP = 45000;
@@ -206,7 +310,11 @@ function estimateUrlCount(catCount) {
 export default async function sitemap({ id }) {
   const now = new Date();
 
-  const categorySlugs = await getCategorySlugs();
+  const [categorySlugs, liveIndex] = await Promise.all([
+    getCategorySlugs(),
+    buildLiveCountIndex(),
+  ]);
+  const liveCount = liveIndex.count;
 
   const start = id * URLS_PER_SITEMAP;
   const end = start + URLS_PER_SITEMAP;
@@ -233,9 +341,11 @@ export default async function sitemap({ id }) {
   for (const slug of STAFFING_SLUGS)
     yield { url: `${BASE_URL}/directory/staffing/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 };
 
-  // ── Category directory pages (all categories) ───────────────────────────────
-  for (const slug of categorySlugs)
+  // ── Category directory pages (all categories with ≥3 live agencies) ────────
+  for (const slug of categorySlugs) {
+    if (liveCount(slug) < MIN_LIVE_AGENCIES) continue;
     yield { url: `${BASE_URL}/directory/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
+  }
 
   // ── Hand-curated location-specific category pages ───────────────────────────
   // Used to push individual high-value SEO pages into the sitemap so Google
@@ -332,31 +442,36 @@ export default async function sitemap({ id }) {
   for (const slug of categorySlugs.slice(0, 500))
     for (const stateSlug of TARGET_STATES) {
       const stateName = STATE_NAMES[stateSlug];
-      if (stateName)
-        yield { url: `${BASE_URL}/directory/${slug}?location=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
+      if (!stateName) continue;
+      if (liveCount(slug, { state: stateName }) < MIN_LIVE_AGENCIES) continue;
+      yield { url: `${BASE_URL}/directory/${slug}?location=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 };
     }
 
   // ── US State detail pages (top 300 × key states) ──────────────────────────
   for (const slug of categorySlugs.slice(0, 300))
     for (const { state } of KEY_STATES) {
       const stateName = STATE_NAMES[state];
-      if (stateName)
-        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 };
+      if (!stateName) continue;
+      if (liveCount(slug, { country: 'United States', state: stateName }) < MIN_LIVE_AGENCIES) continue;
+      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 };
     }
 
   // ── US City pages (top 150 × key cities) ──────────────────────────────────
   for (const slug of categorySlugs.slice(0, 150))
     for (const { state, city } of KEY_CITIES) {
       const stateName = STATE_NAMES[state];
-      if (stateName)
-        yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.75 };
+      if (!stateName) continue;
+      if (liveCount(slug, { country: 'United States', state: stateName, city }) < MIN_LIVE_AGENCIES) continue;
+      yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.75 };
     }
 
   // ── USA city pages (all 50 states × all cities) ───────────────────────────
   for (const slug of categorySlugs.slice(0, 100))
     for (const { stateName, cities } of USA_CITY_ROUTES)
-      for (const city of cities)
+      for (const city of cities) {
+        if (liveCount(slug, { country: 'United States', state: stateName, city }) < MIN_LIVE_AGENCIES) continue;
         yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.72 };
+      }
 
   // ── California deep coverage: ALL categories × all California cities/areas ──
   const CALIFORNIA_CITIES = [
@@ -413,8 +528,10 @@ export default async function sitemap({ id }) {
     'Orinda','Moraga','Brentwood','Antioch','Pittsburg',
   ];
   for (const slug of categorySlugs.slice(0, 300))
-    for (const city of CALIFORNIA_CITIES)
+    for (const city of CALIFORNIA_CITIES) {
+      if (liveCount(slug, { country: 'United States', state: 'California', city }) < MIN_LIVE_AGENCIES) continue;
       yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=California&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
+    }
 
   // ── New York deep coverage: ALL categories × all New York cities/areas ──
   const NEW_YORK_CITIES = [
@@ -469,8 +586,10 @@ export default async function sitemap({ id }) {
     'Ithaca','Rochester','Albany','Syracuse',
   ];
   for (const slug of categorySlugs.slice(0, 300))
-    for (const city of NEW_YORK_CITIES)
+    for (const city of NEW_YORK_CITIES) {
+      if (liveCount(slug, { country: 'United States', state: 'New York', city }) < MIN_LIVE_AGENCIES) continue;
       yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=New%20York&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
+    }
 
   // ── Texas deep coverage ──
   const TEXAS_CITIES = [
@@ -710,8 +829,10 @@ export default async function sitemap({ id }) {
     ['Washington', WASHINGTON_CITIES], ['Georgia', GEORGIA_CITIES], ['New Jersey', NEW_JERSEY_CITIES],
   ])
     for (const slug of categorySlugs.slice(0, 300))
-      for (const city of cities)
+      for (const city of cities) {
+        if (liveCount(slug, { country: 'United States', state: stateName, city }) < MIN_LIVE_AGENCIES) continue;
         yield { url: `${BASE_URL}/directory/${slug}?country=United%20States&amp;state=${encodeURIComponent(stateName)}&amp;city=${encodeURIComponent(city)}`, lastModified: now, changeFrequency: 'weekly', priority: 0.73 };
+      }
   } // end gen()
 
   const routes = [];

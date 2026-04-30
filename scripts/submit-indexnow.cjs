@@ -21,7 +21,7 @@ if (fs.existsSync(envPath)) {
 }
 
 const BASE_URL  = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
-const INDEXNOW_KEY = 'd1fe4870b90d8562cb551a1e68124f4d';
+const INDEXNOW_KEY = 'd37e97116b054d6bbe3275ef4a0f5db1';
 const BATCH_SIZE = 10000; // IndexNow allows up to 10,000 URLs per request
 
 async function getAllUrls() {
