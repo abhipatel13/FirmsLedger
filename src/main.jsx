@@ -34,7 +34,13 @@ export default function Layout({ children, currentPageName }) {
     { label: 'United Kingdom', value: 'United Kingdom' },
     { label: 'Canada', value: 'Canada' },
     { label: 'Australia', value: 'Australia' },
+    { label: 'China', value: 'China' },
+    { label: 'Denmark', value: 'Denmark' },
     { label: 'Singapore', value: 'Singapore' },
+    { label: 'Philippines', value: 'Philippines' },
+    { label: 'South Korea', value: 'South Korea' },
+    { label: 'Mexico', value: 'Mexico' },
+    { label: 'Saudi Arabia', value: 'Saudi Arabia' },
     { label: 'UAE', value: 'United Arab Emirates' },
   ];
 

@@ -9,6 +9,7 @@ import {
   Star, Mail, Phone, Globe, Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useSession } from '@/lib/auth';
 
 const PLANS = {
   pro: {
@@ -30,6 +31,8 @@ export default function ClaimListingPage() {
   const planParam = searchParams.get('plan') || 'pro';
   const selectedPlan = PLANS[planParam] || PLANS.pro;
 
+  const { user, loading: sessionLoading } = useSession();
+
   const [agency, setAgency] = useState(null);
   const [loading, setLoading] = useState(!!agencySlug);
   const [form, setForm] = useState({
@@ -42,6 +45,28 @@ export default function ClaimListingPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Auth gate: redirect to /auth if not signed in
+  useEffect(() => {
+    if (sessionLoading) return;
+    if (!user) {
+      const params = new URLSearchParams();
+      if (agencySlug) params.set('agency', agencySlug);
+      if (planParam) params.set('plan', planParam);
+      const claimUrl = `/claim-listing${params.toString() ? `?${params}` : ''}`;
+      router.replace(`/auth?reason=claim&next=${encodeURIComponent(claimUrl)}`);
+    }
+  }, [sessionLoading, user, agencySlug, planParam, router]);
+
+  // Pre-fill email + name from session user once loaded
+  useEffect(() => {
+    if (!user) return;
+    setForm((f) => ({
+      ...f,
+      email: f.email || user.email || '',
+      name: f.name || user.user_metadata?.full_name || '',
+    }));
+  }, [user]);
 
   useEffect(() => {
     if (!agencySlug) return;
@@ -76,6 +101,7 @@ export default function ClaimListingPage() {
           ...form,
           agency_id: agency?.id || null,
           agency_slug: agencySlug || null,
+          user_id: user?.id || null,
         }),
       });
       if (!res.ok) throw new Error('Failed to submit');
@@ -87,6 +113,15 @@ export default function ClaimListingPage() {
       setSubmitting(false);
     }
   };
+
+  // Block render until auth resolves; redirect handled in effect above
+  if (sessionLoading || !user) {
+    return (
+      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+      </div>
+    );
+  }
 
   if (submitted) {
     return (

@@ -308,8 +308,15 @@ export default function Layout({ children }) {
     { label: 'Canada',         value: 'Canada' },
     { label: 'Australia',      value: 'Australia' },
     { label: 'India',          value: 'India' },
+    { label: 'China',          value: 'China' },
     { label: 'Germany',        value: 'Germany' },
     { label: 'France',         value: 'France' },
+    { label: 'Denmark',        value: 'Denmark' },
+    { label: 'Singapore',      value: 'Singapore' },
+    { label: 'Philippines',    value: 'Philippines' },
+    { label: 'South Korea',    value: 'South Korea' },
+    { label: 'Mexico',         value: 'Mexico' },
+    { label: 'Saudi Arabia',   value: 'Saudi Arabia' },
     { label: 'UAE',            value: 'United Arab Emirates' },
   ];
 
@@ -397,17 +404,18 @@ export default function Layout({ children }) {
                 Write a Review
               </Button>
 
-              <Button
-                variant="outline"
-                onClick={() => api.auth.redirectToLogin()}
-                className="border-slate-200 text-slate-700 hover:border-orange-400 hover:text-orange-600 font-semibold text-sm"
-              >
-                Sign In
-              </Button>
+              <Link href="/auth?mode=signin">
+                <Button
+                  variant="outline"
+                  className="border-slate-200 text-slate-700 hover:border-orange-400 hover:text-orange-600 font-semibold text-sm"
+                >
+                  Sign In
+                </Button>
+              </Link>
 
-              <Link href="/ListYourCompany">
+              <Link href="/auth?mode=signup">
                 <Button className="bg-[#F5A623] hover:bg-[#D48E1A] text-[#1A2E4A] font-semibold text-sm px-5 rounded-lg shadow-md shadow-[#F5A623]/25 btn-premium">
-                  Get Listed — It's Free
+                  Sign Up
                 </Button>
               </Link>
             </nav>
@@ -476,18 +484,19 @@ export default function Layout({ children }) {
                   Write a Review
                 </Link>
                 <div className="border-t border-slate-200 mt-2 pt-3 px-3 flex flex-col gap-2">
-                  <Link href="/ListYourCompany" onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/auth?mode=signup" onClick={() => setMobileMenuOpen(false)}>
                     <Button className="w-full justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold">
-                      Get Listed — It's Free
+                      Sign Up
                     </Button>
                   </Link>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-center border-slate-200 text-slate-700 hover:border-orange-400 hover:text-orange-600"
-                    onClick={() => { setMobileMenuOpen(false); api.auth.redirectToLogin(); }}
-                  >
-                    Sign In
-                  </Button>
+                  <Link href="/auth?mode=signin" onClick={() => setMobileMenuOpen(false)}>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-center border-slate-200 text-slate-700 hover:border-orange-400 hover:text-orange-600"
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -519,7 +528,7 @@ export default function Layout({ children }) {
               <div className="flex flex-col gap-3 text-sm">
                 <Link href={createPageUrl('Home')} className="text-slate-400 hover:text-orange-400 transition-colors">Home</Link>
                 <Link href={getDirectoryUrl()} className="text-slate-400 hover:text-orange-400 transition-colors">Browse Companies</Link>
-                <Link href={createPageUrl('ListYourCompany')} className="text-slate-400 hover:text-orange-400 transition-colors">List your company</Link>
+                <Link href="/auth?mode=signup" className="text-slate-400 hover:text-orange-400 transition-colors">Sign Up</Link>
                 <Link href="/claim-listing" className="text-slate-400 hover:text-orange-400 transition-colors">Claim your listing</Link>
                 {isAdmin && (
                   <Link href="/admin" className="text-slate-400 hover:text-orange-400 transition-colors">Admin</Link>

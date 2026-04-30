@@ -407,10 +407,10 @@ export default function DynamicBlogRenderer({ post, relatedPosts = [] }) {
               Browse Service Providers →
             </Link>
             <Link
-              href="/ListYourCompany"
+              href="/auth?mode=signup"
               className="inline-block bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl transition-all border border-white/20"
             >
-              List Your Company Free
+              Sign Up
             </Link>
           </div>
         </div>

@@ -231,10 +231,10 @@ export default function SearchPageLayout({
               Be the first {categoryName.toLowerCase()} company in {locationName}.
             </p>
             <Link
-              href="/ListYourCompany"
+              href="/auth?mode=signup"
               className="inline-block bg-orange-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-orange-700 transition-colors"
             >
-              List Your Company
+              Sign Up
             </Link>
           </div>
         )}
@@ -247,10 +247,10 @@ export default function SearchPageLayout({
           <h2 className="text-2xl font-bold mb-2">{ctaTitle}</h2>
           <p className="text-slate-300 mb-5">{ctaDescription}</p>
           <Link
-            href="/ListYourCompany"
+            href="/auth?mode=signup"
             className="inline-block bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >
-            List Your Company — It&apos;s Free
+            Sign Up
           </Link>
         </div>
       </div>

@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Directory from '@/views/Directory';
 import JsonLd from '@/components/JsonLd';
+import CategorySEOContent from '@/components/directory/CategorySEOContent';
+import { getFaqsFor } from '@/lib/categoryFaqs';
 import { notFound } from 'next/navigation';
 import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle, getCategoryMetaDescription, getCategoryTitleWithLocation, getCategoryMetaDescriptionWithLocation, CATEGORY_TITLE_OVERRIDES, getOverriddenCategoryTitle, getOverriddenCategoryDescription, getOverrideEntry } from '@/lib/seo';
 
@@ -147,11 +149,22 @@ export async function generateMetadata({ params, searchParams }) {
   if (cityName) qp.set('city', cityName);
   const canonical = qp.size ? `${base}?${qp.toString()}` : base;
 
+  // Thin-content gate: count agencies after applying location filters.
+  // < 3 live = soft-404 risk → noindex. Google saves crawl budget for
+  // pages that can actually rank. follow:true keeps internal link equity.
+  const liveCount = await countAgenciesForCategory(category.id, {
+    country: countryName, state: stateName, city: cityName,
+  });
+  const isThin = liveCount < 3;
+
   return {
     title,
     description,
     openGraph: { title, description, type: 'website', url: canonical },
     alternates: { canonical },
+    robots: isThin
+      ? { index: false, follow: true, googleBot: { index: false, follow: true } }
+      : { index: true, follow: true },
   };
 }
 
@@ -255,10 +268,30 @@ export default async function DirectoryRoute({ params, searchParams }) {
     };
   }
 
+  // FAQPage JSON-LD — only emit when a curated FAQ override exists for this slug.
+  // Generic templated FAQs are too thin to merit schema markup; Google
+  // penalizes duplicate-content FAQ schemas across many pages.
+  let faqJsonLd = null;
+  if (specificCategory) {
+    const curatedFaqs = getFaqsFor(specificCategory.slug);
+    if (curatedFaqs?.length) {
+      faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: curatedFaqs.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      };
+    }
+  }
+
   return (
     <>
       {itemListJsonLd  && <JsonLd data={itemListJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full" /></div>}>
         <Directory
           initialCategorySlug={categorySlug || undefined}
@@ -267,6 +300,13 @@ export default async function DirectoryRoute({ params, searchParams }) {
           initialCategories={categories}
         />
       </Suspense>
+      {specificCategory && agencies?.length > 0 && (
+        <CategorySEOContent
+          category={specificCategory}
+          agencies={agencies}
+          allCategories={categories}
+        />
+      )}
     </>
   );
 }

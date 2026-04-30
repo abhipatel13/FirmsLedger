@@ -85,11 +85,18 @@ export default function AIMatchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
+  const locationParam = searchParams.get('location') || '';
+
+  // If location was passed separately (from hero dual-search), fold it into
+  // the LLM prompt so the existing intent extractor picks up the country.
+  const effectiveQuery = locationParam
+    ? `${query} in ${locationParam}`.trim()
+    : query;
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [newQuery, setNewQuery] = useState(query);
+  const [newQuery, setNewQuery] = useState(effectiveQuery);
   const inputRef = useRef(null);
 
   const runMatch = async (q) => {
@@ -102,7 +109,7 @@ export default function AIMatchPage() {
       const res = await fetch('/api/match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: trimmed }),
+        body: JSON.stringify({ query: trimmed, location: locationParam || null }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong.');
@@ -116,11 +123,11 @@ export default function AIMatchPage() {
 
   // Auto-run on mount / query change
   useEffect(() => {
-    if (query) {
-      setNewQuery(query);
-      runMatch(query);
+    if (effectiveQuery) {
+      setNewQuery(effectiveQuery);
+      runMatch(effectiveQuery);
     }
-  }, [query]);
+  }, [effectiveQuery]);
 
   const handleNewSearch = () => {
     const trimmed = newQuery.trim();
@@ -128,7 +135,7 @@ export default function AIMatchPage() {
     router.push(`/ai-match?q=${encodeURIComponent(trimmed)}`);
   };
 
-  if (loading) return <LoadingState query={query} />;
+  if (loading) return <LoadingState query={effectiveQuery} />;
 
   /* ── Error state ── */
   if (error) {
@@ -150,7 +157,7 @@ export default function AIMatchPage() {
   }
 
   /* ── No query ── */
-  if (!query) {
+  if (!effectiveQuery) {
     return (
       <div className="min-h-screen bg-[#F7F8FA] flex flex-col items-center justify-center px-4 text-center">
         <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mb-4">
@@ -215,7 +222,7 @@ export default function AIMatchPage() {
             </div>
             <button
               onClick={handleNewSearch}
-              disabled={!newQuery.trim() || newQuery.trim() === query}
+              disabled={!newQuery.trim() || newQuery.trim() === effectiveQuery}
               className="bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white font-bold px-5 rounded-xl text-sm transition-colors flex items-center gap-1.5 flex-shrink-0"
             >
               <ArrowUp className="w-4 h-4" />

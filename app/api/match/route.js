@@ -250,7 +250,7 @@ Return JSON in this exact format:
 
 export async function POST(request) {
   try {
-    const { query } = await request.json();
+    const { query, location } = await request.json();
 
     if (!query || typeof query !== 'string' || query.trim().length < 5) {
       return NextResponse.json({ error: 'Please describe what you are looking for.' }, { status: 400 });
@@ -296,6 +296,19 @@ export async function POST(request) {
 
     // Step 1: extract structured intent
     const intent = await extractIntent(query, allCategories.map((c) => c.name));
+
+    // Explicit location from the dual-search hero takes precedence over
+    // whatever the LLM extracted from the free-text query — the user typed it
+    // separately, so trust it.
+    if (location && typeof location === 'string' && location.trim()) {
+      const loc = location.trim();
+      // City-level locations contain a comma ("New York, NY") or are short
+      // single-word city names; otherwise treat as country. Heuristic, but
+      // good enough — the LLM also gets the concatenated query as a fallback.
+      const isCountry = /^[A-Za-z .'-]{3,}$/.test(loc) && !loc.includes(',') && loc.split(' ').length <= 4;
+      if (isCountry) intent.country = loc;
+      else intent.city = loc;
+    }
 
     // Step 2: query DB with extracted filters (+ keyword fallback)
     const { candidates, matchedCategoryNames } = await fetchCandidates(supabase, intent, allCategories, agencyCategories);
