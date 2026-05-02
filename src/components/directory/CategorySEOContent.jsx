@@ -62,8 +62,8 @@ function avgBucket(arr) {
 }
 
 export default function CategorySEOContent({ category, agencies = [], allCategories = [] }) {
-  const [introOpen, setIntroOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const [openGuide, setOpenGuide] = useState(-1);
 
   const total = agencies.length;
   const categoryName = category?.name || 'Companies';
@@ -168,42 +168,47 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
     <section className="bg-white border-t border-slate-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-16">
 
-        {/* ── Hero intro ─────────────────────────────────── */}
-        <div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1A2E4A] tracking-tight mb-5">
-            The Best {categoryName} Companies
+        {/* ── Reasons to Implement [Category] Strategies ──────────────── */}
+        <div className="prose prose-slate max-w-none text-[15px] leading-relaxed">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1A2E4A] tracking-tight">
+            Reasons to Work With {categoryName} Providers
           </h2>
-          <div className={`text-slate-700 text-[15px] leading-relaxed space-y-4 ${introOpen ? '' : 'line-clamp-5'}`}>
-            <p>
-              There are a large number of {categoryName.toLowerCase()} companies you can reach out to for help. We have
-              collected all the leading firms in one list of top {categoryName.toLowerCase()} agencies that provide
-              a full range of services and help you avoid mistakes due to lack of experience. With expertise across
-              the {categoryName.toLowerCase()} space, these companies drive measurable outcomes for businesses
-              of every size.
-            </p>
-            <p>
-              Selecting the right {categoryName.toLowerCase()} partner is a decisive factor for success in today&apos;s
-              market. The companies featured here have been vetted for quality, transparency, and proven results.
-              Whether you&apos;re a startup or an established enterprise, you&apos;ll find providers that fit
-              your stage of growth.
-            </p>
-            <p>
-              {category.description || `Each ${categoryName.toLowerCase()} firm in this list has been independently reviewed. Compare ratings, hourly rates, team size, and locations to shortlist the right partner — no pay-to-rank, no fake reviews.`}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIntroOpen((v) => !v)}
-            className="mt-3 text-orange-600 hover:text-orange-700 text-sm font-semibold inline-flex items-center gap-1"
-          >
-            {introOpen ? 'Show less' : 'Read more'}
-            <ChevronDown className={`w-4 h-4 transition-transform ${introOpen ? 'rotate-180' : ''}`} />
-          </button>
+          <p className="text-slate-700">
+            {categoryName} is about removing manual effort from operations and replacing it with reliable,
+            measurable processes. The right {categoryName.toLowerCase()} partner combines proven technology,
+            domain expertise, and a track record of integrating with your existing systems.
+          </p>
+          <p className="text-slate-700">
+            Today, {categoryName.toLowerCase()} is a decisive factor for back-office productivity. The vendors
+            featured here serve organizations at every stage — from startups consolidating their first workflows
+            to enterprises modernizing legacy {categoryName.toLowerCase()} stacks.
+          </p>
+          <p className="text-slate-700"><strong>Common use cases handled by {categoryName.toLowerCase()} firms:</strong></p>
+          <ul className="text-slate-700 list-disc pl-6 space-y-1">
+            <li>Capture and digitization across email, PDF, and paper sources.</li>
+            <li>Workflow automation and approval routing.</li>
+            <li>Data extraction with OCR + AI/LLM accuracy tuning.</li>
+            <li>ERP, accounting, and finance system integration.</li>
+            <li>Compliance, audit trail, and tax authority reporting.</li>
+            <li>Reporting, analytics, and exception handling dashboards.</li>
+          </ul>
+        </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-slate-600">
-            <span><strong className="text-[#1A2E4A]">{total}</strong> Companies</span>
-            <span>Last updated: <strong className="text-[#1A2E4A]">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</strong></span>
-          </div>
+        {/* ── Main Benefits ──────────────────────────────────────────── */}
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1A2E4A] tracking-tight mb-5">
+            Main Benefits of {categoryName}
+          </h2>
+          <ul className="text-slate-700 text-[15px] leading-relaxed list-disc pl-6 space-y-2">
+            <li><strong>Faster processing.</strong> Automated workflows cut cycle time from days to minutes.</li>
+            <li><strong>Lower cost per transaction.</strong> Mature {categoryName.toLowerCase()} platforms reduce manual labor cost by 60–80%.</li>
+            <li><strong>Higher accuracy.</strong> Modern AI extraction reaches 95–99% field accuracy after tuning, reducing rework.</li>
+            <li><strong>Better compliance.</strong> Built-in audit logs, role-based approvals, and tax-authority integrations protect you during audits.</li>
+            <li><strong>Scalability.</strong> Same headcount handles 5–10× more volume during seasonal peaks.</li>
+            <li><strong>Real-time visibility.</strong> Dashboards show liabilities, exceptions, and cash flow without manual reporting.</li>
+            <li><strong>Vendor-friendly.</strong> Self-service portals reduce inbound support load and accelerate payments.</li>
+            <li><strong>ERP integration.</strong> Direct sync with SAP, Oracle, NetSuite, QuickBooks, and Microsoft Dynamics.</li>
+          </ul>
         </div>
 
         {/* ── Pricing of services by location ────────────── */}
@@ -242,7 +247,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-              <StatCard label="Highest hourly rate" value={highestRate} accent="text-orange-600" />
+              <StatCard label="Highest hourly rate" value={highestRate} accent="text-[#1A2E4A]" />
               <StatCard label="Lowest hourly rate" value={lowestRate} accent="text-slate-600" />
               <StatCard label="Most popular" value={popularRate} accent="text-blue-600" />
             </div>
@@ -316,6 +321,54 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
           )}
         </div>
 
+        {/* ── Choosing the Right Partner: Full Guide ──────────────────── */}
+        <div>
+          <h3 className="text-xl sm:text-2xl font-bold text-[#1A2E4A] tracking-tight text-center mb-6">
+            Choosing the Right {categoryName} Partner: A Full Guide
+          </h3>
+          <div className="space-y-3 max-w-3xl mx-auto">
+            {[
+              {
+                q: `Which ${categoryName} providers featured here have more than 10 years of experience?`,
+                a: `Established ${categoryName.toLowerCase()} firms typically run on enterprise-tier platforms with proven uptime SLAs. Use the year-founded filter on the listing above to surface vendors with 10+ years of operating history and battle-tested integrations.`,
+              },
+              {
+                q: `Which ${categoryName} firms with 1–3 years of experience offer competitive pricing?`,
+                a: `Newer ${categoryName.toLowerCase()} entrants frequently offer aggressive launch pricing in the < $25 - $49/hr range. They are a good fit for small teams or pilots where flexibility matters more than long change-management track records.`,
+              },
+              {
+                q: `Which ${categoryName} providers with 10+ years of experience offer the lowest prices?`,
+                a: `A small set of established ${categoryName.toLowerCase()} firms run high-volume offshore delivery centers and pass savings on to clients — typically billing < $25 - $49/hr while still offering enterprise-grade SLAs. Look for ISO 27001 / SOC 2 certification before committing.`,
+              },
+              {
+                q: `What questions should I ask before signing with a ${categoryName.toLowerCase()} provider?`,
+                a: `Ask about: (1) extraction accuracy on a sample of YOUR documents, (2) pre-built ERP and tax-authority integrations, (3) data residency and SOC 2 / ISO 27001 status, (4) exception-handling UX, (5) onboarding timeline, (6) pricing model (per-document vs. flat SaaS), and (7) typical client time-to-value.`,
+              },
+            ].map((g, i) => (
+              <div
+                key={i}
+                className={`border rounded-xl overflow-hidden transition-colors ${
+                  openGuide === i ? 'border-blue-300 bg-blue-50/30' : 'border-slate-200 bg-white'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenGuide(openGuide === i ? -1 : i)}
+                  className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
+                >
+                  <span className="font-bold text-[#1A2E4A] text-sm sm:text-base">{g.q}</span>
+                  <ChevronDown className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform ${openGuide === i ? 'rotate-180' : ''}`} />
+                </button>
+                {openGuide === i && (
+                  <div className="px-5 pb-4 text-slate-600 text-sm leading-relaxed">
+                    {g.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* ── Choosing the right partner: FAQ accordion ─── */}
         <div>
           <h3 className="text-xl sm:text-2xl font-bold text-[#1A2E4A] tracking-tight text-center mb-6">
@@ -326,7 +379,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
               <div
                 key={i}
                 className={`border rounded-xl overflow-hidden transition-colors ${
-                  openFaq === i ? 'border-orange-300 bg-orange-50/30' : 'border-slate-200 bg-white'
+                  openFaq === i ? 'border-blue-300 bg-blue-50/30' : 'border-slate-200 bg-white'
                 }`}
               >
                 <button
@@ -358,7 +411,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
                 <Link
                   key={c.id}
                   href={getDirectoryUrl(c.slug)}
-                  className="text-orange-600 hover:text-orange-700 text-sm font-medium hover:underline inline-flex items-center gap-1.5"
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline inline-flex items-center gap-1.5"
                 >
                   ↳ {c.name}
                 </Link>
@@ -378,7 +431,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
                 <Link
                   key={c.id}
                   href={getDirectoryUrl(c.slug)}
-                  className="text-orange-600 hover:text-orange-700 text-sm font-medium hover:underline inline-flex items-center gap-2"
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline inline-flex items-center gap-2"
                 >
                   <Building2 className="w-4 h-4" /> {c.name}
                 </Link>
@@ -398,7 +451,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
                 <Link
                   key={loc.name}
                   href={`${getDirectoryUrl(category.slug)}?country=${encodeURIComponent(loc.name)}`}
-                  className="text-orange-600 hover:text-orange-700 text-sm font-medium hover:underline inline-flex items-center gap-2"
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline inline-flex items-center gap-2"
                 >
                   <MapPin className="w-4 h-4" /> {categoryName} Companies in {loc.name}
                 </Link>

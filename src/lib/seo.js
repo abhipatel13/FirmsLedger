@@ -167,6 +167,10 @@ export const CATEGORY_TITLE_OVERRIDES = {
   'mro':                       { '*':             { top: 5,  noun: 'Companies', name: 'Maintenance Repair and Operations (MRO)' } },
   'paints':                    { 'United States': { top: 10, noun: 'Manufacturers', name: 'Paint' } },
   'environmental-services':    { 'United States': { top: 10, noun: 'Companies', name: 'Environmental' } },
+
+  // Batch 3 (2026-05-02)
+  'ai-invoice-processing':     { 'Argentina':     { top: 10, noun: 'Companies', name: 'AI Invoice Processing',
+    description: 'Top 10 AI invoice processing companies in Argentina for 2026. Compare verified providers automating invoice capture, OCR, AP workflows, and ERP integration on FirmsLedger.' } },
 };
 
 /**

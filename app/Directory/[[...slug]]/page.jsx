@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import Directory from '@/views/Directory';
 import JsonLd from '@/components/JsonLd';
 import CategorySEOContent from '@/components/directory/CategorySEOContent';
+import CategorySEOIntro from '@/components/directory/CategorySEOIntro';
 import { getFaqsFor } from '@/lib/categoryFaqs';
 import { notFound } from 'next/navigation';
 import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY, getCategoryTitle, getCategoryMetaDescription, getCategoryTitleWithLocation, getCategoryMetaDescriptionWithLocation, CATEGORY_TITLE_OVERRIDES, getOverriddenCategoryTitle, getOverriddenCategoryDescription, getOverrideEntry } from '@/lib/seo';
@@ -292,6 +293,19 @@ export default async function DirectoryRoute({ params, searchParams }) {
       {itemListJsonLd  && <JsonLd data={itemListJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
+      {specificCategory && (
+        <CategorySEOIntro
+          category={specificCategory}
+          location={[resolvedSearch?.city, resolvedSearch?.state, resolvedSearch?.country].filter(Boolean).join(', ')}
+          total={(agencies || []).filter((a) => {
+            const lc = (s) => (s || '').toString().toLowerCase();
+            if (resolvedSearch?.country && lc(a.hq_country) !== lc(resolvedSearch.country)) return false;
+            if (resolvedSearch?.state   && lc(a.hq_state)   !== lc(resolvedSearch.state))   return false;
+            if (resolvedSearch?.city    && !lc(a.hq_city).includes(lc(resolvedSearch.city))) return false;
+            return true;
+          }).length}
+        />
+      )}
       <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full" /></div>}>
         <Directory
           initialCategorySlug={categorySlug || undefined}

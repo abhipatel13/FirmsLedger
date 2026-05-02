@@ -32,6 +32,7 @@ const COUNTRIES = [
   'South Africa',
   'Brazil',
   'Mexico',
+  'Argentina',
   'Other',
 ];
 

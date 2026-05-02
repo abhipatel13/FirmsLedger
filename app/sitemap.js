@@ -428,6 +428,9 @@ export default async function sitemap({ id }) {
     { slug: 'mro' },
     { slug: 'paints',                    country: 'United States' },
     { slug: 'environmental-services',    country: 'United States' },
+
+    // Batch 3 (2026-05-02)
+    { slug: 'ai-invoice-processing',     country: 'Argentina' },
   ];
   for (const { slug, country, state, city } of CURATED_LOCATION_PAGES) {
     const qp = new URLSearchParams();

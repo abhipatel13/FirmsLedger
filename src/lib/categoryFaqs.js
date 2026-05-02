@@ -406,6 +406,29 @@ export const CATEGORY_FAQS = {
       a: 'Verify state and EPA certifications, professional licensure (PE, PG, CHMM), insurance coverage including pollution liability, prior project experience in your industry, and regulatory relationships in your state.',
     },
   ],
+
+  'ai-invoice-processing': [
+    {
+      q: 'What does an AI invoice processing company do?',
+      a: 'AI invoice processing vendors automate accounts payable: capture invoices from email/PDF/paper, extract line items via OCR + LLMs, match POs and receipts, route approvals, and post entries to ERPs like SAP, NetSuite, or QuickBooks — with minimal manual touch.',
+    },
+    {
+      q: 'How accurate is AI invoice extraction in Spanish-language workflows?',
+      a: 'Top providers handle Spanish (and AFIP electronic invoice formats used in Argentina) at 95–99% field accuracy after a short training period. Look for vendors that fine-tune on local tax IDs (CUIT), IVA breakdowns, and ARCA/AFIP CAE numbers.',
+    },
+    {
+      q: 'How much does AI invoice processing cost in Argentina?',
+      a: 'SaaS pricing typically runs USD 0.10–0.50 per invoice, or USD 500–5,000/month for SMB tiers. Enterprise rollouts with ERP integration and AFIP compliance run USD 25K–150K in year one, with 60–80% AP labor cost reduction afterward.',
+    },
+    {
+      q: 'Does the software integrate with AFIP electronic invoicing?',
+      a: 'Argentina-focused vendors connect to AFIP web services for CAE validation, factura electrónica retrieval, and Libro IVA Digital reporting. Confirm support for monotributo, responsable inscripto, and cross-border invoices before signing.',
+    },
+    {
+      q: 'How do I choose the right AI invoice processing partner?',
+      a: 'Compare extraction accuracy on your own invoice sample, ERP/AFIP integrations, two-/three-way match capability, exception-handling UX, data residency, SOC 2 / ISO 27001, and time-to-value. Run a 30–60 day pilot on real invoices before committing.',
+    },
+  ],
 };
 
 /**
