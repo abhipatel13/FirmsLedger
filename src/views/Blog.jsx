@@ -27,7 +27,7 @@ const ARTICLES_LIST = [
     excerpt: 'Sysco, US Foods, PFG, McLane, Gordon, Dot Foods, UNFI, KeHE, SpartanNash, HAVI, Chefs\' Warehouse, Core-Mark — revenue, coverage, specialties, and trends inside the $991B US food supply chain.',
     category: 'Food & Beverage',
     readTime: '15 min read',
-    image: { src: 'https://images.unsplash.com/photo-1519642918688-7e43b19245d8?w=1200&q=85', alt: 'Top food distribution companies USA 2026', width: 1200, height: 630 },
+    image: { src: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=85', alt: 'Top food distribution companies USA 2026', width: 1200, height: 630 },
   },
   {
     slug: 'top-american-cruise-companies-2026',

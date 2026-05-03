@@ -43,7 +43,7 @@ const ARTICLES = {
     title: 'Top Food Distribution Companies in the United States: The Complete Guide [2026]',
     seoTitle: `Top Food Distribution Companies in the United States (2026) | ${SITE_NAME}`,
     seoDescription: 'Top 12 food distribution companies in the US for 2026 — Sysco, US Foods, PFG, McLane, Gordon, Dot Foods, UNFI, KeHE, SpartanNash, HAVI, Chefs\' Warehouse, Core-Mark. Revenue, trends, and how to choose.',
-    image: 'https://images.unsplash.com/photo-1519642918688-7e43b19245d8?w=1200&h=630&fit=crop&q=85',
+    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&h=630&fit=crop&q=85',
     imageAlt: 'Top food distribution companies in the United States 2026',
     component: TopFoodDistributionCompaniesUSA2026Article,
   },

@@ -8,7 +8,7 @@ import { createPageUrl } from '@/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 
 const FEATURED_IMAGE = {
-  src: 'https://images.unsplash.com/photo-1519642918688-7e43b19245d8?w=1200&q=85',
+  src: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=85',
   alt: 'Top food distribution companies in the United States 2026 — refrigerated trucks at distribution warehouse',
   width: 1200,
   height: 630,
@@ -217,7 +217,7 @@ const ARTICLE_JSON_LD = {
   '@type': 'Article',
   headline: 'Top Food Distribution Companies in the United States: The Complete Guide [2026]',
   description: 'A comprehensive guide to the top 12 food distribution companies in the United States for 2026 — Sysco, US Foods, PFG, McLane, Gordon Food Service, Dot Foods, UNFI, KeHE, SpartanNash, HAVI, Chefs Warehouse, and Core-Mark. Industry trends, comparison table, and how to choose the right partner.',
-  image: 'https://images.unsplash.com/photo-1519642918688-7e43b19245d8?w=1200&q=85',
+  image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=85',
   datePublished: '2026-05-02',
   dateModified: '2026-05-02',
   author: { '@type': 'Organization', name: 'FirmsLedger Editorial Team' },
