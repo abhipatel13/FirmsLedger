@@ -125,22 +125,6 @@ const ARTICLES_LIST = [
     readTime: '13 min read',
     image: { src: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&q=85', alt: 'Top 10 milling machine manufacturers in India 2026', width: 1200, height: 630 },
   },
-  {
-    slug: 'top-10-recruitment-agencies-india-2026',
-    title: 'Top 10 Recruitment Agencies in India (2026)',
-    excerpt: 'TeamLease, Naukri, Randstad, Adecco, ManpowerGroup, ABC Consultants, Michael Page, Korn Ferry, Heidrick & Struggles, Quess.',
-    category: 'Staffing',
-    readTime: '14 min read',
-    image: { src: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&q=85', alt: 'Top 10 recruitment agencies in India 2026', width: 1200, height: 630 },
-  },
-  {
-    slug: 'top-it-staffing-companies-bangalore-2026',
-    title: 'Top IT Staffing Companies in Bangalore (2026)',
-    excerpt: 'ORR, Whitefield, Electronic City, Manyata, Koramangala — TeamLease Digital, Xpheno, Quess, Careernet, Zyoin.',
-    category: 'Staffing',
-    readTime: '12 min read',
-    image: { src: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=1200&q=85', alt: 'Top IT Staffing Companies in Bangalore 2026', width: 1200, height: 630 },
-  },
 ];
 
 export default function Blogs() {

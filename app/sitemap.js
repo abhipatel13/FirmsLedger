@@ -25,8 +25,6 @@ const BLOG_SLUGS = [
   'top-10-water-pump-brands-india-2026',
   'top-10-drilling-machine-brands-india-2026',
   'top-10-milling-machine-manufacturers-india-2026',
-  'top-10-recruitment-agencies-india-2026',
-  'top-it-staffing-companies-bangalore-2026',
 ];
 
 const TARGET_STATES = [

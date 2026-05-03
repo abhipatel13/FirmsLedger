@@ -3,8 +3,6 @@ import { createClient } from '@supabase/supabase-js';
 import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY } from '@/lib/seo';
 import DynamicBlogRenderer from '@/components/DynamicBlogRenderer';
 
-import Top10RecruitmentAgenciesIndia2026Article from '@/views/blog/Top10RecruitmentAgenciesIndia2026Article';
-import TopITStaffingCompaniesBangalore2026Article from '@/views/blog/TopITStaffingCompaniesBangalore2026Article';
 import TopFoodDistributionCompaniesUSA2026Article from '@/views/blog/TopFoodDistributionCompaniesUSA2026Article';
 import Top10MillingMachineManufacturersIndia2026Article from '@/views/blog/Top10MillingMachineManufacturersIndia2026Article';
 import Top10DrillingMachineBrandsIndia2026Article from '@/views/blog/Top10DrillingMachineBrandsIndia2026Article';
@@ -142,22 +140,6 @@ const ARTICLES = {
     image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&h=630&fit=crop&q=85',
     imageAlt: 'Top 10 milling machine manufacturers in India 2026',
     component: Top10MillingMachineManufacturersIndia2026Article,
-  },
-  'top-10-recruitment-agencies-india-2026': {
-    title: 'Top 10 Recruitment Agencies in India (2026)',
-    seoTitle: `Top 10 Recruitment Agencies in India (2026) | ${SEO_COUNTRY} | ${SITE_NAME}`,
-    seoDescription: 'Expert guide to the best recruitment agencies in India for 2026. TeamLease, Naukri, Randstad, Adecco & more.',
-    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=630&fit=crop&q=85',
-    imageAlt: 'Top 10 recruitment agencies in India 2026',
-    component: Top10RecruitmentAgenciesIndia2026Article,
-  },
-  'top-it-staffing-companies-bangalore-2026': {
-    title: `Top IT Staffing Companies in Bangalore (${SEO_YEAR})`,
-    seoTitle: `Top IT Staffing Companies in Bangalore ${SEO_YEAR} | ${SITE_NAME}`,
-    seoDescription: `Best IT staffing companies in Bangalore for ${SEO_YEAR} — ORR, Whitefield, Electronic City, Manyata, Koramangala.`,
-    image: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=1200&h=630&fit=crop&q=85',
-    imageAlt: 'Top IT Staffing Companies in Bangalore 2026',
-    component: TopITStaffingCompaniesBangalore2026Article,
   },
 };
 
