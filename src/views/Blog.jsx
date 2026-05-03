@@ -22,6 +22,14 @@ const POSTS_PER_PAGE = 9;
 
 const ARTICLES_LIST = [
   {
+    slug: 'top-ice-cream-companies-usa-2026',
+    title: 'Top Ice Cream Companies in the United States: The Complete Guide [2026]',
+    excerpt: 'Häagen-Dazs, Ben & Jerry\'s, Breyers, Baskin-Robbins, Blue Bell, Tillamook, Turkey Hill, Dreyer\'s/Edy\'s, Talenti, Friendly\'s, Good Humor, Halo Top — revenue, reach, and the brands that own America\'s freezer.',
+    category: 'Food & Beverage',
+    readTime: '15 min read',
+    image: { src: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=1200&q=85', alt: 'Top ice cream companies USA 2026', width: 1200, height: 630 },
+  },
+  {
     slug: 'top-food-distribution-companies-usa-2026',
     title: 'Top Food Distribution Companies in the United States: The Complete Guide [2026]',
     excerpt: 'Sysco, US Foods, PFG, McLane, Gordon, Dot Foods, UNFI, KeHE, SpartanNash, HAVI, Chefs\' Warehouse, Core-Mark — revenue, coverage, specialties, and trends inside the $991B US food supply chain.',

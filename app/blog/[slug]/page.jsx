@@ -4,6 +4,7 @@ import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY } from '@/lib/seo';
 import DynamicBlogRenderer from '@/components/DynamicBlogRenderer';
 
 import TopFoodDistributionCompaniesUSA2026Article from '@/views/blog/TopFoodDistributionCompaniesUSA2026Article';
+import TopIceCreamCompaniesUSA2026Article from '@/views/blog/TopIceCreamCompaniesUSA2026Article';
 import Top10MillingMachineManufacturersIndia2026Article from '@/views/blog/Top10MillingMachineManufacturersIndia2026Article';
 import Top10DrillingMachineBrandsIndia2026Article from '@/views/blog/Top10DrillingMachineBrandsIndia2026Article';
 import Top10WaterPumpBrandsIndia2026Article from '@/views/blog/Top10WaterPumpBrandsIndia2026Article';
@@ -37,6 +38,14 @@ async function getDbPost(slug) {
 }
 
 const ARTICLES = {
+  'top-ice-cream-companies-usa-2026': {
+    title: 'Top Ice Cream Companies in the United States: The Complete Guide [2026]',
+    seoTitle: `Top Ice Cream Companies in the United States (2026) | ${SITE_NAME}`,
+    seoDescription: 'Top 12 ice cream companies in the US for 2026 — Häagen-Dazs, Ben & Jerry\'s, Breyers, Baskin-Robbins, Blue Bell, Tillamook, Talenti, Halo Top and more. Trends, market share, and how to choose.',
+    image: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top ice cream companies in the United States 2026 — premium scoops',
+    component: TopIceCreamCompaniesUSA2026Article,
+  },
   'top-food-distribution-companies-usa-2026': {
     title: 'Top Food Distribution Companies in the United States: The Complete Guide [2026]',
     seoTitle: `Top Food Distribution Companies in the United States (2026) | ${SITE_NAME}`,
