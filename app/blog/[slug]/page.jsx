@@ -5,6 +5,7 @@ import DynamicBlogRenderer from '@/components/DynamicBlogRenderer';
 
 import TopFoodDistributionCompaniesUSA2026Article from '@/views/blog/TopFoodDistributionCompaniesUSA2026Article';
 import TopIceCreamCompaniesUSA2026Article from '@/views/blog/TopIceCreamCompaniesUSA2026Article';
+import TopEnergyStorageCompaniesSpain2026Article from '@/views/blog/TopEnergyStorageCompaniesSpain2026Article';
 import Top10MillingMachineManufacturersIndia2026Article from '@/views/blog/Top10MillingMachineManufacturersIndia2026Article';
 import Top10DrillingMachineBrandsIndia2026Article from '@/views/blog/Top10DrillingMachineBrandsIndia2026Article';
 import Top10WaterPumpBrandsIndia2026Article from '@/views/blog/Top10WaterPumpBrandsIndia2026Article';
@@ -38,6 +39,14 @@ async function getDbPost(slug) {
 }
 
 const ARTICLES = {
+  'top-energy-storage-companies-spain-2026': {
+    title: 'Top Energy Storage Companies in Spain: The Complete Guide [2026]',
+    seoTitle: `Top Energy Storage Companies in Spain (2026) | ${SITE_NAME}`,
+    seoDescription: 'Top 12 energy storage companies in Spain for 2026 — Iberdrola, Endesa, Repsol, Acciona, Naturgy, EDPR, Solaria, Ingeteam and more. BESS, pumped hydro, green H₂, PNIEC, NextGenerationEU.',
+    image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&h=630&fit=crop&q=85',
+    imageAlt: 'Top energy storage companies in Spain 2026 — wind farm and battery storage',
+    component: TopEnergyStorageCompaniesSpain2026Article,
+  },
   'top-ice-cream-companies-usa-2026': {
     title: 'Top Ice Cream Companies in the United States: The Complete Guide [2026]',
     seoTitle: `Top Ice Cream Companies in the United States (2026) | ${SITE_NAME}`,

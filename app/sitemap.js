@@ -12,6 +12,7 @@ const STAFFING_SLUGS = [
 // Hand-curated blog slugs. Keep in sync with src/views/Blog.jsx ARTICLES_LIST
 // and the static map in app/blog/[slug]/page.jsx.
 const BLOG_SLUGS = [
+  'top-energy-storage-companies-spain-2026',
   'top-ice-cream-companies-usa-2026',
   'top-food-distribution-companies-usa-2026',
   'top-american-cruise-companies-2026',

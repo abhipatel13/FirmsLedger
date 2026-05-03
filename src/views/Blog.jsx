@@ -22,6 +22,14 @@ const POSTS_PER_PAGE = 9;
 
 const ARTICLES_LIST = [
   {
+    slug: 'top-energy-storage-companies-spain-2026',
+    title: 'Top Energy Storage Companies in Spain: The Complete Guide [2026]',
+    excerpt: 'Iberdrola, Endesa, Repsol, Acciona Energía, Naturgy, EDPR, Solaria, Gestamp, Ingeteam, Gamesa Electric, Plenitude, Amp Energy — BESS, pumped hydro, green hydrogen, PNIEC policy, and Spain\'s path to 22 GW of storage by 2030.',
+    category: 'Energy',
+    readTime: '16 min read',
+    image: { src: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&q=85', alt: 'Top energy storage companies in Spain 2026', width: 1200, height: 630 },
+  },
+  {
     slug: 'top-ice-cream-companies-usa-2026',
     title: 'Top Ice Cream Companies in the United States: The Complete Guide [2026]',
     excerpt: 'Häagen-Dazs, Ben & Jerry\'s, Breyers, Baskin-Robbins, Blue Bell, Tillamook, Turkey Hill, Dreyer\'s/Edy\'s, Talenti, Friendly\'s, Good Humor, Halo Top — revenue, reach, and the brands that own America\'s freezer.',
