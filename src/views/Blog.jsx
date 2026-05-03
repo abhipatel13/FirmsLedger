@@ -19,7 +19,129 @@ import {
 } from 'lucide-react';
 
 const POSTS_PER_PAGE = 9;
-const ARTICLES_LIST = [];
+
+const ARTICLES_LIST = [
+  {
+    slug: 'top-food-distribution-companies-usa-2026',
+    title: 'Top Food Distribution Companies in the United States: The Complete Guide [2026]',
+    excerpt: 'Sysco, US Foods, PFG, McLane, Gordon, Dot Foods, UNFI, KeHE, SpartanNash, HAVI, Chefs\' Warehouse, Core-Mark — revenue, coverage, specialties, and trends inside the $991B US food supply chain.',
+    category: 'Food & Beverage',
+    readTime: '15 min read',
+    image: { src: 'https://images.unsplash.com/photo-1519642918688-7e43b19245d8?w=1200&q=85', alt: 'Top food distribution companies USA 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-american-cruise-companies-2026',
+    title: 'Top American Cruise Companies: The Best of the US Cruise Industry in 2026',
+    excerpt: 'Compare Carnival, Royal Caribbean, Norwegian, Celebrity, Disney, Viking, and Regent Seven Seas — fleet, destinations, and onboard experience.',
+    category: 'Travel',
+    readTime: '14 min read',
+    image: { src: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1200&q=85', alt: 'Top American cruise companies 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-medical-ventilator-manufacturers-usa-2026',
+    title: 'Top Medical Ventilator Manufacturers in the USA (2026)',
+    excerpt: 'Medtronic, GE HealthCare, ResMed, Vyaire, ZOLL, Hamilton, Philips, Hill-Rom, and Spiritus Medical — compared by ICU, home care, and transport ventilation.',
+    category: 'Healthcare',
+    readTime: '15 min read',
+    image: { src: 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&q=85', alt: 'Top medical ventilator manufacturers in the USA 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-cnc-manufacturers-nevada-2026',
+    title: 'Top CNC Manufacturers in Nevada: Best Machine Shops for Precision Machining (2026)',
+    excerpt: 'CES Machine, Owens Industries, Frigate, CapableMachining, and Tonza Making — capabilities, certifications, and industries served.',
+    category: 'Manufacturing',
+    readTime: '12 min read',
+    image: { src: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1200&q=85', alt: 'Top CNC manufacturers in Nevada 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'best-specialty-chemical-companies-australia-2026',
+    title: 'Best Specialty Chemical Companies in Australia for Manufacturing (2026)',
+    excerpt: 'Orica, Nufarm, Ixom, Brenntag, Chem-Supply and more — AICIS compliance, certifications, and sectors served.',
+    category: 'Manufacturing',
+    readTime: '13 min read',
+    image: { src: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=85', alt: 'Best specialty chemical companies in Australia 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'best-solar-panels-australia-2026',
+    title: 'Best Solar Panels in Australia (2026) — Brands Compared & Reviewed',
+    excerpt: 'CEC-approved panels for homes, farms, and commercial use. Efficiency, warranty, and AUD price compared.',
+    category: 'Energy',
+    readTime: '12 min read',
+    image: { src: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1200&q=85', alt: 'Best solar panels in Australia 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-10-stabilizer-brands-india-2026',
+    title: 'Top 10 Stabilizer Brands in India (2026)',
+    excerpt: 'V-Guard, Microtek, Luminous, Servokon and more — ISI-certified voltage stabilizers for home, commercial, and industrial use.',
+    category: 'Electrical',
+    readTime: '11 min read',
+    image: { src: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=85', alt: 'Top 10 stabilizer brands in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-10-switch-socket-brands-india-2026',
+    title: 'Top 10 Switch & Socket Brands in India (2026)',
+    excerpt: 'Legrand, Havells, Anchor, Schneider, GM Modular and more — ISI-certified modular switches for home and commercial use.',
+    category: 'Electrical',
+    readTime: '11 min read',
+    image: { src: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=85', alt: 'Top 10 switch and socket brands in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'best-solar-panel-brands-india-2026',
+    title: 'Best Solar Panel Brands in India (2026)',
+    excerpt: 'Waaree, Tata Power Solar, Adani Solar, Vikram Solar and more — BIS certified, ALMM listed, compared by efficiency and warranty.',
+    category: 'Energy',
+    readTime: '12 min read',
+    image: { src: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=85', alt: 'Best solar panel brands in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-10-led-light-brands-india-2026',
+    title: 'Top 10 LED Light Brands in India (2026)',
+    excerpt: 'Philips, Havells, Syska, Wipro, Bajaj, Crompton and more — for home, office, and industrial use.',
+    category: 'Electrical',
+    readTime: '11 min read',
+    image: { src: 'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=1200&q=85', alt: 'Top 10 LED light brands in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-10-water-pump-brands-india-2026',
+    title: 'Top 10 Water Pump Brands in India (2026)',
+    excerpt: 'Kirloskar, Crompton, CRI, Grundfos and more — for home, agriculture, and industrial use.',
+    category: 'Industrial',
+    readTime: '11 min read',
+    image: { src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=85', alt: 'Top 10 water pump brands in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-10-drilling-machine-brands-india-2026',
+    title: "Top 10 Drilling Machine Brands in India (2026): Complete B2B Buyer's Guide",
+    excerpt: 'HMT, BFW, Jyoti CNC, Premier, INDER, Apex Tools, Precihole, Bosch, DeWalt, Makita — type, price range, certifications, after-sales support.',
+    category: 'Manufacturing',
+    readTime: '13 min read',
+    image: { src: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&q=85', alt: 'Top 10 drilling machine brands in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-10-milling-machine-manufacturers-india-2026',
+    title: 'Top 10 Milling Machine Manufacturers in India (2026)',
+    excerpt: 'HMT, BFW, Jyoti CNC, Ace Micromatic, Lokesh, Godrej, MTAB, Premier, Electronica, Precihole — certifications and specializations.',
+    category: 'Manufacturing',
+    readTime: '13 min read',
+    image: { src: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&q=85', alt: 'Top 10 milling machine manufacturers in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-10-recruitment-agencies-india-2026',
+    title: 'Top 10 Recruitment Agencies in India (2026)',
+    excerpt: 'TeamLease, Naukri, Randstad, Adecco, ManpowerGroup, ABC Consultants, Michael Page, Korn Ferry, Heidrick & Struggles, Quess.',
+    category: 'Staffing',
+    readTime: '14 min read',
+    image: { src: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&q=85', alt: 'Top 10 recruitment agencies in India 2026', width: 1200, height: 630 },
+  },
+  {
+    slug: 'top-it-staffing-companies-bangalore-2026',
+    title: 'Top IT Staffing Companies in Bangalore (2026)',
+    excerpt: 'ORR, Whitefield, Electronic City, Manyata, Koramangala — TeamLease Digital, Xpheno, Quess, Careernet, Zyoin.',
+    category: 'Staffing',
+    readTime: '12 min read',
+    image: { src: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=1200&q=85', alt: 'Top IT Staffing Companies in Bangalore 2026', width: 1200, height: 630 },
+  },
+];
 
 export default function Blogs() {
   const [dbPosts, setDbPosts] = useState([]);
