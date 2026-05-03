@@ -291,6 +291,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
         )}
 
         {/* ── Summary block ──────────────────────────────── */}
+        {total > 0 && (
         <div className="prose prose-slate max-w-none text-[15px] leading-relaxed">
           <h3 className="text-xl sm:text-2xl font-bold text-[#1A2E4A] tracking-tight">
             Summary of {categoryName} Companies Rates
@@ -320,6 +321,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
             </p>
           )}
         </div>
+        )}
 
         {/* ── Choosing the Right Partner: Full Guide ──────────────────── */}
         <div>

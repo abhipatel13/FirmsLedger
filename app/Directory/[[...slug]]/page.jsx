@@ -314,10 +314,10 @@ export default async function DirectoryRoute({ params, searchParams }) {
           initialCategories={categories}
         />
       </Suspense>
-      {specificCategory && agencies?.length > 0 && (
+      {specificCategory && (
         <CategorySEOContent
           category={specificCategory}
-          agencies={agencies}
+          agencies={agencies || []}
           allCategories={categories}
         />
       )}
