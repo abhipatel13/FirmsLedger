@@ -9,6 +9,26 @@ const STAFFING_SLUGS = [
   'government-defense-staffing', 'hospitality-event-staffing', 'scientific-pharmaceutical-staffing',
 ];
 
+// Hand-curated blog slugs. Keep in sync with src/views/Blog.jsx ARTICLES_LIST
+// and the static map in app/blog/[slug]/page.jsx.
+const BLOG_SLUGS = [
+  'top-food-distribution-companies-usa-2026',
+  'top-american-cruise-companies-2026',
+  'top-medical-ventilator-manufacturers-usa-2026',
+  'top-cnc-manufacturers-nevada-2026',
+  'best-specialty-chemical-companies-australia-2026',
+  'best-solar-panels-australia-2026',
+  'top-10-stabilizer-brands-india-2026',
+  'top-10-switch-socket-brands-india-2026',
+  'best-solar-panel-brands-india-2026',
+  'top-10-led-light-brands-india-2026',
+  'top-10-water-pump-brands-india-2026',
+  'top-10-drilling-machine-brands-india-2026',
+  'top-10-milling-machine-manufacturers-india-2026',
+  'top-10-recruitment-agencies-india-2026',
+  'top-it-staffing-companies-bangalore-2026',
+];
+
 const TARGET_STATES = [
   'california', 'texas', 'new-york', 'florida', 'illinois',
   'pennsylvania', 'ohio', 'georgia', 'virginia', 'north-carolina',
@@ -330,6 +350,11 @@ export default async function sitemap({ id }) {
   yield { url: `${BASE_URL}/ai-match`,           lastModified: now, changeFrequency: 'monthly', priority: 0.7 };
   yield { url: `${BASE_URL}/Compare`,            lastModified: now, changeFrequency: 'weekly',  priority: 0.6 };
   yield { url: `${BASE_URL}/claim-listing`,      lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
+  yield { url: `${BASE_URL}/blog`,               lastModified: now, changeFrequency: 'weekly',  priority: 0.7 };
+
+  // ── Blog articles ───────────────────────────────────────────────────────────
+  for (const slug of BLOG_SLUGS)
+    yield { url: `${BASE_URL}/blog/${slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
 
   // ── Company profile pages ───────────────────────────────────────────────────
   // Intentionally NOT emitted: per product decision, individual /companies/:slug
