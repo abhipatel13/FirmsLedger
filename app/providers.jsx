@@ -5,6 +5,7 @@ import { queryClientInstance } from '@/lib/query-client';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import NavigationTracker from '@/lib/NavigationTracker';
 import UserNotRegisteredError from '@/components/UserNotRegistedError';
+import AuthHashHandler from '@/components/AuthHashHandler';
 import Layout from '@/Layout';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -37,6 +38,7 @@ export function Providers({ children }) {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <NavigationTracker />
+        <AuthHashHandler />
         <AuthGate>{children}</AuthGate>
         <Toaster />
       </QueryClientProvider>
