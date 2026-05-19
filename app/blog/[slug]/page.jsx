@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { SITE_NAME, BASE_URL, SEO_YEAR, SEO_COUNTRY } from '@/lib/seo';

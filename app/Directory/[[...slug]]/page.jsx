@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import { Suspense } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Directory from '@/views/Directory';
