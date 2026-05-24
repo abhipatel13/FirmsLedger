@@ -246,7 +246,7 @@ export default function Blogs() {
           <div className="text-center">
             <div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/30 text-orange-400 text-xs font-semibold px-4 py-2 rounded-full mb-6 uppercase tracking-wider backdrop-blur-sm">
               <BookOpen className="w-4 h-4" />
-              Guides & Lists
+              Trade Resources
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-5 text-white">
               Insights &{' '}
@@ -255,7 +255,7 @@ export default function Blogs() {
               </span>
             </h1>
             <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed mb-10">
-              Expert guides and curated lists to help you choose the right companies across every industry.
+              Industry guides, supplier spotlights, and sourcing tips to help buyers and suppliers make better trade decisions.
             </p>
 
             {/* Search bar */}

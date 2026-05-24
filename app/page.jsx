@@ -1,16 +1,16 @@
-import Home from '@/views/Home';
+import MarketplaceHub from '@/views/marketplace/MarketplaceHub';
 import JsonLd from '@/components/JsonLd';
-import { SITE_NAME, SEO_YEAR, SEO_COUNTRY, BASE_URL } from '@/lib/seo';
+import { SITE_NAME, BASE_URL } from '@/lib/seo';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
-  title: `Best Companies & Service Providers ${SEO_YEAR} | Global Business Directory | ${SITE_NAME}`,
-  description: `FirmsLedger is the trusted global business directory. Find and compare verified companies across staffing, healthcare, travel, IT, education, and every other industry. Read real client reviews and get matched with the right partner.`,
+  title: `B2B Marketplace — Connect Buyers & Suppliers Globally | ${SITE_NAME}`,
+  description: 'Post RFQs to find suppliers or list your products to reach buyers worldwide. Free B2B marketplace for all industries.',
   alternates: { canonical: _BASE },
   openGraph: {
-    title: `Best Companies Worldwide | ${SITE_NAME}`,
-    description: 'Find and compare the best companies worldwide. Verified reviews, ratings, and direct contact across every industry.',
+    title: `FirmsLedger B2B Marketplace`,
+    description: 'Post RFQs or list your products. Connect with buyers and suppliers worldwide.',
     type: 'website',
     url: _BASE,
   },
@@ -21,29 +21,14 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: SITE_NAME,
   url: _BASE,
-  description: "The trusted global business directory. Find and compare verified companies across every industry, worldwide.",
+  description: 'Global B2B marketplace. Post RFQs to find suppliers or list products to reach buyers worldwide.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${_BASE}/directory?search={search_term_string}`,
+      urlTemplate: `${_BASE}/marketplace/rfqs?search={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
-  },
-};
-
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: SITE_NAME,
-  url: _BASE,
-  logo: `${_BASE}/icon.svg`,
-  description: "The trusted global business directory. Find and compare verified companies across every industry, worldwide.",
-  areaServed: 'Worldwide',
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer service',
-    url: `${_BASE}/contact`,
   },
 };
 
@@ -51,8 +36,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={websiteSchema} />
-      <JsonLd data={organizationSchema} />
-      <Home />
+      <MarketplaceHub />
     </>
   );
 }
