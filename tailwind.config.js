@@ -4,6 +4,11 @@ module.exports = {
   content: ["./app/**/*.{ts,tsx,js,jsx}", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['"Barlow Condensed"', 'sans-serif'],
+        body:    ['"DM Sans"', 'sans-serif'],
+        mono:    ['"IBM Plex Mono"', 'monospace'],
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -19,6 +24,24 @@ module.exports = {
           'gold-light': '#FDCE6E',
           'gold-dark':  '#D48E1A',
         },
+        // ── Homepage design system tokens (from DirectoryHub / Clay-style) ──
+        canvas:         '#fffaf0',   // warm cream page background
+        'surface-soft': '#faf5e8',   // section alternates
+        'surface-card': '#f5f0e0',   // card fills, search widget, badge pills
+        'surface-strong':'#ebe6d6',  // CTA band
+        ink:            '#0a0a0a',   // headlines, primary buttons
+        clay: {
+          body:     '#3a3a3a',  // running text
+          muted:    '#6a6a6a',  // captions, sub-labels
+          hairline: '#e5e5e5',  // 1px borders
+        },
+        accent: {
+          peach: '#ffb084',  // Bike / Midwest region
+          ochre: '#e8b94a',  // Electrical / Northeast region
+          teal:  '#1a3a3a',  // Mechanical / South region
+          sage:  '#6b9080',  // West region
+        },
+
         // Remap Tailwind `orange-*` to the logo's gold palette so existing
         // `bg-orange-500`, `text-orange-600`, etc. automatically become on-brand.
         orange: {

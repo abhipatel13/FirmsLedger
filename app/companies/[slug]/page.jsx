@@ -2,64 +2,51 @@ import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { db } from '@/db/client';
+import { companies } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 async function getCompanyData(slug) {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!supabaseUrl || !supabaseKey || !slug) return null;
-    const res = await fetch(
-      `${supabaseUrl}/rest/v1/agencies?slug=eq.${encodeURIComponent(slug)}&select=name,hq_city,hq_country,logo_url,website,phone,team_size,description,avg_rating,review_count&limit=1`,
-      {
-        headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
-        next: { revalidate: 3600 },
-      }
-    );
-    if (res.ok) {
-      const data = await res.json();
-      return data?.[0] || null;
-    }
-  } catch {}
-  return null;
+    if (!slug) return null;
+    const [row] = await db
+      .select({
+        name: companies.name,
+        hq_city: companies.hq_city,
+        hq_state: companies.hq_state,
+        hq_state_label: companies.hq_state_label,
+        logo_url: companies.logo_url,
+        website: companies.website,
+        employee_count: companies.employee_count,
+        description: companies.description,
+        avg_rating: companies.avg_rating,
+        review_count: companies.review_count,
+      })
+      .from(companies)
+      .where(and(eq(companies.slug, slug), eq(companies.approved, true)))
+      .limit(1);
+    return row ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  let companyName = 'Company Profile';
-  let description = `View this company profile on FirmsLedger – the global directory of verified products and services.`;
+  const company = await getCompanyData(slug);
 
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (supabaseUrl && supabaseKey && slug) {
-      const res = await fetch(
-        `${supabaseUrl}/rest/v1/agencies?slug=eq.${encodeURIComponent(slug)}&select=name,hq_city,hq_country&limit=1`,
-        {
-          headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
-          next: { revalidate: 3600 },
-        }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.[0]?.name) {
-          companyName = data[0].name;
-          const location = [data[0].hq_city, data[0].hq_country].filter(Boolean).join(', ');
-          description = `${companyName} is a verified business${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their services, specializations, team size, reviews, and contact information.`;
-        }
-      }
-    }
-  } catch {
-    // fall through to defaults
-  }
+  const companyName = company?.name || 'Company Profile';
+  const location = [company?.hq_city, company?.hq_state_label].filter(Boolean).join(', ');
+  const description = company
+    ? `${companyName} is a verified US manufacturer${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their profile, ratings, and reviews.`
+    : `View this company profile on FirmsLedger – the US manufacturer directory.`;
 
   const canonical = `${_BASE}/companies/${slug}`;
   return {
     title: companyName,
     description,
-    // Per product decision: do not index individual company profile pages.
-    // Crawlers may still follow links to surface category/directory pages.
     robots: { index: false, follow: true },
     alternates: { canonical },
     openGraph: {
@@ -87,13 +74,13 @@ export default async function CompanyProfilePage({ params }) {
         ...(company.logo_url && { logo: company.logo_url, image: company.logo_url }),
         ...(company.description && { description: company.description }),
         ...(company.website && { sameAs: [company.website] }),
-        ...(company.phone && { telephone: company.phone }),
-        ...(company.team_size && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.team_size } }),
-        ...((company.hq_city || company.hq_country) && {
+        ...(company.employee_count && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.employee_count } }),
+        ...((company.hq_city || company.hq_state_label) && {
           address: {
             '@type': 'PostalAddress',
             ...(company.hq_city && { addressLocality: company.hq_city }),
-            ...(company.hq_country && { addressCountry: company.hq_country }),
+            ...(company.hq_state_label && { addressRegion: company.hq_state_label }),
+            addressCountry: 'US',
           },
         }),
         ...(company.avg_rating && company.review_count > 0 && {
@@ -108,58 +95,14 @@ export default async function CompanyProfilePage({ params }) {
       }
     : null;
 
-  // BreadcrumbList — helps Google show the breadcrumb path in SERPs.
   const breadcrumbJsonLd = company
     ? {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE },
-          { '@type': 'ListItem', position: 2, name: 'Directory', item: `${_BASE}/directory` },
+          { '@type': 'ListItem', position: 2, name: 'Directory', item: `${_BASE}/Directory` },
           { '@type': 'ListItem', position: 3, name: company.name, item: profileUrl },
-        ],
-      }
-    : null;
-
-  // FAQPage — mirrors the in-page FAQ component so Google can surface rich
-  // FAQ snippets. Keep questions identical to what the user actually sees.
-  const faqJsonLd = company
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: `What does ${company.name} do?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: company.description || `${company.name} is a verified business listed on FirmsLedger. View their services and contact information on this page.`,
-            },
-          },
-          {
-            '@type': 'Question',
-            name: `Where is ${company.name} located?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: `${company.name} is headquartered in ${[company.hq_city, company.hq_country].filter(Boolean).join(', ') || 'their service area'}${company.phone ? ` and can be reached at ${company.phone}` : ''}.`,
-            },
-          },
-          {
-            '@type': 'Question',
-            name: `How do I request a quote from ${company.name}?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: `Use the "Request Proposal" button on their FirmsLedger profile page to share your project details. ${company.name} will respond directly with pricing and next steps.`,
-            },
-          },
-          {
-            '@type': 'Question',
-            name: `How can I leave a review for ${company.name}?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: `Click the "Write Review" button on the ${company.name} FirmsLedger profile to share your experience and help other businesses make informed decisions.`,
-            },
-          },
         ],
       }
     : null;
@@ -168,7 +111,6 @@ export default async function CompanyProfilePage({ params }) {
     <>
       {localBusinessJsonLd && <JsonLd data={localBusinessJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
-      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>}>
         <AgencyProfile companySlug={slug || undefined} />
       </Suspense>

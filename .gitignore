@@ -1,6 +1,7 @@
 #env
 .env
 .env.*
+.env.local
 
 # Logs
 logs
@@ -34,3 +35,6 @@ firmsledger-*.json
 .vercel
 .env*.local
 supabase/.temp/
+.agents/
+skills-lock.json
+CLAUDE.md

@@ -37,14 +37,14 @@ export default function CategoryPage({ searchParams }) {
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center">
         <p className="text-slate-500">Category not found</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen bg-[#fffaf0]">
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-4">

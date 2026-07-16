@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  { auth: { persistSession: false } }
-);
+import { db } from '@/db/client';
+import { listing_requests } from '@/db/schema';
 
 export async function POST(request) {
   try {
@@ -16,23 +11,14 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Name, email, and role are required' }, { status: 400 });
     }
 
-    // Store claim request in a claims table (or leads table as fallback)
-    const claimData = {
+    await db.insert(listing_requests).values({
       company_name: company_name || 'Unknown',
       contact_email: email,
       contact_phone: phone || null,
-      description: `CLAIM REQUEST\nPlan: ${plan || 'pro'}\nName: ${name}\nRole: ${role}\nAgency ID: ${agency_id || 'N/A'}\nAgency Slug: ${agency_slug || 'N/A'}`,
-      status: 'Open',
-    };
+      description: `CLAIM REQUEST\nPlan: ${plan || 'pro'}\nName: ${name}\nRole: ${role}\nCompany ID: ${agency_id || 'N/A'}\nCompany Slug: ${agency_slug || 'N/A'}`,
+      status: 'pending',
+    });
 
-    const { error } = await supabase.from('leads').insert(claimData);
-
-    if (error) {
-      console.error('Claim insert error:', error);
-      return NextResponse.json({ error: 'Failed to submit claim' }, { status: 500 });
-    }
-
-    // Send notification email if Resend is configured
     if (process.env.RESEND_API_KEY && process.env.NOTIFY_SUBMISSION_EMAIL) {
       try {
         const { Resend } = await import('resend');
@@ -49,7 +35,7 @@ export async function POST(request) {
             <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
             <p><strong>Role:</strong> ${role}</p>
             <p><strong>Plan:</strong> ${plan || 'pro'}</p>
-            <p><strong>Agency Slug:</strong> ${agency_slug || 'N/A'}</p>
+            <p><strong>Company Slug:</strong> ${agency_slug || 'N/A'}</p>
           `,
         });
       } catch (emailErr) {

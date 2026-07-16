@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from './AuthContext';
 import { api } from '@/api/apiClient';
 
-const PAGE_KEYS = ['Home', 'AdminDashboard', 'AgencyDashboard', 'AgencyProfile', 'BlogPost', 'Blogs', 'Categories', 'CategoryPage', 'Compare', 'CountryPage', 'Directory', 'RequestProposal', 'TopRankings', 'WriteReview'];
+const PAGE_KEYS = ['Home', 'AdminDashboard', 'AgencyDashboard', 'AgencyProfile', 'Categories', 'CategoryPage', 'Compare', 'CountryPage', 'Directory', 'RequestProposal', 'TopRankings', 'WriteReview'];
 const mainPageKey = 'Home';
 
 export default function NavigationTracker() {
