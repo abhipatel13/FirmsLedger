@@ -41,13 +41,13 @@ export default function CountryPage({ searchParams }) {
     : agencies;
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen bg-[#fffaf0]">
       {/* Hero */}
-      <div className="bg-[#1A2E4A] text-white">
+      <div className="bg-[#faf5e8] border-b border-[#e5e5e5]">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-14">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-[#f5f0e0] border border-[#e5e5e5] rounded-xl flex items-center justify-center flex-shrink-0">
+              <MapPin className="w-5 h-5 text-[#0a0a0a]" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">{country}</h1>
           </div>

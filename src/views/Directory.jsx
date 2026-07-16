@@ -243,7 +243,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen bg-[#fffaf0]">
       {/* Page Header — slim, near-white surface */}
       <div className="bg-white border-b border-slate-200">
         <div className="w-full px-4 sm:px-6 lg:px-10 pt-4 pb-4">

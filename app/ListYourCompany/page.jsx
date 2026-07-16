@@ -73,7 +73,7 @@ export default function ListYourCompanyPage() {
   // ── Success state ──────────────────────────────────────────────────────────
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center px-4 py-16">
+      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center px-4 py-16">
         <div className="max-w-md w-full text-center">
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-600" />
@@ -85,12 +85,12 @@ export default function ListYourCompanyPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href={createPageUrl('Directory')}>
-              <button className="px-6 py-3 bg-[#1A2E4A] text-white text-sm font-semibold rounded-lg hover:bg-[#1a2e47] transition-colors">
+              <button className="px-6 py-3 bg-[#0a0a0a] text-white text-sm font-semibold rounded-xl hover:bg-[#3a3a3a] transition-colors">
                 Browse Directory
               </button>
             </Link>
             <Link href={createPageUrl('Home')}>
-              <button className="px-6 py-3 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors">
+              <button className="px-6 py-3 border border-[#e5e5e5] bg-[#f5f0e0] text-[#3a3a3a] text-sm font-semibold rounded-xl hover:bg-[#ebe6d6] transition-colors">
                 Back to Home
               </button>
             </Link>
@@ -102,32 +102,29 @@ export default function ListYourCompanyPage() {
 
   // ── Main page ──────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen bg-[#fffaf0]">
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <div className="bg-[#1A2E4A] text-white relative overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-indigo-500/8 blur-[100px] pointer-events-none" />
-        <div className="relative w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div className="bg-[#faf5e8] border-b border-[#e5e5e5]">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-5 py-2 text-xs font-semibold text-orange-300 mb-6 uppercase tracking-widest">
-              <Star className="w-3.5 h-3.5 text-[#F5A623]" /> Free to list · No credit card required
+            <div className="inline-flex items-center gap-2 bg-[#f5f0e0] border border-[#e5e5e5] rounded-full px-4 py-2 text-xs font-semibold text-[#6a6a6a] mb-6 uppercase tracking-widest">
+              <Star className="w-3.5 h-3.5 text-[#e8b94a]" /> Free to list · No credit card required
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight mb-4">
-              Get your business in front of<br />
-              <span className="text-[#F5A623]">buyers worldwide</span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#0a0a0a] leading-tight mb-4" style={{ letterSpacing: '-1.5px' }}>
+              Get your business in front of buyers
             </h1>
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-xl">
+            <p className="text-[#3a3a3a] text-base sm:text-lg leading-relaxed mb-8 max-w-xl">
               FirmsLedger is a global directory where companies find verified products and services across every industry.
-              Submit your listing today and start winning new clients worldwide.
+              Submit your listing today and start winning new clients.
             </p>
 
             {/* Stats */}
             <div className="flex flex-wrap gap-8">
               {STATS.map(({ value, label }) => (
                 <div key={label}>
-                  <p className="text-2xl font-extrabold text-white">{value}</p>
-                  <p className="text-slate-400 text-xs mt-0.5">{label}</p>
+                  <p className="text-2xl font-medium text-[#0a0a0a]" style={{ letterSpacing: '-0.5px' }}>{value}</p>
+                  <p className="text-[#6a6a6a] text-xs font-semibold uppercase tracking-wider mt-0.5">{label}</p>
                 </div>
               ))}
             </div>
@@ -136,19 +133,19 @@ export default function ListYourCompanyPage() {
       </div>
 
       {/* ── Process steps ─────────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-[#fffaf0] border-b border-[#e5e5e5]">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-wrap items-center gap-3 sm:gap-0">
             {STEPS.map((step, i) => (
               <React.Fragment key={step.n}>
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-[#1A2E4A] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-[#0a0a0a] text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
                     {step.n}
                   </div>
-                  <span className="text-sm font-medium text-slate-700">{step.label}</span>
+                  <span className="text-sm font-medium text-[#3a3a3a]">{step.label}</span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <ChevronRight className="w-4 h-4 text-slate-300 hidden sm:block mx-4" />
+                  <ChevronRight className="w-4 h-4 text-[#e5e5e5] hidden sm:block mx-4" />
                 )}
               </React.Fragment>
             ))}
@@ -165,20 +162,20 @@ export default function ListYourCompanyPage() {
             {/* Benefits */}
             <div className="grid sm:grid-cols-3 gap-4">
               {BENEFITS.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="bg-white border border-slate-200 rounded-xl p-5">
-                  <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center mb-3">
-                    <Icon className="w-5 h-5 text-orange-500" />
+                <div key={title} className="bg-[#fffaf0] border border-[#e5e5e5] rounded-xl p-5">
+                  <div className="w-10 h-10 rounded-xl bg-[#f5f0e0] border border-[#e5e5e5] flex items-center justify-center mb-3">
+                    <Icon className="w-5 h-5 text-[#0a0a0a]" />
                   </div>
-                  <h3 className="font-bold text-[#1A2E4A] text-sm mb-1.5">{title}</h3>
+                  <h3 className="font-semibold text-[#0a0a0a] text-sm mb-1.5">{title}</h3>
                   <p className="text-slate-500 text-xs leading-relaxed">{desc}</p>
                 </div>
               ))}
             </div>
 
             {/* Form */}
-            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-              <div className="px-6 sm:px-8 py-6 border-b border-slate-100">
-                <h2 className="text-xl font-extrabold text-[#1A2E4A]">Tell us about your company</h2>
+            <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-2xl overflow-hidden">
+              <div className="px-6 sm:px-8 py-6 border-b border-[#e5e5e5]">
+                <h2 className="text-xl font-medium text-[#0a0a0a]" style={{ letterSpacing: '-0.5px' }}>Tell us about your company</h2>
                 <p className="text-slate-500 text-sm mt-1">All fields marked * are required. We'll review your listing within 1–2 business days.</p>
               </div>
 
@@ -259,7 +256,7 @@ export default function ListYourCompanyPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex items-center justify-center gap-2 px-7 py-3 bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white text-sm font-bold rounded-lg transition-colors"
+                    className="flex items-center justify-center gap-2 px-7 py-3 bg-[#0a0a0a] hover:bg-[#3a3a3a] disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors"
                   >
                     {submitting ? (
                       <>
@@ -284,7 +281,7 @@ export default function ListYourCompanyPage() {
           {/* ── Right: Sidebar info ────────────────────────────────────────── */}
           <div className="space-y-5 lg:sticky lg:top-6">
             {/* What happens next */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+            <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-2xl p-6">
               <h3 className="font-bold text-[#1A2E4A] mb-4">What happens next?</h3>
               <div className="space-y-4">
                 {[
@@ -307,7 +304,7 @@ export default function ListYourCompanyPage() {
             </div>
 
             {/* Included in free listing */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+            <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-2xl p-6">
               <h3 className="font-bold text-[#1A2E4A] mb-4">Included in your free listing</h3>
               <ul className="space-y-2.5">
                 {[
@@ -327,12 +324,12 @@ export default function ListYourCompanyPage() {
             </div>
 
             {/* Trust note */}
-            <div className="bg-[#1A2E4A] rounded-2xl p-6 text-white">
+            <div className="bg-[#ebe6d6] border border-[#e5e5e5] rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-3">
-                <Shield className="w-5 h-5 text-[#F5A623]" />
-                <span className="font-bold text-sm">Verified directory</span>
+                <Shield className="w-5 h-5 text-[#0a0a0a]" />
+                <span className="font-semibold text-sm text-[#0a0a0a]">Verified directory</span>
               </div>
-              <p className="text-slate-300 text-xs leading-relaxed">
+              <p className="text-[#6a6a6a] text-xs leading-relaxed">
                 Every listing is manually reviewed before going live. We ensure only legitimate businesses are featured, so clients can trust the results they find.
               </p>
             </div>
@@ -345,7 +342,7 @@ export default function ListYourCompanyPage() {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-const INPUT = 'w-full h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-colors';
+const INPUT = 'w-full h-10 rounded-xl border border-[#e5e5e5] bg-[#f5f0e0] px-3 text-sm text-[#0a0a0a] placeholder-[#9a9a9a] focus:outline-none focus:border-[#0a0a0a] focus:ring-1 focus:ring-[#0a0a0a] transition-colors';
 
 function Field({ label, required, children }) {
   return (

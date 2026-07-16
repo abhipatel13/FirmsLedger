@@ -10,11 +10,15 @@
         "lint": "eslint . --quiet",
         "lint:fix": "eslint . --fix",
         "typecheck": "tsc -p ./jsconfig.json",
-        "seed": "echo 'No seed script; use your own backend or edit src/api/apiClient.js'"
+        "seed": "echo 'No seed script; use your own backend or edit src/api/apiClient.js'",
+        "db:push": "drizzle-kit push",
+        "db:studio": "drizzle-kit studio",
+        "db:generate": "drizzle-kit generate"
     },
     "dependencies": {
         "@hello-pangea/dnd": "^17.0.0",
         "@hookform/resolvers": "^4.1.2",
+        "@neondatabase/serverless": "^1.1.0",
         "@radix-ui/react-accordion": "^1.2.3",
         "@radix-ui/react-alert-dialog": "^1.1.6",
         "@radix-ui/react-aspect-ratio": "^1.1.2",
@@ -53,6 +57,7 @@
         "cmdk": "^1.0.0",
         "date-fns": "^3.6.0",
         "dotenv": "^17.4.2",
+        "drizzle-orm": "^0.45.2",
         "embla-carousel-react": "^8.5.2",
         "framer-motion": "^11.16.4",
         "html2canvas": "^1.4.1",
@@ -89,6 +94,7 @@
         "@types/react-dom": "^18.2.22",
         "autoprefixer": "^10.4.20",
         "baseline-browser-mapping": "^2.8.32",
+        "drizzle-kit": "^0.31.10",
         "eslint": "^9.19.0",
         "eslint-plugin-react": "^7.37.4",
         "eslint-plugin-react-hooks": "^5.0.0",

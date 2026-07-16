@@ -6,7 +6,6 @@ import { getDirectoryUrl, getCompanyProfileUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import AISearchBar from '@/components/AISearchBar';
 import {
   ArrowRight, Star, Shield, CheckCircle, Award,
   ChevronRight, Sparkles, Globe, Users, Zap,
@@ -62,7 +61,7 @@ export default function Home() {
 
             {/* Dual search: service + location */}
             <div className="max-w-[760px] mx-auto mb-8">
-              <AISearchBar withLocation />
+              {/* AI search removed */}
             </div>
 
             {/* Trending categories */}

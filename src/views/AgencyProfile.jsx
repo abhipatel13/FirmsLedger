@@ -8,7 +8,6 @@ import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import RatingDisplay from '@/components/RatingDisplay';
-import AIInsights from '@/components/AIInsights';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   MapPin, Users, Calendar, Globe, CheckCircle, Crown, Star,
@@ -140,7 +139,7 @@ export default function AgencyProfile({ companySlug }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-slate-300 border-t-orange-500 mb-3" />
           <p className="text-slate-500 text-sm">Loading profile...</p>
@@ -151,11 +150,11 @@ export default function AgencyProfile({ companySlug }) {
 
   if (!agency) {
     return (
-      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-500 mb-4">Agency not found</p>
           <Link href={getDirectoryUrl()}>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 h-10 rounded-md">
+            <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-6 h-10 rounded-md">
               Back to Directory
             </Button>
           </Link>
@@ -192,10 +191,10 @@ export default function AgencyProfile({ companySlug }) {
   ].filter(s => s.url);
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen bg-[#fffaf0]">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-[#faf5e8] border-b border-[#e5e5e5]">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
             {agency.logo_url ? (
@@ -209,7 +208,7 @@ export default function AgencyProfile({ companySlug }) {
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A2E4A] break-words tracking-tight">{agency.name}</h1>
+                <h1 className="break-words uppercase text-[#0a0a0a]" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 0.95, letterSpacing: '-0.5px' }}>{agency.name}</h1>
                 {agency.verified && (
                   <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2 py-1 rounded border border-green-200 mt-0.5">
                     <CheckCircle className="w-3 h-3" /> Verified
@@ -255,7 +254,7 @@ export default function AgencyProfile({ companySlug }) {
 
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
                 <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`} className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 h-11 rounded-md transition-colors">
+                  <Button className="w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-6 h-11 rounded-md transition-colors">
                     Request Proposal <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
@@ -281,7 +280,7 @@ export default function AgencyProfile({ companySlug }) {
       <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
         {/* ── Overview ─────────────────────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg overflow-hidden">
           <div className="grid md:grid-cols-[1fr_220px_160px] divide-y md:divide-y-0 md:divide-x divide-slate-200">
             {/* Description + social */}
             <div className="p-6">
@@ -325,19 +324,19 @@ export default function AgencyProfile({ companySlug }) {
             {/* Key metrics */}
             <div className="p-6 space-y-4">
               {agency.hourly_rate && (
-                <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
                   <DollarSign className="w-4 h-4 text-orange-500" />
                   {agency.hourly_rate}
                 </div>
               )}
               {agency.team_size && (
-                <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
                   <Users className="w-4 h-4 text-orange-500" />
                   {agency.team_size}
                 </div>
               )}
               {agency.founded_year && (
-                <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
                   <Calendar className="w-4 h-4 text-orange-500" />
                   {agency.founded_year}
                 </div>
@@ -346,12 +345,10 @@ export default function AgencyProfile({ companySlug }) {
           </div>
         </div>
 
-        {/* ── AI Insights ──────────────────────────────────────────────────── */}
-        <AIInsights agencyId={agency.id} agencyName={agency.name} />
 
         {/* ── Services Offered (from linked categories) ────────────────────── */}
         {categories.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Services Offered</h2>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
@@ -369,7 +366,7 @@ export default function AgencyProfile({ companySlug }) {
         )}
 
         {/* ── At a Glance ──────────────────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-lg p-6">
+        <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
           <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">About {agency.name}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
@@ -382,7 +379,7 @@ export default function AgencyProfile({ companySlug }) {
               { Icon: Star,      label: 'Rating',       value: (agency.avg_rating || 0) > 0 ? `${(+agency.avg_rating).toFixed(1)} / 5` : null },
               { Icon: MessageSquare, label: 'Reviews',  value: (agency.review_count || 0) > 0 ? String(agency.review_count) : null },
             ].filter(item => item.value).map(({ Icon, label, value, href }) => (
-              <div key={label} className="border border-slate-100 rounded-lg p-4">
+              <div key={label} className="border border-[#e5e5e5] rounded-xl p-4">
                 <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wide mb-1.5">
                   <Icon className="w-3.5 h-3.5 text-orange-500" />
                   {label}
@@ -392,7 +389,7 @@ export default function AgencyProfile({ companySlug }) {
                     {value}
                   </a>
                 ) : (
-                  <p className="text-sm font-semibold text-[#1A2E4A] break-words">{value}</p>
+                  <p className="font-semibold text-[#1A2E4A] break-words" style={{ fontSize: 13, fontFamily: (label === 'Rating' || label === 'Reviews') ? '"IBM Plex Mono", monospace' : 'inherit' }}>{value}</p>
                 )}
               </div>
             ))}
@@ -404,7 +401,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Similar Companies ───────────────────────────────────────────── */}
         {similarCompanies.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-[#1A2E4A]">
                 Similar {categories[0]?.name || 'Companies'}{agency.hq_country ? ` in ${agency.hq_country}` : ''}
@@ -437,7 +434,7 @@ export default function AgencyProfile({ companySlug }) {
                       {(c.avg_rating || 0) > 0 && (
                         <span className="inline-flex items-center gap-0.5">
                           <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                          {(+c.avg_rating).toFixed(1)}
+                          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 11 }}>{(+c.avg_rating).toFixed(1)}</span>
                         </span>
                       )}
                       {c.hq_city && <span className="truncate">{c.hq_city}</span>}
@@ -452,7 +449,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Service Focus ─────────────────────────────────────────────────── */}
         {serviceFocus.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Service Focus</h2>
             <div className="grid md:grid-cols-[220px_1fr_1fr] gap-8 items-center">
               {/* Category tabs */}
@@ -529,7 +526,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Industry Focus ────────────────────────────────────────────────── */}
         {industryFocus.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Industry Focus</h2>
             <div className="flex flex-wrap gap-2">
               {industryFocus.map((item, i) => (
@@ -545,7 +542,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Client Focus ──────────────────────────────────────────────────── */}
         {(clientFocus.small_business || clientFocus.medium_business || clientFocus.large_business) && (
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-6">Client Focus</h2>
             <div className="grid sm:grid-cols-3 gap-8">
               {[
@@ -572,7 +569,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Review Analytics ──────────────────────────────────────────────── */}
         {reviews.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">
               Review Analytics of {agency.name}
             </h2>
@@ -584,9 +581,9 @@ export default function AgencyProfile({ companySlug }) {
                 { label: 'Overall Rating',  value: `${avgOverall.toFixed(1)}/5` },
                 { label: 'Recent Reviews',  value: Math.min(reviews.length, 80) },
               ].map(({ label, value }) => (
-                <div key={label} className="bg-[#1A2E4A] border-b-2 border-orange-500 rounded-lg p-5">
-                  <p className="text-2xl font-extrabold text-white">{value}</p>
-                  <p className="text-sm font-medium text-slate-400 mt-1">{label}</p>
+                <div key={label} className="bg-[#ebe6d6] border border-[#e5e5e5] rounded-xl p-5">
+                  <p className="text-2xl font-medium text-[#0a0a0a]" style={{ letterSpacing: '-1px' }}>{value}</p>
+                  <p className="text-xs font-semibold text-[#6a6a6a] uppercase tracking-wider mt-1">{label}</p>
                 </div>
               ))}
             </div>
@@ -624,7 +621,7 @@ export default function AgencyProfile({ companySlug }) {
                 <span className="text-slate-500 text-sm">{reviews.length} Reviews</span>
               </div>
               <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#1A2E4A] hover:bg-[#1a2e47] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-5 h-9 rounded-md text-sm">
                   Write a Review
                 </Button>
               </Link>
@@ -636,11 +633,11 @@ export default function AgencyProfile({ companySlug }) {
           </h2>
 
           {reviews.length === 0 ? (
-            <div className="bg-white border border-slate-200 rounded-lg p-12 text-center">
+            <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-12 text-center">
               <Star className="w-10 h-10 text-slate-200 mx-auto mb-3" />
               <p className="text-slate-500 mb-4 text-sm">No reviews yet</p>
               <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-5 h-9 rounded-md text-sm">
                   Be the first to review
                 </Button>
               </Link>
@@ -693,7 +690,7 @@ function DetailedReviewCard({ review, expanded, onToggle }) {
   ];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+    <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg overflow-hidden">
       {/* Top: reviewer */}
       <div className="flex items-start justify-between p-5 pb-3">
         <div className="flex items-center gap-3">
@@ -789,7 +786,7 @@ function FAQSection({ agency, categoryName }) {
   ];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-6">
+    <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
       <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Frequently Asked Questions</h2>
       <div className="divide-y divide-slate-100">
         {faqs.map((faq, i) => {

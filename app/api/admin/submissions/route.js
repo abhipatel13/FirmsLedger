@@ -44,10 +44,10 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { getUnsubmittedUrls } = await import('@/lib/automation/topicsManager');
+    // TODO(Step 5): replace with Drizzle query on submission_logs for unsubmitted URLs
     const { submitUrls } = await import('@/lib/automation/urlSubmitter');
 
-    const urls = await getUnsubmittedUrls(20);
+    const urls = [] as string[]; // stub until Step 5
     if (urls.length === 0) {
       return NextResponse.json({ success: true, submitted: 0, message: 'No new URLs to submit' });
     }
