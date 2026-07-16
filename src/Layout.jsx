@@ -1,9 +1,15 @@
 'use client';
 
+/**
+ * Layout — Clay.com design system
+ * Nav:    canvas #fffaf0 bg · 64px height · near-black CTA #0a0a0a
+ * Footer: surface-soft #faf5e8 bg · warm cream (NOT dark) per Clay system
+ */
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Building2 } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const NAV_LINKS = [
   { href: '/Directory', label: 'Browse Directory' },
@@ -16,128 +22,230 @@ export default function Layout({ children }) {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
-            {/* Logo */}
-            <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.svg" alt="FirmsLedger" className="h-11 sm:h-12 w-auto" />
+    <div style={{ minHeight: '100vh', backgroundColor: '#fffaf0', fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+
+      {/* ── Nav ─── canvas bg, 64px, sticky */}
+      <header style={{
+        backgroundColor: '#fffaf0',
+        borderBottom: '1px solid #e5e5e5',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        height: 64,
+      }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+
+          {/* Logo */}
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+            <img src="/logo.svg" alt="FirmsLedger" style={{ height: 36, width: 'auto' }} />
+          </Link>
+
+          {/* Desktop nav */}
+          <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="hidden-mobile">
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: pathname === href ? '#0a0a0a' : '#6a6a6a',
+                  textDecoration: 'none',
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  transition: 'color 0.15s, background 0.15s',
+                  backgroundColor: pathname === href ? '#f5f0e0' : 'transparent',
+                }}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Desktop CTA — primary button: #0a0a0a bg */}
+          <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Link
+              href="/ListYourCompany"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                backgroundColor: '#0a0a0a',
+                color: '#ffffff',
+                borderRadius: 12,
+                padding: '10px 18px',
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: 'none',
+                lineHeight: 1,
+                transition: 'background 0.15s',
+              }}
+            >
+              List Your Company
             </Link>
+          </div>
 
-            {/* Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-6">
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`font-semibold text-sm transition-colors ${
-                    pathname === href ? 'text-orange-600' : 'text-slate-700 hover:text-orange-600'
-                  }`}
-                >
-                  {label}
-                </Link>
-              ))}
-            </nav>
+          {/* Mobile toggle */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            className="show-mobile"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 8,
+              display: 'none',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: 44,
+              minHeight: 44,
+            }}
+          >
+            {mobileOpen ? <X size={22} color="#0a0a0a" /> : <Menu size={22} color="#0a0a0a" />}
+          </button>
+        </div>
 
-            {/* Desktop CTAs */}
-            <div className="hidden lg:flex items-center gap-3">
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div style={{
+            backgroundColor: '#fffaf0',
+            borderTop: '1px solid #e5e5e5',
+            padding: '12px 24px 20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+          }}>
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: '#3a3a3a',
+                  textDecoration: 'none',
+                  padding: '10px 12px',
+                  borderRadius: 10,
+                  backgroundColor: pathname === href ? '#f5f0e0' : 'transparent',
+                }}
+              >
+                {label}
+              </Link>
+            ))}
+            <div style={{ borderTop: '1px solid #e5e5e5', marginTop: 8, paddingTop: 12 }}>
               <Link
                 href="/ListYourCompany"
-                className="inline-flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors shadow-sm"
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#0a0a0a',
+                  color: '#ffffff',
+                  borderRadius: 12,
+                  padding: '12px 20px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
               >
-                <Building2 className="w-4 h-4" />
                 List Your Company
               </Link>
             </div>
-
-            {/* Mobile toggle */}
-            <button
-              type="button"
-              className="lg:hidden p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
-              onClick={() => setMobileOpen((v) => !v)}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            >
-              {mobileOpen ? <X className="w-6 h-6 text-slate-700" /> : <Menu className="w-6 h-6 text-slate-700" />}
-            </button>
           </div>
-
-          {/* Mobile menu */}
-          {mobileOpen && (
-            <div className="lg:hidden py-4 border-t border-slate-200 flex flex-col gap-1">
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-slate-700 hover:text-orange-600 py-3 px-3 font-medium text-sm rounded-lg hover:bg-orange-50"
-                >
-                  {label}
-                </Link>
-              ))}
-              <div className="border-t border-slate-200 mt-2 pt-3 px-3 flex flex-col gap-2">
-                <Link
-                  href="/ListYourCompany"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center gap-2 bg-orange-500 text-white font-semibold py-2.5 rounded-lg text-sm"
-                >
-                  <Building2 className="w-4 h-4" />
-                  List Your Company
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </header>
 
       {/* Main */}
-      <main className="min-w-0 overflow-x-hidden">{children}</main>
+      <main style={{ minWidth: 0, overflowX: 'hidden' }}>{children}</main>
 
-      {/* Footer */}
-      <footer className="bg-[#1A2E4A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-            <div className="lg:col-span-2">
-              <Link href="/" className="flex items-center mb-5">
-                <img src="/logo-white.svg" alt="FirmsLedger" className="h-10 w-auto" />
+      {/* ── Footer ─── surface-soft #faf5e8, cream (NOT dark — Clay system) */}
+      <footer style={{ backgroundColor: '#faf5e8', borderTop: '1px solid #e5e5e5' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40, marginBottom: 48 }}>
+
+            {/* Brand */}
+            <div style={{ gridColumn: 'span 2', maxWidth: 360 }}>
+              <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 16 }}>
+                <img src="/logo.svg" alt="FirmsLedger" style={{ height: 32, width: 'auto' }} />
               </Link>
-              <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
+              <p style={{ fontSize: 14, lineHeight: 1.55, color: '#6a6a6a', maxWidth: 320 }}>
                 US manufacturer directory. Find the top verified manufacturers by category and state — bike, electrical, mechanical, and more.
               </p>
             </div>
 
+            {/* Browse by Category */}
             <div>
-              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Browse by Category</h4>
-              <div className="flex flex-col gap-3 text-sm">
-                <Link href="/top/bike-manufacturers/california" className="text-slate-400 hover:text-orange-400 transition-colors">Bike Manufacturers</Link>
-                <Link href="/top/electrical-manufacturers/texas" className="text-slate-400 hover:text-orange-400 transition-colors">Electrical Manufacturers</Link>
-                <Link href="/top/mechanical-manufacturers/new-york" className="text-slate-400 hover:text-orange-400 transition-colors">Mechanical Manufacturers</Link>
-                <Link href="/Categories" className="text-slate-400 hover:text-orange-400 transition-colors">All Categories</Link>
+              <h4 style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16 }}>
+                Browse by Category
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  { href: '/top/bike-manufacturers/california', label: 'Bike Manufacturers' },
+                  { href: '/top/electrical-manufacturers/texas', label: 'Electrical Manufacturers' },
+                  { href: '/top/mechanical-manufacturers/new-york', label: 'Mechanical Manufacturers' },
+                  { href: '/Categories', label: 'All Categories' },
+                ].map(({ href, label }) => (
+                  <Link key={href} href={href} style={{ fontSize: 14, color: '#6a6a6a', textDecoration: 'none', transition: 'color 0.15s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#0a0a0a'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#6a6a6a'}
+                  >
+                    {label}
+                  </Link>
+                ))}
               </div>
             </div>
 
+            {/* Browse by State */}
             <div>
-              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Browse by State</h4>
-              <div className="flex flex-col gap-3 text-sm">
-                <Link href="/top/bike-manufacturers/california" className="text-slate-400 hover:text-orange-400 transition-colors">California</Link>
-                <Link href="/top/bike-manufacturers/texas" className="text-slate-400 hover:text-orange-400 transition-colors">Texas</Link>
-                <Link href="/top/bike-manufacturers/new-york" className="text-slate-400 hover:text-orange-400 transition-colors">New York</Link>
-                <Link href="/top/bike-manufacturers/florida" className="text-slate-400 hover:text-orange-400 transition-colors">Florida</Link>
-                <Link href="/contact" className="text-slate-400 hover:text-orange-400 transition-colors">Contact Us</Link>
+              <h4 style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16 }}>
+                Browse by State
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  { href: '/top/bike-manufacturers/california', label: 'California' },
+                  { href: '/top/bike-manufacturers/texas', label: 'Texas' },
+                  { href: '/top/bike-manufacturers/new-york', label: 'New York' },
+                  { href: '/top/bike-manufacturers/florida', label: 'Florida' },
+                  { href: '/contact', label: 'Contact Us' },
+                ].map(({ href, label }) => (
+                  <Link key={href} href={href} style={{ fontSize: 14, color: '#6a6a6a', textDecoration: 'none', transition: 'color 0.15s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#0a0a0a'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#6a6a6a'}
+                  >
+                    {label}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-slate-500 text-xs">© 2026 FirmsLedger. All rights reserved.</p>
-            <div className="flex gap-6 text-sm">
-              <Link href="/terms" className="text-slate-400 hover:text-orange-400 transition-colors">Terms</Link>
-              <Link href="/privacy" className="text-slate-400 hover:text-orange-400 transition-colors">Privacy</Link>
+          {/* Bottom bar */}
+          <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: 24, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+            <p style={{ fontSize: 13, color: '#9a9a9a' }}>© 2026 FirmsLedger. All rights reserved.</p>
+            <div style={{ display: 'flex', gap: 24 }}>
+              {[{ href: '/terms', label: 'Terms' }, { href: '/privacy', label: 'Privacy' }].map(({ href, label }) => (
+                <Link key={href} href={href} style={{ fontSize: 13, color: '#6a6a6a', textDecoration: 'none' }}>{label}</Link>
+              ))}
             </div>
           </div>
         </div>
       </footer>
+
+      {/* Responsive helpers — mobile-first without Tailwind on layout */}
+      <style>{`
+        @media (max-width: 768px) {
+          .hidden-mobile { display: none !important; }
+          .show-mobile { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+          .show-mobile { display: none !important; }
+          .hidden-mobile { display: flex !important; }
+        }
+      `}</style>
     </div>
   );
 }
