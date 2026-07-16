@@ -186,12 +186,12 @@ function StatePill({ state, categorySlug, accentColor, accentTextColor }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <span style={{ fontSize: 10, fontWeight: 700, color: hovered ? accentColor : '#9a9a9a' }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: hovered ? accentColor : '#9a9a9a', fontFamily: '"IBM Plex Mono", monospace' }}>
         {state.abbr}
       </span>
       {state.name}
       {hovered && count && (
-        <span style={{ fontSize: 11, fontWeight: 600, color: accentColor, marginLeft: 2 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: accentColor, marginLeft: 2, fontFamily: '"IBM Plex Mono", monospace' }}>
           · {count}
         </span>
       )}
@@ -235,6 +235,7 @@ function StateMap({ states, categorySlug }) {
                   fontWeight: 700,
                   color: '#c0bab0',
                   opacity: 0.5,
+                  fontFamily: '"IBM Plex Mono", monospace',
                 }}
               >
                 {abbr}
@@ -263,6 +264,7 @@ function StateMap({ states, categorySlug }) {
                 color: accent.textOnColor,
                 textDecoration: 'none',
                 cursor: 'pointer',
+                fontFamily: '"IBM Plex Mono", monospace',
                 transition: 'all 0.12s',
                 transform: isHovered ? 'scale(1.1)' : 'scale(1)',
                 boxShadow: isHovered ? `0 2px 8px ${accent.color}60` : 'none',
@@ -416,7 +418,7 @@ function HeroSearchPreview() {
       {/* Label */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: ex.accent, flexShrink: 0 }} />
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.5px', color: '#6a6a6a', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1px', color: '#6a6a6a', textTransform: 'uppercase', fontFamily: '"IBM Plex Mono", monospace' }}>
           {ex.label}
         </span>
       </div>
@@ -444,6 +446,7 @@ function HeroSearchPreview() {
               color: row.rank === 1 ? (ex.accentText || '#0a0a0a') : '#9a9a9a',
               fontSize: 10,
               fontWeight: 700,
+              fontFamily: '"IBM Plex Mono", monospace',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -457,7 +460,7 @@ function HeroSearchPreview() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
               <StarsMini rating={row.rating} />
-              <span style={{ fontSize: 11, fontWeight: 600, color: '#3a3a3a' }}>{row.rating.toFixed(1)}</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#3a3a3a', fontFamily: '"IBM Plex Mono", monospace' }}>{row.rating.toFixed(1)}</span>
             </div>
           </div>
         ))}
@@ -546,7 +549,7 @@ export default function DirectoryHub() {
   }
 
   return (
-    <div style={{ backgroundColor: '#fffaf0', fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+    <div style={{ backgroundColor: '#fffaf0' }}>
 
       {/* ══ HERO ═══════════════════════════════════════════════════════ */}
       {/* Canvas bg, centered, 96px vertical padding */}
@@ -556,22 +559,24 @@ export default function DirectoryHub() {
           {/* Badge pill */}
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#f5f0e0', borderRadius: 9999, padding: '4px 14px', marginBottom: 32 }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#0a0a0a', display: 'inline-block' }} />
-            <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', color: '#0a0a0a', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', color: '#0a0a0a', textTransform: 'uppercase', fontFamily: '"IBM Plex Mono", monospace' }}>
               US Manufacturer Directory
             </span>
           </div>
 
-          {/* Display headline — Inter 500, -2.5px tracking (Plain Black substitute) */}
+          {/* Display headline — Barlow Condensed 800 */}
           <h1 style={{
-            fontSize: 'clamp(40px, 6vw, 72px)',
-            fontWeight: 500,
-            lineHeight: 1,
-            letterSpacing: '-2.5px',
+            fontSize: 'clamp(52px, 7vw, 84px)',
+            fontWeight: 800,
+            lineHeight: 0.92,
+            letterSpacing: '-1px',
             color: '#0a0a0a',
             marginBottom: 24,
             maxWidth: 820,
             marginLeft: 'auto',
             marginRight: 'auto',
+            fontFamily: '"Barlow Condensed", sans-serif',
+            textTransform: 'uppercase',
           }}>
             Find the top manufacturers
             <br />
@@ -707,10 +712,10 @@ export default function DirectoryHub() {
                   backgroundColor: '#e5e5e5',
                 }} />
               )}
-              <span style={{ fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', lineHeight: 1 }}>
+              <span style={{ fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 700, color: '#0a0a0a', lineHeight: 1, fontFamily: '"IBM Plex Mono", monospace' }}>
                 {value}
               </span>
-              <span style={{ fontSize: 13, fontWeight: 500, color: '#6a6a6a', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: 11, fontWeight: 500, color: '#6a6a6a', letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: '"IBM Plex Mono", monospace' }}>
                 {label}
               </span>
             </div>
@@ -724,10 +729,10 @@ export default function DirectoryHub() {
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
 
           {/* Section label */}
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, textAlign: 'center' }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, textAlign: 'center', fontFamily: '"IBM Plex Mono", monospace' }}>
             Browse by Category
           </p>
-          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', textAlign: 'center', marginBottom: 48, lineHeight: 1.1 }}>
+          <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', textAlign: 'center', marginBottom: 48, lineHeight: 0.95, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
             Popular manufacturing categories
           </h2>
 
@@ -750,20 +755,21 @@ export default function DirectoryHub() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                     <Icon size={28} color={cat.text} />
                     <span style={{
-                      fontSize: 12,
-                      fontWeight: 600,
+                      fontSize: 11,
+                      fontWeight: 700,
                       color: cat.text,
-                      opacity: 0.6,
+                      opacity: 0.7,
                       backgroundColor: cat.text === '#ffffff' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)',
                       borderRadius: 9999,
                       padding: '3px 10px',
+                      fontFamily: '"IBM Plex Mono", monospace',
                     }}>
                       {cat.count} companies
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h3 style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.3, letterSpacing: '-0.3px', color: cat.text, marginBottom: 10, flex: 1 }}>
+                  <h3 style={{ fontSize: 26, fontWeight: 800, lineHeight: 1.0, letterSpacing: '0px', color: cat.text, marginBottom: 10, flex: 1, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
                     {cat.name}
                   </h3>
 
@@ -825,10 +831,10 @@ export default function DirectoryHub() {
       {/* canvas bg, 5 cards, each with ONE number + ONE claim */}
       <section style={{ backgroundColor: '#fffaf0', padding: '96px 24px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, textAlign: 'center' }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, textAlign: 'center', fontFamily: '"IBM Plex Mono", monospace' }}>
             Why trust our listings
           </p>
-          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', textAlign: 'center', marginBottom: 48, lineHeight: 1.1 }}>
+          <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', textAlign: 'center', marginBottom: 48, lineHeight: 0.95, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
             What makes this directory different
           </h2>
 
@@ -856,10 +862,11 @@ export default function DirectoryHub() {
                   color: accentText || '#0a0a0a',
                   borderRadius: 12,
                   padding: '6px 14px',
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: 700,
-                  letterSpacing: '-0.5px',
+                  letterSpacing: '0px',
                   lineHeight: 1,
+                  fontFamily: '"IBM Plex Mono", monospace',
                 }}>
                   {number}
                 </div>
@@ -875,10 +882,10 @@ export default function DirectoryHub() {
       {/* surface-soft bg, 3-step process */}
       <section style={{ backgroundColor: '#faf5e8', padding: '96px 24px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, textAlign: 'center' }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, textAlign: 'center', fontFamily: '"IBM Plex Mono", monospace' }}>
             How it works
           </p>
-          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', textAlign: 'center', marginBottom: 56, lineHeight: 1.1 }}>
+          <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', textAlign: 'center', marginBottom: 56, lineHeight: 0.95, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
             From search to shortlist in seconds
           </h2>
 
@@ -914,11 +921,12 @@ export default function DirectoryHub() {
                   backgroundColor: numBg,
                   color: numColor,
                   fontSize: 18,
-                  fontWeight: 600,
+                  fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginBottom: 20,
+                  fontFamily: '"IBM Plex Mono", monospace',
                 }}>
                   {num}
                 </div>
@@ -935,14 +943,14 @@ export default function DirectoryHub() {
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
 
           {/* Header row */}
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, fontFamily: '"IBM Plex Mono", monospace' }}>
             Browse by State
           </p>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
-            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', lineHeight: 1.1, margin: 0 }}>
+            <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', lineHeight: 0.95, margin: 0, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
               Every US state
             </h2>
-            <span style={{ fontSize: 14, color: '#6a6a6a', fontWeight: 500 }}>50 states · 3 categories each</span>
+            <span style={{ fontSize: 12, color: '#6a6a6a', fontWeight: 500, fontFamily: '"IBM Plex Mono", monospace' }}>50 states · 3 categories each</span>
           </div>
 
           {/* Search + view toggle row */}
@@ -1026,10 +1034,11 @@ export default function DirectoryHub() {
                         <span style={{
                           fontSize: 11, fontWeight: 700, letterSpacing: '1.5px',
                           textTransform: 'uppercase', color: accent.color, whiteSpace: 'nowrap',
+                          fontFamily: '"IBM Plex Mono", monospace',
                         }}>
                           {region}
                         </span>
-                        <span style={{ fontSize: 12, color: '#9a9a9a' }}>{states.length} states</span>
+                        <span style={{ fontSize: 11, color: '#9a9a9a', fontFamily: '"IBM Plex Mono", monospace' }}>{states.length} states</span>
                         <div style={{ flex: 1, height: 1, backgroundColor: '#e5e5e5' }} />
                       </div>
 
@@ -1073,7 +1082,7 @@ export default function DirectoryHub() {
       {/* surface-soft bg */}
       <section style={{ backgroundColor: '#faf5e8', padding: '96px 24px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', textAlign: 'center', marginBottom: 56, lineHeight: 1.1 }}>
+          <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', textAlign: 'center', marginBottom: 56, lineHeight: 0.95, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
             Why FirmsLedger?
           </h2>
 
@@ -1113,10 +1122,10 @@ export default function DirectoryHub() {
           }}
         >
           <div style={{ maxWidth: 520 }}>
-            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, fontFamily: '"IBM Plex Mono", monospace' }}>
               For manufacturers
             </p>
-            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', lineHeight: 1.1, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', lineHeight: 0.95, marginBottom: 16, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
               Get your company in front of buyers
             </h2>
             <p style={{ fontSize: 16, lineHeight: 1.55, color: '#3a3a3a' }}>

@@ -56,7 +56,7 @@ export default function Layout({ children }) {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#fffaf0', fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#fffaf0' }}>
 
       {/* ── Nav ─── canvas bg, 64px, sticky */}
       <header style={{
@@ -303,7 +303,7 @@ export default function Layout({ children }) {
             flexDirection: 'column',
             gap: 2,
           }}>
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9a9a9a', padding: '8px 12px 4px', margin: 0 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9a9a9a', padding: '8px 12px 4px', margin: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
               By Category
             </p>
             {MEGA_CATEGORIES.map(({ slug, name, accent }) => (
@@ -318,7 +318,7 @@ export default function Layout({ children }) {
               </Link>
             ))}
 
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9a9a9a', padding: '12px 12px 4px', margin: 0 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9a9a9a', padding: '12px 12px 4px', margin: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
               By State
             </p>
             {MEGA_STATES.map(({ slug, name }) => (
@@ -384,7 +384,7 @@ export default function Layout({ children }) {
 
             {/* Browse by Category */}
             <div>
-              <h4 style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0 }}>
+              <h4 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
                 Browse by Category
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -409,7 +409,7 @@ export default function Layout({ children }) {
 
             {/* Browse by State */}
             <div>
-              <h4 style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0 }}>
+              <h4 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
                 Browse by State
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -436,7 +436,7 @@ export default function Layout({ children }) {
 
             {/* For Companies */}
             <div>
-              <h4 style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0 }}>
+              <h4 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
                 For Companies
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

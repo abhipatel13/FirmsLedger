@@ -117,7 +117,7 @@ export default async function StateHubPage({ params }) {
     <>
       <JsonLd data={jsonLd} />
 
-      <div style={{ backgroundColor: '#fffaf0', minHeight: '100vh', fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+      <div style={{ backgroundColor: '#fffaf0', minHeight: '100vh' }}>
 
         {/* ── Page header ── */}
         <div style={{ backgroundColor: '#faf5e8', borderBottom: '1px solid #e5e5e5', padding: '48px 24px 40px' }}>
@@ -127,12 +127,12 @@ export default async function StateHubPage({ params }) {
             </Link>
 
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#f5f0e0', borderRadius: 9999, padding: '4px 14px', marginBottom: 20 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: '#6a6a6a', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: '#6a6a6a', textTransform: 'uppercase', fontFamily: '"IBM Plex Mono", monospace' }}>
                 {state.region}
               </span>
             </div>
 
-            <h1 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 500, letterSpacing: '-1.5px', color: '#0a0a0a', lineHeight: 1.1, marginBottom: 16, marginTop: 0 }}>
+            <h1 style={{ fontSize: 'clamp(36px, 5vw, 60px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', lineHeight: 0.95, marginBottom: 16, marginTop: 0, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
               Manufacturers in {state.name}
             </h1>
             <p style={{ fontSize: 17, color: '#3a3a3a', lineHeight: 1.55, maxWidth: 560, marginBottom: 0 }}>
@@ -157,7 +157,7 @@ export default async function StateHubPage({ params }) {
         {/* ── Other states ── */}
         <div style={{ backgroundColor: '#faf5e8', borderTop: '1px solid #e5e5e5', padding: '56px 24px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 20 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 20, fontFamily: '"IBM Plex Mono", monospace' }}>
               Other states
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>

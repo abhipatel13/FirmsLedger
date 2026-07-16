@@ -147,7 +147,7 @@ export default async function CategoryHubPage({ params }) {
     <>
       <JsonLd data={jsonLd} />
 
-      <div style={{ backgroundColor: '#fffaf0', minHeight: '100vh', fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+      <div style={{ backgroundColor: '#fffaf0', minHeight: '100vh' }}>
 
         {/* ── Page header ── */}
         <div style={{ backgroundColor: '#faf5e8', borderBottom: '1px solid #e5e5e5', padding: '48px 24px 40px' }}>
@@ -157,12 +157,12 @@ export default async function CategoryHubPage({ params }) {
             </Link>
 
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: cat.accent, borderRadius: 9999, padding: '4px 14px', marginBottom: 20 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: cat.accentText, textTransform: 'uppercase' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: cat.accentText, textTransform: 'uppercase', fontFamily: '"IBM Plex Mono", monospace' }}>
                 Category
               </span>
             </div>
 
-            <h1 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 500, letterSpacing: '-1.5px', color: '#0a0a0a', lineHeight: 1.1, marginBottom: 16, marginTop: 0 }}>
+            <h1 style={{ fontSize: 'clamp(36px, 5vw, 60px)', fontWeight: 800, letterSpacing: '-0.5px', color: '#0a0a0a', lineHeight: 0.95, marginBottom: 16, marginTop: 0, fontFamily: '"Barlow Condensed", sans-serif', textTransform: 'uppercase' }}>
               {cat.name} Directory
             </h1>
             <p style={{ fontSize: 17, color: '#3a3a3a', lineHeight: 1.55, maxWidth: 560, marginBottom: 0 }}>
@@ -173,14 +173,14 @@ export default async function CategoryHubPage({ params }) {
 
         {/* ── State grid ── */}
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 24px 96px' }}>
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 40 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 40, fontFamily: '"IBM Plex Mono", monospace' }}>
             Browse by state — 50 US states covered
           </p>
 
           {Object.entries(US_STATES_BY_REGION).map(([region, states]) => (
             <div key={region} style={{ marginBottom: 48 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: REGION_ACCENTS[region] }}>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: REGION_ACCENTS[region], fontFamily: '"IBM Plex Mono", monospace' }}>
                   {region}
                 </span>
                 <div style={{ flex: 1, height: 1, backgroundColor: '#e5e5e5' }} />

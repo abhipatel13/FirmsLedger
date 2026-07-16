@@ -208,7 +208,7 @@ export default function AgencyProfile({ companySlug }) {
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A2E4A] break-words tracking-tight">{agency.name}</h1>
+                <h1 className="break-words uppercase text-[#0a0a0a]" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 0.95, letterSpacing: '-0.5px' }}>{agency.name}</h1>
                 {agency.verified && (
                   <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2 py-1 rounded border border-green-200 mt-0.5">
                     <CheckCircle className="w-3 h-3" /> Verified
@@ -389,7 +389,7 @@ export default function AgencyProfile({ companySlug }) {
                     {value}
                   </a>
                 ) : (
-                  <p className="text-sm font-semibold text-[#1A2E4A] break-words">{value}</p>
+                  <p className="font-semibold text-[#1A2E4A] break-words" style={{ fontSize: 13, fontFamily: (label === 'Rating' || label === 'Reviews') ? '"IBM Plex Mono", monospace' : 'inherit' }}>{value}</p>
                 )}
               </div>
             ))}
@@ -434,7 +434,7 @@ export default function AgencyProfile({ companySlug }) {
                       {(c.avg_rating || 0) > 0 && (
                         <span className="inline-flex items-center gap-0.5">
                           <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                          {(+c.avg_rating).toFixed(1)}
+                          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 11 }}>{(+c.avg_rating).toFixed(1)}</span>
                         </span>
                       )}
                       {c.hq_city && <span className="truncate">{c.hq_city}</span>}

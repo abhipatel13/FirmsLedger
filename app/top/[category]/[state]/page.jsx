@@ -185,22 +185,22 @@ export default async function RankedListingPage({ params }) {
             {/* Badge */}
             <div className="inline-flex items-center gap-1.5 bg-[#f5f0e0] border border-[#e5e5e5] rounded-full px-3 py-1 mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a] inline-block" />
-              <span className="text-[10px] font-bold tracking-widest uppercase text-[#6a6a6a]">{categoryName}</span>
+              <span className="font-bold uppercase text-[#6a6a6a]" style={{ fontSize: 10, letterSpacing: '1.5px', fontFamily: '"IBM Plex Mono", monospace' }}>{categoryName}</span>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
               <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-medium text-[#0a0a0a] leading-tight" style={{ letterSpacing: '-1.5px' }}>
+                <h1 className="text-[#0a0a0a] uppercase" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontSize: 'clamp(36px, 5vw, 56px)', letterSpacing: '-0.5px', lineHeight: 0.95 }}>
                   {pageTitle}
                 </h1>
-                <p className="text-[#6a6a6a] text-sm mt-2 max-w-xl">
+                <p className="text-[#6a6a6a] text-sm mt-3 max-w-xl">
                   Ranked by verified reviews, ratings, and years in operation. Updated monthly.
                 </p>
               </div>
               <div className="flex-shrink-0">
                 <div className="bg-[#f5f0e0] border border-[#e5e5e5] rounded-2xl px-6 py-4 text-center">
-                  <p className="text-2xl font-medium text-[#0a0a0a]" style={{ letterSpacing: '-1px' }}>{companies.length}</p>
-                  <p className="text-[#6a6a6a] text-xs font-semibold uppercase tracking-wider mt-1">verified listings</p>
+                  <p className="text-[#0a0a0a]" style={{ fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, fontSize: 28 }}>{companies.length}</p>
+                  <p className="text-[#6a6a6a] mt-1" style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 10, fontWeight: 500, letterSpacing: '1.5px', textTransform: 'uppercase' }}>verified listings</p>
                 </div>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default async function RankedListingPage({ params }) {
             {/* ── Ranked list ─────────────────────────────────────── */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="font-semibold text-[#6a6a6a] text-xs uppercase tracking-widest">
+                <h2 className="text-[#6a6a6a] uppercase" style={{ fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, fontSize: 11, letterSpacing: '1.5px' }}>
                   All {categoryName} in {stateName}
                 </h2>
                 <p className="text-[#9a9a9a] text-xs">Sorted by rating</p>
@@ -229,15 +229,18 @@ export default async function RankedListingPage({ params }) {
                   >
                     <div className="flex items-start gap-4">
                       {/* Rank badge */}
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold transition-colors ${
-                        index === 0
-                          ? 'bg-[#ffb084] text-[#0a0a0a]'
-                          : index === 1
-                          ? 'bg-[#e8b94a] text-[#0a0a0a]'
-                          : index === 2
-                          ? 'bg-[#1a3a3a] text-white'
-                          : 'bg-[#f5f0e0] text-[#6a6a6a]'
-                      }`}>
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
+                          index === 0
+                            ? 'bg-[#ffb084] text-[#0a0a0a]'
+                            : index === 1
+                            ? 'bg-[#e8b94a] text-[#0a0a0a]'
+                            : index === 2
+                            ? 'bg-[#1a3a3a] text-white'
+                            : 'bg-[#f5f0e0] text-[#6a6a6a]'
+                        }`}
+                        style={{ fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, fontSize: 12 }}
+                      >
                         #{index + 1}
                       </div>
 
@@ -249,7 +252,7 @@ export default async function RankedListingPage({ params }) {
                       {/* Details */}
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-[#0a0a0a] text-base">
+                          <h3 className="font-semibold text-[#0a0a0a]" style={{ fontSize: 15 }}>
                             {company.name}
                           </h3>
                           {company.is_verified && (
@@ -263,10 +266,10 @@ export default async function RankedListingPage({ params }) {
                         <div className="flex items-center gap-3 mb-3">
                           <div className="flex items-center gap-1.5">
                             <StarRow rating={company.rating} />
-                            <span className="text-sm font-semibold text-[#3a3a3a]">{company.rating.toFixed(1)}</span>
+                            <span className="text-[#3a3a3a]" style={{ fontFamily: '"IBM Plex Mono", monospace', fontWeight: 600, fontSize: 13 }}>{company.rating.toFixed(1)}</span>
                           </div>
                           <span className="text-[#e5e5e5]">·</span>
-                          <span className="text-xs text-[#6a6a6a]">{company.review_count} reviews</span>
+                          <span className="text-[#6a6a6a]" style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 11 }}>{company.review_count} reviews</span>
                           <span className="text-[#e5e5e5]">·</span>
                           <span className="text-xs text-[#6a6a6a] flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
