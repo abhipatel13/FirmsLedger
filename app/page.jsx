@@ -1,16 +1,16 @@
-import MarketplaceHub from '@/views/marketplace/MarketplaceHub';
+import DirectoryHub from '@/views/DirectoryHub';
 import JsonLd from '@/components/JsonLd';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
-  title: `B2B Marketplace — Connect Buyers & Suppliers Globally | ${SITE_NAME}`,
-  description: 'Post RFQs to find suppliers or list your products to reach buyers worldwide. Free B2B marketplace for all industries.',
+  title: `Top Manufacturers by State — US Manufacturer Directory | ${SITE_NAME}`,
+  description: 'Find the top verified manufacturers in your state. Browse bike, electrical, mechanical, and more by category and location.',
   alternates: { canonical: _BASE },
   openGraph: {
-    title: `FirmsLedger B2B Marketplace`,
-    description: 'Post RFQs or list your products. Connect with buyers and suppliers worldwide.',
+    title: `FirmsLedger — US Manufacturer Directory`,
+    description: 'Browse verified manufacturers by category and state. Find the best in your area.',
     type: 'website',
     url: _BASE,
   },
@@ -21,14 +21,14 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: SITE_NAME,
   url: _BASE,
-  description: 'Global B2B marketplace. Post RFQs to find suppliers or list products to reach buyers worldwide.',
+  description: 'US manufacturer directory. Find top verified manufacturers by category and state.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${_BASE}/marketplace/rfqs?search={search_term_string}`,
+      urlTemplate: `${_BASE}/top/{category_slug}/{state_slug}`,
     },
-    'query-input': 'required name=search_term_string',
+    'query-input': 'required name=category_slug required name=state_slug',
   },
 };
 
@@ -36,7 +36,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={websiteSchema} />
-      <MarketplaceHub />
+      <DirectoryHub />
     </>
   );
 }

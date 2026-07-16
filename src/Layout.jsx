@@ -3,11 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ShoppingCart, Package } from 'lucide-react';
+import { Menu, X, Building2 } from 'lucide-react';
 
 const NAV_LINKS = [
-  { href: '/marketplace/rfqs', label: 'Browse RFQs' },
-  { href: '/marketplace/suppliers', label: 'Suppliers' },
+  { href: '/Directory', label: 'Browse Directory' },
+  { href: '/Categories', label: 'Categories' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -44,18 +44,11 @@ export default function Layout({ children }) {
             {/* Desktop CTAs */}
             <div className="hidden lg:flex items-center gap-3">
               <Link
-                href="/marketplace/rfqs/new"
-                className="inline-flex items-center gap-1.5 bg-white border border-slate-200 hover:border-orange-400 text-slate-700 hover:text-orange-600 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                Post RFQ
-              </Link>
-              <Link
-                href="/marketplace/suppliers/new"
+                href="/ListYourCompany"
                 className="inline-flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors shadow-sm"
               >
-                <Package className="w-4 h-4" />
-                List Products
+                <Building2 className="w-4 h-4" />
+                List Your Company
               </Link>
             </div>
 
@@ -85,20 +78,12 @@ export default function Layout({ children }) {
               ))}
               <div className="border-t border-slate-200 mt-2 pt-3 px-3 flex flex-col gap-2">
                 <Link
-                  href="/marketplace/rfqs/new"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center gap-2 border border-slate-200 text-slate-700 font-semibold py-2.5 rounded-lg text-sm"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  Post RFQ
-                </Link>
-                <Link
-                  href="/marketplace/suppliers/new"
+                  href="/ListYourCompany"
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-center gap-2 bg-orange-500 text-white font-semibold py-2.5 rounded-lg text-sm"
                 >
-                  <Package className="w-4 h-4" />
-                  List Products
+                  <Building2 className="w-4 h-4" />
+                  List Your Company
                 </Link>
               </div>
             </div>
@@ -118,25 +103,27 @@ export default function Layout({ children }) {
                 <img src="/logo-white.svg" alt="FirmsLedger" className="h-10 w-auto" />
               </Link>
               <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-                Global B2B marketplace. Post RFQs to find suppliers or list your products to reach
-                qualified buyers worldwide — free for buyers and suppliers.
+                US manufacturer directory. Find the top verified manufacturers by category and state — bike, electrical, mechanical, and more.
               </p>
             </div>
 
             <div>
-              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">For Buyers</h4>
+              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Browse by Category</h4>
               <div className="flex flex-col gap-3 text-sm">
-                <Link href="/marketplace/rfqs/new" className="text-slate-400 hover:text-orange-400 transition-colors">Post an RFQ</Link>
-                <Link href="/marketplace/rfqs" className="text-slate-400 hover:text-orange-400 transition-colors">Browse Open RFQs</Link>
-                <Link href="/marketplace/suppliers" className="text-slate-400 hover:text-orange-400 transition-colors">Find Suppliers</Link>
+                <Link href="/top/bike-manufacturers/california" className="text-slate-400 hover:text-orange-400 transition-colors">Bike Manufacturers</Link>
+                <Link href="/top/electrical-manufacturers/texas" className="text-slate-400 hover:text-orange-400 transition-colors">Electrical Manufacturers</Link>
+                <Link href="/top/mechanical-manufacturers/new-york" className="text-slate-400 hover:text-orange-400 transition-colors">Mechanical Manufacturers</Link>
+                <Link href="/Categories" className="text-slate-400 hover:text-orange-400 transition-colors">All Categories</Link>
               </div>
             </div>
 
             <div>
-              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">For Suppliers</h4>
+              <h4 className="font-bold mb-4 text-white text-xs uppercase tracking-widest">Browse by State</h4>
               <div className="flex flex-col gap-3 text-sm">
-                <Link href="/marketplace/suppliers/new" className="text-slate-400 hover:text-orange-400 transition-colors">List Your Products</Link>
-                <Link href="/marketplace/rfqs" className="text-slate-400 hover:text-orange-400 transition-colors">Browse RFQs</Link>
+                <Link href="/top/bike-manufacturers/california" className="text-slate-400 hover:text-orange-400 transition-colors">California</Link>
+                <Link href="/top/bike-manufacturers/texas" className="text-slate-400 hover:text-orange-400 transition-colors">Texas</Link>
+                <Link href="/top/bike-manufacturers/new-york" className="text-slate-400 hover:text-orange-400 transition-colors">New York</Link>
+                <Link href="/top/bike-manufacturers/florida" className="text-slate-400 hover:text-orange-400 transition-colors">Florida</Link>
                 <Link href="/contact" className="text-slate-400 hover:text-orange-400 transition-colors">Contact Us</Link>
               </div>
             </div>
