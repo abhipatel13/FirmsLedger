@@ -1,8 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+/**
+ * supabase.js — stub retained for import compatibility.
+ * This project uses Neon/Drizzle. Supabase env vars are not present.
+ * All callers should use src/db/neonApi.js or src/db/client.ts directly.
+ */
 
-const url = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SUPABASE_URL : '';
-const anonKey = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY : '';
-
-export const supabase = url && anonKey ? createClient(url, anonKey) : null;
-
-export const hasSupabase = () => !!supabase;
+export const supabase = null;
+export const hasSupabase = () => false;

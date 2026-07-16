@@ -50,8 +50,6 @@
 import AdminDashboard from './views/AdminDashboard';
 import AgencyDashboard from './views/AgencyDashboard';
 import AgencyProfile from './views/AgencyProfile';
-import BlogPost from './views/BlogPost';
-import Blogs from './views/Blog';
 import Categories from './views/Categories';
 import CategoryPage from './views/CategoryPage';
 import Compare from './views/Compare';
@@ -72,8 +70,6 @@ export const PAGES = {
     "AdminDashboard": AdminDashboard,
     "AgencyDashboard": AgencyDashboard,
     "AgencyProfile": AgencyProfile,
-    "BlogPost": BlogPost,
-    "Blogs": Blogs,
     "Categories": Categories,
     "CategoryPage": CategoryPage,
     "Compare": Compare,

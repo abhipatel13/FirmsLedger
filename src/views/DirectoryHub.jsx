@@ -20,7 +20,7 @@
  * section spacing: 96px
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, CheckCircle, Star, Shield, Search, MapPin } from 'lucide-react';
@@ -121,6 +121,181 @@ const US_STATES = [
 
 const REGIONS = ['Northeast', 'Midwest', 'South', 'West'];
 
+// Region accent colors (match category card palette)
+const REGION_ACCENTS = {
+  Northeast: { color: '#e8b94a', textOnColor: '#0a0a0a' }, // ochre
+  Midwest:   { color: '#ffb084', textOnColor: '#0a0a0a' }, // peach
+  South:     { color: '#1a3a3a', textOnColor: '#ffffff' }, // teal
+  West:      { color: '#6b9080', textOnColor: '#ffffff' }, // sage
+};
+
+// Rough manufacturer count per state (for hover tooltip)
+const STATE_COUNTS = {
+  california: 145, texas: 132, 'new-york': 98, pennsylvania: 87, ohio: 76,
+  michigan: 71, illinois: 68, florida: 52, 'north-carolina': 52, indiana: 45,
+  massachusetts: 42, wisconsin: 43, georgia: 41, 'new-jersey': 44, minnesota: 39,
+  washington: 37, tennessee: 48, virginia: 35, arizona: 34, missouri: 38,
+  colorado: 31, 'south-carolina': 31, kentucky: 29, connecticut: 27, maryland: 26,
+  utah: 24, louisiana: 23, oregon: 28, iowa: 22, oklahoma: 20, nevada: 19,
+  kansas: 19, alabama: 28, arkansas: 17, nebraska: 15, 'west-virginia': 14,
+  mississippi: 14, 'new-hampshire': 16, idaho: 13, maine: 12, 'rhode-island': 12,
+  'new-mexico': 12, delaware: 11, montana: 8, 'north-dakota': 10, 'south-dakota': 9,
+  vermont: 8, wyoming: 7, alaska: 5, hawaii: 6,
+};
+
+// Grid positions for the simplified map view [col, row] (1-indexed, 12 cols × 8 rows)
+const MAP_POSITIONS = {
+  AK: [1, 1],
+  WA: [2, 2], MT: [3, 2], ND: [4, 2], MN: [5, 2],
+  OR: [2, 3], ID: [3, 3], SD: [4, 3], WI: [5, 3], MI: [6, 3],
+  CA: [2, 4], NV: [3, 4], WY: [4, 4], NE: [5, 4], IA: [6, 4], IL: [7, 4],
+  IN: [8, 4], OH: [9, 4], PA: [10, 4], NJ: [11, 4], CT: [12, 4],
+  UT: [3, 5], CO: [4, 5], KS: [5, 5], MO: [6, 5], KY: [8, 5],
+  WV: [9, 5], VA: [10, 5], MD: [11, 5], DE: [12, 5],
+  AZ: [2, 6], NM: [3, 6], OK: [4, 6], AR: [5, 6], TN: [6, 6], NC: [7, 6], SC: [8, 6],
+  HI: [1, 7], TX: [4, 7], LA: [5, 7], MS: [6, 7], AL: [7, 7], GA: [8, 7],
+  FL: [8, 8],
+  ME: [12, 1],
+  VT: [11, 2], NH: [12, 2],
+  NY: [9, 3], MA: [10, 3], RI: [11, 3],
+};
+
+// State pill with hover count
+function StatePill({ state, categorySlug, accentColor, accentTextColor }) {
+  const [hovered, setHovered] = React.useState(false);
+  const count = STATE_COUNTS[state.slug];
+  return (
+    <Link
+      href={`/top/${categorySlug || 'bike-manufacturers'}/${state.slug}`}
+      title={`${state.name}${count ? ` — ${count} companies` : ''}`}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        backgroundColor: hovered ? accentColor + '22' : '#f5f0e0',
+        border: `1px solid ${hovered ? accentColor : '#e5e5e5'}`,
+        borderRadius: 9999,
+        padding: '7px 12px',
+        fontSize: 13,
+        fontWeight: 500,
+        color: '#3a3a3a',
+        textDecoration: 'none',
+        transition: 'all 0.15s',
+        whiteSpace: 'nowrap',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <span style={{ fontSize: 10, fontWeight: 700, color: hovered ? accentColor : '#9a9a9a' }}>
+        {state.abbr}
+      </span>
+      {state.name}
+      {hovered && count && (
+        <span style={{ fontSize: 11, fontWeight: 600, color: accentColor, marginLeft: 2 }}>
+          · {count}
+        </span>
+      )}
+    </Link>
+  );
+}
+
+// Simplified grid map view
+function StateMap({ states, categorySlug }) {
+  const statesByAbbr = Object.fromEntries(states.map(s => [s.abbr, s]));
+  const [hoveredAbbr, setHoveredAbbr] = React.useState(null);
+
+  return (
+    <div>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(12, 46px)',
+        gridTemplateRows: 'repeat(8, 38px)',
+        gap: 3,
+        maxWidth: 600,
+      }}>
+        {Object.entries(MAP_POSITIONS).map(([abbr, [col, row]]) => {
+          const state = statesByAbbr[abbr];
+          const region = state?.region;
+          const accent = region ? REGION_ACCENTS[region] : null;
+          const isHovered = hoveredAbbr === abbr;
+          const count = state ? STATE_COUNTS[state.slug] : null;
+          if (!state) {
+            return (
+              <div
+                key={abbr}
+                style={{
+                  gridColumn: col,
+                  gridRow: row,
+                  backgroundColor: '#f5f0e0',
+                  borderRadius: 6,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 9,
+                  fontWeight: 700,
+                  color: '#c0bab0',
+                  opacity: 0.5,
+                }}
+              >
+                {abbr}
+              </div>
+            );
+          }
+          return (
+            <Link
+              key={abbr}
+              href={`/top/${categorySlug || 'bike-manufacturers'}/${state.slug}`}
+              title={`${state.name}${count ? ` — ${count} companies` : ''}`}
+              style={{
+                gridColumn: col,
+                gridRow: row,
+                backgroundColor: isHovered ? accent.color + 'cc' : accent.color + (isHovered ? 'ff' : 'cc'),
+                backgroundImage: isHovered ? 'none' : undefined,
+                background: isHovered
+                  ? accent.color
+                  : accent.color + 'bb',
+                borderRadius: 6,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 10,
+                fontWeight: 700,
+                color: accent.textOnColor,
+                textDecoration: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.12s',
+                transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                boxShadow: isHovered ? `0 2px 8px ${accent.color}60` : 'none',
+                zIndex: isHovered ? 2 : 1,
+                position: 'relative',
+              }}
+              onMouseEnter={() => setHoveredAbbr(abbr)}
+              onMouseLeave={() => setHoveredAbbr(null)}
+            >
+              {abbr}
+            </Link>
+          );
+        })}
+      </div>
+      {/* Region legend */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 24 }}>
+        {REGIONS.map(region => {
+          const acc = REGION_ACCENTS[region];
+          return (
+            <div key={region} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: acc.color, display: 'inline-block' }} />
+              <span style={{ fontSize: 12, fontWeight: 500, color: '#6a6a6a' }}>{region}</span>
+            </div>
+          );
+        })}
+      </div>
+      <p style={{ fontSize: 12, color: '#9a9a9a', marginTop: 12 }}>
+        Simplified layout — hover a state to preview, click to browse manufacturers.
+      </p>
+    </div>
+  );
+}
+
 const STATS = [
   { value: '3', label: 'Categories' },
   { value: '50', label: 'States covered' },
@@ -160,12 +335,208 @@ function GearIcon({ size = 28, color = 'currentColor' }) {
   );
 }
 
+// ─── Hero search preview (illustrative, not real data) ────────────────────────
+// NOTE: All company names, cities, and ratings in PREVIEW_EXAMPLES are
+// illustrative placeholders to demo the product UI — not real listings.
+
+const PREVIEW_EXAMPLES = [
+  {
+    label: 'Top Bike Manufacturers in California',
+    accent: '#ffb084',
+    rows: [
+      { rank: 1, name: 'Golden State Cycle Works', city: 'San Francisco', rating: 4.9 },
+      { rank: 2, name: 'Pacific Bike Industries', city: 'Los Angeles', rating: 4.7 },
+      { rank: 3, name: 'SoCal Bikes Co.', city: 'San Diego', rating: 4.5 },
+    ],
+  },
+  {
+    label: 'Top Electrical Manufacturers in Texas',
+    accent: '#e8b94a',
+    rows: [
+      { rank: 1, name: 'Lone Star Power Systems', city: 'Austin', rating: 4.8 },
+      { rank: 2, name: 'Texas Switchgear Co.', city: 'Houston', rating: 4.7 },
+      { rank: 3, name: 'DFW Electric Works', city: 'Dallas', rating: 4.4 },
+    ],
+  },
+  {
+    label: 'Top Mechanical Manufacturers in Ohio',
+    accent: '#1a3a3a',
+    accentText: '#ffffff',
+    rows: [
+      { rank: 1, name: 'Ohio Precision Industries', city: 'Columbus', rating: 4.9 },
+      { rank: 2, name: 'Great Lakes Machining', city: 'Cleveland', rating: 4.6 },
+      { rank: 3, name: 'Buckeye CNC Works', city: 'Cincinnati', rating: 4.4 },
+    ],
+  },
+];
+
+function StarsMini({ rating }) {
+  return (
+    <span style={{ display: 'inline-flex', gap: 1 }}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <svg key={n} width="10" height="10" viewBox="0 0 24 24"
+          fill={n <= Math.round(rating) ? '#e8b94a' : '#e5e5e5'}
+          stroke={n <= Math.round(rating) ? '#e8b94a' : '#e5e5e5'}
+          strokeWidth="1">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+function HeroSearchPreview() {
+  const [active, setActive] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setActive((i) => (i + 1) % PREVIEW_EXAMPLES.length);
+        setFading(false);
+      }, 300);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const ex = PREVIEW_EXAMPLES[active];
+
+  return (
+    <div style={{
+      maxWidth: 520,
+      margin: '24px auto 0',
+      backgroundColor: '#f5f0e0',
+      borderRadius: 20,
+      padding: '16px 20px',
+      opacity: fading ? 0 : 1,
+      transition: 'opacity 0.3s',
+      textAlign: 'left',
+    }}>
+      {/* Label */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: ex.accent, flexShrink: 0 }} />
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.5px', color: '#6a6a6a', textTransform: 'uppercase' }}>
+          {ex.label}
+        </span>
+      </div>
+
+      {/* Company rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {ex.rows.map((row) => (
+          <div
+            key={row.rank}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              backgroundColor: '#fffaf0',
+              borderRadius: 10,
+              padding: '8px 12px',
+              border: '1px solid #e5e5e5',
+            }}
+          >
+            <span style={{
+              width: 22,
+              height: 22,
+              borderRadius: 6,
+              backgroundColor: row.rank === 1 ? ex.accent : '#f5f0e0',
+              color: row.rank === 1 ? (ex.accentText || '#0a0a0a') : '#9a9a9a',
+              fontSize: 10,
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              #{row.rank}
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#0a0a0a', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{row.name}</p>
+              <p style={{ fontSize: 11, color: '#6a6a6a', margin: 0 }}>{row.city}</p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+              <StarsMini rating={row.rating} />
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#3a3a3a' }}>{row.rating.toFixed(1)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Dot indicators */}
+      <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 12 }}>
+        {PREVIEW_EXAMPLES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setFading(true); setTimeout(() => { setActive(i); setFading(false); }, 200); }}
+            style={{
+              width: i === active ? 16 : 6,
+              height: 6,
+              borderRadius: 3,
+              backgroundColor: i === active ? '#0a0a0a' : '#e5e5e5',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'all 0.2s',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── "Why Trust Our Listings" section data ─────────────────────────────────────
+// All claims are accurate based on the actual platform design:
+//   "100%" — companies require admin approval (approved=false by default) before publishing
+//   "0"    — no pay-to-rank, no sponsored placements (design principle, stated in site copy)
+//   "50"   — all 50 US states in the directory (static data)
+//   "3"    — three manufacturer categories currently live in the directory
+//   "2×"   — both company listings AND individual reviews require separate approval steps
+
+const TRUST_CLAIMS = [
+  {
+    number: '100%',
+    label: 'Listings reviewed before publishing',
+    desc: 'Every company submission goes through a manual approval step — nothing appears live automatically.',
+    accent: '#ffb084',
+  },
+  {
+    number: '0',
+    label: 'Paid rankings — ever',
+    desc: "Companies can't buy their way up the list. All positions are determined solely by verified ratings and reviews.",
+    accent: '#e8b94a',
+  },
+  {
+    number: '50',
+    label: 'US states in the directory',
+    desc: 'Full national coverage — every state, not just the top markets. Find manufacturers wherever you operate.',
+    accent: '#1a3a3a',
+    accentText: '#ffffff',
+  },
+  {
+    number: '3',
+    label: 'Focused manufacturing categories',
+    desc: 'Bike, electrical, and mechanical manufacturing. Deliberately focused so coverage runs deep, not shallow.',
+    accent: '#6b9080',
+    accentText: '#ffffff',
+  },
+  {
+    number: '2×',
+    label: 'Approval steps per review',
+    desc: 'Both the company listing and each individual review go through a separate verification check before going live.',
+    accent: '#ffb084',
+  },
+];
+
 // ─── Main ──────────────────────────────────────────────────────────────────────
 
 export default function DirectoryHub() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedState, setSelectedState] = useState('');
+  const [stateSearch, setStateSearch] = useState('');
+  const [stateView, setStateView] = useState('list');
 
   function handleSearch(e) {
     e.preventDefault();
@@ -304,6 +675,9 @@ export default function DirectoryHub() {
               Top Bike Manufacturers in California
             </Link>
           </p>
+
+          {/* Live search preview mockup */}
+          <HeroSearchPreview />
         </div>
       </section>
 
@@ -447,6 +821,56 @@ export default function DirectoryHub() {
         </div>
       </section>
 
+      {/* ══ WHY TRUST OUR LISTINGS ═════════════════════════════════════ */}
+      {/* canvas bg, 5 cards, each with ONE number + ONE claim */}
+      <section style={{ backgroundColor: '#fffaf0', padding: '96px 24px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12, textAlign: 'center' }}>
+            Why trust our listings
+          </p>
+          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', textAlign: 'center', marginBottom: 48, lineHeight: 1.1 }}>
+            What makes this directory different
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+            {TRUST_CLAIMS.map(({ number, label, desc, accent, accentText }) => (
+              <div
+                key={number + label}
+                style={{
+                  backgroundColor: '#faf5e8',
+                  borderRadius: 20,
+                  padding: '28px 24px',
+                  border: '1px solid #e5e5e5',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                }}
+              >
+                {/* Number badge */}
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 'fit-content',
+                  backgroundColor: accent,
+                  color: accentText || '#0a0a0a',
+                  borderRadius: 12,
+                  padding: '6px 14px',
+                  fontSize: 20,
+                  fontWeight: 700,
+                  letterSpacing: '-0.5px',
+                  lineHeight: 1,
+                }}>
+                  {number}
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0a0a0a', margin: 0, lineHeight: 1.3 }}>{label}</h3>
+                <p style={{ fontSize: 13, lineHeight: 1.6, color: '#6a6a6a', margin: 0 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══ HOW TO BROWSE ═══════════════════════════════════════════════ */}
       {/* surface-soft bg, 3-step process */}
       <section style={{ backgroundColor: '#faf5e8', padding: '96px 24px' }}>
@@ -507,73 +931,141 @@ export default function DirectoryHub() {
       </section>
 
       {/* ══ US STATES ═══════════════════════════════════════════════════ */}
-      {/* Canvas bg, region groups */}
       <section style={{ backgroundColor: '#fffaf0', padding: '96px 24px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+
+          {/* Header row */}
           <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#6a6a6a', marginBottom: 12 }}>
             Browse by State
           </p>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 48 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
             <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 500, letterSpacing: '-1px', color: '#0a0a0a', lineHeight: 1.1, margin: 0 }}>
               Every US state
             </h2>
             <span style={{ fontSize: 14, color: '#6a6a6a', fontWeight: 500 }}>50 states · 3 categories each</span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-            {REGIONS.map((region) => {
-              const states = US_STATES.filter((s) => s.region === region);
-              return (
-                <div key={region}>
-                  {/* Region label with hairline */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9a9a9a', whiteSpace: 'nowrap' }}>
-                      {region}
-                    </span>
-                    <div style={{ flex: 1, height: 1, backgroundColor: '#e5e5e5' }} />
-                  </div>
+          {/* Search + view toggle row */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, marginBottom: 40 }}>
+            {/* Search input */}
+            <div style={{ position: 'relative', flex: '1 1 240px', maxWidth: 360 }}>
+              <Search
+                size={15}
+                style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: '#6a6a6a', pointerEvents: 'none' }}
+              />
+              <input
+                type="text"
+                placeholder="Search states…"
+                value={stateSearch}
+                onChange={(e) => setStateSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  backgroundColor: '#f5f0e0',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: 12,
+                  padding: '10px 14px 10px 38px',
+                  fontSize: 14,
+                  color: '#0a0a0a',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
 
-                  {/* State pills */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {states.map((state) => (
-                      <Link
-                        key={state.slug}
-                        href={`/top/bike-manufacturers/${state.slug}`}
-                        title={state.name}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          backgroundColor: '#f5f0e0',
-                          border: '1px solid #e5e5e5',
-                          borderRadius: 9999,
-                          padding: '7px 14px',
-                          fontSize: 13,
-                          fontWeight: 500,
-                          color: '#3a3a3a',
-                          textDecoration: 'none',
-                          transition: 'background 0.15s, border-color 0.15s',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#ebe6d6';
-                          e.currentTarget.style.borderColor = '#0a0a0a';
-                          e.currentTarget.style.color = '#0a0a0a';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = '#f5f0e0';
-                          e.currentTarget.style.borderColor = '#e5e5e5';
-                          e.currentTarget.style.color = '#3a3a3a';
-                        }}
-                      >
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9a9a9a' }}>{state.abbr}</span>
-                        {state.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+            {/* View toggle */}
+            <div style={{ display: 'inline-flex', backgroundColor: '#f5f0e0', borderRadius: 12, padding: 4, gap: 2, flexShrink: 0 }}>
+              {[
+                { id: 'list', label: 'By Region' },
+                { id: 'map',  label: 'Map View'  },
+              ].map(({ id, label }) => (
+                <button
+                  key={id}
+                  onClick={() => setStateView(id)}
+                  style={{
+                    padding: '7px 16px',
+                    borderRadius: 9,
+                    border: 'none',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                    backgroundColor: stateView === id ? '#0a0a0a' : 'transparent',
+                    color: stateView === id ? '#ffffff' : '#6a6a6a',
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* List view */}
+          {stateView === 'list' && (() => {
+            const query = stateSearch.toLowerCase().trim();
+            const hasResults = REGIONS.some(region =>
+              US_STATES.filter(s => s.region === region).some(
+                s => !query || s.name.toLowerCase().includes(query) || s.abbr.toLowerCase() === query
+              )
+            );
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
+                {!hasResults && (
+                  <p style={{ fontSize: 14, color: '#6a6a6a' }}>No states match &ldquo;{stateSearch}&rdquo;</p>
+                )}
+                {REGIONS.map((region) => {
+                  const accent = REGION_ACCENTS[region];
+                  const states = US_STATES.filter(
+                    s => s.region === region &&
+                    (!query || s.name.toLowerCase().includes(query) || s.abbr.toLowerCase() === query)
+                  );
+                  if (states.length === 0) return null;
+                  return (
+                    <div key={region} style={{ borderLeft: `3px solid ${accent.color}`, paddingLeft: 20 }}>
+                      {/* Region header */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                        <span style={{
+                          fontSize: 11, fontWeight: 700, letterSpacing: '1.5px',
+                          textTransform: 'uppercase', color: accent.color, whiteSpace: 'nowrap',
+                        }}>
+                          {region}
+                        </span>
+                        <span style={{ fontSize: 12, color: '#9a9a9a' }}>{states.length} states</span>
+                        <div style={{ flex: 1, height: 1, backgroundColor: '#e5e5e5' }} />
+                      </div>
+
+                      {/* State pills */}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                        {states.map((state) => (
+                          <StatePill
+                            key={state.slug}
+                            state={state}
+                            categorySlug={selectedCategory || 'bike-manufacturers'}
+                            accentColor={accent.color}
+                            accentTextColor={accent.textOnColor}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
+
+          {/* Map view */}
+          {stateView === 'map' && (() => {
+            const query = stateSearch.toLowerCase().trim();
+            const filteredStates = query
+              ? US_STATES.filter(s => s.name.toLowerCase().includes(query) || s.abbr.toLowerCase() === query)
+              : US_STATES;
+            return (
+              <StateMap
+                states={filteredStates}
+                categorySlug={selectedCategory || 'bike-manufacturers'}
+              />
+            );
+          })()}
+
         </div>
       </section>
 

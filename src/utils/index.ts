@@ -4,14 +4,8 @@ const STAFFING_SEGMENT = 'staffing';
 export function createPageUrl(pageName: string) {
   if (pageName === 'Home') return '/';
   if (pageName === 'Directory') return DIRECTORY_BASE;
-  if (pageName === 'Blogs') return '/blog';
   if (pageName === 'Contact') return '/contact';
   return '/' + pageName.replace(/ /g, '-');
-}
-
-/** Blog article URL: /blog/slug */
-export function getBlogArticleUrl(slug: string): string {
-  return `/blog/${encodeURIComponent(slug)}`;
 }
 
 /**
