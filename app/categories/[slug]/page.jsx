@@ -191,6 +191,7 @@ export default async function CategoryHubPage({ params }) {
                   <Link
                     key={state.slug}
                     href={`/top/${slug}/${state.slug}`}
+                    className="region-state-pill"
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -204,14 +205,8 @@ export default async function CategoryHubPage({ params }) {
                       color: '#3a3a3a',
                       textDecoration: 'none',
                       transition: 'all 0.15s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = REGION_ACCENTS[region] + '22';
-                      e.currentTarget.style.borderColor = REGION_ACCENTS[region];
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f5f0e0';
-                      e.currentTarget.style.borderColor = '#e5e5e5';
+                      '--pill-accent': REGION_ACCENTS[region],
+                      '--pill-accent-bg': REGION_ACCENTS[region] + '22',
                     }}
                   >
                     {state.name}

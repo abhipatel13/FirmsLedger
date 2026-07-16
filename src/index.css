@@ -234,3 +234,9 @@
   color: white;
   border-radius: 8px;
 }
+
+/* ── Region state pill hover ─────────────────────────────────── */
+.region-state-pill:hover {
+  background-color: var(--pill-accent-bg, #e5e5e5) !important;
+  border-color: var(--pill-accent, #999) !important;
+}
