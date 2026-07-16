@@ -242,21 +242,18 @@ export default async function CategoryHubPage({ params }) {
                 <div style={{ flex: 1, height: 1, backgroundColor: '#e5e5e5' }} />
               </div>
 
-              <style>{`
-                .state-pill-${region} { background-color: #f5f0e0; border-color: #e5e5e5; }
-                .state-pill-${region}:hover { background-color: ${REGION_ACCENTS[region]}22; border-color: ${REGION_ACCENTS[region]}; }
-              `}</style>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {states.map((state) => (
                   <Link
                     key={state.slug}
                     href={`/top/${slug}/${state.slug}`}
-                    className={`state-pill-${region}`}
+                    className="region-state-pill"
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 6,
-                      border: '1px solid',
+                      backgroundColor: '#f5f0e0',
+                      border: '1px solid #e5e5e5',
                       borderRadius: 9999,
                       padding: '8px 14px',
                       fontSize: 14,
@@ -264,6 +261,8 @@ export default async function CategoryHubPage({ params }) {
                       color: '#3a3a3a',
                       textDecoration: 'none',
                       transition: 'all 0.15s',
+                      '--pill-accent': REGION_ACCENTS[region],
+                      '--pill-accent-bg': REGION_ACCENTS[region] + '22',
                     }}
                   >
                     {state.name}
