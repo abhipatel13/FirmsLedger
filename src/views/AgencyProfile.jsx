@@ -86,10 +86,10 @@ export default function AgencyProfile({ companySlug }) {
     queryKey: ['agency', identifier],
     queryFn: async () => {
       if (companySlug) {
-        const bySlug = await api.entities.Agency.filter({ slug: companySlug });
+        const bySlug = await api.entities.Company.filter({ slug: companySlug });
         return bySlug[0];
       }
-      const byId = await api.entities.Agency.filter({ id: queryId });
+      const byId = await api.entities.Company.filter({ id: queryId });
       return byId[0];
     },
     enabled: !!identifier,
@@ -99,14 +99,14 @@ export default function AgencyProfile({ companySlug }) {
 
   const { data: reviews = [] } = useQuery({
     queryKey: ['agency-reviews', agencyId],
-    queryFn: () => api.entities.Review.filter({ agency_id: agencyId, approved: true }, '-created_at', 50),
+    queryFn: () => api.entities.Review.filter({ company_id: agencyId, approved: true }, '-created_at', 50),
     enabled: !!agencyId,
   });
 
   const { data: categories = [] } = useQuery({
     queryKey: ['agency-categories', agencyId],
     queryFn: async () => {
-      const agencyCats = await api.entities.AgencyCategory.filter({ agency_id: agencyId });
+      const agencyCats = await api.entities.CompanyCategory.filter({ company_id: agencyId });
       const catIds = agencyCats.map(ac => ac.category_id ?? ac.categoryId);
       const allCats = await api.entities.Category.list();
       return allCats.filter(c => catIds.includes(c.id));
@@ -119,7 +119,7 @@ export default function AgencyProfile({ companySlug }) {
   const { data: similarCompanies = [] } = useQuery({
     queryKey: ['similar-agencies', primaryCategorySlug, agency?.hq_country, agencyId],
     queryFn: async () => {
-      const list = await api.entities.Agency.filterByCategory(primaryCategorySlug, '-avg_rating', 30);
+      const list = await api.entities.Company.filterByCategory(primaryCategorySlug, '-avg_rating', 30);
       return list
         .filter(a => a.id !== agencyId)
         .filter(a => !agency?.hq_country || a.hq_country === agency.hq_country)
@@ -201,15 +201,15 @@ export default function AgencyProfile({ companySlug }) {
               <img src={agency.logo_url} alt={agency.name}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-contain border border-slate-200 bg-white flex-shrink-0" />
             ) : (
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-[#1A2E4A] flex items-center justify-center text-white font-bold text-2xl sm:text-3xl flex-shrink-0">
-                {agency.name.charAt(0)}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-3 flex-shrink-0">
+                <img src="/logo-icon.svg" alt="" className="w-full h-full" />
               </div>
             )}
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
                 <h1 className="break-words uppercase text-[#0a0a0a]" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 0.95, letterSpacing: '-0.5px' }}>{agency.name}</h1>
-                {agency.verified && (
+                {agency.is_verified && (
                   <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2 py-1 rounded border border-green-200 mt-0.5">
                     <CheckCircle className="w-3 h-3" /> Verified
                   </span>
@@ -263,7 +263,7 @@ export default function AgencyProfile({ companySlug }) {
                     <MessageSquare className="w-4 h-4 mr-2" /> Write Review
                   </Button>
                 </Link>
-                {!agency.verified && (
+                {!agency.is_verified && (
                   <Link href={`/claim-listing?agency=${agency.slug || agency.id}`} className="w-full sm:w-auto">
                     <Button variant="outline" className="w-full sm:w-auto border-orange-200 text-orange-600 hover:border-orange-400 hover:bg-orange-50 font-semibold px-6 h-11 rounded-md transition-colors">
                       <Crown className="w-4 h-4 mr-2" /> Claim This Listing
@@ -775,7 +775,7 @@ function FAQSection({ agency, categoryName }) {
     },
     {
       q: `Is ${agency.name} a verified company?`,
-      a: agency.verified
+      a: agency.is_verified
         ? `Yes — ${agency.name} has been verified by FirmsLedger. The team has confirmed company details, contact information, and service offerings.`
         : `${agency.name} is currently listed but not yet verified. If you own this company, you can claim the listing using the button above to verify and unlock additional features.`,
     },

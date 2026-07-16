@@ -30,6 +30,62 @@ const CATEGORIES = {
     accent: '#1a3a3a',
     accentText: '#ffffff',
   },
+  'plastics-packaging-manufacturers': {
+    name: 'Plastics & Packaging Manufacturers',
+    noun: 'plastics & packaging manufacturers',
+    desc: 'Injection molding, packaging materials, containers, and plastic component makers across the US.',
+    accent: '#6b9080',
+    accentText: '#ffffff',
+  },
+  'metal-fabrication-machining': {
+    name: 'Metal Fabrication & Machining',
+    noun: 'metal fabrication & machining companies',
+    desc: 'Sheet metal, welding, stamping, and custom metal fabrication shops across the US.',
+    accent: '#243B58',
+    accentText: '#ffffff',
+  },
+  'electronics-semiconductor-manufacturers': {
+    name: 'Electronics & Semiconductor Manufacturers',
+    noun: 'electronics & semiconductor manufacturers',
+    desc: 'PCBs, chips, electronic assemblies, and semiconductor component makers across the US.',
+    accent: '#2E4E6E',
+    accentText: '#ffffff',
+  },
+  'automotive-parts-manufacturers': {
+    name: 'Automotive Parts Manufacturers',
+    noun: 'automotive parts manufacturers',
+    desc: 'OEM and aftermarket automotive component and assembly makers across the US.',
+    accent: '#c0563c',
+    accentText: '#ffffff',
+  },
+  'textile-apparel-manufacturers': {
+    name: 'Textile & Apparel Manufacturers',
+    noun: 'textile & apparel manufacturers',
+    desc: 'Fabric production, garment manufacturing, and textile finishing companies across the US.',
+    accent: '#d9a5ad',
+    accentText: '#0a0a0a',
+  },
+  'furniture-woodworking-manufacturers': {
+    name: 'Furniture & Woodworking Manufacturers',
+    noun: 'furniture & woodworking manufacturers',
+    desc: 'Custom furniture, cabinetry, and woodworking production companies across the US.',
+    accent: '#a97452',
+    accentText: '#ffffff',
+  },
+  'food-beverage-processing': {
+    name: 'Food & Beverage Processing',
+    noun: 'food & beverage processing companies',
+    desc: 'Food processing equipment, packaging lines, and beverage production companies across the US.',
+    accent: '#e0b04a',
+    accentText: '#0a0a0a',
+  },
+  'medical-device-manufacturers': {
+    name: 'Medical Device Manufacturers',
+    noun: 'medical device manufacturers',
+    desc: 'Diagnostic equipment, surgical instruments, and medical component makers across the US.',
+    accent: '#8fb8a8',
+    accentText: '#0a0a0a',
+  },
 };
 
 // All 50 US states with region grouping
@@ -186,17 +242,21 @@ export default async function CategoryHubPage({ params }) {
                 <div style={{ flex: 1, height: 1, backgroundColor: '#e5e5e5' }} />
               </div>
 
+              <style>{`
+                .state-pill-${region} { background-color: #f5f0e0; border-color: #e5e5e5; }
+                .state-pill-${region}:hover { background-color: ${REGION_ACCENTS[region]}22; border-color: ${REGION_ACCENTS[region]}; }
+              `}</style>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {states.map((state) => (
                   <Link
                     key={state.slug}
                     href={`/top/${slug}/${state.slug}`}
+                    className={`state-pill-${region}`}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 6,
-                      backgroundColor: '#f5f0e0',
-                      border: '1px solid #e5e5e5',
+                      border: '1px solid',
                       borderRadius: 9999,
                       padding: '8px 14px',
                       fontSize: 14,
@@ -204,14 +264,6 @@ export default async function CategoryHubPage({ params }) {
                       color: '#3a3a3a',
                       textDecoration: 'none',
                       transition: 'all 0.15s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = REGION_ACCENTS[region] + '22';
-                      e.currentTarget.style.borderColor = REGION_ACCENTS[region];
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f5f0e0';
-                      e.currentTarget.style.borderColor = '#e5e5e5';
                     }}
                   >
                     {state.name}

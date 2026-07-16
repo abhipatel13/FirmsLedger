@@ -23,7 +23,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, CheckCircle, Star, Shield, Search, MapPin } from 'lucide-react';
+import { ArrowRight, CheckCircle, Star, Shield, Search, MapPin, Package, Wrench, Cpu, Car, Shirt, Sofa, UtensilsCrossed, Stethoscope } from 'lucide-react';
 
 // ─── Static data ───────────────────────────────────────────────────────────────
 
@@ -63,6 +63,94 @@ const CATEGORIES = [
     btnBg: '#fffaf0',
     btnText: '#0a0a0a',
     icon: GearIcon,
+  },
+  {
+    slug: 'plastics-packaging-manufacturers',
+    name: 'Plastics & Packaging Manufacturers',
+    desc: 'Injection molding, packaging materials, containers, and plastic components.',
+    count: '60+',
+    bg: '#6b9080',
+    text: '#ffffff',
+    btnBg: '#fffaf0',
+    btnText: '#0a0a0a',
+    icon: Package,
+  },
+  {
+    slug: 'metal-fabrication-machining',
+    name: 'Metal Fabrication & Machining',
+    desc: 'Sheet metal, welding, stamping, and custom metal fabrication.',
+    count: '85+',
+    bg: '#243B58',
+    text: '#ffffff',
+    btnBg: '#fffaf0',
+    btnText: '#0a0a0a',
+    icon: Wrench,
+  },
+  {
+    slug: 'electronics-semiconductor-manufacturers',
+    name: 'Electronics & Semiconductor Manufacturers',
+    desc: 'PCBs, chips, electronic assemblies, and semiconductor components.',
+    count: '70+',
+    bg: '#2E4E6E',
+    text: '#ffffff',
+    btnBg: '#fffaf0',
+    btnText: '#0a0a0a',
+    icon: Cpu,
+  },
+  {
+    slug: 'automotive-parts-manufacturers',
+    name: 'Automotive Parts Manufacturers',
+    desc: 'OEM and aftermarket automotive components and assemblies.',
+    count: '55+',
+    bg: '#c0563c',
+    text: '#ffffff',
+    btnBg: '#fffaf0',
+    btnText: '#0a0a0a',
+    icon: Car,
+  },
+  {
+    slug: 'textile-apparel-manufacturers',
+    name: 'Textile & Apparel Manufacturers',
+    desc: 'Fabric production, garment manufacturing, and textile finishing.',
+    count: '30+',
+    bg: '#d9a5ad',
+    text: '#0a0a0a',
+    btnBg: '#0a0a0a',
+    btnText: '#ffffff',
+    icon: Shirt,
+  },
+  {
+    slug: 'furniture-woodworking-manufacturers',
+    name: 'Furniture & Woodworking Manufacturers',
+    desc: 'Custom furniture, cabinetry, and woodworking production.',
+    count: '25+',
+    bg: '#a97452',
+    text: '#ffffff',
+    btnBg: '#fffaf0',
+    btnText: '#0a0a0a',
+    icon: Sofa,
+  },
+  {
+    slug: 'food-beverage-processing',
+    name: 'Food & Beverage Processing',
+    desc: 'Food processing equipment, packaging lines, and beverage production.',
+    count: '50+',
+    bg: '#e0b04a',
+    text: '#0a0a0a',
+    btnBg: '#0a0a0a',
+    btnText: '#ffffff',
+    icon: UtensilsCrossed,
+  },
+  {
+    slug: 'medical-device-manufacturers',
+    name: 'Medical Device Manufacturers',
+    desc: 'Diagnostic equipment, surgical instruments, and medical components.',
+    count: '40+',
+    bg: '#8fb8a8',
+    text: '#0a0a0a',
+    btnBg: '#0a0a0a',
+    btnText: '#ffffff',
+    icon: Stethoscope,
   },
 ];
 
@@ -299,7 +387,7 @@ function StateMap({ states, categorySlug }) {
 }
 
 const STATS = [
-  { value: '3', label: 'Categories' },
+  { value: '11', label: 'Categories' },
   { value: '50', label: 'States covered' },
   { value: '500+', label: 'Companies listed' },
   { value: '100%', label: 'Verified listings' },
@@ -518,9 +606,9 @@ const TRUST_CLAIMS = [
     accentText: '#ffffff',
   },
   {
-    number: '3',
+    number: '11',
     label: 'Focused manufacturing categories',
-    desc: 'Bike, electrical, and mechanical manufacturing. Deliberately focused so coverage runs deep, not shallow.',
+    desc: 'Bike, electrical, mechanical, plastics, metal fabrication, electronics, automotive, textile, furniture, food & beverage, and medical device manufacturing.',
     accent: '#6b9080',
     accentText: '#ffffff',
   },
@@ -580,12 +668,12 @@ export default function DirectoryHub() {
           }}>
             Find the top manufacturers
             <br />
-            in your state
+            in the United States
           </h1>
 
           {/* Sub-headline */}
           <p style={{ fontSize: 18, fontWeight: 400, lineHeight: 1.55, color: '#3a3a3a', marginBottom: 48, maxWidth: 540, marginLeft: 'auto', marginRight: 'auto' }}>
-            Browse verified manufacturers by category and state — bike, electrical, mechanical, and more.
+            Browse verified manufacturers across the United States by category and state — bike, electrical, mechanical, and more.
           </p>
 
           {/* Search widget — surface-card bg, rounded-xl */}

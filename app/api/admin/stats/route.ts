@@ -24,21 +24,21 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     safe(async () => {
       const rows = await db.select({ approved: companies.approved }).from(companies);
       const total = rows.length;
-      const pending = rows.filter((r) => !r.approved).length;
+      const pending = rows.filter((r: { approved: boolean | null }) => !r.approved).length;
       return { total, pending };
     }, { total: 0, pending: 0 }),
 
     safe(async () => {
       const rows = await db.select({ approved: reviews.approved }).from(reviews);
       const total = rows.length;
-      const pending = rows.filter((r) => !r.approved).length;
+      const pending = rows.filter((r: { approved: boolean | null }) => !r.approved).length;
       return { total, pending };
     }, { total: 0, pending: 0 }),
 
     safe(async () => {
       const rows = await db.select({ status: listing_requests.status }).from(listing_requests);
       const total = rows.length;
-      const pending = rows.filter((r) => r.status === 'pending').length;
+      const pending = rows.filter((r: { status: string | null }) => r.status === 'pending').length;
       return { total, pending };
     }, { total: 0, pending: 0 }),
   ]);

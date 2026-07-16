@@ -81,18 +81,23 @@ export async function fetchCompanies(where = {}, orderKey = '-avg_rating', limit
     if (!stateId) return []; // unknown state → no results
   }
 
-  const conditions = [eq(companies.approved, true)];
+  const conditions = [];
 
   if (stateId) {
     conditions.push(eq(companies.hq_state_id, stateId));
   }
 
+  let approvedSet = false;
   for (const [k, v] of Object.entries(rest)) {
     const col = k.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
     if (companies[col] !== undefined && v != null && v !== '') {
       conditions.push(eq(companies[col], v));
+      if (col === 'approved') approvedSet = true;
     }
   }
+  // Default to approved-only unless the caller explicitly filtered on `approved`
+  // (e.g. admin queues need approved: false).
+  if (!approvedSet) conditions.push(eq(companies.approved, true));
 
   let q = db
     .select()
@@ -212,6 +217,15 @@ export async function createCompany(payload, categoryIds = []) {
     if (categoryId) await createCompanyCategory(company.id, categoryId);
   }
   return company;
+}
+
+export async function updateCompany(id, patch) {
+  const [row] = await db.update(companies).set(patch).where(eq(companies.id, id)).returning();
+  return row;
+}
+
+export async function deleteCompany(id) {
+  await db.delete(companies).where(eq(companies.id, id));
 }
 
 export async function fetchCompanyCategories(where = {}) {

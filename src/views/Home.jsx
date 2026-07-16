@@ -22,12 +22,12 @@ export default function Home() {
 
   const { data: topRatedAgencies = [] } = useQuery({
     queryKey: ['top-rated-agencies'],
-    queryFn: () => api.entities.Agency.filter({ approved: true }, '-avg_rating', 6),
+    queryFn: () => api.entities.Company.filter({ approved: true }, '-avg_rating', 6),
   });
 
   const { data: recentReviews = [] } = useQuery({
     queryKey: ['recent-reviews'],
-    queryFn: () => api.entities.Review.filter({ approved: true }, '-created_date', 3),
+    queryFn: () => api.entities.Review.filter({ approved: true }, '-created_at', 3),
   });
 
   return (
@@ -505,7 +505,7 @@ function RecommendedProviders({ parentCategories }) {
 
   const { data: agencies = [], isLoading } = useQuery({
     queryKey: ['recommended-providers', activeSlug],
-    queryFn: () => api.entities.Agency.filterByCategory(activeSlug, '-avg_rating', 8),
+    queryFn: () => api.entities.Company.filterByCategory(activeSlug, '-avg_rating', 8),
     enabled: !!activeSlug,
   });
 

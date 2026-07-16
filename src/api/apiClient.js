@@ -9,14 +9,23 @@ import * as neon from '@/db/neonApi';
 // ── Mock fallback (used when DATABASE_URL is not set in dev) ──────────────────
 
 const mockCategories = [
-  { id: 'cat-1', name: 'Bike Manufacturers',        slug: 'bike-manufacturers',        description: 'Bicycle and e-bike manufacturers',     icon: 'bike',    order: 1, is_parent: false },
-  { id: 'cat-2', name: 'Electrical Manufacturers',  slug: 'electrical-manufacturers',  description: 'Electrical components and systems',    icon: 'zap',     order: 2, is_parent: false },
-  { id: 'cat-3', name: 'Mechanical Manufacturers',  slug: 'mechanical-manufacturers',  description: 'Mechanical parts and assemblies',      icon: 'settings',order: 3, is_parent: false },
+  { id: 'cat-1',  name: 'Bike Manufacturers',                     slug: 'bike-manufacturers',                       description: 'Bicycle and e-bike manufacturers',                    icon: 'bike',       order: 1,  is_parent: false },
+  { id: 'cat-2',  name: 'Electrical Manufacturers',               slug: 'electrical-manufacturers',                 description: 'Electrical components and systems',                   icon: 'zap',        order: 2,  is_parent: false },
+  { id: 'cat-3',  name: 'Mechanical Manufacturers',                slug: 'mechanical-manufacturers',                 description: 'Mechanical parts and assemblies',                      icon: 'settings',   order: 3,  is_parent: false },
+  { id: 'cat-4',  name: 'Plastics & Packaging Manufacturers',      slug: 'plastics-packaging-manufacturers',         description: 'Injection molding, packaging materials, containers',  icon: 'package',    order: 4,  is_parent: false },
+  { id: 'cat-5',  name: 'Metal Fabrication & Machining',           slug: 'metal-fabrication-machining',              description: 'Sheet metal, welding, stamping, custom fabrication',  icon: 'wrench',     order: 5,  is_parent: false },
+  { id: 'cat-6',  name: 'Electronics & Semiconductor Manufacturers', slug: 'electronics-semiconductor-manufacturers', description: 'PCBs, chips, electronic assemblies',                  icon: 'cpu',        order: 6,  is_parent: false },
+  { id: 'cat-7',  name: 'Automotive Parts Manufacturers',          slug: 'automotive-parts-manufacturers',           description: 'OEM and aftermarket auto components',                 icon: 'car',        order: 7,  is_parent: false },
+  { id: 'cat-8',  name: 'Textile & Apparel Manufacturers',         slug: 'textile-apparel-manufacturers',            description: 'Fabric production and garment manufacturing',         icon: 'shirt',      order: 8,  is_parent: false },
+  { id: 'cat-9',  name: 'Furniture & Woodworking Manufacturers',   slug: 'furniture-woodworking-manufacturers',      description: 'Custom furniture, cabinetry, and woodworking',        icon: 'sofa',       order: 9,  is_parent: false },
+  { id: 'cat-10', name: 'Food & Beverage Processing',              slug: 'food-beverage-processing',                 description: 'Food processing equipment and beverage production',   icon: 'utensils',   order: 10, is_parent: false },
+  { id: 'cat-11', name: 'Medical Device Manufacturers',            slug: 'medical-device-manufacturers',             description: 'Diagnostic equipment and surgical instruments',       icon: 'stethoscope',order: 11, is_parent: false },
 ];
 
 const mockCompanies = [
   { id: 'co-1', name: 'California Precision Works', slug: 'california-precision-works', description: 'ISO 9001 certified manufacturer.', hq_state: 'california', hq_state_label: 'California', hq_city: 'San Francisco', website: '', logo_url: '', avg_rating: '4.9', review_count: 87, is_verified: true, approved: true },
   { id: 'co-2', name: 'Allied Bike Industries',     slug: 'allied-bike-industries',     description: 'Mid-size bike manufacturer.',         hq_state: 'california', hq_state_label: 'California', hq_city: 'Los Angeles',    website: '', logo_url: '', avg_rating: '4.7', review_count: 54, is_verified: true, approved: true },
+  { id: 'co-3', name: 'Massachusetts Precision Works', slug: 'massachusetts-precision-works', description: 'Precision CNC machining and tooling manufacturer serving aerospace and medical device clients.', hq_state: 'massachusetts', hq_state_label: 'Massachusetts', hq_city: 'Worcester', website: '', logo_url: '', avg_rating: '4.8', review_count: 62, is_verified: true, approved: true },
 ];
 
 function filterBy(obj, where) {
