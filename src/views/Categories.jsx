@@ -120,7 +120,7 @@ export default function Categories() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen bg-[#fffaf0]">
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <div className="bg-[#0D1B2A] relative overflow-hidden">

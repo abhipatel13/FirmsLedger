@@ -116,14 +116,14 @@ export default function SearchPage() {
   const hasQuery = !!activeQuery;
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen bg-[#fffaf0]">
       {/* Hero Search Bar */}
-      <div className="bg-[#1A2E4A] text-white">
+      <div className="bg-[#faf5e8] border-b border-[#e5e5e5]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
-          <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-2">Search Results</p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-6 tracking-tight">
+          <p className="text-[#6a6a6a] text-xs font-semibold uppercase tracking-widest mb-2">Search Results</p>
+          <h1 className="text-2xl sm:text-3xl font-medium text-[#0a0a0a] mb-6" style={{ letterSpacing: '-1px' }}>
             {hasQuery ? (
-              <>Results for <span className="text-orange-400">"{activeQuery}"</span></>
+              <>Results for &ldquo;<span className="text-[#3a3a3a]">{activeQuery}</span>&rdquo;</>
             ) : (
               'Search agencies & services'
             )}
@@ -132,7 +132,7 @@ export default function SearchPage() {
           {/* Search input */}
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6a6a6a]" />
               <input
                 ref={inputRef}
                 type="text"
@@ -140,12 +140,12 @@ export default function SearchPage() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search by name, service, location..."
-                className="w-full h-12 pl-11 pr-4 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full h-12 pl-11 pr-4 rounded-xl bg-[#f5f0e0] border border-[#e5e5e5] text-[#0a0a0a] placeholder:text-[#6a6a6a] text-sm font-medium focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] focus:border-[#0a0a0a]"
               />
               {inputValue && (
                 <button
                   onClick={() => { setInputValue(''); inputRef.current?.focus(); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6a6a6a] hover:text-[#0a0a0a]"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -153,7 +153,7 @@ export default function SearchPage() {
             </div>
             <button
               onClick={() => handleSearch()}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 rounded-xl text-sm transition-colors flex-shrink-0"
+              className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-6 rounded-xl text-sm transition-colors flex-shrink-0"
             >
               Search
             </button>
@@ -176,8 +176,8 @@ export default function SearchPage() {
                 onClick={() => setActiveCategory(prev => prev === cat.slug ? '' : cat.slug)}
                 className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
                   activeCategory === cat.slug
-                    ? 'bg-orange-500 border-orange-500 text-white'
-                    : 'bg-white border-slate-200 text-slate-600 hover:border-orange-400 hover:text-orange-600'
+                    ? 'bg-[#0a0a0a] border-[#0a0a0a] text-white'
+                    : 'bg-[#f5f0e0] border-[#e5e5e5] text-[#3a3a3a] hover:border-[#0a0a0a] hover:text-[#0a0a0a]'
                 }`}
               >
                 {cat.name}
@@ -186,7 +186,7 @@ export default function SearchPage() {
           {activeCategory && (
             <button
               onClick={handleClearCategory}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 text-slate-500 hover:border-slate-300 flex items-center gap-1"
+              className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#e5e5e5] bg-[#f5f0e0] text-[#6a6a6a] hover:border-[#0a0a0a] flex items-center gap-1"
             >
               <X className="w-3 h-3" /> Clear filter
             </button>
@@ -275,7 +275,7 @@ export default function SearchPage() {
                       <div className="flex gap-4">
                         {/* Rank + Logo */}
                         <div className="flex items-start gap-3 flex-shrink-0">
-                          <div className="w-6 h-6 rounded bg-[#1A2E4A] flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-6 h-6 rounded bg-[#f5f0e0] border border-[#e5e5e5] flex items-center justify-center flex-shrink-0 mt-0.5">
                             <span className="text-[9px] font-black text-white">{index + 1}</span>
                           </div>
                           {agency.logo_url ? (
