@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { CheckCircle, Star, MapPin, Globe, ArrowLeft, Shield } from 'lucide-react';
+import { CheckCircle, Star, MapPin, ArrowLeft, Shield } from 'lucide-react';
+import { fetchCompaniesByCategoryAndState } from '@/db/neonApi';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -12,82 +13,6 @@ function toTitleCase(slug) {
     .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
-}
-
-// ─── Mock companies (consistent with future data shape) ───────────────────────
-// Fields: name, slug, description, logo_url, website, state, city, rating, review_count, is_verified
-
-function getMockCompanies(categorySlug, stateSlug) {
-  const stateName = toTitleCase(stateSlug);
-  const categoryName = toTitleCase(categorySlug);
-
-  const templates = [
-    {
-      name: `${stateName} Precision Works`,
-      slug: `${stateSlug}-precision-works`,
-      description: `A vertically integrated ${categoryName.toLowerCase()} facility specializing in custom orders and OEM production runs. ISO 9001 certified with a 22-year track record in ${stateName}.`,
-      city: getMainCity(stateSlug, 0),
-      rating: 4.9,
-      review_count: 87,
-      is_verified: true,
-    },
-    {
-      name: `Allied ${toTitleCase(categorySlug.split('-')[0])} Industries`,
-      slug: `allied-${categorySlug.split('-')[0]}-industries`,
-      description: `Mid-size manufacturer serving regional distributors and direct B2B clients. Known for tight tolerances and on-time delivery. 300+ active enterprise accounts.`,
-      city: getMainCity(stateSlug, 1),
-      rating: 4.7,
-      review_count: 54,
-      is_verified: true,
-    },
-    {
-      name: `${stateName} Industrial Group`,
-      slug: `${stateSlug}-industrial-group`,
-      description: `Family-owned for three generations. Specializes in high-volume runs with competitive unit costs. Strong export footprint across 18 countries.`,
-      city: getMainCity(stateSlug, 2),
-      rating: 4.5,
-      review_count: 41,
-      is_verified: true,
-    },
-    {
-      name: `NextGen ${toTitleCase(categorySlug.split('-')[0])} Co.`,
-      slug: `nextgen-${categorySlug.split('-')[0]}-co`,
-      description: `Founded in 2014, bringing modern lean-manufacturing practices to ${stateName}. Fast prototyping with production ramp in as little as 6 weeks.`,
-      city: getMainCity(stateSlug, 3),
-      rating: 4.3,
-      review_count: 29,
-      is_verified: false,
-    },
-    {
-      name: `Cornerstone Mfg. ${stateName}`,
-      slug: `cornerstone-mfg-${stateSlug}`,
-      description: `Regional staple with deep distribution relationships. Focuses on consistent quality over price competition. Best for recurring long-term supply contracts.`,
-      city: getMainCity(stateSlug, 4),
-      rating: 4.1,
-      review_count: 18,
-      is_verified: true,
-    },
-  ];
-
-  return templates;
-}
-
-const CITY_MAP = {
-  california: ['San Francisco', 'Los Angeles', 'San Jose', 'San Diego', 'Fresno'],
-  texas: ['Austin', 'Houston', 'Dallas', 'Fort Worth', 'San Antonio'],
-  'new-york': ['New York City', 'Buffalo', 'Rochester', 'Albany', 'Syracuse'],
-  florida: ['Miami', 'Tampa', 'Orlando', 'Jacksonville', 'Fort Lauderdale'],
-  illinois: ['Chicago', 'Aurora', 'Naperville', 'Rockford', 'Springfield'],
-  pennsylvania: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading'],
-  ohio: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron'],
-  michigan: ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Lansing'],
-};
-
-function getMainCity(stateSlug, index) {
-  const cities = CITY_MAP[stateSlug];
-  if (cities) return cities[index % cities.length];
-  const stateName = toTitleCase(stateSlug);
-  return `${stateName} City`;
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -134,7 +59,7 @@ export default async function RankedListingPage({ params }) {
   const { category, state } = await params;
   const categoryName = toTitleCase(category);
   const stateName = toTitleCase(state);
-  const companies = getMockCompanies(category, state);
+  const companies = await fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 50);
 
   const pageTitle = `Top ${categoryName} in ${stateName}`;
 
@@ -220,6 +145,15 @@ export default async function RankedListingPage({ params }) {
                 <p className="text-[#9a9a9a] text-xs">Sorted by rating</p>
               </div>
 
+              {companies.length === 0 ? (
+                <div className="text-center py-16 text-[#6a6a6a]">
+                  <p className="text-lg font-semibold text-[#0a0a0a] mb-2">No listings yet</p>
+                  <p className="text-sm">Be the first {categoryName} in {stateName} to get listed.</p>
+                  <Link href="/ListYourCompany" className="inline-block mt-4 bg-[#0a0a0a] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#3a3a3a] transition-colors">
+                    List Your Company
+                  </Link>
+                </div>
+              ) : (
               <div className="space-y-4">
                 {companies.map((company, index) => (
                   <Link
@@ -244,10 +178,14 @@ export default async function RankedListingPage({ params }) {
                         #{index + 1}
                       </div>
 
-                      {/* Logo placeholder */}
-                      <div className="w-14 h-14 bg-[#f5f0e0] border border-[#e5e5e5] rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
-                        <span className="text-xl font-bold text-[#9a9a9a]">{company.name.charAt(0)}</span>
-                      </div>
+                      {/* Logo */}
+                      {company.logo_url ? (
+                        <img src={company.logo_url} alt={company.name} className="w-14 h-14 rounded-xl object-contain border border-[#e5e5e5] bg-white flex-shrink-0" />
+                      ) : (
+                        <div className="w-14 h-14 bg-[#f5f0e0] border border-[#e5e5e5] rounded-xl flex items-center justify-center flex-shrink-0">
+                          <span className="text-xl font-bold text-[#9a9a9a]">{company.name.charAt(0)}</span>
+                        </div>
+                      )}
 
                       {/* Details */}
                       <div className="flex-1 min-w-0">
@@ -265,21 +203,27 @@ export default async function RankedListingPage({ params }) {
 
                         <div className="flex items-center gap-3 mb-3">
                           <div className="flex items-center gap-1.5">
-                            <StarRow rating={company.rating} />
-                            <span className="text-[#3a3a3a]" style={{ fontFamily: '"IBM Plex Mono", monospace', fontWeight: 600, fontSize: 13 }}>{company.rating.toFixed(1)}</span>
+                            <StarRow rating={parseFloat(company.avg_rating) || 0} />
+                            <span className="text-[#3a3a3a]" style={{ fontFamily: '"IBM Plex Mono", monospace', fontWeight: 600, fontSize: 13 }}>{(parseFloat(company.avg_rating) || 0).toFixed(1)}</span>
                           </div>
                           <span className="text-[#e5e5e5]">·</span>
-                          <span className="text-[#6a6a6a]" style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 11 }}>{company.review_count} reviews</span>
-                          <span className="text-[#e5e5e5]">·</span>
-                          <span className="text-xs text-[#6a6a6a] flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {company.city}, {stateName}
-                          </span>
+                          <span className="text-[#6a6a6a]" style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 11 }}>{company.review_count || 0} reviews</span>
+                          {(company.hq_city || company.hq_state_label) && (
+                            <>
+                              <span className="text-[#e5e5e5]">·</span>
+                              <span className="text-xs text-[#6a6a6a] flex items-center gap-1">
+                                <MapPin className="w-3 h-3" />
+                                {[company.hq_city, company.hq_state_label].filter(Boolean).join(', ')}
+                              </span>
+                            </>
+                          )}
                         </div>
 
-                        <p className="text-[#6a6a6a] text-sm leading-relaxed line-clamp-2">
-                          {company.description}
-                        </p>
+                        {company.description && (
+                          <p className="text-[#6a6a6a] text-sm leading-relaxed line-clamp-2">
+                            {company.description}
+                          </p>
+                        )}
                       </div>
 
                       {/* CTA */}
@@ -292,6 +236,7 @@ export default async function RankedListingPage({ params }) {
                   </Link>
                 ))}
               </div>
+              )}
 
               <p className="text-center text-xs text-[#6a6a6a] mt-8 leading-relaxed max-w-md mx-auto">
                 Rankings are based on verified reviews and ratings only. Paid placements are never accepted.{' '}
@@ -309,9 +254,16 @@ export default async function RankedListingPage({ params }) {
                 <h3 className="font-semibold text-[#0a0a0a] text-sm mb-4">Other Categories in {stateName}</h3>
                 <div className="space-y-1">
                   {[
-                    { slug: 'bike-manufacturers', name: 'Bike Manufacturers', accent: '#ffb084' },
-                    { slug: 'electrical-manufacturers', name: 'Electrical Manufacturers', accent: '#e8b94a' },
-                    { slug: 'mechanical-manufacturers', name: 'Mechanical Manufacturers', accent: '#1a3a3a' },
+                    { slug: 'electrical-manufacturers', name: 'Electrical Manufacturers' },
+                    { slug: 'mechanical-manufacturers', name: 'Mechanical Manufacturers' },
+                    { slug: 'electronics-semiconductor-manufacturers', name: 'Electronics & Semiconductors' },
+                    { slug: 'metal-fabrication-machining', name: 'Metal Fabrication' },
+                    { slug: 'plastics-packaging-manufacturers', name: 'Plastics & Packaging' },
+                    { slug: 'automotive-parts-manufacturers', name: 'Automotive Parts' },
+                    { slug: 'medical-device-manufacturers', name: 'Medical Devices' },
+                    { slug: 'food-beverage-processing', name: 'Food & Beverage' },
+                    { slug: 'textile-apparel-manufacturers', name: 'Textile & Apparel' },
+                    { slug: 'furniture-woodworking-manufacturers', name: 'Furniture & Woodworking' },
                   ].map((cat) => (
                     <Link
                       key={cat.slug}

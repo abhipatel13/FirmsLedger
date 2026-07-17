@@ -16,7 +16,7 @@ const siteJsonLd = [
     url: BASE_URL,
     logo: `${BASE_URL}/icon.svg`,
     sameAs: ['https://twitter.com/firmsledger'],
-    description: 'Global directory of verified business service providers. Compare staffing, IT, marketing, accounting, legal, and 8,000+ other categories with real client reviews.',
+    description: 'The trusted US manufacturer directory. Find verified manufacturers across all 50 states — bike, electrical, mechanical, metal fabrication, electronics, automotive, and more. Ranked by real reviews.',
   },
   {
     '@context': 'https://schema.org',
@@ -25,7 +25,7 @@ const siteJsonLd = [
     url: BASE_URL,
     potentialAction: {
       '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${BASE_URL}/directory?search={search_term_string}` },
+      target: { '@type': 'EntryPoint', urlTemplate: `${BASE_URL}/Directory?search={search_term_string}` },
       'query-input': 'required name=search_term_string',
     },
   },
@@ -34,10 +34,10 @@ const siteJsonLd = [
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'FirmsLedger – Global Business & Service Provider Directory',
+    default: 'FirmsLedger – US Manufacturer Directory | Find Verified Manufacturers',
     template: '%s | FirmsLedger',
   },
-  description: "Find and compare the best companies worldwide. Verified reviews, ratings, and direct contact for staffing, healthcare, travel, IT, education, and more across every industry.",
+  description: 'Find the top US manufacturers by category and state. Verified listings, real client reviews, zero paid rankings. Browse bike, electrical, mechanical, automotive, and 11 more manufacturing categories across all 50 states.',
   openGraph: {
     type: 'website',
     locale: 'en',

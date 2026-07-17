@@ -243,10 +243,10 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
   }
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]">
-      {/* Page Header — slim, near-white surface */}
+    <div className="min-h-screen bg-[#F8FAFC]">
+      {/* Page Header */}
       <div className="bg-white border-b border-slate-200">
-        <div className="w-full px-4 sm:px-6 lg:px-10 pt-4 pb-4">
+        <div className="w-full px-4 sm:px-6 lg:px-10 pt-5 pb-5">
           <Breadcrumb
             items={
               selectedService
@@ -261,8 +261,8 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
             }
           />
 
-          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A2E4A] tracking-tight leading-tight">
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h1 className="text-2xl sm:text-[28px] font-extrabold text-[#0F172A] tracking-tight leading-snug">
               {/* Reads the same per-slug overrides as the SEO <title>. Add new
                   categories by editing CATEGORY_TITLE_OVERRIDES in src/lib/seo.js. */}
               {getOverriddenCategoryTitle(
@@ -272,13 +272,13 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
                 selectedCountry,
               ) || `Top ${selectedCategoryName} Companies`}
             </h1>
-            <span className="inline-flex items-center bg-slate-100 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded">
+            <span className="inline-flex items-center bg-[#EFF6FF] text-[#1A2E4A] text-xs font-bold px-2.5 py-1 rounded-full border border-[#BFDBFE]">
               {filteredAgencies.length} listed
             </span>
             {parentOfSelected && (
               <button
                 onClick={() => setSelectedService(parentOfSelected.slug)}
-                className="text-xs text-slate-400 hover:text-orange-600 transition-colors"
+                className="text-xs text-slate-400 hover:text-[#1A2E4A] transition-colors"
               >
                 ← {parentOfSelected.name}
               </button>
@@ -378,15 +378,15 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
               return (
               <div
                 key={agency.id}
-                className="bg-white border border-slate-100 rounded-2xl card-hover"
+                className="bg-white border border-slate-200 rounded-2xl card-hover"
               >
                 <div className="p-5 sm:p-6">
                   <div className="flex flex-col sm:flex-row gap-5">
 
                     {/* Rank + Logo */}
                     <div className="flex items-start gap-3 flex-shrink-0">
-                      <div className={`w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mt-0.5 text-[11px] font-black ${
-                        isTopThree ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-500'
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 text-[11px] font-black font-mono ${
+                        isTopThree ? 'bg-[#1A2E4A] text-white' : 'bg-slate-100 text-slate-500'
                       }`}>
                         {rank}
                       </div>

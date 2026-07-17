@@ -1,41 +1,22 @@
+export const dynamic = 'force-dynamic';
+
 import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { db } from '@/db/client';
-import { companies } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import {
+  fetchCompanyByIdAny,
+  fetchReviews,
+  fetchCompanyCategories,
+  fetchCategories,
+  fetchCompaniesByCategoryAndState,
+} from '@/db/neonApi';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
-async function getCompanyData(slug) {
-  try {
-    if (!slug) return null;
-    const [row] = await db
-      .select({
-        name: companies.name,
-        hq_city: companies.hq_city,
-        hq_state: companies.hq_state,
-        hq_state_label: companies.hq_state_label,
-        logo_url: companies.logo_url,
-        website: companies.website,
-        employee_count: companies.employee_count,
-        description: companies.description,
-        avg_rating: companies.avg_rating,
-        review_count: companies.review_count,
-      })
-      .from(companies)
-      .where(and(eq(companies.slug, slug), eq(companies.approved, true)))
-      .limit(1);
-    return row ?? null;
-  } catch {
-    return null;
-  }
-}
-
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const company = await getCompanyData(slug);
+  const company = await fetchCompanyByIdAny(slug).catch(() => null);
 
   const companyName = company?.name || 'Company Profile';
   const location = [company?.hq_city, company?.hq_state_label].filter(Boolean).join(', ');
@@ -61,7 +42,32 @@ export async function generateMetadata({ params }) {
 export default async function CompanyProfilePage({ params }) {
   const resolved = await params;
   const slug = typeof resolved?.slug === 'string' ? resolved.slug.trim() : '';
-  const company = await getCompanyData(slug);
+
+  const company = await fetchCompanyByIdAny(slug).catch(() => null);
+
+  // Fetch all related data server-side so the client component has everything
+  let reviews = [];
+  let companyCategories = [];
+  let similarCompanies = [];
+
+  if (company?.id) {
+    [reviews, companyCategories] = await Promise.all([
+      fetchReviews({ company_id: company.id, approved: true }, '-created_at', 50).catch(() => []),
+      fetchCompanyCategories({ company_id: company.id }).catch(() => []),
+    ]);
+
+    if (companyCategories.length > 0) {
+      const allCats = await fetchCategories().catch(() => []);
+      const catIds = companyCategories.map((cc) => cc.category_id);
+      companyCategories = allCats.filter((c) => catIds.includes(c.id));
+      const primarySlug = companyCategories[0]?.slug;
+      if (primarySlug) {
+        similarCompanies = await fetchCompaniesByCategoryAndState(primarySlug, null, '-avg_rating', 30)
+          .then((list) => list.filter((c) => c.id !== company.id).slice(0, 4))
+          .catch(() => []);
+      }
+    }
+  }
 
   const profileUrl = `${_BASE}/companies/${slug}`;
 
@@ -112,7 +118,13 @@ export default async function CompanyProfilePage({ params }) {
       {localBusinessJsonLd && <JsonLd data={localBusinessJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
       <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>}>
-        <AgencyProfile companySlug={slug || undefined} />
+        <AgencyProfile
+          companySlug={slug || undefined}
+          initialCompany={company}
+          initialReviews={reviews}
+          initialCategories={companyCategories}
+          initialSimilar={similarCompanies}
+        />
       </Suspense>
     </>
   );

@@ -72,7 +72,7 @@ function DonutLabel({ viewBox, total }) {
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function AgencyProfile({ companySlug }) {
+export default function AgencyProfile({ companySlug, initialCompany, initialReviews, initialCategories, initialSimilar }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -87,12 +87,13 @@ export default function AgencyProfile({ companySlug }) {
     queryFn: async () => {
       if (companySlug) {
         const bySlug = await api.entities.Company.filter({ slug: companySlug });
-        return bySlug[0];
+        return bySlug[0] ?? null;
       }
       const byId = await api.entities.Company.filter({ id: queryId });
-      return byId[0];
+      return byId[0] ?? null;
     },
-    enabled: !!identifier,
+    initialData: initialCompany ?? undefined,
+    enabled: !!identifier && !initialCompany,
   });
 
   const agencyId = agency?.id ?? null;
@@ -100,7 +101,8 @@ export default function AgencyProfile({ companySlug }) {
   const { data: reviews = [] } = useQuery({
     queryKey: ['agency-reviews', agencyId],
     queryFn: () => api.entities.Review.filter({ company_id: agencyId, approved: true }, '-created_at', 50),
-    enabled: !!agencyId,
+    initialData: initialReviews ?? undefined,
+    enabled: !!agencyId && !initialReviews,
   });
 
   const { data: categories = [] } = useQuery({
@@ -111,22 +113,23 @@ export default function AgencyProfile({ companySlug }) {
       const allCats = await api.entities.Category.list();
       return allCats.filter(c => catIds.includes(c.id));
     },
-    enabled: !!agencyId,
+    initialData: initialCategories ?? undefined,
+    enabled: !!agencyId && !initialCategories,
   });
 
-  // Similar companies — same primary category, same country, exclude self.
-  const primaryCategorySlug = categories[0]?.slug;
   const { data: similarCompanies = [] } = useQuery({
-    queryKey: ['similar-agencies', primaryCategorySlug, agency?.hq_country, agencyId],
+    queryKey: ['similar-agencies', agencyId],
     queryFn: async () => {
-      const list = await api.entities.Company.filterByCategory(primaryCategorySlug, '-avg_rating', 30);
-      return list
-        .filter(a => a.id !== agencyId)
-        .filter(a => !agency?.hq_country || a.hq_country === agency.hq_country)
-        .slice(0, 4);
+      const primarySlug = categories[0]?.slug;
+      if (!primarySlug) return [];
+      const list = await api.entities.Company.filterByCategory(primarySlug, '-avg_rating', 30);
+      return list.filter(a => a.id !== agencyId).slice(0, 4);
     },
-    enabled: !!primaryCategorySlug && !!agencyId,
+    initialData: initialSimilar ?? undefined,
+    enabled: !!agencyId && !initialSimilar,
   });
+
+  const primaryCategorySlug = categories[0]?.slug;
 
   // Canonical redirect
   React.useEffect(() => {

@@ -7,9 +7,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Barlow Condensed"', 'sans-serif'],
-        body:    ['"DM Sans"', 'sans-serif'],
-        mono:    ['"IBM Plex Mono"', 'monospace'],
+        sans:    ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        body:    ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono:    ['"IBM Plex Mono"', '"Courier New"', 'monospace'],
       },
       borderRadius: {
         lg: 'var(--radius)',

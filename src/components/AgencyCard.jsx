@@ -39,7 +39,7 @@ export default function AgencyCard({ agency, rank }) {
   const isTopThree = rank && rank <= 3;
 
   return (
-    <div className="group bg-white border border-slate-200 rounded-xl p-4 sm:p-5 hover:border-slate-300 hover:shadow-md transition-all duration-200">
+    <div className="group bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 hover:border-slate-300 hover:shadow-md transition-all duration-200">
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto_auto] gap-5 lg:gap-6">
 
         {/* LEFT — rank, logo, name, rating, description */}
@@ -47,8 +47,8 @@ export default function AgencyCard({ agency, rank }) {
           <div className="flex items-start gap-3">
             {rank ? (
               <div
-                className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-black ${
-                  isTopThree ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-500'
+                className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-black font-mono ${
+                  isTopThree ? 'bg-[#1A2E4A] text-white' : 'bg-slate-100 text-slate-500'
                 }`}
                 aria-label={`Ranked #${rank}`}
               >
