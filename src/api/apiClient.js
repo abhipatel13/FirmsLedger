@@ -9,17 +9,16 @@ import * as neon from '@/db/neonApi';
 // ── Mock fallback (used when DATABASE_URL is not set in dev) ──────────────────
 
 const mockCategories = [
-  { id: 'cat-1',  name: 'Bike Manufacturers',                     slug: 'bike-manufacturers',                       description: 'Bicycle and e-bike manufacturers',                    icon: 'bike',       order: 1,  is_parent: false },
-  { id: 'cat-2',  name: 'Electrical Manufacturers',               slug: 'electrical-manufacturers',                 description: 'Electrical components and systems',                   icon: 'zap',        order: 2,  is_parent: false },
-  { id: 'cat-3',  name: 'Mechanical Manufacturers',                slug: 'mechanical-manufacturers',                 description: 'Mechanical parts and assemblies',                      icon: 'settings',   order: 3,  is_parent: false },
-  { id: 'cat-4',  name: 'Plastics & Packaging Manufacturers',      slug: 'plastics-packaging-manufacturers',         description: 'Injection molding, packaging materials, containers',  icon: 'package',    order: 4,  is_parent: false },
-  { id: 'cat-5',  name: 'Metal Fabrication & Machining',           slug: 'metal-fabrication-machining',              description: 'Sheet metal, welding, stamping, custom fabrication',  icon: 'wrench',     order: 5,  is_parent: false },
-  { id: 'cat-6',  name: 'Electronics & Semiconductor Manufacturers', slug: 'electronics-semiconductor-manufacturers', description: 'PCBs, chips, electronic assemblies',                  icon: 'cpu',        order: 6,  is_parent: false },
-  { id: 'cat-7',  name: 'Automotive Parts Manufacturers',          slug: 'automotive-parts-manufacturers',           description: 'OEM and aftermarket auto components',                 icon: 'car',        order: 7,  is_parent: false },
-  { id: 'cat-8',  name: 'Textile & Apparel Manufacturers',         slug: 'textile-apparel-manufacturers',            description: 'Fabric production and garment manufacturing',         icon: 'shirt',      order: 8,  is_parent: false },
-  { id: 'cat-9',  name: 'Furniture & Woodworking Manufacturers',   slug: 'furniture-woodworking-manufacturers',      description: 'Custom furniture, cabinetry, and woodworking',        icon: 'sofa',       order: 9,  is_parent: false },
-  { id: 'cat-10', name: 'Food & Beverage Processing',              slug: 'food-beverage-processing',                 description: 'Food processing equipment and beverage production',   icon: 'utensils',   order: 10, is_parent: false },
-  { id: 'cat-11', name: 'Medical Device Manufacturers',            slug: 'medical-device-manufacturers',             description: 'Diagnostic equipment and surgical instruments',       icon: 'stethoscope',order: 11, is_parent: false },
+  { id: 'cat-1',  name: 'Electrical Components Manufacturers',            slug: 'electrical-components',     description: 'Wiring, switchgear, and electrical components',       icon: 'zap',        order: 1,  is_parent: false },
+  { id: 'cat-2',  name: 'Mechanical Components Manufacturers',            slug: 'mechanical-components',     description: 'CNC machining, precision parts, and assemblies',      icon: 'settings',   order: 2,  is_parent: false },
+  { id: 'cat-3',  name: 'Plastics & Packaging Manufacturers',             slug: 'plastics-packaging',        description: 'Injection molding, packaging materials, containers',  icon: 'package',    order: 3,  is_parent: false },
+  { id: 'cat-4',  name: 'Metal Fabrication & Machining',                  slug: 'metal-fabrication',         description: 'Sheet metal, welding, stamping, custom fabrication',  icon: 'wrench',     order: 4,  is_parent: false },
+  { id: 'cat-5',  name: 'Electronics & Semiconductor Manufacturers',      slug: 'electronics-semiconductor', description: 'PCBs, chips, electronic assemblies',                  icon: 'cpu',        order: 5,  is_parent: false },
+  { id: 'cat-6',  name: 'Automotive Parts Manufacturers',                 slug: 'automotive-parts',          description: 'OEM and aftermarket auto components',                 icon: 'car',        order: 6,  is_parent: false },
+  { id: 'cat-7',  name: 'Textile & Apparel Manufacturers',                slug: 'textile-apparel',           description: 'Fabric production and garment manufacturing',         icon: 'shirt',      order: 7,  is_parent: false },
+  { id: 'cat-8',  name: 'Furniture & Woodworking Manufacturers',          slug: 'furniture-woodworking',     description: 'Custom furniture, cabinetry, and woodworking',        icon: 'sofa',       order: 8,  is_parent: false },
+  { id: 'cat-9',  name: 'Food & Beverage Processing Equipment Manufacturers', slug: 'food-beverage-processing', description: 'Food processing equipment and beverage production', icon: 'utensils',   order: 9,  is_parent: false },
+  { id: 'cat-10', name: 'Medical Device Manufacturers',                   slug: 'medical-devices',           description: 'Diagnostic equipment and surgical instruments',       icon: 'stethoscope',order: 10, is_parent: false },
 ];
 
 const mockCompanies = [

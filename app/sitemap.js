@@ -327,8 +327,8 @@ export default async function sitemap({ id }) {
   yield { url: `${BASE_URL}/directory`,          lastModified: now, changeFrequency: 'daily',   priority: 0.9 };
   yield { url: `${BASE_URL}/directory/staffing`, lastModified: now, changeFrequency: 'weekly',  priority: 0.8 };
   yield { url: `${BASE_URL}/contact`,            lastModified: now, changeFrequency: 'monthly', priority: 0.5 };
-  yield { url: `${BASE_URL}/ListYourCompany`,    lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
-  yield { url: `${BASE_URL}/Compare`,            lastModified: now, changeFrequency: 'weekly',  priority: 0.6 };
+  yield { url: `${BASE_URL}/list-your-company`,  lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
+  yield { url: `${BASE_URL}/browse`,             lastModified: now, changeFrequency: 'weekly',  priority: 0.7 };
   yield { url: `${BASE_URL}/claim-listing`,      lastModified: now, changeFrequency: 'monthly', priority: 0.6 };
 
   // ── Company profile pages ───────────────────────────────────────────────────

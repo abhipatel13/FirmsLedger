@@ -6,6 +6,7 @@ import { api } from '@/api/apiClient';
 import Link from 'next/link';
 import { getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Search, ChevronRight, ArrowRight, Grid3X3, List, X } from 'lucide-react';
+import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 
 const CAT_ICONS = {
   'staffing-companies': '👥',
@@ -107,8 +108,8 @@ export default function Categories() {
     return getDirectoryUrl(cat.slug, { underStaffing: isStaffing });
   };
 
-  const totalCategories = parentCategories.length + standaloneCategories.length;
-  const totalSubcategories = categories.length - parentCategories.length - standaloneCategories.length;
+  const totalCategories = MANUFACTURING_CATEGORIES.length;
+  const totalSubcategories = MANUFACTURING_CATEGORIES.reduce((sum, c) => sum + (c.subcategories?.length ?? 0), 0);
 
   const toggleExpand = (id) => {
     setExpandedIds((prev) => {
@@ -120,7 +121,7 @@ export default function Categories() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]">
+    <div className="min-h-screen bg-white">
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <div className="bg-[#0D1B2A] relative overflow-hidden">

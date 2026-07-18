@@ -55,27 +55,27 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffaf0] py-12">
+    <div className="min-h-screen bg-white py-12">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href={createPageUrl('Home')}
-          className="inline-flex items-center gap-2 text-slate-600 hover:text-orange-600 text-sm font-medium mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-medium mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Home
         </Link>
 
         <div className="text-center mb-10">
-          <div className="w-16 h-16 rounded-2xl bg-[#f5f0e0] border border-[#e5e5e5] flex items-center justify-center mx-auto mb-4">
-            <Mail className="w-8 h-8 text-[#0a0a0a]" />
+          <div className="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-7 h-7 text-slate-700" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-medium text-[#0a0a0a]" style={{ letterSpacing: '-1px' }}>Contact us</h1>
-          <p className="text-slate-600 mt-2">
+          <h1 className="text-3xl md:text-4xl font-semibold text-slate-900" style={{ letterSpacing: '-0.025em' }}>Contact us</h1>
+          <p className="text-slate-500 mt-2">
             Have a question or feedback? Send us a message and we&apos;ll get back to you.
           </p>
         </div>
 
-        <Card className="border-[#e5e5e5] bg-[#fffaf0] shadow-sm">
+        <Card className="border-slate-200 bg-white shadow-sm">
           <CardHeader>
             <CardTitle className="text-xl text-[#0a0a0a]">Send a message</CardTitle>
             <p className="text-slate-600 text-sm">
@@ -135,7 +135,7 @@ export default function Contact() {
               <Button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold rounded-xl transition-colors"
+                className="w-full sm:w-auto bg-slate-900 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors"
               >
                 {submitting ? 'Sending...' : 'Send message'}
                 <Send className="w-4 h-4 ml-2 inline" />

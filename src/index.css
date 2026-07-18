@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -14,23 +14,23 @@
     --popover-foreground: 222 47% 11%;
     --primary: 215 50% 20%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 210 40% 96.1%;
+    --secondary: 210 20% 96%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96.1%;
+    --muted: 210 20% 96%;
     --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96.1%;
+    --accent: 210 20% 96%;
     --accent-foreground: 222 47% 11%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
     --ring: 215 50% 20%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.625rem;
+    --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -98,85 +98,101 @@
   }
 }
 
-/* ── FirmsLedger brand tokens ────────────────────────────────── */
+/* ── FirmsLedger design tokens ───────────────────────────────── */
 :root {
-  --navy: #1A2E4A;
+  /* Brand */
+  --navy:      #1A2E4A;
   --navy-dark: #0F1824;
-  --navy-mid: #243B58;
-  --gold: #F5A623;
-  --gold-light: #FDCE6E;
+  --navy-mid:  #243B58;
+  --gold:      #F5A623;
+  --gold-light:#FDCE6E;
   --gold-dark: #D48E1A;
-  --bg-light: #F8FAFC;
-  --star-color: #F5A623;
+  --star-color:#F5A623;
   --max-width: 1380px;
 
-  /* Homepage warm cream tokens (Clay.com design identity) */
-  --canvas: #fffaf0;
-  --surface-soft: #faf5e8;
-  --surface-card: #f5f0e0;
-  --surface-strong: #ebe6d6;
-  --ink: #0a0a0a;
-  --body-text: #3a3a3a;
-  --muted-text: #6a6a6a;
-  --hairline: #e5e5e5;
+  /* Surface scale — white → light gray */
+  --surface-page:   #ffffff;
+  --surface-alt:    #f8fafc;
+  --surface-subtle: #f1f5f9;
+  --surface-raised: #e2e8f0;
+
+  /* Border */
+  --border-light:  #e2e8f0;
+  --border-normal: #cbd5e1;
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-body:    #334155;
+  --text-muted:   #64748b;
+  --text-caption: #94a3b8;
 }
+
+/* ── Typography scale ────────────────────────────────────────── */
+/* All headings use Inter; tracking tightened for display sizes */
 
 /* ── Animations ──────────────────────────────────────────────── */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  50%       { transform: translateY(-8px); }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
 @keyframes dotPulse {
   0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.6; }
+  50%       { opacity: 0.6; }
 }
 
 @keyframes slideInRight {
   from { opacity: 0; transform: translateX(16px); }
-  to { opacity: 1; transform: translateX(0); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-.animate-float { animation: float 6s ease-in-out infinite; }
-.animate-float-delayed { animation: float 6s ease-in-out 2s infinite; }
-.animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
-.animate-marquee { animation: marquee 35s linear infinite; }
-.animate-dot-pulse { animation: dotPulse 3s ease-in-out infinite; }
-.animate-slide-in-right { animation: slideInRight 0.4s ease-out forwards; }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-/* ── Card hover effect ──────────────────────────────────────── */
+.animate-float           { animation: float 6s ease-in-out infinite; }
+.animate-float-delayed   { animation: float 6s ease-in-out 2s infinite; }
+.animate-fade-in-up      { animation: fadeInUp 0.4s ease-out forwards; }
+.animate-marquee         { animation: marquee 35s linear infinite; }
+.animate-dot-pulse       { animation: dotPulse 3s ease-in-out infinite; }
+.animate-slide-in-right  { animation: slideInRight 0.3s ease-out forwards; }
+.animate-slide-down      { animation: slideDown 0.2s ease-out forwards; }
+
+/* ── Card hover ──────────────────────────────────────────────── */
 .card-hover {
-  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
 }
 .card-hover:hover {
-  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 8px -2px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 8px -2px rgba(15, 23, 42, 0.04);
   transform: translateY(-1px);
+  border-color: #cbd5e1 !important;
 }
 
-/* ── Gradient button ─────────────────────────────────────────── */
+/* ── Button: gold gradient ───────────────────────────────────── */
 .btn-gradient {
   background: linear-gradient(135deg, #F5A623 0%, #FDCE6E 100%);
   color: #1A2E4A;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
 }
 .btn-gradient:hover {
   background: linear-gradient(135deg, #D48E1A 0%, #F5A623 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.35);
+  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.32);
 }
 
-/* ── Premium button sweep ────────────────────────────────────── */
+/* ── Button: premium sweep ───────────────────────────────────── */
 .btn-premium {
   position: relative;
   overflow: hidden;
@@ -185,9 +201,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.15), transparent);
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.12), transparent);
   transform: translateX(-100%);
-  transition: transform 0.5s;
+  transition: transform 0.45s;
 }
 .btn-premium:hover::after {
   transform: translateX(100%);
@@ -201,55 +217,10 @@
   background-clip: text;
 }
 
-.text-gradient-navy {
-  background: linear-gradient(135deg, #243B58, #1A2E4A);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ── Mesh gradient ───────────────────────────────────────────── */
-.mesh-gradient {
-  background:
-    radial-gradient(at 20% 20%, rgba(245, 166, 35, 0.06) 0, transparent 50%),
-    radial-gradient(at 80% 80%, rgba(26, 46, 74, 0.03) 0, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(245, 166, 35, 0.03) 0, transparent 70%);
-}
-
-/* ── Dot grid ────────────────────────────────────────────────── */
-.dot-grid {
-  background-image: radial-gradient(circle, #CBD5E1 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* ── Marquee fade edges ──────────────────────────────────────── */
-.marquee-fade {
-  -webkit-mask-image: linear-gradient(90deg, transparent, black 120px, black calc(100% - 120px), transparent);
-  mask-image: linear-gradient(90deg, transparent, black 120px, black calc(100% - 120px), transparent);
-}
-
 /* ── Star color ──────────────────────────────────────────────── */
 .star-filled {
   color: var(--star-color);
   fill: var(--star-color);
-}
-
-/* ── Glass morphism ──────────────────────────────────────────── */
-.glass {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* ── Premium input focus ─────────────────────────────────────── */
-.input-premium {
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.input-premium:focus {
-  border-color: var(--navy);
-  box-shadow: 0 0 0 3px rgba(26, 46, 74, 0.08);
-  outline: none;
 }
 
 /* ── Hero grid — responsive 2-col split ─────────────────────── */
@@ -266,30 +237,26 @@
   }
 }
 
-/* ── Nav mega-menu item ──────────────────────────────────────── */
+/* ── Mega-menu item hover ────────────────────────────────────── */
 .mega-item {
   background: transparent;
-  transition: background 0.12s;
+  transition: background 0.1s;
 }
 .mega-item:hover {
-  background: #F8FAFC !important;
+  background: #f8fafc !important;
 }
 
-/* ── State pill hover ────────────────────────────────────────── (legacy) */
-
-/* ── Category card list grid ─────────────────────────────────── */
+/* ── Category card grid ──────────────────────────────────────── */
 .category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
 }
 @media (max-width: 640px) {
-  .category-grid {
-    grid-template-columns: 1fr;
-  }
+  .category-grid { grid-template-columns: 1fr; }
 }
 
-/* ── Directory listing sidebar layout ────────────────────────── */
+/* ── Directory sidebar layout ────────────────────────────────── */
 .dir-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -297,25 +264,45 @@
   align-items: start;
 }
 @media (max-width: 1024px) {
-  .dir-layout {
-    grid-template-columns: 1fr;
-  }
+  .dir-layout { grid-template-columns: 1fr; }
 }
 
 /* ── State pill hover ────────────────────────────────────────── */
 .region-state-pill:hover {
-  background-color: var(--pill-accent-bg, #e5e5e5) !important;
-  border-color: var(--pill-accent, #999) !important;
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
 }
 
 /* ── Listing card ────────────────────────────────────────────── */
 .listing-card {
-  background: white;
-  border: 1px solid #E2E8F0;
-  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .listing-card:hover {
-  border-color: #CBD5E1;
-  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.10);
+  border-color: #94a3b8;
+  box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.08);
+}
+
+/* ── Premium input focus ─────────────────────────────────────── */
+.input-premium {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input-premium:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(26, 46, 74, 0.07);
+  outline: none;
+}
+
+/* ── Marquee fade edges ──────────────────────────────────────── */
+.marquee-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 120px, black calc(100% - 120px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 120px, black calc(100% - 120px), transparent);
+}
+
+/* ── Dot grid ────────────────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
+  background-size: 24px 24px;
 }

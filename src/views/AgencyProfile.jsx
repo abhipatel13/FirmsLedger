@@ -136,13 +136,13 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
     if (!agency?.slug || !pathname?.startsWith('/AgencyProfile')) return;
     const search = searchParams?.toString() ? `?${searchParams.toString()}` : '';
     if (search === `?id=${agency.id}` || (searchParams?.get('id') === agency.id && !searchParams.get('slug'))) {
-      router.replace(`/companies/${encodeURIComponent(agency.slug)}`);
+      router.replace(`/company/${encodeURIComponent(agency.slug)}`);
     }
   }, [agency?.id, agency?.slug, pathname, router, searchParams]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center">
+      <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-slate-300 border-t-orange-500 mb-3" />
           <p className="text-slate-500 text-sm">Loading profile...</p>
@@ -153,11 +153,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
   if (!agency) {
     return (
-      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center">
+      <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-500 mb-4">Agency not found</p>
           <Link href={getDirectoryUrl()}>
-            <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-6 h-10 rounded-md">
+            <Button className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-6 h-10 rounded-md">
               Back to Directory
             </Button>
           </Link>
@@ -194,10 +194,10 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
   ].filter(s => s.url);
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]">
+    <div className="min-h-screen bg-[#ffffff]">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="bg-[#faf5e8] border-b border-[#e5e5e5]">
+      <div className="bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
             {agency.logo_url ? (
@@ -211,7 +211,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <h1 className="break-words uppercase text-[#0a0a0a]" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 0.95, letterSpacing: '-0.5px' }}>{agency.name}</h1>
+                <h1 className="break-words uppercase text-[#0f172a]" style={{ fontWeight: 700, fontSize: 'clamp(24px, 4vw, 40px)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>{agency.name}</h1>
                 {agency.is_verified && (
                   <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2 py-1 rounded border border-green-200 mt-0.5">
                     <CheckCircle className="w-3 h-3" /> Verified
@@ -257,7 +257,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
                 <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`} className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-6 h-11 rounded-md transition-colors">
+                  <Button className="w-full sm:w-auto bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-6 h-11 rounded-md transition-colors">
                     Request Proposal <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
@@ -283,7 +283,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
       <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
         {/* ── Overview ─────────────────────────────────────────────────────── */}
-        <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg overflow-hidden">
+        <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg overflow-hidden">
           <div className="grid md:grid-cols-[1fr_220px_160px] divide-y md:divide-y-0 md:divide-x divide-slate-200">
             {/* Description + social */}
             <div className="p-6">
@@ -327,19 +327,19 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
             {/* Key metrics */}
             <div className="p-6 space-y-4">
               {agency.hourly_rate && (
-                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
                   <DollarSign className="w-4 h-4 text-orange-500" />
                   {agency.hourly_rate}
                 </div>
               )}
               {agency.team_size && (
-                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
                   <Users className="w-4 h-4 text-orange-500" />
                   {agency.team_size}
                 </div>
               )}
               {agency.founded_year && (
-                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
                   <Calendar className="w-4 h-4 text-orange-500" />
                   {agency.founded_year}
                 </div>
@@ -351,7 +351,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Services Offered (from linked categories) ────────────────────── */}
         {categories.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Services Offered</h2>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
@@ -369,7 +369,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
         )}
 
         {/* ── At a Glance ──────────────────────────────────────────────────── */}
-        <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+        <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
           <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">About {agency.name}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
@@ -382,7 +382,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
               { Icon: Star,      label: 'Rating',       value: (agency.avg_rating || 0) > 0 ? `${(+agency.avg_rating).toFixed(1)} / 5` : null },
               { Icon: MessageSquare, label: 'Reviews',  value: (agency.review_count || 0) > 0 ? String(agency.review_count) : null },
             ].filter(item => item.value).map(({ Icon, label, value, href }) => (
-              <div key={label} className="border border-[#e5e5e5] rounded-xl p-4">
+              <div key={label} className="border border-[#e2e8f0] rounded-xl p-4">
                 <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wide mb-1.5">
                   <Icon className="w-3.5 h-3.5 text-orange-500" />
                   {label}
@@ -392,7 +392,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                     {value}
                   </a>
                 ) : (
-                  <p className="font-semibold text-[#1A2E4A] break-words" style={{ fontSize: 13, fontFamily: (label === 'Rating' || label === 'Reviews') ? '"IBM Plex Mono", monospace' : 'inherit' }}>{value}</p>
+                  <p className="font-semibold text-[#1A2E4A] break-words" style={{ fontSize: 13, fontFamily: (label === 'Rating' || label === 'Reviews') ? 'inherit' : 'inherit' }}>{value}</p>
                 )}
               </div>
             ))}
@@ -404,7 +404,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Similar Companies ───────────────────────────────────────────── */}
         {similarCompanies.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-[#1A2E4A]">
                 Similar {categories[0]?.name || 'Companies'}{agency.hq_country ? ` in ${agency.hq_country}` : ''}
@@ -437,7 +437,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                       {(c.avg_rating || 0) > 0 && (
                         <span className="inline-flex items-center gap-0.5">
                           <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 11 }}>{(+c.avg_rating).toFixed(1)}</span>
+                          <span style={{ fontFamily: 'inherit', fontSize: 11 }}>{(+c.avg_rating).toFixed(1)}</span>
                         </span>
                       )}
                       {c.hq_city && <span className="truncate">{c.hq_city}</span>}
@@ -452,7 +452,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Service Focus ─────────────────────────────────────────────────── */}
         {serviceFocus.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Service Focus</h2>
             <div className="grid md:grid-cols-[220px_1fr_1fr] gap-8 items-center">
               {/* Category tabs */}
@@ -529,7 +529,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Industry Focus ────────────────────────────────────────────────── */}
         {industryFocus.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Industry Focus</h2>
             <div className="flex flex-wrap gap-2">
               {industryFocus.map((item, i) => (
@@ -545,7 +545,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Client Focus ──────────────────────────────────────────────────── */}
         {(clientFocus.small_business || clientFocus.medium_business || clientFocus.large_business) && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-6">Client Focus</h2>
             <div className="grid sm:grid-cols-3 gap-8">
               {[
@@ -572,7 +572,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Review Analytics ──────────────────────────────────────────────── */}
         {reviews.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">
               Review Analytics of {agency.name}
             </h2>
@@ -584,9 +584,9 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 { label: 'Overall Rating',  value: `${avgOverall.toFixed(1)}/5` },
                 { label: 'Recent Reviews',  value: Math.min(reviews.length, 80) },
               ].map(({ label, value }) => (
-                <div key={label} className="bg-[#ebe6d6] border border-[#e5e5e5] rounded-xl p-5">
-                  <p className="text-2xl font-medium text-[#0a0a0a]" style={{ letterSpacing: '-1px' }}>{value}</p>
-                  <p className="text-xs font-semibold text-[#6a6a6a] uppercase tracking-wider mt-1">{label}</p>
+                <div key={label} className="bg-[#e2e8f0] border border-[#e2e8f0] rounded-xl p-5">
+                  <p className="text-2xl font-medium text-[#0f172a]" style={{ letterSpacing: '-1px' }}>{value}</p>
+                  <p className="text-xs font-semibold text-[#64748b] uppercase tracking-wider mt-1">{label}</p>
                 </div>
               ))}
             </div>
@@ -624,7 +624,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 <span className="text-slate-500 text-sm">{reviews.length} Reviews</span>
               </div>
               <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Button className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
                   Write a Review
                 </Button>
               </Link>
@@ -636,11 +636,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
           </h2>
 
           {reviews.length === 0 ? (
-            <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-12 text-center">
+            <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-12 text-center">
               <Star className="w-10 h-10 text-slate-200 mx-auto mb-3" />
               <p className="text-slate-500 mb-4 text-sm">No reviews yet</p>
               <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Button className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
                   Be the first to review
                 </Button>
               </Link>
@@ -693,7 +693,7 @@ function DetailedReviewCard({ review, expanded, onToggle }) {
   ];
 
   return (
-    <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg overflow-hidden">
+    <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg overflow-hidden">
       {/* Top: reviewer */}
       <div className="flex items-start justify-between p-5 pb-3">
         <div className="flex items-center gap-3">
@@ -789,7 +789,7 @@ function FAQSection({ agency, categoryName }) {
   ];
 
   return (
-    <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+    <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
       <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Frequently Asked Questions</h2>
       <div className="divide-y divide-slate-100">
         {faqs.map((faq, i) => {
