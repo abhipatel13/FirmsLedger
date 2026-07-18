@@ -157,4 +157,9 @@ export const api = {
   hasNeon,
   // NavigationTracker calls this; no-op since we have no analytics table
   appLogs: { logUserInApp: () => Promise.resolve() },
+  // Auth stub — this is a public directory with no user auth
+  auth: {
+    me: () => Promise.resolve(null),
+    redirectToLogin: () => {},
+  },
 };
