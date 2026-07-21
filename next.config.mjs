@@ -66,8 +66,6 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      { source: '/sitemap.xml',      destination: '/api/sitemap-index' },
-      { source: '/sitemap/:id.xml',  destination: '/api/sitemap/:id' },
       { source: '/blogs',            destination: '/blog' },
       { source: '/blogs/:path*',     destination: '/blog/:path*' },
       { source: '/blog-automation',  destination: '/BlogAutomation' },
