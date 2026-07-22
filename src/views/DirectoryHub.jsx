@@ -654,13 +654,13 @@ export default function DirectoryHub() {
 
           {/* Display headline — Barlow Condensed 800 */}
           <h1 style={{
-            fontSize: 'clamp(52px, 7vw, 84px)',
+            fontSize: 'clamp(64px, 9vw, 116px)',
             fontWeight: 800,
-            lineHeight: 0.92,
-            letterSpacing: '-1px',
+            lineHeight: 0.9,
+            letterSpacing: '-1.5px',
             color: '#0a0a0a',
             marginBottom: 24,
-            maxWidth: 820,
+            maxWidth: 980,
             marginLeft: 'auto',
             marginRight: 'auto',
             fontFamily: '"Barlow Condensed", sans-serif',
