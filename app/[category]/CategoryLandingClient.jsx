@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 
 const US_STATES_BY_REGION = {
   Northeast: [
@@ -72,14 +73,14 @@ const REGION_ACCENTS = {
   West:      '#6b9080',
 };
 
+const ALL_STATES_FLAT = Object.values(US_STATES_BY_REGION)
+  .flat()
+  .sort((a, b) => a.name.localeCompare(b.name));
+
 export default function CategoryLandingClient({ cat, slug, otherCategories }) {
   const [selectedSubcat, setSelectedSubcat] = useState(null);
-
-  function stateHref(stateSlug) {
-    return selectedSubcat
-      ? `/${slug}/${selectedSubcat}/${stateSlug}`
-      : `/${slug}/${stateSlug}`;
-  }
+  const [pickedCategory, setPickedCategory] = useState(slug);
+  const [pickedState, setPickedState] = useState(ALL_STATES_FLAT[0].slug);
 
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
@@ -162,50 +163,75 @@ export default function CategoryLandingClient({ cat, slug, otherCategories }) {
           )}
         </div>
 
-        {/* ── State grid ── */}
-        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 40 }}>
-          Browse by state — 50 US states covered
+        {/* ── State picker ── */}
+        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 16 }}>
+          Browse by category &amp; state
         </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+          <select
+            value={pickedCategory}
+            onChange={(e) => setPickedCategory(e.target.value)}
+            style={{
+              fontSize: 14,
+              fontWeight: 500,
+              padding: '11px 14px',
+              borderRadius: 10,
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#ffffff',
+              color: '#0f172a',
+              minWidth: 240,
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}
+          >
+            {MANUFACTURING_CATEGORIES.map((c) => (
+              <option key={c.slug} value={c.slug}>{c.name}</option>
+            ))}
+          </select>
 
-        {Object.entries(US_STATES_BY_REGION).map(([region, states]) => (
-          <div key={region} style={{ marginBottom: 48 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: REGION_ACCENTS[region] }} />
-                {region}
-              </span>
-              <div style={{ flex: 1, height: 1, backgroundColor: '#f1f5f9' }} />
-            </div>
+          <select
+            value={pickedState}
+            onChange={(e) => setPickedState(e.target.value)}
+            style={{
+              fontSize: 14,
+              fontWeight: 500,
+              padding: '11px 14px',
+              borderRadius: 10,
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#ffffff',
+              color: '#0f172a',
+              minWidth: 200,
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}
+          >
+            {ALL_STATES_FLAT.map((s) => (
+              <option key={s.slug} value={s.slug}>{s.name}</option>
+            ))}
+          </select>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {states.map((state) => (
-                <Link
-                  key={state.slug}
-                  href={stateHref(state.slug)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 5,
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: 9999,
-                    padding: '7px 14px',
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: '#334155',
-                    textDecoration: 'none',
-                    transition: 'all 0.12s',
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.color = '#0f172a'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#334155'; }}
-                >
-                  {state.name}
-                  <ArrowRight size={11} style={{ color: '#cbd5e1' }} />
-                </Link>
-              ))}
-            </div>
-          </div>
-        ))}
+          <Link
+            href={
+              selectedSubcat && pickedCategory === slug
+                ? `/${pickedCategory}/${selectedSubcat}/${pickedState}`
+                : `/${pickedCategory}/${pickedState}`
+            }
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              backgroundColor: '#0f172a',
+              color: '#ffffff',
+              borderRadius: 10,
+              padding: '11px 20px',
+              fontSize: 14,
+              fontWeight: 600,
+              textDecoration: 'none',
+            }}
+          >
+            View Companies <ArrowRight size={14} />
+          </Link>
+        </div>
       </div>
 
       {/* ── Other categories ── */}
