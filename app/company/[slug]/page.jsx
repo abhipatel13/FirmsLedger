@@ -14,6 +14,17 @@ import {
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
+// Internal-only columns that must never reach the client bundle (RSC props
+// passed to a 'use client' component get serialized and shipped to the browser).
+const INTERNAL_FIELDS = ['data_source', 'source_url', 'owner_user_id'];
+
+function stripInternalFields(row) {
+  if (!row) return row;
+  const clean = { ...row };
+  for (const field of INTERNAL_FIELDS) delete clean[field];
+  return clean;
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const company = await fetchCompanyByIdAny(slug).catch(() => null);
@@ -118,10 +129,10 @@ export default async function CompanyProfilePage({ params }) {
       <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>}>
         <AgencyProfile
           companySlug={slug || undefined}
-          initialCompany={company}
+          initialCompany={stripInternalFields(company)}
           initialReviews={reviews}
           initialCategories={companyCategories}
-          initialSimilar={similarCompanies}
+          initialSimilar={similarCompanies.map(stripInternalFields)}
         />
       </Suspense>
     </>
