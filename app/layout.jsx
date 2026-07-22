@@ -1,7 +1,15 @@
+import { Inter } from 'next/font/google';
 import { Providers } from './providers';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import JsonLd from '@/components/JsonLd';
 import '@/index.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -82,12 +90,9 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        {/* Google Fonts — preconnect for faster font loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Preconnect to third-party origins used for images and analytics */}
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
