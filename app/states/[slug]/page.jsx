@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
+import CategoryCard from '@/components/CategoryCard';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { ArrowRight, Package, Wrench, Cpu, Car, Shirt, Sofa, UtensilsCrossed, Stethoscope } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -60,16 +61,16 @@ const ALL_STATES = [
 ];
 
 const CATEGORIES = [
-  { slug: 'electrical-components',     name: 'Electrical Components Manufacturers',          shortDesc: 'Wiring, switchgear & components',          dot: '#eab308' },
-  { slug: 'mechanical-components',     name: 'Mechanical Components Manufacturers',          shortDesc: 'CNC machining & precision parts',           dot: '#64748b' },
-  { slug: 'plastics-packaging',        name: 'Plastics & Packaging Manufacturers',           shortDesc: 'Injection molding & packaging',             dot: '#22c55e' },
-  { slug: 'metal-fabrication',         name: 'Metal Fabrication & Machining',                shortDesc: 'Sheet metal, welding & stamping',           dot: '#3b82f6' },
-  { slug: 'electronics-semiconductor', name: 'Electronics & Semiconductor Manufacturers',    shortDesc: 'PCBs, chips & assemblies',                  dot: '#6366f1' },
-  { slug: 'automotive-parts',          name: 'Automotive Parts Manufacturers',               shortDesc: 'OEM & aftermarket components',              dot: '#ef4444' },
-  { slug: 'textile-apparel',           name: 'Textile & Apparel Manufacturers',              shortDesc: 'Fabric & garment manufacturing',            dot: '#ec4899' },
-  { slug: 'furniture-woodworking',     name: 'Furniture & Woodworking Manufacturers',        shortDesc: 'Custom furniture & cabinetry',              dot: '#f59e0b' },
-  { slug: 'food-beverage-processing',  name: 'Food & Beverage Processing Equipment Manufacturers', shortDesc: 'Processing & packaging lines',         dot: '#84cc16' },
-  { slug: 'medical-devices',           name: 'Medical Device Manufacturers',                 shortDesc: 'Diagnostic & surgical equipment',           dot: '#14b8a6' },
+  { slug: 'electrical-components',     name: 'Electrical Components Manufacturers',          shortDesc: 'Wiring, switchgear & components',          dot: '#eab308', icon: '⚡' },
+  { slug: 'mechanical-components',     name: 'Mechanical Components Manufacturers',          shortDesc: 'CNC machining & precision parts',           dot: '#64748b', icon: '⚙️' },
+  { slug: 'plastics-packaging',        name: 'Plastics & Packaging Manufacturers',           shortDesc: 'Injection molding & packaging',             dot: '#22c55e', icon: '📦' },
+  { slug: 'metal-fabrication',         name: 'Metal Fabrication & Machining',                shortDesc: 'Sheet metal, welding & stamping',           dot: '#3b82f6', icon: '🔧' },
+  { slug: 'electronics-semiconductor', name: 'Electronics & Semiconductor Manufacturers',    shortDesc: 'PCBs, chips & assemblies',                  dot: '#6366f1', icon: '🖥️' },
+  { slug: 'automotive-parts',          name: 'Automotive Parts Manufacturers',               shortDesc: 'OEM & aftermarket components',              dot: '#ef4444', icon: '🚗' },
+  { slug: 'textile-apparel',           name: 'Textile & Apparel Manufacturers',              shortDesc: 'Fabric & garment manufacturing',            dot: '#ec4899', icon: '🧵' },
+  { slug: 'furniture-woodworking',     name: 'Furniture & Woodworking Manufacturers',        shortDesc: 'Custom furniture & cabinetry',              dot: '#f59e0b', icon: '🪵' },
+  { slug: 'food-beverage-processing',  name: 'Food & Beverage Processing Equipment Manufacturers', shortDesc: 'Processing & packaging lines',         dot: '#84cc16', icon: '🍽️' },
+  { slug: 'medical-devices',           name: 'Medical Device Manufacturers',                 shortDesc: 'Diagnostic & surgical equipment',           dot: '#14b8a6', icon: '🩺' },
 ];
 
 const STATE_MAP = Object.fromEntries(ALL_STATES.map((s) => [s.slug, s]));
@@ -115,7 +116,6 @@ export default async function StateHubPage({ params }) {
   return (
     <>
       <style>{`
-        .state-cat-card:hover { border-color: #94a3b8 !important; box-shadow: 0 4px 16px -4px rgba(15,23,42,0.07) !important; }
         .state-pill:hover { border-color: #94a3b8 !important; color: #0f172a !important; }
       `}</style>
       <JsonLd data={jsonLd} />
@@ -173,34 +173,16 @@ export default async function StateHubPage({ params }) {
             Choose a manufacturing category
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
-            {CATEGORIES.map((cat) => (
-              <Link
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {CATEGORIES.map((cat, idx) => (
+              <CategoryCard
                 key={cat.slug}
                 href={`/${cat.slug}/${slug}`}
-                className="state-cat-card"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 12,
-                  padding: '20px 22px',
-                  textDecoration: 'none',
-                  transition: 'border-color 0.15s, box-shadow 0.15s',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: cat.dot, flexShrink: 0, marginTop: 6 }} />
-                  <ArrowRight style={{ width: 15, height: 15, color: '#cbd5e1', flexShrink: 0 }} />
-                </div>
-                <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', margin: '0 0 4px', lineHeight: 1.35 }}>
-                  {cat.name}
-                </h3>
-                <p style={{ fontSize: 12, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  {cat.shortDesc} in {state.name}
-                </p>
-              </Link>
+                icon={cat.icon}
+                name={cat.name}
+                description={`${cat.shortDesc} in ${state.name}`}
+                colorIndex={idx}
+              />
             ))}
           </div>
         </div>
