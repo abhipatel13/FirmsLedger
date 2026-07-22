@@ -9,6 +9,16 @@ import { Search, ChevronRight, ArrowRight, Grid3X3, List, X } from 'lucide-react
 import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 
 const CAT_ICONS = {
+  'electrical-components':     '⚡',
+  'mechanical-components':     '⚙️',
+  'plastics-packaging':        '📦',
+  'metal-fabrication':         '🔧',
+  'electronics-semiconductor': '🖥️',
+  'automotive-parts':          '🚗',
+  'textile-apparel':           '🧵',
+  'furniture-woodworking':     '🪵',
+  'food-beverage-processing':  '🍽️',
+  'medical-devices':           '🩺',
   'staffing-companies': '👥',
   'it-staffing': '💻',
   'healthcare-staffing': '🏥',
@@ -233,7 +243,7 @@ export default function Categories() {
               {filteredParents.length > 0 && (
                 <div className={
                   viewMode === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-12'
                     : 'flex flex-col gap-4 mb-12'
                 }>
                   {filteredParents.map((parent, idx) => {
@@ -306,14 +316,14 @@ export default function Categories() {
                     return (
                       <div key={parent.id} className={`bg-white border border-slate-200 rounded-2xl overflow-hidden ${color.hoverBorder} hover:shadow-md transition-all group`}>
                         {/* Card header with colored accent */}
-                        <div className={`${color.bg} px-6 py-5 border-b ${color.border}`}>
-                          <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-xl bg-white/80 border border-white flex items-center justify-center text-xl shadow-sm">
+                        <div className={`${color.bg} px-7 py-6 border-b ${color.border}`}>
+                          <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-xl bg-white/80 border border-white flex items-center justify-center text-2xl shadow-sm">
                               {icon}
                             </div>
                             <div className="min-w-0 flex-1">
                               <Link href={parentHref}>
-                                <h2 className="font-bold text-[#0D1B2A] text-base hover:text-orange-600 transition-colors leading-snug">
+                                <h2 className="font-bold text-[#0D1B2A] text-lg hover:text-orange-600 transition-colors leading-snug">
                                   {parent.name}
                                 </h2>
                               </Link>
@@ -397,9 +407,9 @@ export default function Categories() {
                         <Link
                           key={cat.id}
                           href={getDirectoryUrl(cat.slug)}
-                          className={`flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3.5 hover:shadow-sm ${color.hoverBorder} transition-all group`}
+                          className={`flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:shadow-sm ${color.hoverBorder} transition-all group`}
                         >
-                          <div className={`w-9 h-9 rounded-lg ${color.bg} ${color.border} border flex items-center justify-center text-base flex-shrink-0`}>
+                          <div className={`w-12 h-12 rounded-lg ${color.bg} ${color.border} border flex items-center justify-center text-xl flex-shrink-0`}>
                             {icon}
                           </div>
                           <div className="min-w-0 flex-1">
