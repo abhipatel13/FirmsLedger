@@ -13,7 +13,9 @@ const nextConfig = {
     return [
       // ── PascalCase → lowercase (SEO canonical cleanup) ─────────────────
       { source: '/Home',            destination: '/',                  permanent: true },
-      { source: '/Contact',         destination: '/contact',           permanent: true },
+      // NOTE: no '/Contact' -> '/contact' rule here. Next.js redirect source
+      // matching is case-insensitive, so a same-word rule like that matches
+      // '/contact' itself and creates an infinite 308 redirect loop.
       { source: '/ListYourCompany', destination: '/list-your-company', permanent: true },
       { source: '/Categories',      destination: '/browse',            permanent: true },
 

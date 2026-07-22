@@ -397,8 +397,8 @@ export default function Categories() {
                   )}
                   <div className={
                     viewMode === 'grid'
-                      ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3'
-                      : 'grid grid-cols-1 sm:grid-cols-2 gap-3'
+                      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'
+                      : 'grid grid-cols-1 sm:grid-cols-2 gap-5'
                   }>
                     {filteredStandalone.map((cat, idx) => {
                       const icon = CAT_ICONS[cat.slug] || '🏷️';
@@ -407,20 +407,20 @@ export default function Categories() {
                         <Link
                           key={cat.id}
                           href={getDirectoryUrl(cat.slug)}
-                          className={`flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:shadow-sm ${color.hoverBorder} transition-all group`}
+                          className={`flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-5 hover:shadow-sm ${color.hoverBorder} transition-all group`}
                         >
-                          <div className={`w-12 h-12 rounded-lg ${color.bg} ${color.border} border flex items-center justify-center text-xl flex-shrink-0`}>
+                          <div className={`w-16 h-16 rounded-xl ${color.bg} ${color.border} border flex items-center justify-center text-3xl flex-shrink-0`}>
                             {icon}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-semibold text-[#0D1B2A] group-hover:text-orange-600 transition-colors truncate">
+                            <p className="text-base font-bold text-[#0D1B2A] group-hover:text-orange-600 transition-colors">
                               {cat.name}
                             </p>
                             {cat.description && (
-                              <p className="text-[11px] text-slate-400 truncate">{cat.description}</p>
+                              <p className="text-sm text-slate-500 mt-0.5">{cat.description}</p>
                             )}
                           </div>
-                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-orange-400 flex-shrink-0 transition-colors" />
+                          <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-orange-400 flex-shrink-0 transition-colors" />
                         </Link>
                       );
                     })}

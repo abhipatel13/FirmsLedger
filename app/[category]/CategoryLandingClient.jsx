@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 
 const US_STATES_BY_REGION = {
   Northeast: [
@@ -66,20 +65,12 @@ const US_STATES_BY_REGION = {
   ],
 };
 
-const REGION_ACCENTS = {
-  Northeast: '#e8b94a',
-  Midwest:   '#ffb084',
-  South:     '#1a3a3a',
-  West:      '#6b9080',
-};
-
 const ALL_STATES_FLAT = Object.values(US_STATES_BY_REGION)
   .flat()
   .sort((a, b) => a.name.localeCompare(b.name));
 
 export default function CategoryLandingClient({ cat, slug, otherCategories }) {
   const [selectedSubcat, setSelectedSubcat] = useState(null);
-  const [pickedCategory, setPickedCategory] = useState(slug);
   const [pickedState, setPickedState] = useState(ALL_STATES_FLAT[0].slug);
 
   return (
@@ -165,30 +156,9 @@ export default function CategoryLandingClient({ cat, slug, otherCategories }) {
 
         {/* ── State picker ── */}
         <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 16 }}>
-          Browse by category &amp; state
+          Browse by state
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
-          <select
-            value={pickedCategory}
-            onChange={(e) => setPickedCategory(e.target.value)}
-            style={{
-              fontSize: 14,
-              fontWeight: 500,
-              padding: '11px 14px',
-              borderRadius: 10,
-              border: '1px solid #e2e8f0',
-              backgroundColor: '#ffffff',
-              color: '#0f172a',
-              minWidth: 240,
-              fontFamily: 'inherit',
-              cursor: 'pointer',
-            }}
-          >
-            {MANUFACTURING_CATEGORIES.map((c) => (
-              <option key={c.slug} value={c.slug}>{c.name}</option>
-            ))}
-          </select>
-
           <select
             value={pickedState}
             onChange={(e) => setPickedState(e.target.value)}
@@ -200,7 +170,7 @@ export default function CategoryLandingClient({ cat, slug, otherCategories }) {
               border: '1px solid #e2e8f0',
               backgroundColor: '#ffffff',
               color: '#0f172a',
-              minWidth: 200,
+              minWidth: 220,
               fontFamily: 'inherit',
               cursor: 'pointer',
             }}
@@ -212,9 +182,9 @@ export default function CategoryLandingClient({ cat, slug, otherCategories }) {
 
           <Link
             href={
-              selectedSubcat && pickedCategory === slug
-                ? `/${pickedCategory}/${selectedSubcat}/${pickedState}`
-                : `/${pickedCategory}/${pickedState}`
+              selectedSubcat
+                ? `/${slug}/${selectedSubcat}/${pickedState}`
+                : `/${slug}/${pickedState}`
             }
             style={{
               display: 'inline-flex',

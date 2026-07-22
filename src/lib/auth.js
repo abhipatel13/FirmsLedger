@@ -1,55 +1,57 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from './supabase';
 
 export function useSession() {
-  const [session, setSession] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase) { setLoading(false); return; }
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (mounted) {
-        setSession(data?.session || null);
-        setLoading(false);
-      }
-    });
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      if (mounted) setSession(s);
-    });
+    fetch('/api/auth/session')
+      .then((res) => res.json())
+      .then((data) => {
+        if (mounted) {
+          setUser(data?.user || null);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) setLoading(false);
+      });
 
     return () => {
       mounted = false;
-      sub?.subscription?.unsubscribe?.();
     };
   }, []);
 
-  return { session, user: session?.user || null, loading };
+  return { session: user, user, loading };
+}
+
+async function postJson(url, body) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || 'Something went wrong. Please try again.');
+  }
+  return data;
 }
 
 export async function signUpWithPassword({ email, password, fullName }) {
-  if (!supabase) throw new Error('Auth unavailable');
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { full_name: fullName || '' } },
-  });
-  if (error) throw error;
-  return data;
+  const data = await postJson('/api/auth/signup', { email, password, fullName });
+  return { user: data.user, session: data.user };
 }
 
 export async function signInWithPassword({ email, password }) {
-  if (!supabase) throw new Error('Auth unavailable');
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  return data;
+  const data = await postJson('/api/auth/login', { email, password });
+  return { user: data.user, session: data.user };
 }
 
 export async function signOut() {
-  if (!supabase) return;
-  await supabase.auth.signOut();
+  await fetch('/api/auth/logout', { method: 'POST' });
 }

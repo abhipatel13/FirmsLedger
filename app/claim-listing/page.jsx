@@ -64,7 +64,7 @@ export default function ClaimListingPage() {
     setForm((f) => ({
       ...f,
       email: f.email || user.email || '',
-      name: f.name || user.user_metadata?.full_name || '',
+      name: f.name || user.full_name || '',
     }));
   }, [user]);
 
@@ -157,7 +157,7 @@ export default function ClaimListingPage() {
               <Crown className="w-3.5 h-3.5 text-[#F5A623]" /> Claim & upgrade your listing
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
-              {agency ? `Claim ${agency.name}` : 'Claim Your Staffing Agency Listing'}
+              {agency ? `Claim ${agency.name}` : 'Claim Your Company Listing'}
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl">
               Take ownership of your profile, get verified, and unlock premium features to attract more clients.
@@ -233,7 +233,7 @@ export default function ClaimListingPage() {
                 {!agency && (
                   <div>
                     <label className="block text-xs font-medium text-slate-600 mb-1.5">Company Name <span className="text-orange-500">*</span></label>
-                    <input className={INPUT} required placeholder="Your Staffing Agency" value={form.company_name} onChange={(e) => set('company_name', e.target.value)} />
+                    <input className={INPUT} required placeholder="Your Company Name" value={form.company_name} onChange={(e) => set('company_name', e.target.value)} />
                   </div>
                 )}
 

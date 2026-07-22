@@ -30,19 +30,20 @@ export default function Contact() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY,
           name: formData.name.trim(),
           email: formData.email.trim(),
-          subject: (formData.subject || 'Contact form').trim(),
+          subject: `[FirmsLedger Contact] ${(formData.subject || 'Contact form').trim()}`,
           message: formData.message.trim(),
         }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        toast.error(data.error || 'Failed to send message. Please try again.');
+      if (!res.ok || !data.success) {
+        toast.error(data.message || 'Failed to send message. Please try again.');
         return;
       }
       toast.success('Message sent! We\'ll get back to you soon.');

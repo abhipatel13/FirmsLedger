@@ -252,6 +252,24 @@ export const state_category_rankings = pgTable(
   (t) => [unique().on(t.state_id, t.category_id)],
 );
 
+// ── Users & Sessions (public account auth) ─────────────────────────────────────
+
+export const users = pgTable('users', {
+  id:            uuid('id').primaryKey().defaultRandom(),
+  email:         text('email').notNull().unique(),
+  password_hash: text('password_hash').notNull(),
+  full_name:     text('full_name'),
+  created_at:    timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const sessions = pgTable('sessions', {
+  id:         uuid('id').primaryKey().defaultRandom(),
+  user_id:    uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token_hash: text('token_hash').notNull().unique(),
+  expires_at: timestamp('expires_at', { withTimezone: true }).notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type State                   = typeof states.$inferSelect;
@@ -268,3 +286,5 @@ export type MarketplaceRfq          = typeof marketplace_rfqs.$inferSelect;
 export type MarketplaceSupplier     = typeof marketplace_suppliers.$inferSelect;
 export type MarketplaceResponse     = typeof marketplace_responses.$inferSelect;
 export type StateCategoryRanking    = typeof state_category_rankings.$inferSelect;
+export type User                    = typeof users.$inferSelect;
+export type Session                 = typeof sessions.$inferSelect;
