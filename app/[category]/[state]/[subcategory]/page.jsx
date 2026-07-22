@@ -6,6 +6,10 @@ import { CheckCircle, Star, MapPin, Shield, ArrowRight } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 
+export const dynamic = 'force-dynamic';
+
+const PAGE_SIZE = 10;
+
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 const VALID_CATEGORIES = new Set(CATEGORY_SLUGS);
@@ -54,8 +58,9 @@ function StarRow({ rating }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function SubcategoryStatePage({ params }) {
+export default async function SubcategoryStatePage({ params, searchParams }) {
   const { category, state: subcategory, subcategory: state } = await params;
+  const { page: pageParam } = await searchParams;
   const cat = CATEGORY_MAP[category];
   if (!cat || !VALID_CATEGORIES.has(category)) notFound();
 
@@ -66,7 +71,13 @@ export default async function SubcategoryStatePage({ params }) {
   const pageTitle = `${sub.name} Manufacturers in ${stateName}`;
 
   // Fetch companies — pass both category and subcategory for filtering
-  const companies = await fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 50);
+  const companies = await fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500);
+
+  const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
+  const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+  const pageCompanies = companies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const rankOffset     = (currentPage - 1) * PAGE_SIZE;
+  const basePath       = `/${category}/${subcategory}/${state}`;
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -138,7 +149,9 @@ export default async function SubcategoryStatePage({ params }) {
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {companies.map((company, index) => (
+                  {pageCompanies.map((company, i) => {
+                  const index = rankOffset + i;
+                  return (
                     <Link
                       key={company.slug}
                       href={`/company/${company.slug}`}
@@ -189,8 +202,58 @@ export default async function SubcategoryStatePage({ params }) {
                         </div>
                       </div>
                     </Link>
-                  ))}
+                  );})}
                 </div>
+              )}
+
+              {totalPages > 1 && (
+                <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
+                  <Link
+                    href={`${basePath}${currentPage - 1 > 1 ? `?page=${currentPage - 1}` : ''}`}
+                    aria-disabled={currentPage === 1}
+                    style={{
+                      pointerEvents: currentPage === 1 ? 'none' : 'auto',
+                      opacity: currentPage === 1 ? 0.4 : 1,
+                      fontSize: 13, fontWeight: 500, color: '#475569',
+                      padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
+                      textDecoration: 'none', backgroundColor: '#ffffff',
+                    }}
+                  >
+                    ← Prev
+                  </Link>
+
+                  {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
+                    <Link
+                      key={n}
+                      href={`${basePath}${n > 1 ? `?page=${n}` : ''}`}
+                      style={{
+                        fontSize: 13, fontWeight: 600,
+                        minWidth: 34, textAlign: 'center',
+                        padding: '8px 10px', borderRadius: 8,
+                        textDecoration: 'none',
+                        color: n === currentPage ? '#ffffff' : '#475569',
+                        backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
+                        border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
+                      }}
+                    >
+                      {n}
+                    </Link>
+                  ))}
+
+                  <Link
+                    href={`${basePath}?page=${currentPage + 1}`}
+                    aria-disabled={currentPage === totalPages}
+                    style={{
+                      pointerEvents: currentPage === totalPages ? 'none' : 'auto',
+                      opacity: currentPage === totalPages ? 0.4 : 1,
+                      fontSize: 13, fontWeight: 500, color: '#475569',
+                      padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
+                      textDecoration: 'none', backgroundColor: '#ffffff',
+                    }}
+                  >
+                    Next →
+                  </Link>
+                </nav>
               )}
             </div>
 
