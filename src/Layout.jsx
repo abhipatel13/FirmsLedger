@@ -3,20 +3,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, ArrowRight, Search } from 'lucide-react';
+import {
+  Menu, X, ChevronDown, ArrowRight, Search,
+  Zap, Cog, Package, Wrench, Cpu, Car, Shirt, Sofa, UtensilsCrossed, Stethoscope,
+} from 'lucide-react';
 
-/* ── Manufacturing categories ──────────────────────────────────── */
+/* ── Manufacturing categories ──────────────────────────────────────
+   Icon + muted accent palette kept in sync with the category cards on
+   the homepage (src/views/DirectoryHub.jsx) for a consistent icon
+   system across the site — no decorative colored dots. */
 const NAV_CATEGORIES = [
-  { slug: 'electrical-components',     name: 'Electrical Components',          desc: 'Wiring, switchgear & components',      dot: '#eab308' },
-  { slug: 'mechanical-components',     name: 'Mechanical Components',          desc: 'CNC machining & precision parts',       dot: '#64748b' },
-  { slug: 'plastics-packaging',        name: 'Plastics & Packaging',           desc: 'Injection molding & packaging',         dot: '#22c55e' },
-  { slug: 'metal-fabrication',         name: 'Metal Fabrication',              desc: 'Sheet metal, welding & stamping',       dot: '#3b82f6' },
-  { slug: 'electronics-semiconductor', name: 'Electronics & Semiconductor',    desc: 'PCBs, chips & assemblies',              dot: '#6366f1' },
-  { slug: 'automotive-parts',          name: 'Automotive Parts',               desc: 'OEM & aftermarket components',          dot: '#ef4444' },
-  { slug: 'textile-apparel',           name: 'Textile & Apparel',              desc: 'Fabric & garment manufacturing',        dot: '#ec4899' },
-  { slug: 'furniture-woodworking',     name: 'Furniture & Woodworking',        desc: 'Custom furniture & cabinetry',          dot: '#a16207' },
-  { slug: 'food-beverage-processing',  name: 'Food & Beverage Processing',     desc: 'Processing & packaging lines',          dot: '#f59e0b' },
-  { slug: 'medical-devices',           name: 'Medical Devices',                desc: 'Diagnostic & surgical equipment',       dot: '#14b8a6' },
+  { slug: 'electrical-components',     name: 'Electrical Components',          desc: 'Wiring, switchgear & components',      icon: Zap,            bg: '#fef9ee', border: '#fde68a', color: '#92400e' },
+  { slug: 'mechanical-components',     name: 'Mechanical Components',          desc: 'CNC machining & precision parts',       icon: Cog,            bg: '#f8fafc', border: '#e2e8f0', color: '#1e3a5f' },
+  { slug: 'plastics-packaging',        name: 'Plastics & Packaging',           desc: 'Injection molding & packaging',         icon: Package,        bg: '#f0fdf4', border: '#bbf7d0', color: '#166534' },
+  { slug: 'metal-fabrication',         name: 'Metal Fabrication',              desc: 'Sheet metal, welding & stamping',       icon: Wrench,         bg: '#eff6ff', border: '#bfdbfe', color: '#1e3a8a' },
+  { slug: 'electronics-semiconductor', name: 'Electronics & Semiconductor',    desc: 'PCBs, chips & assemblies',              icon: Cpu,            bg: '#f5f3ff', border: '#ddd6fe', color: '#4c1d95' },
+  { slug: 'automotive-parts',          name: 'Automotive Parts',               desc: 'OEM & aftermarket components',          icon: Car,            bg: '#fff1f2', border: '#fecdd3', color: '#9f1239' },
+  { slug: 'textile-apparel',           name: 'Textile & Apparel',              desc: 'Fabric & garment manufacturing',        icon: Shirt,          bg: '#fdf2f8', border: '#f9a8d4', color: '#831843' },
+  { slug: 'furniture-woodworking',     name: 'Furniture & Woodworking',        desc: 'Custom furniture & cabinetry',          icon: Sofa,           bg: '#fffbeb', border: '#fde68a', color: '#78350f' },
+  { slug: 'food-beverage-processing',  name: 'Food & Beverage Processing',     desc: 'Processing & packaging lines',          icon: UtensilsCrossed, bg: '#fff7ed', border: '#fed7aa', color: '#7c2d12' },
+  { slug: 'medical-devices',           name: 'Medical Devices',                desc: 'Diagnostic & surgical equipment',       icon: Stethoscope,    bg: '#f0fdfa', border: '#99f6e4', color: '#134e4a' },
 ];
 
 /* ── Footer data ───────────────────────────────────────────────── */
@@ -52,19 +58,6 @@ const FOOTER_COMPANY = [
   // { href: '/admin',   label: 'Admin Login' },
   { href: '/terms',   label: 'Terms of Service' },
   { href: '/privacy', label: 'Privacy Policy' },
-];
-
-const SOCIAL_LINKS = [
-  {
-    label: 'X / Twitter',
-    href: 'https://twitter.com/firmsledger',
-    path: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.738l7.73-8.835L1.254 2.25H8.08l4.259 5.632L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z',
-  },
-  {
-    label: 'LinkedIn',
-    href: 'https://linkedin.com/company/firmsledger',
-    path: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
-  },
 ];
 
 export default function Layout({ children }) {
@@ -175,37 +168,45 @@ export default function Layout({ children }) {
                   </p>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                    {NAV_CATEGORIES.map((cat) => (
-                      <Link
-                        key={cat.slug}
-                        href={`/${cat.slug}`}
-                        onClick={() => setBrowseOpen(false)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 10,
-                          padding: '8px 10px',
-                          borderRadius: 8,
-                          textDecoration: 'none',
-                          transition: 'background 0.1s',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                      >
-                        <span style={{
-                          width: 7,
-                          height: 7,
-                          borderRadius: '50%',
-                          backgroundColor: cat.dot,
-                          flexShrink: 0,
-                          marginTop: 5,
-                        }} />
-                        <div style={{ minWidth: 0 }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', margin: 0, lineHeight: 1.3 }}>{cat.name}</p>
-                          <p style={{ fontSize: 11.5, color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.3 }}>{cat.desc}</p>
-                        </div>
-                      </Link>
-                    ))}
+                    {NAV_CATEGORIES.map((cat) => {
+                      const Icon = cat.icon;
+                      return (
+                        <Link
+                          key={cat.slug}
+                          href={`/${cat.slug}`}
+                          onClick={() => setBrowseOpen(false)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: 10,
+                            padding: '8px 10px',
+                            borderRadius: 8,
+                            textDecoration: 'none',
+                            transition: 'background 0.1s',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                        >
+                          <span style={{
+                            width: 30,
+                            height: 30,
+                            borderRadius: 8,
+                            backgroundColor: cat.bg,
+                            border: `1px solid ${cat.border}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}>
+                            <Icon size={14} color={cat.color} strokeWidth={2} />
+                          </span>
+                          <div style={{ minWidth: 0 }}>
+                            <p style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', margin: 0, lineHeight: 1.3 }}>{cat.name}</p>
+                            <p style={{ fontSize: 11.5, color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.3 }}>{cat.desc}</p>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
 
                   <div style={{ borderTop: '1px solid #f1f5f9', marginTop: 12, paddingTop: 12 }}>
@@ -365,7 +366,7 @@ export default function Layout({ children }) {
             <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', padding: '8px 12px 4px', margin: 0 }}>
               Categories
             </p>
-            {NAV_CATEGORIES.map(({ slug, name, dot }) => (
+            {NAV_CATEGORIES.map(({ slug, name, icon: Icon, bg, border, color }) => (
               <Link
                 key={slug}
                 href={`/${slug}`}
@@ -385,7 +386,19 @@ export default function Layout({ children }) {
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
-                <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: dot, flexShrink: 0 }} />
+                <span style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 7,
+                  backgroundColor: bg,
+                  border: `1px solid ${border}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <Icon size={13} color={color} strokeWidth={2} />
+                </span>
                 {name}
               </Link>
             ))}
@@ -446,34 +459,6 @@ export default function Layout({ children }) {
               <p style={{ fontSize: 14, lineHeight: 1.7, color: '#64748b', marginBottom: 20 }}>
                 Discover verified US manufacturers across all 50 states and 11 categories. Ranked by real reviews — no paid placements, ever.
               </p>
-              <div style={{ display: 'flex', gap: 8 }}>
-                {SOCIAL_LINKS.map(({ label, href, path }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 8,
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e2e8f0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'border-color 0.15s, background 0.15s',
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#1A2E4A'; e.currentTarget.style.backgroundColor = '#1A2E4A'; e.currentTarget.querySelector('svg path').setAttribute('fill', '#ffffff'); }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.backgroundColor = '#ffffff'; e.currentTarget.querySelector('svg path').setAttribute('fill', '#64748b'); }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b">
-                      <path d={path} />
-                    </svg>
-                  </a>
-                ))}
-              </div>
             </div>
           </div>
 

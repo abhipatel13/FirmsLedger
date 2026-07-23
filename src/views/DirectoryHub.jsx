@@ -2,11 +2,14 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Star, Shield, Package, Wrench, Cpu, Car, Shirt, Sofa, UtensilsCrossed, Stethoscope } from 'lucide-react';
-
-// ─── Design tokens ──────────────────────────────────────────────────────────────
-// surface-page: #ffffff   surface-alt: #f8fafc   surface-subtle: #f1f5f9
-// border: #e2e8f0   text-primary: #0f172a   text-body: #334155   text-muted: #64748b
+import {
+  ArrowRight, CheckCircle, Star, Shield, Package, Wrench, Cpu, Car,
+  Shirt, Sofa, UtensilsCrossed, Stethoscope,
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 // ─── Static data ────────────────────────────────────────────────────────────────
 
@@ -16,11 +19,7 @@ const CATEGORIES = [
     name: 'Electrical Components Manufacturers',
     shortName: 'Electrical Components',
     desc: 'Wiring systems, components, switchgear, and electrical equipment.',
-    count: '120+',
-    accentBg: '#fef9ee',
-    accentBorder: '#fde68a',
-    accentText: '#92400e',
-    dot: '#eab308',
+    iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700', dot: 'bg-amber-500',
     icon: BoltIcon,
   },
   {
@@ -28,11 +27,7 @@ const CATEGORIES = [
     name: 'Mechanical Components Manufacturers',
     shortName: 'Mechanical Components',
     desc: 'CNC machining, precision parts, assemblies, and tooling.',
-    count: '95+',
-    accentBg: '#f8fafc',
-    accentBorder: '#e2e8f0',
-    accentText: '#1e3a5f',
-    dot: '#64748b',
+    iconBg: 'bg-slate-100', iconBorder: 'border-slate-300', iconText: 'text-slate-700', dot: 'bg-slate-500',
     icon: GearIcon,
   },
   {
@@ -40,11 +35,7 @@ const CATEGORIES = [
     name: 'Plastics & Packaging Manufacturers',
     shortName: 'Plastics & Packaging',
     desc: 'Injection molding, packaging materials, containers, and plastic components.',
-    count: '60+',
-    accentBg: '#f0fdf4',
-    accentBorder: '#bbf7d0',
-    accentText: '#166534',
-    dot: '#22c55e',
+    iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700', dot: 'bg-green-500',
     icon: Package,
   },
   {
@@ -52,11 +43,7 @@ const CATEGORIES = [
     name: 'Metal Fabrication & Machining',
     shortName: 'Metal Fabrication',
     desc: 'Sheet metal, welding, stamping, and custom metal fabrication.',
-    count: '85+',
-    accentBg: '#eff6ff',
-    accentBorder: '#bfdbfe',
-    accentText: '#1e3a8a',
-    dot: '#3b82f6',
+    iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700', dot: 'bg-blue-500',
     icon: Wrench,
   },
   {
@@ -64,11 +51,7 @@ const CATEGORIES = [
     name: 'Electronics & Semiconductor Manufacturers',
     shortName: 'Electronics & Semiconductor',
     desc: 'PCBs, chips, electronic assemblies, and semiconductor components.',
-    count: '70+',
-    accentBg: '#f5f3ff',
-    accentBorder: '#ddd6fe',
-    accentText: '#4c1d95',
-    dot: '#6366f1',
+    iconBg: 'bg-violet-50', iconBorder: 'border-violet-200', iconText: 'text-violet-700', dot: 'bg-indigo-500',
     icon: Cpu,
   },
   {
@@ -76,11 +59,7 @@ const CATEGORIES = [
     name: 'Automotive Parts Manufacturers',
     shortName: 'Automotive Parts',
     desc: 'OEM and aftermarket automotive components and assemblies.',
-    count: '55+',
-    accentBg: '#fff1f2',
-    accentBorder: '#fecdd3',
-    accentText: '#9f1239',
-    dot: '#ef4444',
+    iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700', dot: 'bg-red-500',
     icon: Car,
   },
   {
@@ -88,11 +67,7 @@ const CATEGORIES = [
     name: 'Textile & Apparel Manufacturers',
     shortName: 'Textile & Apparel',
     desc: 'Fabric production, garment manufacturing, and textile finishing.',
-    count: '30+',
-    accentBg: '#fdf2f8',
-    accentBorder: '#f9a8d4',
-    accentText: '#831843',
-    dot: '#ec4899',
+    iconBg: 'bg-pink-50', iconBorder: 'border-pink-200', iconText: 'text-pink-700', dot: 'bg-pink-500',
     icon: Shirt,
   },
   {
@@ -100,11 +75,7 @@ const CATEGORIES = [
     name: 'Furniture & Woodworking Manufacturers',
     shortName: 'Furniture & Woodworking',
     desc: 'Custom furniture, cabinetry, and woodworking production.',
-    count: '25+',
-    accentBg: '#fffbeb',
-    accentBorder: '#fde68a',
-    accentText: '#78350f',
-    dot: '#f59e0b',
+    iconBg: 'bg-orange-50', iconBorder: 'border-orange-200', iconText: 'text-orange-800', dot: 'bg-orange-400',
     icon: Sofa,
   },
   {
@@ -112,11 +83,7 @@ const CATEGORIES = [
     name: 'Food & Beverage Processing',
     shortName: 'Food & Beverage',
     desc: 'Food processing equipment, packaging lines, and beverage production.',
-    count: '50+',
-    accentBg: '#fff7ed',
-    accentBorder: '#fed7aa',
-    accentText: '#7c2d12',
-    dot: '#f97316',
+    iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-800', dot: 'bg-amber-600',
     icon: UtensilsCrossed,
   },
   {
@@ -124,217 +91,191 @@ const CATEGORIES = [
     name: 'Medical Device Manufacturers',
     shortName: 'Medical Devices',
     desc: 'Diagnostic equipment, surgical instruments, and medical components.',
-    count: '40+',
-    accentBg: '#f0fdfa',
-    accentBorder: '#99f6e4',
-    accentText: '#134e4a',
-    dot: '#14b8a6',
+    iconBg: 'bg-teal-50', iconBorder: 'border-teal-200', iconText: 'text-teal-700', dot: 'bg-teal-500',
     icon: Stethoscope,
   },
 ];
 
 const US_STATES = [
-  { name: 'Maine',           slug: 'maine',           abbr: 'ME', region: 'Northeast' },
-  { name: 'Vermont',         slug: 'vermont',         abbr: 'VT', region: 'Northeast' },
-  { name: 'New Hampshire',   slug: 'new-hampshire',   abbr: 'NH', region: 'Northeast' },
-  { name: 'Massachusetts',   slug: 'massachusetts',   abbr: 'MA', region: 'Northeast' },
-  { name: 'Rhode Island',    slug: 'rhode-island',    abbr: 'RI', region: 'Northeast' },
-  { name: 'Connecticut',     slug: 'connecticut',     abbr: 'CT', region: 'Northeast' },
-  { name: 'New York',        slug: 'new-york',        abbr: 'NY', region: 'Northeast' },
-  { name: 'New Jersey',      slug: 'new-jersey',      abbr: 'NJ', region: 'Northeast' },
-  { name: 'Pennsylvania',    slug: 'pennsylvania',    abbr: 'PA', region: 'Northeast' },
-  { name: 'Delaware',        slug: 'delaware',        abbr: 'DE', region: 'Northeast' },
-  { name: 'Maryland',        slug: 'maryland',        abbr: 'MD', region: 'Northeast' },
-  { name: 'Ohio',            slug: 'ohio',            abbr: 'OH', region: 'Midwest'   },
-  { name: 'Michigan',        slug: 'michigan',        abbr: 'MI', region: 'Midwest'   },
-  { name: 'Indiana',         slug: 'indiana',         abbr: 'IN', region: 'Midwest'   },
-  { name: 'Illinois',        slug: 'illinois',        abbr: 'IL', region: 'Midwest'   },
-  { name: 'Wisconsin',       slug: 'wisconsin',       abbr: 'WI', region: 'Midwest'   },
-  { name: 'Minnesota',       slug: 'minnesota',       abbr: 'MN', region: 'Midwest'   },
-  { name: 'Iowa',            slug: 'iowa',            abbr: 'IA', region: 'Midwest'   },
-  { name: 'Missouri',        slug: 'missouri',        abbr: 'MO', region: 'Midwest'   },
-  { name: 'North Dakota',    slug: 'north-dakota',    abbr: 'ND', region: 'Midwest'   },
-  { name: 'South Dakota',    slug: 'south-dakota',    abbr: 'SD', region: 'Midwest'   },
-  { name: 'Nebraska',        slug: 'nebraska',        abbr: 'NE', region: 'Midwest'   },
-  { name: 'Kansas',          slug: 'kansas',          abbr: 'KS', region: 'Midwest'   },
-  { name: 'West Virginia',   slug: 'west-virginia',   abbr: 'WV', region: 'South'     },
-  { name: 'Virginia',        slug: 'virginia',        abbr: 'VA', region: 'South'     },
-  { name: 'Kentucky',        slug: 'kentucky',        abbr: 'KY', region: 'South'     },
-  { name: 'Tennessee',       slug: 'tennessee',       abbr: 'TN', region: 'South'     },
-  { name: 'North Carolina',  slug: 'north-carolina',  abbr: 'NC', region: 'South'     },
-  { name: 'South Carolina',  slug: 'south-carolina',  abbr: 'SC', region: 'South'     },
-  { name: 'Georgia',         slug: 'georgia',         abbr: 'GA', region: 'South'     },
-  { name: 'Florida',         slug: 'florida',         abbr: 'FL', region: 'South'     },
-  { name: 'Alabama',         slug: 'alabama',         abbr: 'AL', region: 'South'     },
-  { name: 'Mississippi',     slug: 'mississippi',     abbr: 'MS', region: 'South'     },
-  { name: 'Arkansas',        slug: 'arkansas',        abbr: 'AR', region: 'South'     },
-  { name: 'Louisiana',       slug: 'louisiana',       abbr: 'LA', region: 'South'     },
-  { name: 'Oklahoma',        slug: 'oklahoma',        abbr: 'OK', region: 'South'     },
-  { name: 'Texas',           slug: 'texas',           abbr: 'TX', region: 'South'     },
-  { name: 'Montana',         slug: 'montana',         abbr: 'MT', region: 'West'      },
-  { name: 'Idaho',           slug: 'idaho',           abbr: 'ID', region: 'West'      },
-  { name: 'Wyoming',         slug: 'wyoming',         abbr: 'WY', region: 'West'      },
-  { name: 'Colorado',        slug: 'colorado',        abbr: 'CO', region: 'West'      },
-  { name: 'New Mexico',      slug: 'new-mexico',      abbr: 'NM', region: 'West'      },
-  { name: 'Arizona',         slug: 'arizona',         abbr: 'AZ', region: 'West'      },
-  { name: 'Utah',            slug: 'utah',            abbr: 'UT', region: 'West'      },
-  { name: 'Nevada',          slug: 'nevada',          abbr: 'NV', region: 'West'      },
-  { name: 'California',      slug: 'california',      abbr: 'CA', region: 'West'      },
-  { name: 'Oregon',          slug: 'oregon',          abbr: 'OR', region: 'West'      },
-  { name: 'Washington',      slug: 'washington',      abbr: 'WA', region: 'West'      },
-  { name: 'Alaska',          slug: 'alaska',          abbr: 'AK', region: 'West'      },
-  { name: 'Hawaii',          slug: 'hawaii',          abbr: 'HI', region: 'West'      },
+  { name: 'Maine', slug: 'maine', region: 'Northeast' },
+  { name: 'Vermont', slug: 'vermont', region: 'Northeast' },
+  { name: 'New Hampshire', slug: 'new-hampshire', region: 'Northeast' },
+  { name: 'Massachusetts', slug: 'massachusetts', region: 'Northeast' },
+  { name: 'Rhode Island', slug: 'rhode-island', region: 'Northeast' },
+  { name: 'Connecticut', slug: 'connecticut', region: 'Northeast' },
+  { name: 'New York', slug: 'new-york', region: 'Northeast' },
+  { name: 'New Jersey', slug: 'new-jersey', region: 'Northeast' },
+  { name: 'Pennsylvania', slug: 'pennsylvania', region: 'Northeast' },
+  { name: 'Delaware', slug: 'delaware', region: 'Northeast' },
+  { name: 'Maryland', slug: 'maryland', region: 'Northeast' },
+  { name: 'Ohio', slug: 'ohio', region: 'Midwest' },
+  { name: 'Michigan', slug: 'michigan', region: 'Midwest' },
+  { name: 'Indiana', slug: 'indiana', region: 'Midwest' },
+  { name: 'Illinois', slug: 'illinois', region: 'Midwest' },
+  { name: 'Wisconsin', slug: 'wisconsin', region: 'Midwest' },
+  { name: 'Minnesota', slug: 'minnesota', region: 'Midwest' },
+  { name: 'Iowa', slug: 'iowa', region: 'Midwest' },
+  { name: 'Missouri', slug: 'missouri', region: 'Midwest' },
+  { name: 'North Dakota', slug: 'north-dakota', region: 'Midwest' },
+  { name: 'South Dakota', slug: 'south-dakota', region: 'Midwest' },
+  { name: 'Nebraska', slug: 'nebraska', region: 'Midwest' },
+  { name: 'Kansas', slug: 'kansas', region: 'Midwest' },
+  { name: 'West Virginia', slug: 'west-virginia', region: 'South' },
+  { name: 'Virginia', slug: 'virginia', region: 'South' },
+  { name: 'Kentucky', slug: 'kentucky', region: 'South' },
+  { name: 'Tennessee', slug: 'tennessee', region: 'South' },
+  { name: 'North Carolina', slug: 'north-carolina', region: 'South' },
+  { name: 'South Carolina', slug: 'south-carolina', region: 'South' },
+  { name: 'Georgia', slug: 'georgia', region: 'South' },
+  { name: 'Florida', slug: 'florida', region: 'South' },
+  { name: 'Alabama', slug: 'alabama', region: 'South' },
+  { name: 'Mississippi', slug: 'mississippi', region: 'South' },
+  { name: 'Arkansas', slug: 'arkansas', region: 'South' },
+  { name: 'Louisiana', slug: 'louisiana', region: 'South' },
+  { name: 'Oklahoma', slug: 'oklahoma', region: 'South' },
+  { name: 'Texas', slug: 'texas', region: 'South' },
+  { name: 'Montana', slug: 'montana', region: 'West' },
+  { name: 'Idaho', slug: 'idaho', region: 'West' },
+  { name: 'Wyoming', slug: 'wyoming', region: 'West' },
+  { name: 'Colorado', slug: 'colorado', region: 'West' },
+  { name: 'New Mexico', slug: 'new-mexico', region: 'West' },
+  { name: 'Arizona', slug: 'arizona', region: 'West' },
+  { name: 'Utah', slug: 'utah', region: 'West' },
+  { name: 'Nevada', slug: 'nevada', region: 'West' },
+  { name: 'California', slug: 'california', region: 'West' },
+  { name: 'Oregon', slug: 'oregon', region: 'West' },
+  { name: 'Washington', slug: 'washington', region: 'West' },
+  { name: 'Alaska', slug: 'alaska', region: 'West' },
+  { name: 'Hawaii', slug: 'hawaii', region: 'West' },
 ];
 
 const STATS = [
-  { value: '10',   label: 'Categories' },
-  { value: '50',   label: 'States covered' },
-  { value: '67',   label: 'Companies listed' },
+  { value: '10', label: 'Categories' },
+  { value: '50', label: 'States covered' },
+  { value: '67', label: 'Companies listed' },
   { value: '100%', label: 'Verified listings' },
 ];
 
-const TRUST_CLAIMS = [
+const TRUST_TILES = [
   {
     number: '100%',
     label: 'Listings reviewed before publishing',
-    desc: 'Every company submission goes through a manual approval step — nothing appears live automatically.',
-    iconBg: '#fef9ee',
-    iconColor: '#d97706',
+    desc: 'Every company submission goes through a manual approval step, and every review is independently verified before it goes live.',
+    icon: Shield,
+    iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700',
   },
   {
     number: '0',
     label: 'Paid rankings — ever',
-    desc: "Companies can't buy their way up the list. All positions are determined solely by verified ratings and reviews.",
-    iconBg: '#f0fdf4',
-    iconColor: '#16a34a',
+    desc: "Companies can't buy their way up the list. Rankings are purely performance-based, determined solely by verified ratings and reviews.",
+    icon: CheckCircle,
+    iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700',
   },
   {
-    number: '50',
-    label: 'US states in the directory',
-    desc: 'Full national coverage — every state, not just the top markets.',
-    iconBg: '#eff6ff',
-    iconColor: '#2563eb',
+    number: null,
+    label: 'Real reviews only',
+    desc: 'All reviews come from verified clients — we never edit, hide, or filter ratings.',
+    icon: Star,
+    iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700',
   },
   {
     number: '10',
     label: 'Manufacturing categories',
     desc: 'Electrical, mechanical, plastics, metal fabrication, electronics, automotive, textile, furniture, food, and medical.',
-    iconBg: '#f5f3ff',
-    iconColor: '#7c3aed',
-  },
-  {
-    number: '2×',
-    label: 'Verification steps per review',
-    desc: 'Both the company listing and each individual review go through a separate verification check before going live.',
-    iconBg: '#fff1f2',
-    iconColor: '#e11d48',
+    icon: Wrench,
+    iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700',
   },
 ];
 
 // ─── Inline icons ────────────────────────────────────────────────────────────────
 
-function BoltIcon({ size = 20, color = 'currentColor' }) {
+function BoltIcon({ className }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
     </svg>
   );
 }
 
-function GearIcon({ size = 20, color = 'currentColor' }) {
+function GearIcon({ className }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <circle cx="12" cy="12" r="3" />
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   );
 }
 
+// ─── Shared section wrapper ─────────────────────────────────────────────────────
+
+function SectionEyebrow({ children }) {
+  return (
+    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400 mb-2.5">
+      {children}
+    </p>
+  );
+}
+
 // ─── Main ────────────────────────────────────────────────────────────────────────
+
+const CATEGORIES_PREVIEW_COUNT = 3;
 
 export default function DirectoryHub() {
   const [selectedState, setSelectedState] = useState('california');
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const activeState = US_STATES.find((s) => s.slug === selectedState);
+  const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, CATEGORIES_PREVIEW_COUNT);
 
   return (
-    <div style={{ backgroundColor: '#ffffff' }}>
+    <div className="bg-white">
 
       {/* ══ HERO ══════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '80px 0 88px' }}>
-        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '0 24px' }}>
-          <div className="hero-grid">
+      <section className="bg-white border-b border-slate-200 py-20 sm:py-24 lg:py-32">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
 
             {/* LEFT */}
             <div>
-              {/* Badge */}
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 7,
-                backgroundColor: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: 9999,
-                padding: '5px 14px',
-                marginBottom: 28,
-              }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#2563eb', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', color: '#1e40af', textTransform: 'uppercase' }}>
-                  US Manufacturer Directory
-                </span>
-              </div>
+              <Badge className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 rounded-full px-3.5 py-1.5 mb-7 font-semibold text-[11px] tracking-wider uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0" />
+                US Manufacturer Directory
+              </Badge>
 
-              <h1 style={{
-                fontSize: 'clamp(40px, 5.5vw, 64px)',
-                fontWeight: 700,
-                lineHeight: 1.06,
-                letterSpacing: '-0.03em',
-                color: '#0f172a',
-                marginBottom: 20,
-                maxWidth: 560,
-              }}>
-                Find top{' '}
-                <span style={{ color: '#1A2E4A' }}>manufacturers</span>
-                {' '}across the US
+              <h1 className="text-[40px] sm:text-5xl lg:text-[64px] font-bold leading-[1.06] tracking-tight text-[#211F1C] mb-5 max-w-lg">
+                Find top <span className="text-[#1A2E4A]">manufacturers</span> across the US
               </h1>
 
-              <p style={{
-                fontSize: 18,
-                lineHeight: 1.65,
-                color: '#475569',
-                marginBottom: 32,
-                maxWidth: 480,
-              }}>
+              <p className="text-lg leading-relaxed text-slate-600 mb-8 max-w-md">
                 Browse verified manufacturers across every US state by category — electrical, mechanical, automotive, and more. Ranked by real reviews.
               </p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+              <div className="flex flex-wrap gap-5">
                 {[
                   { icon: CheckCircle, text: '100% verified listings' },
-                  { icon: Shield,      text: 'Zero paid rankings' },
-                  { icon: Star,        text: 'All 50 US states' },
+                  { icon: Shield, text: 'Zero paid rankings' },
+                  { icon: Star, text: 'All 50 US states' },
                 ].map(({ icon: Icon, text }) => (
-                  <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <Icon size={14} style={{ color: '#F5A623', flexShrink: 0 }} />
-                    <span style={{ fontSize: 13, fontWeight: 500, color: '#475569' }}>{text}</span>
+                  <div key={text} className="flex items-center gap-1.5">
+                    <Icon className="w-3.5 h-3.5 text-[#F5A623] flex-shrink-0" />
+                    <span className="text-[13px] font-medium text-slate-600">{text}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* RIGHT — stats grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              {STATS.map(({ value, label }) => (
-                <div key={label} style={{
-                  backgroundColor: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 12,
-                  padding: '20px 24px',
-                }}>
-                  <div style={{ fontSize: 32, fontWeight: 700, color: '#0f172a', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
-                    {value}
-                  </div>
-                  <div style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>{label}</div>
-                </div>
-              ))}
+            <div className="relative">
+              <div className="absolute -inset-8 rounded-full bg-[#F5A623]/10 blur-3xl pointer-events-none" />
+              <div className="relative grid grid-cols-2 gap-2.5">
+                {STATS.map(({ value, label }) => (
+                  <Card key={label} className="bg-[#FAF7F1] border-slate-200 rounded-xl px-6 py-5 shadow-none">
+                    <div className="text-3xl font-bold text-[#211F1C] leading-none mb-1 tracking-tight tabular-nums">
+                      {value}
+                    </div>
+                    <div className="text-xs text-slate-500 font-medium">{label}</div>
+                  </Card>
+                ))}
+              </div>
             </div>
 
           </div>
@@ -342,476 +283,263 @@ export default function DirectoryHub() {
       </section>
 
       {/* ══ CATEGORY CARDS ════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#f8fafc', padding: '80px 24px' }} id="categories">
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="bg-[#FAF7F1] py-20 sm:py-24 lg:py-28" id="categories">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 10 }}>
-              Browse by Category
-            </p>
-            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a', lineHeight: 1.15, margin: 0 }}>
+          <div className="text-center mb-12">
+            <SectionEyebrow>Browse by Category</SectionEyebrow>
+            <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight">
               Popular manufacturing categories
             </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
-            {CATEGORIES.map((cat) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {visibleCategories.map((cat) => {
               const Icon = cat.icon;
               return (
-                <div
+                <Card
                   key={cat.slug}
-                  className="card-hover"
-                  style={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: 16,
-                    padding: 24,
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
+                  className="bg-white border-slate-200 rounded-2xl p-0 flex flex-col h-full overflow-hidden transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg"
                 >
-                  {/* Icon */}
-                  <div style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 10,
-                    backgroundColor: cat.accentBg,
-                    border: `1px solid ${cat.accentBorder}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 16,
-                  }}>
-                    <Icon size={18} color={cat.accentText} />
+                  <div className={cn('h-[3px] w-full', cat.dot)} />
+                  <div className="p-6 flex flex-col flex-1">
+                  <div className={cn('w-10 h-10 rounded-lg border flex items-center justify-center mb-4', cat.iconBg, cat.iconBorder)}>
+                    <Icon className={cn('w-[18px] h-[18px]', cat.iconText)} />
                   </div>
 
-                  {/* Title */}
-                  <h3 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', marginBottom: 8, lineHeight: 1.35, flex: 1 }}>
+                  <h3 className="text-[15px] font-semibold text-[#211F1C] mb-2 leading-snug flex-1">
                     {cat.name}
                   </h3>
 
-                  {/* Description */}
-                  <p style={{ fontSize: 13, lineHeight: 1.6, color: '#64748b', marginBottom: 16 }}>
+                  <p className="text-[13px] leading-relaxed text-slate-500 mb-4">
                     {cat.desc}
                   </p>
 
-                  {/* Quick state links */}
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 16 }}>
-                    {['california', 'texas', 'new-york'].map((stateSlug, i) => {
-                      const stateNames = { 'california': 'California', 'texas': 'Texas', 'new-york': 'New York' };
-                      return (
-                        <Link
-                          key={stateSlug}
-                          href={`/${cat.slug}/${stateSlug}`}
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 500,
-                            color: '#64748b',
-                            backgroundColor: '#f8fafc',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: 9999,
-                            padding: '3px 10px',
-                            textDecoration: 'none',
-                            transition: 'all 0.12s',
-                          }}
-                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.color = '#0f172a'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#64748b'; }}
-                        >
-                          {stateNames[stateSlug]}
-                        </Link>
-                      );
-                    })}
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {[
+                      { slug: 'california', label: 'California' },
+                      { slug: 'texas', label: 'Texas' },
+                      { slug: 'new-york', label: 'New York' },
+                    ].map(({ slug, label }) => (
+                      <Link
+                        key={slug}
+                        href={`/${cat.slug}/${slug}`}
+                        className="text-[11px] font-medium text-slate-500 bg-slate-50 border border-slate-200 rounded-full px-2.5 py-[3px] transition-colors hover:border-slate-400 hover:text-slate-900"
+                      >
+                        {label}
+                      </Link>
+                    ))}
                   </div>
 
-                  {/* CTA */}
                   <Link
                     href={`/${cat.slug}`}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 5,
-                      color: '#1A2E4A',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                      transition: 'gap 0.12s',
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.gap = '8px'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.gap = '5px'; }}
+                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1A2E4A] group"
                   >
                     View all states
-                    <ArrowRight size={13} />
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                   </Link>
-                </div>
+                  </div>
+                </Card>
               );
             })}
           </div>
+
+          {CATEGORIES.length > CATEGORIES_PREVIEW_COUNT && (
+            <div className="text-center mt-8">
+              <button
+                type="button"
+                onClick={() => setShowAllCategories((v) => !v)}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A2E4A] border border-slate-300 rounded-full px-5 py-2.5 hover:border-slate-400 hover:bg-white transition-colors"
+              >
+                {showAllCategories ? 'Show less' : `View more categories (${CATEGORIES.length - CATEGORIES_PREVIEW_COUNT})`}
+                <ArrowRight className={cn('w-3.5 h-3.5 transition-transform', showAllCategories && 'rotate-90')} />
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ══ WHY TRUST ═════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '80px 24px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 10 }}>
-              Why trust our listings
-            </p>
-            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a', lineHeight: 1.15, margin: 0 }}>
-              What makes this directory different
-            </h2>
-          </div>
+      {/* ══ TRUST ═════════════════════════════════════════════════════ */}
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-12 lg:gap-16 items-center">
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-            {TRUST_CLAIMS.map(({ number, label, desc, iconBg, iconColor }) => (
-              <div
-                key={number + label}
-                style={{
-                  backgroundColor: '#f8fafc',
-                  borderRadius: 16,
-                  padding: '24px 22px',
-                  border: '1px solid #e2e8f0',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 10,
-                }}
-              >
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 'fit-content',
-                  backgroundColor: iconBg,
-                  color: iconColor,
-                  borderRadius: 8,
-                  padding: '5px 12px',
-                  fontSize: 20,
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
-                  lineHeight: 1,
-                  fontVariantNumeric: 'tabular-nums',
-                }}>
-                  {number}
-                </div>
-                <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', margin: 0, lineHeight: 1.4 }}>{label}</h3>
-                <p style={{ fontSize: 13, lineHeight: 1.6, color: '#64748b', margin: 0 }}>{desc}</p>
-              </div>
-            ))}
+            <div>
+              <SectionEyebrow>Why trust our listings</SectionEyebrow>
+              <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight mb-4">
+                What makes this directory different
+              </h2>
+              <p className="text-slate-500 leading-relaxed max-w-sm">
+                Every listing and every review goes through manual verification before it ever reaches the public directory.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {TRUST_TILES.map(({ number, label, desc, icon: Icon, iconBg, iconBorder, iconText }) => (
+                <Card key={label} className="bg-[#FAF7F1] border-slate-200 rounded-2xl p-6 shadow-none">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center flex-shrink-0', iconBg, iconBorder)}>
+                      <Icon className={cn('w-4 h-4', iconText)} />
+                    </div>
+                    {number && (
+                      <span className="text-xl font-bold text-[#211F1C] tracking-tight tabular-nums">{number}</span>
+                    )}
+                  </div>
+                  <h3 className="text-sm font-semibold text-[#211F1C] mb-1.5 leading-snug">{label}</h3>
+                  <p className="text-[13px] leading-relaxed text-slate-500">{desc}</p>
+                </Card>
+              ))}
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* ══ HOW IT WORKS ══════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#f8fafc', padding: '80px 24px', borderTop: '1px solid #e2e8f0' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 10 }}>
-              How it works
-            </p>
-            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a', lineHeight: 1.15, margin: 0 }}>
+      <section className="bg-[#FAF7F1] py-20 sm:py-24 lg:py-28 border-t border-slate-200">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <SectionEyebrow>How it works</SectionEyebrow>
+            <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight">
               From search to shortlist in seconds
             </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {[
-              {
-                num: '1',
-                numColor: '#1A2E4A',
-                title: 'Pick a category',
-                desc: 'Choose from Electrical Components, Mechanical Components, Automotive, and more.',
-              },
-              {
-                num: '2',
-                numColor: '#D48E1A',
-                title: 'Select your state',
-                desc: 'All 50 US states covered. Find manufacturers close to your supply chain.',
-              },
-              {
-                num: '3',
-                numColor: '#16a34a',
-                title: 'Browse the rankings',
-                desc: 'Ranked by verified reviews and ratings. No pay-to-rank. No sponsored placements.',
-              },
-            ].map(({ num, numColor, title, desc }) => (
-              <div key={num} style={{
-                backgroundColor: '#ffffff',
-                borderRadius: 16,
-                padding: '28px 24px',
-                border: '1px solid #e2e8f0',
-              }}>
-                <div style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 10,
-                  backgroundColor: numColor + '14',
-                  border: `1px solid ${numColor}28`,
-                  color: numColor,
-                  fontSize: 15,
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 18,
-                  fontVariantNumeric: 'tabular-nums',
-                }}>
+              { num: '1', color: 'text-[#1A2E4A] bg-[#1A2E4A]/10 border-[#1A2E4A]/20', title: 'Pick a category', desc: 'Choose from Electrical Components, Mechanical Components, Automotive, and more.' },
+              { num: '2', color: 'text-amber-700 bg-amber-50 border-amber-200', title: 'Select your state', desc: 'All 50 US states covered. Find manufacturers close to your supply chain.' },
+              { num: '3', color: 'text-green-700 bg-green-50 border-green-200', title: 'Browse the rankings', desc: 'Ranked by verified reviews and ratings. No pay-to-rank. No sponsored placements.' },
+            ].map(({ num, color, title, desc }) => (
+              <Card key={num} className="bg-white border-slate-200 rounded-2xl p-7 shadow-none">
+                <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center mb-4 text-[15px] font-bold tabular-nums shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)]', color)}>
                   {num}
                 </div>
-                <h3 style={{ fontSize: 16, fontWeight: 600, letterSpacing: '-0.015em', color: '#0f172a', marginBottom: 8 }}>{title}</h3>
-                <p style={{ fontSize: 14, lineHeight: 1.6, color: '#475569', margin: 0 }}>{desc}</p>
-              </div>
+                <h3 className="text-base font-semibold tracking-tight text-[#211F1C] mb-2">{title}</h3>
+                <p className="text-sm leading-relaxed text-slate-600">{desc}</p>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
       {/* ══ US STATES PANEL ═══════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '80px 24px', borderTop: '1px solid #e2e8f0' }} id="states">
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="bg-white py-20 sm:py-24 lg:py-28 border-t border-slate-200" id="states">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
+          <div className="flex items-baseline justify-between flex-wrap gap-3 mb-8">
             <div>
-              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 8 }}>
-                Browse by State
-              </p>
-              <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a', lineHeight: 1.15, margin: 0 }}>
+              <SectionEyebrow>Browse by State</SectionEyebrow>
+              <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight">
                 Every US state
               </h2>
             </div>
-            <span style={{ fontSize: 13, color: '#94a3b8', fontWeight: 500 }}>
+            <span className="text-[13px] text-slate-400 font-medium">
               50 states · 10 categories each
             </span>
           </div>
 
-          {/* 2-panel state selector */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '240px 1fr',
-            border: '1px solid #e2e8f0',
-            borderRadius: 16,
-            overflow: 'hidden',
-            backgroundColor: '#ffffff',
-            minHeight: 480,
-          }} className="state-panel">
+          <Card className="grid grid-cols-1 md:grid-cols-[240px_1fr] rounded-2xl overflow-hidden border-slate-200 shadow-sm p-0">
 
-            {/* Left: scrollable state list */}
-            <div style={{
-              borderRight: '1px solid #e2e8f0',
-              maxHeight: 540,
-              overflowY: 'auto',
-              backgroundColor: '#f8fafc',
-              padding: '4px 0',
-            }}>
-              {US_STATES.map((state) => {
-                const active = selectedState === state.slug;
-                return (
-                  <button
-                    key={state.slug}
-                    onMouseEnter={() => setSelectedState(state.slug)}
-                    onClick={() => setSelectedState(state.slug)}
-                    style={{
-                      display: 'flex',
-                      width: '100%',
-                      textAlign: 'left',
-                      padding: '8px 20px',
-                      fontSize: active ? 14 : 13.5,
-                      fontWeight: active ? 600 : 400,
-                      color: active ? '#0f172a' : '#64748b',
-                      background: active ? '#ffffff' : 'none',
-                      border: 'none',
-                      borderLeft: active ? '2px solid #1A2E4A' : '2px solid transparent',
-                      cursor: 'pointer',
-                      transition: 'all 0.1s',
-                      lineHeight: 1.4,
-                      fontFamily: 'inherit',
-                    }}
-                  >
-                    {state.name}
-                  </button>
-                );
-              })}
-            </div>
+            {/* Left: state list */}
+            <ScrollArea className="h-[220px] md:h-[540px] bg-[#FAF7F1] border-b md:border-b-0 md:border-r border-slate-200">
+              <div className="py-1">
+                {US_STATES.map((state) => {
+                  const active = selectedState === state.slug;
+                  return (
+                    <button
+                      key={state.slug}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => setSelectedState(state.slug)}
+                      className={cn(
+                        'flex w-full text-left px-5 py-2 text-[13.5px] leading-tight border-l-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A2E4A] focus-visible:ring-inset',
+                        active
+                          ? 'bg-white text-[#211F1C] font-semibold border-l-[#F5A623]'
+                          : 'text-slate-500 font-normal border-l-transparent hover:bg-white/60 hover:text-slate-800'
+                      )}
+                    >
+                      {state.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </ScrollArea>
 
             {/* Right: categories for selected state */}
-            <div style={{ padding: '32px 40px', backgroundColor: '#ffffff' }}>
-              {(() => {
-                const state = US_STATES.find(s => s.slug === selectedState);
-                if (!state) return null;
-                return (
-                  <>
-                    <div style={{ marginBottom: 24 }}>
-                      <h3 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', margin: '0 0 4px', letterSpacing: '-0.015em' }}>
-                        {state.name}
-                      </h3>
-                      <p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>
-                        {state.region} · Choose a manufacturing category
-                      </p>
-                    </div>
+            <div className="px-8 py-8 sm:px-10">
+              {activeState && (
+                <>
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold tracking-tight text-[#211F1C] mb-1">
+                      {activeState.name}
+                    </h3>
+                    <p className="text-[13px] text-slate-500">
+                      {activeState.region} · Choose a manufacturing category
+                    </p>
+                  </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 32px' }}>
-                      {CATEGORIES.map((cat) => (
-                        <Link
-                          key={cat.slug}
-                          href={`/${cat.slug}/${selectedState}`}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            fontSize: 13.5,
-                            color: '#334155',
-                            textDecoration: 'none',
-                            lineHeight: 1.5,
-                            padding: '6px 0',
-                            borderBottom: '1px solid transparent',
-                            transition: 'color 0.12s',
-                          }}
-                          onMouseEnter={(e) => { e.currentTarget.style.color = '#1A2E4A'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.color = '#334155'; }}
-                        >
-                          <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: cat.dot, flexShrink: 0 }} />
-                          {cat.shortName} in {state.name}
-                        </Link>
-                      ))}
-                    </div>
-
-                    <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid #f1f5f9' }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+                    {CATEGORIES.map((cat) => (
                       <Link
-                        href={`/states/${state.slug}`}
-                        style={{
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: '#1A2E4A',
-                          textDecoration: 'none',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 5,
-                          transition: 'gap 0.12s',
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.gap = '8px'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.gap = '5px'; }}
+                        key={cat.slug}
+                        href={`/${cat.slug}/${selectedState}`}
+                        className="flex items-center gap-2 text-[13.5px] text-slate-700 leading-relaxed py-1.5 transition-colors hover:text-[#1A2E4A]"
                       >
-                        See all manufacturers in {state.name}
-                        <ArrowRight size={13} />
+                        <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', cat.dot)} />
+                        {cat.shortName} in {activeState.name}
                       </Link>
-                    </div>
-                  </>
-                );
-              })()}
+                    ))}
+                  </div>
+
+                  <div className="mt-6 pt-5 border-t border-slate-100">
+                    <Link
+                      href={`/states/${activeState.slug}`}
+                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1A2E4A] group"
+                    >
+                      See all manufacturers in {activeState.name}
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
-          </div>
-
-          <style>{`
-            @media (max-width: 640px) {
-              .state-panel { grid-template-columns: 1fr !important; }
-              .state-panel > div:first-child { max-height: 200px !important; border-right: none !important; border-bottom: 1px solid #e2e8f0; }
-            }
-          `}</style>
-        </div>
-      </section>
-
-      {/* ══ WHY FIRMSLEDGER ═══════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#f8fafc', padding: '80px 24px', borderTop: '1px solid #e2e8f0' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a', lineHeight: 1.15, margin: 0 }}>
-              Why FirmsLedger?
-            </h2>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
-            {[
-              { icon: CheckCircle, title: 'Verified listings', desc: 'Every manufacturer is checked before going live. No ghost profiles, no unverified entries.', color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
-              { icon: Star,        title: 'Real reviews only', desc: 'All reviews are from verified clients. We never edit, filter, or hide ratings.', color: '#d97706', bg: '#fef9ee', border: '#fde68a' },
-              { icon: Shield,      title: 'Unbiased rankings', desc: 'Rankings are purely performance-based. Zero pay-to-rank influence — ever.', color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
-            ].map(({ icon: Icon, title, desc, color, bg, border }) => (
-              <div key={title} style={{
-                backgroundColor: '#ffffff',
-                borderRadius: 16,
-                padding: '28px 24px',
-                border: '1px solid #e2e8f0',
-              }}>
-                <div style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 10,
-                  backgroundColor: bg,
-                  border: `1px solid ${border}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 18,
-                }}>
-                  <Icon size={18} color={color} />
-                </div>
-                <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 8, letterSpacing: '-0.01em' }}>{title}</h3>
-                <p style={{ fontSize: 14, lineHeight: 1.6, color: '#475569', margin: 0 }}>{desc}</p>
-              </div>
-            ))}
-          </div>
+          </Card>
         </div>
       </section>
 
       {/* ══ CTA BAND ══════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#1A2E4A', padding: 'clamp(64px, 8vw, 96px) 24px' }}>
-        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 40,
-          }}>
-            <div style={{ maxWidth: 560 }}>
-              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>
+      <section className="bg-[#1A2E4A] py-20 sm:py-24 lg:py-28 relative overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-orange-500/10 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-indigo-500/8 blur-[100px] pointer-events-none" />
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }}
+        />
+        <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-10">
+            <div className="max-w-lg">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 mb-3">
                 For manufacturers
               </p>
-              <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 700, letterSpacing: '-0.025em', color: '#ffffff', lineHeight: 1.15, marginBottom: 16 }}>
+              <h2 className="text-[28px] sm:text-[44px] font-bold tracking-tight text-white leading-tight mb-4">
                 Get your company in front of buyers
               </h2>
-              <p style={{ fontSize: 16, lineHeight: 1.65, color: 'rgba(255,255,255,0.6)', maxWidth: 480, margin: 0 }}>
+              <p className="text-base leading-relaxed text-white/60">
                 Join FirmsLedger and appear in state-level ranked lists. Verified listings reach procurement managers actively searching for manufacturers.
               </p>
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <div className="flex flex-wrap gap-3">
               <Link
                 href="/list-your-company"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  backgroundColor: '#F5A623',
-                  color: '#1A2E4A',
-                  borderRadius: 9999,
-                  padding: '14px 28px',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  boxShadow: '0 4px 16px rgba(245,166,35,0.35)',
-                  transition: 'background 0.15s, box-shadow 0.15s',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#D48E1A'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(245,166,35,0.5)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#F5A623'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(245,166,35,0.35)'; }}
+                className="inline-flex items-center gap-2 bg-[#F5A623] hover:bg-[#D48E1A] text-[#1A2E4A] rounded-full px-7 py-3.5 text-sm font-semibold shadow-[0_4px_16px_rgba(245,166,35,0.35)] hover:shadow-[0_6px_20px_rgba(245,166,35,0.5)] transition-all"
               >
                 List Your Company
-                <ArrowRight size={15} />
+                <ArrowRight className="w-[15px] h-[15px]" />
               </Link>
               <Link
                 href="/contact"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  backgroundColor: 'transparent',
-                  color: 'rgba(255,255,255,0.8)',
-                  borderRadius: 9999,
-                  padding: '14px 28px',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  transition: 'border-color 0.15s, color 0.15s',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.55)'; e.currentTarget.style.color = '#ffffff'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                className="inline-flex items-center gap-2 bg-transparent text-white/80 hover:text-white border border-white/20 hover:border-white/55 rounded-full px-7 py-3.5 text-sm font-medium transition-all"
               >
                 Contact Us
               </Link>
