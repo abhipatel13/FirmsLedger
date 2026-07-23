@@ -1,27 +1,19 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { pickCategoryIcon, colorFor } from '@/lib/categoryIcon';
 
-const CARD_COLORS = [
-  { bg: 'bg-orange-50', border: 'border-orange-100' },
-  { bg: 'bg-blue-50', border: 'border-blue-100' },
-  { bg: 'bg-emerald-50', border: 'border-emerald-100' },
-  { bg: 'bg-violet-50', border: 'border-violet-100' },
-  { bg: 'bg-rose-50', border: 'border-rose-100' },
-  { bg: 'bg-amber-50', border: 'border-amber-100' },
-  { bg: 'bg-cyan-50', border: 'border-cyan-100' },
-  { bg: 'bg-pink-50', border: 'border-pink-100' },
-];
-
-export default function CategoryCard({ href, icon, name, description, colorIndex = 0 }) {
-  const color = CARD_COLORS[colorIndex % CARD_COLORS.length];
+export default function CategoryCard({ href, cat, name, description }) {
+  const Icon = pickCategoryIcon(cat || { name });
+  const colorClasses = colorFor(cat?.slug || name);
+  const [bgClass, borderClass, textClass] = colorClasses.split(' ');
 
   return (
     <Link
       href={href}
-      className={`flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:shadow-sm hover:border-slate-300 transition-all group`}
+      className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-5 hover:shadow-sm hover:border-slate-300 transition-all group"
     >
-      <div className={`w-14 h-14 rounded-xl ${color.bg} ${color.border} border flex items-center justify-center text-2xl flex-shrink-0`}>
-        {icon}
+      <div className={`w-16 h-16 rounded-xl ${bgClass} ${borderClass} border flex items-center justify-center flex-shrink-0`}>
+        <Icon className={`w-7 h-7 ${textClass}`} />
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="font-bold text-[#0D1B2A] text-base group-hover:text-orange-600 transition-colors leading-snug">
