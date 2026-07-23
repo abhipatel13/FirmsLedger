@@ -48,7 +48,8 @@ const FOOTER_RESOURCES = [
 ];
 
 const FOOTER_COMPANY = [
-  { href: '/admin',   label: 'Admin Login' },
+  // Re-enable once the public-facing admin entry point is ready.
+  // { href: '/admin',   label: 'Admin Login' },
   { href: '/terms',   label: 'Terms of Service' },
   { href: '/privacy', label: 'Privacy Policy' },
 ];
