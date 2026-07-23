@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import CategoryLandingClient from './CategoryLandingClient';
+import { renderCategoryPage } from './[state]/page';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
   const { category: slug } = await params;
@@ -24,10 +26,9 @@ export function generateStaticParams() {
   return MANUFACTURING_CATEGORIES.map((c) => ({ category: c.slug }));
 }
 
-export default async function CategoryLandingPage({ params }) {
+export default async function CategoryLandingPage({ params, searchParams }) {
   const { category: slug } = await params;
-  const cat = CATEGORY_MAP[slug];
-  if (!cat) notFound();
-  const otherCategories = MANUFACTURING_CATEGORIES.filter((c) => c.slug !== slug);
-  return <CategoryLandingClient cat={cat} slug={slug} otherCategories={otherCategories} />;
+  const { page: pageParam } = await searchParams;
+  if (!CATEGORY_MAP[slug]) notFound();
+  return renderCategoryPage({ category: slug, state: undefined, pageParam });
 }

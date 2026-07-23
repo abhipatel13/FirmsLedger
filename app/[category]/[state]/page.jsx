@@ -156,13 +156,16 @@ function StarRow({ rating }) {
 export default async function CategoryStatePage({ params, searchParams }) {
   const { category, state } = await params;
   const { page: pageParam } = await searchParams;
+  return renderCategoryPage({ category, state, pageParam });
+}
 
+export async function renderCategoryPage({ category, state, pageParam }) {
   if (!VALID_CATEGORIES.has(category)) notFound();
 
   const cat = CATEGORY_MAP[category];
 
   // ── Branch: subcategory hub ──────────────────────────────────────────────
-  if (ALL_SUBCATEGORY_SLUGS.has(state)) {
+  if (state && ALL_SUBCATEGORY_SLUGS.has(state)) {
     const sub = cat.subcategories.find((s) => s.slug === state);
     if (!sub) notFound();
 
@@ -395,11 +398,12 @@ export default async function CategoryStatePage({ params, searchParams }) {
     );
   }
 
-  // ── Branch: state listing ────────────────────────────────────────────────
+  // ── Branch: state listing (or nationwide when `state` is absent) ────────
   const categoryName = cat?.name || toTitleCase(category);
-  const stateName    = toTitleCase(state);
-  const companies    = await fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500);
-  const pageTitle    = `Top ${categoryName} in ${stateName}`;
+  const stateName    = state ? toTitleCase(state) : null;
+  const companies    = await fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', 500);
+  const pageTitle    = stateName ? `Top ${categoryName} in ${stateName}` : `Top ${categoryName} in the US`;
+  const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
   const totalPages   = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
   const currentPage  = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
@@ -410,7 +414,7 @@ export default async function CategoryStatePage({ params, searchParams }) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: pageTitle,
-    url: `${_BASE}/${category}/${state}`,
+    url: `${_BASE}${basePath}`,
     numberOfItems: companies.length,
     itemListElement: companies.map((company, i) => ({
       '@type': 'ListItem',
@@ -421,14 +425,18 @@ export default async function CategoryStatePage({ params, searchParams }) {
     })),
   };
 
+  const breadcrumbItems = [
+    { '@type': 'ListItem', position: 1, name: 'Home',       item: _BASE },
+    { '@type': 'ListItem', position: 2, name: categoryName, item: `${_BASE}/${category}` },
+  ];
+  if (stateName) {
+    breadcrumbItems.push({ '@type': 'ListItem', position: 3, name: stateName, item: `${_BASE}${basePath}` });
+  }
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home',         item: _BASE },
-      { '@type': 'ListItem', position: 2, name: categoryName,   item: `${_BASE}/${category}` },
-      { '@type': 'ListItem', position: 3, name: stateName,      item: `${_BASE}/${category}/${state}` },
-    ],
+    itemListElement: breadcrumbItems,
   };
 
   return (
@@ -448,11 +456,17 @@ export default async function CategoryStatePage({ params, searchParams }) {
                 Home
               </Link>
               <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>
-                {categoryName}
-              </Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{stateName}</span>
+              {stateName ? (
+                <>
+                  <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>
+                    {categoryName}
+                  </Link>
+                  <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
+                  <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{stateName}</span>
+                </>
+              ) : (
+                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{categoryName}</span>
+              )}
             </nav>
 
             {/* Badge */}
@@ -509,7 +523,7 @@ export default async function CategoryStatePage({ params, searchParams }) {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                 <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
-                  All {categoryName} in {stateName}
+                  All {categoryName}{stateName ? ` in ${stateName}` : ' in the US'}
                 </p>
                 <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>Sorted by rating</p>
               </div>
@@ -517,7 +531,7 @@ export default async function CategoryStatePage({ params, searchParams }) {
               {companies.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '64px 24px', color: '#64748b' }}>
                   <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No listings yet</p>
-                  <p style={{ fontSize: 14 }}>Be the first {categoryName} in {stateName} to get listed.</p>
+                  <p style={{ fontSize: 14 }}>Be the first {categoryName}{stateName ? ` in ${stateName}` : ' in the US'} to get listed.</p>
                   <Link href="/list-your-company" style={{
                     display: 'inline-flex',
                     marginTop: 16,
@@ -647,7 +661,7 @@ export default async function CategoryStatePage({ params, searchParams }) {
               {totalPages > 1 && (
                 <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
                   <Link
-                    href={`/${category}/${state}${currentPage - 1 > 1 ? `?page=${currentPage - 1}` : ''}`}
+                    href={`${basePath}${currentPage - 1 > 1 ? `?page=${currentPage - 1}` : ''}`}
                     aria-disabled={currentPage === 1}
                     style={{
                       pointerEvents: currentPage === 1 ? 'none' : 'auto',
@@ -663,7 +677,7 @@ export default async function CategoryStatePage({ params, searchParams }) {
                   {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
                     <Link
                       key={n}
-                      href={`/${category}/${state}${n > 1 ? `?page=${n}` : ''}`}
+                      href={`${basePath}${n > 1 ? `?page=${n}` : ''}`}
                       style={{
                         fontSize: 13, fontWeight: 600,
                         minWidth: 34, textAlign: 'center',
@@ -679,7 +693,7 @@ export default async function CategoryStatePage({ params, searchParams }) {
                   ))}
 
                   <Link
-                    href={`/${category}/${state}?page=${currentPage + 1}`}
+                    href={`${basePath}?page=${currentPage + 1}`}
                     aria-disabled={currentPage === totalPages}
                     style={{
                       pointerEvents: currentPage === totalPages ? 'none' : 'auto',
@@ -708,13 +722,13 @@ export default async function CategoryStatePage({ params, searchParams }) {
               {/* Other categories */}
               <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>
                 <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Other Categories in {stateName}
+                  {stateName ? `Other Categories in ${stateName}` : 'Other Categories'}
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {SIDEBAR_CATEGORIES.map((c) => (
                     <Link
                       key={c.slug}
-                      href={`/${c.slug}/${state}`}
+                      href={state ? `/${c.slug}/${state}` : `/${c.slug}`}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
