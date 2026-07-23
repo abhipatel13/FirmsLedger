@@ -10,7 +10,7 @@ export default {
         sans:    ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
         body:    ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
-        mono:    ['"Courier New"', 'monospace'],
+        mono:    ['var(--font-plex-mono)', '"Courier New"', 'monospace'],
       },
       borderRadius: {
         lg: 'var(--radius)',
