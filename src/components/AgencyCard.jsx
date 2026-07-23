@@ -48,7 +48,11 @@ export default function AgencyCard({ agency, rank }) {
             {rank ? (
               <div
                 className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-black font-mono ${
-                  isTopThree ? 'bg-[#1A2E4A] text-white' : 'bg-slate-100 text-slate-500'
+                  rank === 1
+                    ? 'bg-orange-500 text-white'
+                    : isTopThree
+                    ? 'bg-[#1A2E4A] text-white'
+                    : 'bg-slate-100 text-slate-500'
                 }`}
                 aria-label={`Ranked #${rank}`}
               >
@@ -79,8 +83,8 @@ export default function AgencyCard({ agency, rank }) {
                   {agency.name}
                 </Link>
                 {agency.verified && (
-                  <span className="inline-flex items-center gap-1 text-slate-500 text-[10px] font-semibold uppercase tracking-wide">
-                    <CheckCircle className="w-3 h-3 text-emerald-500" /> Verified
+                  <span className="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full">
+                    <CheckCircle className="w-3 h-3" /> Verified
                   </span>
                 )}
                 {agency.featured && (
@@ -88,13 +92,18 @@ export default function AgencyCard({ agency, rank }) {
                     <Crown className="w-3 h-3" /> Featured
                   </span>
                 )}
+                {rating >= 4.5 && reviewCount >= 3 && (
+                  <span className="inline-flex items-center gap-1 bg-amber-50 border border-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full">
+                    <Star className="w-3 h-3 fill-amber-500 text-amber-500" /> Top Rated
+                  </span>
+                )}
               </div>
               {(rating > 0 || reviewCount > 0) && (
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="font-semibold text-slate-900 text-sm">{rating.toFixed(1)}</span>
+                  <span className="font-semibold text-slate-900 text-sm font-mono">{rating.toFixed(1)}</span>
                   <StarRow rating={rating} />
                   {reviewCount > 0 && (
-                    <Link href={profileUrl} className="text-xs text-slate-500 hover:text-slate-700">
+                    <Link href={profileUrl} className="text-xs text-slate-500 hover:text-slate-700 font-mono">
                       ({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})
                     </Link>
                   )}
