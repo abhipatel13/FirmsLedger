@@ -10,6 +10,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Electrical Components',
     noun: 'electrical component manufacturers',
     desc: 'Wiring systems, components, switchgear, and electrical equipment producers across the US.',
+    longDescription: "Electrical Components Manufacturers design and produce the hardware that carries, controls, and distributes electrical power — wiring harnesses, switchgear, circuit breakers, panels, transformers, cables, connectors, sensors, and relays. This segment serves industrial plants, utilities, construction contractors, and OEMs building anything that needs to be wired or powered safely. Buyers here are typically sourcing components to code (UL, NEC, IEC) for new builds, retrofits, or equipment assembly, so certifications, voltage ratings, and lead times matter as much as unit price.",
     accent: '#e8b94a',
     accentText: '#0a0a0a',
     subcategories: [
@@ -31,6 +32,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Mechanical Components',
     noun: 'mechanical component manufacturers',
     desc: 'CNC machining, precision parts, assemblies, and industrial tooling makers across the US.',
+    longDescription: "Mechanical Components Manufacturers produce precision parts and assemblies — CNC- and precision-machined components, gears, bearings, shafts, fasteners, springs, and contract-assembled subassemblies — used to build machinery, equipment, and finished products. This industry serves OEMs in aerospace, automotive, industrial equipment, and general manufacturing that need tight-tolerance parts made to spec rather than off-the-shelf. Buyers typically evaluate suppliers on machining capability, material handling, tolerance range, and capacity for both prototype runs and volume production.",
     accent: '#1a3a3a',
     accentText: '#ffffff',
     subcategories: [
@@ -52,6 +54,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Plastics & Packaging',
     noun: 'plastics & packaging manufacturers',
     desc: 'Injection molding, packaging materials, containers, and plastic component makers across the US.',
+    longDescription: "Plastics & Packaging Manufacturers turn resin into finished parts and packaging — via injection molding, blow molding, extrusion, and thermoforming — plus food-grade, medical, flexible, and rigid packaging formats. The segment serves consumer goods brands, food and beverage producers, medical device makers, and industrial buyers who need containers, components, or protective packaging at scale. Sourcing decisions here hinge on material compatibility, tooling costs, regulatory compliance (FDA, ISO), and production volume.",
     accent: '#6b9080',
     accentText: '#ffffff',
     subcategories: [
@@ -71,6 +74,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Metal Fabrication',
     noun: 'metal fabrication & machining companies',
     desc: 'Sheet metal, welding, stamping, and custom metal fabrication shops across the US.',
+    longDescription: "Metal Fabrication & Machining companies cut, shape, weld, and finish metal into structural and custom parts — using laser and waterjet cutting, welding, stamping, and sheet-metal and aluminum fabrication, often finished with powder coating. This industry serves construction, industrial equipment, automotive, and infrastructure projects that need custom or structural metalwork rather than mass-produced parts. Buyers typically compare shops on material capability, cutting/forming precision, finishing options, and project-based turnaround.",
     accent: '#243B58',
     accentText: '#ffffff',
     subcategories: [
@@ -90,6 +94,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Electronics & Semiconductor',
     noun: 'electronics & semiconductor manufacturers',
     desc: 'PCBs, chips, electronic assemblies, and semiconductor component makers across the US.',
+    longDescription: "Electronics & Semiconductor Manufacturers produce the circuitry inside electronic products — PCB manufacturing and assembly, SMT and cable assembly, power and industrial electronics, and semiconductor packaging and components. This segment serves consumer electronics, industrial automation, telecom, and defense OEMs that need boards or chips built to a design spec. Buyers evaluate suppliers on assembly capability (SMT/THT), component sourcing, testing/quality processes, and ability to scale from prototype to production runs.",
     accent: '#2E4E6E',
     accentText: '#ffffff',
     subcategories: [
@@ -109,6 +114,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Automotive Parts',
     noun: 'automotive parts manufacturers',
     desc: 'OEM and aftermarket automotive component and assembly makers across the US.',
+    longDescription: "Automotive Parts Manufacturers supply OEM and aftermarket components for vehicles — engine, brake, suspension, steering, and transmission parts, wiring harnesses, EV components, and aftermarket replacement parts. This industry serves vehicle OEMs, Tier 1/2 suppliers, and the aftermarket repair and accessories channel. Buyers typically source against OEM specifications or fit/form/function standards, and increasingly evaluate suppliers on EV-component capability alongside traditional internal-combustion parts.",
     accent: '#c0563c',
     accentText: '#ffffff',
     subcategories: [
@@ -128,6 +134,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Textile & Apparel',
     noun: 'textile & apparel manufacturers',
     desc: 'Fabric production, garment manufacturing, and textile finishing companies across the US.',
+    longDescription: "Textile & Apparel Manufacturers produce fabric and finished garments — fabric and yarn manufacturing, garment and knitwear production, woven fabrics, sportswear, technical textiles, and uniforms. This segment serves fashion and apparel brands, industrial and workwear buyers, and institutional uniform programs that need production runs from raw fiber through finished product. Sourcing decisions typically weigh fabric type, minimum order quantities, dyeing/finishing capability, and compliance with labor and material standards.",
     accent: '#d9a5ad',
     accentText: '#0a0a0a',
     subcategories: [
@@ -147,6 +154,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Furniture & Woodworking',
     noun: 'furniture & woodworking manufacturers',
     desc: 'Custom furniture, cabinetry, and woodworking production companies across the US.',
+    longDescription: "Furniture & Woodworking Manufacturers build furniture and wood-based building products — office and residential furniture, kitchen cabinets, custom cabinetry, millwork, wooden doors, MDF products, and plywood. This industry serves commercial furnishers, homebuilders, contractors, and interior designers sourcing either standard product lines or custom, made-to-order pieces. Buyers typically compare manufacturers on material grade, customization capability, finishing options, and production lead time.",
     accent: '#a97452',
     accentText: '#ffffff',
     subcategories: [
@@ -166,6 +174,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Food & Beverage Processing',
     noun: 'food & beverage processing companies',
     desc: 'Food processing equipment, packaging lines, and beverage production companies across the US.',
+    longDescription: "Food & Beverage Processing Equipment Manufacturers build the machinery used to produce, package, and move food and drink — food and dairy/meat processing systems, filling and bottling machines, packaging equipment, and conveyor systems. This segment serves food and beverage producers, co-packers, and distributors that need equipment meeting food-safety and sanitation standards (FDA, USDA, 3-A). Buyers typically evaluate suppliers on throughput capacity, sanitary design, and compatibility with existing production lines.",
     accent: '#e0b04a',
     accentText: '#0a0a0a',
     subcategories: [
@@ -185,6 +194,7 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Medical Devices',
     noun: 'medical device manufacturers',
     desc: 'Diagnostic equipment, surgical instruments, and medical component makers across the US.',
+    longDescription: "Medical Device Manufacturers produce equipment and instruments used in clinical and diagnostic settings — surgical instruments, diagnostic and laboratory equipment, medical electronics, hospital and dental equipment, orthopedic devices, and medical packaging. This industry serves hospitals, clinics, diagnostic labs, and medical device OEMs that require FDA-regulated, quality-controlled manufacturing. Buyers typically prioritize regulatory certifications (FDA 510(k), ISO 13485), precision tolerances, and sterile/clean-room manufacturing capability when selecting suppliers.",
     accent: '#8fb8a8',
     accentText: '#0a0a0a',
     subcategories: [

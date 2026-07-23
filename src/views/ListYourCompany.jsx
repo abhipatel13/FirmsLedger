@@ -105,47 +105,113 @@ export default function ListYourCompany() {
     <div className="min-h-screen bg-[#ffffff]">
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <div className="bg-[#f8fafc] border-b border-[#e2e8f0]">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-[#f1f5f9] border border-[#e2e8f0] rounded-full px-4 py-2 text-xs font-semibold text-[#64748b] mb-6 uppercase tracking-widest">
-              <Star className="w-3.5 h-3.5 text-[#e8b94a]" /> Free to list · No credit card required
-            </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#0f172a] leading-tight mb-4" style={{ letterSpacing: '-1.5px' }}>
-              Get your business in front of buyers
-            </h1>
-            <p className="text-[#334155] text-base sm:text-lg leading-relaxed mb-8 max-w-xl">
-              FirmsLedger is the US manufacturer directory where buyers find verified suppliers across all 50 states.
-              Submit your listing today and start winning new clients.
-            </p>
+      <div className="relative overflow-hidden bg-[#f8fafc] border-b border-[#e2e8f0]">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)',
+            backgroundSize: '28px 28px',
+            maskImage: 'linear-gradient(to bottom, black, transparent)',
+          }}
+        />
+        <div className="relative max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+          <div className="grid lg:grid-cols-[1fr_1fr] gap-12 xl:gap-16 items-center">
 
-            {/* Stats */}
-            <div className="flex flex-wrap gap-8">
-              {STATS.map(({ value, label }) => (
-                <div key={label}>
-                  <p className="text-2xl font-medium text-[#0f172a]" style={{ letterSpacing: '-0.5px' }}>{value}</p>
-                  <p className="text-[#64748b] text-xs font-semibold uppercase tracking-wider mt-0.5">{label}</p>
+            {/* Left: copy */}
+            <div>
+              <div className="inline-flex items-center gap-2 bg-white border border-[#e2e8f0] rounded-full px-4 py-2 text-xs font-semibold text-[#64748b] mb-6 uppercase tracking-widest shadow-sm">
+                <Star className="w-3.5 h-3.5 text-[#e8b94a]" /> Free to list · No credit card required
+              </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-[#0f172a] leading-[1.05] mb-5" style={{ letterSpacing: '-2px' }}>
+                Get your business in front of buyers
+              </h1>
+              <p className="text-[#334155] text-base sm:text-lg leading-relaxed mb-10 max-w-xl">
+                FirmsLedger is the US manufacturer directory where buyers find verified suppliers across all 50 states.
+                Submit your listing today and start winning new clients.
+              </p>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 max-w-md">
+                {STATS.map(({ value, label }, i) => (
+                  <div key={label} className={i > 0 ? 'pl-6 sm:pl-10 border-l border-[#e2e8f0]' : 'pr-6 sm:pr-10'}>
+                    <p className="text-2xl sm:text-3xl font-bold text-[#0f172a]" style={{ letterSpacing: '-0.5px' }}>{value}</p>
+                    <p className="text-[#64748b] text-[11px] sm:text-xs font-semibold uppercase tracking-wider mt-1">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: visual */}
+            <div className="hidden lg:block relative">
+              <div className="absolute -inset-8 bg-gradient-to-br from-[#F5A623]/10 via-transparent to-[#1A2E4A]/10 rounded-[2.5rem] blur-2xl" />
+              <div className="relative bg-white border border-[#e2e8f0] rounded-2xl shadow-xl shadow-slate-900/5 p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-xs font-semibold text-[#64748b] uppercase tracking-widest">Live preview</span>
+                  <span className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Verified
+                  </span>
                 </div>
-              ))}
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-xl bg-[#1A2E4A] flex items-center justify-center flex-shrink-0">
+                    <Building2 className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[#0f172a] text-base">Acme Precision Mfg.</p>
+                    <p className="text-sm text-[#64748b] mt-1">Columbus, OH · CNC Machining</p>
+                    <div className="flex items-center gap-1 mt-2">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-[#F5A623] text-[#F5A623]" />
+                      ))}
+                      <span className="text-xs text-[#64748b] ml-1">4.9 (32)</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2.5 mb-6">
+                  {['ISO 9001', '50+ Staff', 'Est. 2004'].map(tag => (
+                    <div key={tag} className="bg-[#f8fafc] border border-[#e2e8f0] rounded-lg py-2.5 text-center">
+                      <span className="text-xs font-semibold text-[#334155]">{tag}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-[#64748b] leading-relaxed mb-6 line-clamp-2">
+                  Custom CNC machining and precision fabrication for aerospace, medical, and industrial clients since 2004.
+                </p>
+                <div className="w-full h-11 rounded-lg bg-[#1A2E4A] flex items-center justify-center">
+                  <span className="text-sm font-semibold text-white">Contact Supplier</span>
+                </div>
+              </div>
+
+              <div className="absolute -bottom-6 -left-8 bg-white border border-[#e2e8f0] rounded-xl shadow-lg shadow-slate-900/5 px-5 py-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#F5A623]/15 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-[#F5A623]" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[#0f172a] leading-none">+2,400</p>
+                  <p className="text-xs text-[#64748b] mt-1">buyer searches / mo</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Process steps ─────────────────────────────────────────────────── */}
-      <div className="bg-[#ffffff] border-b border-[#e2e8f0]">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
-          <div className="flex flex-wrap items-center gap-3 sm:gap-0">
+      <div className="bg-white border-b border-[#e2e8f0]">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-0">
             {STEPS.map((step, i) => (
               <React.Fragment key={step.n}>
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-[#0f172a] text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#1A2E4A] text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
                     {step.n}
                   </div>
                   <span className="text-sm font-medium text-[#334155]">{step.label}</span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <ChevronRight className="w-4 h-4 text-[#e2e8f0] hidden sm:block mx-4" />
+                  <div className="hidden sm:flex items-center mx-6">
+                    <div className="w-12 h-px bg-[#e2e8f0]" />
+                    <ChevronRight className="w-4 h-4 text-[#cbd5e1] -ml-1" />
+                  </div>
                 )}
               </React.Fragment>
             ))}
@@ -154,8 +220,8 @@ export default function ListYourCompany() {
       </div>
 
       {/* ── Body ──────────────────────────────────────────────────────────── */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        <div className="grid lg:grid-cols-[1fr_400px] gap-10 xl:gap-16 items-start">
+      <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-[#f8fafc]">
+        <div className="max-w-[1240px] mx-auto grid lg:grid-cols-[1fr_400px] gap-10 xl:gap-16 items-start">
 
           {/* ── Left: Benefits + form ──────────────────────────────────────── */}
           <div className="space-y-8">
