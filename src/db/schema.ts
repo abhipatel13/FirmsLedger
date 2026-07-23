@@ -111,6 +111,19 @@ export const reviews = pgTable('reviews', {
   updated_at:            timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
+// ── Company Leads (Request Proposal submissions) ──────────────────────────────
+
+export const company_leads = pgTable('company_leads', {
+  id:         uuid('id').primaryKey().defaultRandom(),
+  company_id: uuid('company_id').notNull().references(() => companies.id, { onDelete: 'cascade' }),
+  name:       text('name').notNull(),
+  email:      text('email').notNull(),
+  phone:      text('phone'),
+  message:    text('message').notNull(),
+  status:     text('status').default('new'), // new | contacted | closed
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
 // ── Listing Requests ──────────────────────────────────────────────────────────
 
 export const listing_requests = pgTable('listing_requests', {
@@ -277,6 +290,7 @@ export type Category                = typeof categories.$inferSelect;
 export type Company                 = typeof companies.$inferSelect;
 export type CompanyCategory         = typeof company_categories.$inferSelect;
 export type Review                  = typeof reviews.$inferSelect;
+export type CompanyLead             = typeof company_leads.$inferSelect;
 export type ListingRequest          = typeof listing_requests.$inferSelect;
 export type CompanyInvite           = typeof company_invites.$inferSelect;
 export type EmailCampaign           = typeof email_campaigns.$inferSelect;
