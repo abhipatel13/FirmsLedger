@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -25,6 +25,18 @@ const PLANS = {
 };
 
 export default function ClaimListingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+      </div>
+    }>
+      <ClaimListingContent />
+    </Suspense>
+  );
+}
+
+function ClaimListingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const agencySlug = searchParams.get('agency') || '';
