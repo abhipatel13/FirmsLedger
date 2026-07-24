@@ -183,6 +183,71 @@ function GearIcon({ className }) {
   );
 }
 
+// ─── Scroll effects ──────────────────────────────────────────────────────────────
+
+function useFadeInOnScroll() {
+  const ref = React.useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  React.useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, visible];
+}
+
+function AnimatedCounter({ value, duration = 1200 }) {
+  const ref = React.useRef(null);
+  const [display, setDisplay] = useState('0');
+  const [started, setStarted] = useState(false);
+
+  const numericMatch = String(value).match(/[\d.]+/);
+  const numericTarget = numericMatch ? parseFloat(numericMatch[0]) : null;
+  const prefix = numericMatch ? value.slice(0, numericMatch.index) : '';
+  const suffix = numericMatch ? value.slice(numericMatch.index + numericMatch[0].length) : '';
+
+  React.useEffect(() => {
+    const node = ref.current;
+    if (!node || numericTarget === null) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) {
+          setStarted(true);
+          const startTime = performance.now();
+          function tick(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setDisplay(Math.round(numericTarget * eased).toString());
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [numericTarget, duration, started]);
+
+  if (numericTarget === null) {
+    return <span ref={ref}>{value}</span>;
+  }
+  return <span ref={ref}>{prefix}{display}{suffix}</span>;
+}
+
 // ─── Shared section wrapper ─────────────────────────────────────────────────────
 
 function SectionEyebrow({ children }) {
@@ -203,26 +268,39 @@ export default function DirectoryHub() {
   const activeState = US_STATES.find((s) => s.slug === selectedState);
   const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, CATEGORIES_PREVIEW_COUNT);
 
+  const [categoriesRef, categoriesVisible] = useFadeInOnScroll();
+  const [trustRef, trustVisible] = useFadeInOnScroll();
+  const [statementRef, statementVisible] = useFadeInOnScroll();
+  const [howRef, howVisible] = useFadeInOnScroll();
+  const [statesRef, statesVisible] = useFadeInOnScroll();
+  const [ctaRef, ctaVisible] = useFadeInOnScroll();
+
   return (
     <div className="bg-white">
 
       {/* ══ HERO ══════════════════════════════════════════════════════ */}
-      <section className="bg-white border-b border-slate-200 py-20 sm:py-24 lg:py-32">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+      <section className="relative overflow-hidden border-b border-slate-200 py-16 sm:py-20 lg:py-24" style={{ backgroundColor: 'var(--bg-page)' }}>
+        <div className="grid-texture-dark absolute inset-0 opacity-40 pointer-events-none" />
+        <div className="absolute -top-40 -left-20 w-[520px] h-[520px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.08), transparent 70%)' }} />
+        <div className="absolute -bottom-40 -right-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(15,23,42,0.05), transparent 70%)' }} />
+        <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
 
             {/* LEFT */}
             <div>
-              <Badge className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 rounded-full px-3.5 py-1.5 mb-7 font-semibold text-[11px] tracking-wider uppercase">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0" />
+              <Badge
+                className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 mb-8 font-semibold text-[11px] tracking-wider uppercase"
+                style={{ backgroundColor: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.12)', color: '#0F172A' }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: 'var(--gold)' }} />
                 US Manufacturer Directory
               </Badge>
 
-              <h1 className="text-[40px] sm:text-5xl lg:text-[64px] font-bold leading-[1.06] tracking-tight text-[#211F1C] mb-5 max-w-lg">
-                Find top <span className="text-[#1A2E4A]">manufacturers</span> across the US
+              <h1 className="text-[40px] sm:text-5xl lg:text-[68px] font-bold leading-[1.06] tracking-tight text-[#211F1C] mb-6 max-w-lg">
+                Find top <span className="text-[#0F172A]">manufacturers</span> across the US
               </h1>
 
-              <p className="text-lg leading-relaxed text-slate-600 mb-8 max-w-md">
+              <p className="text-lg text-[17px] leading-relaxed text-slate-600 mb-10 max-w-md">
                 Browse verified manufacturers across every US state by category — electrical, mechanical, automotive, and more. Ranked by real reviews.
               </p>
 
@@ -234,7 +312,7 @@ export default function DirectoryHub() {
                   { icon: Package, text: 'Free to list' },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex items-center gap-1.5">
-                    <Icon className="w-3.5 h-3.5 text-[#F5A623] flex-shrink-0" />
+                    <Icon className="w-3.5 h-3.5 text-gold flex-shrink-0" />
                     <span className="text-[13px] font-medium text-slate-600">{text}</span>
                   </div>
                 ))}
@@ -243,14 +321,14 @@ export default function DirectoryHub() {
 
             {/* RIGHT — stats grid */}
             <div className="relative">
-              <div className="absolute -inset-8 rounded-full bg-[#F5A623]/10 blur-3xl pointer-events-none" />
+              <div className="absolute -inset-8 rounded-full bg-[#D4A017]/10 blur-3xl pointer-events-none" />
               <div className="relative grid grid-cols-2 gap-2.5">
                 {STATS.map(({ value, label }) => (
-                  <Card key={label} className="bg-[#FAF7F1] border-slate-200 rounded-xl px-6 py-5 shadow-none">
-                    <div className="text-3xl font-bold text-[#211F1C] leading-none mb-1 tracking-tight tabular-nums">
-                      {value}
+                  <Card key={label} className="card-premium rounded-xl px-6 py-5" style={{ backgroundColor: 'var(--bg-surface)' }}>
+                    <div className="text-3xl font-bold leading-none mb-1 tracking-tight tabular-nums" style={{ color: '#111827' }}>
+                      <AnimatedCounter value={value} />
                     </div>
-                    <div className="text-xs text-slate-500 font-medium">{label}</div>
+                    <div className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>{label}</div>
                   </Card>
                 ))}
               </div>
@@ -261,7 +339,12 @@ export default function DirectoryHub() {
       </section>
 
       {/* ══ CATEGORY CARDS ════════════════════════════════════════════ */}
-      <section className="bg-[#FAF7F1] py-20 sm:py-24 lg:py-28" id="categories">
+      <section
+        ref={categoriesRef}
+        className={`py-20 sm:py-24 lg:py-28 transition-all duration-500 ${categoriesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ backgroundColor: 'var(--bg-surface)' }}
+        id="categories"
+      >
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
           <div className="text-center mb-12">
@@ -277,7 +360,7 @@ export default function DirectoryHub() {
               return (
                 <Card
                   key={cat.slug}
-                  className="bg-white border-slate-200 rounded-2xl p-0 flex flex-col h-full overflow-hidden transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg"
+                  className="card-premium bg-white rounded-2xl p-0 flex flex-col h-full overflow-hidden"
                 >
                   <div className={cn('h-[3px] w-full', cat.dot)} />
                   <div className="p-6 flex flex-col flex-1">
@@ -322,7 +405,11 @@ export default function DirectoryHub() {
       </section>
 
       {/* ══ TRUST ═════════════════════════════════════════════════════ */}
-      <section className="bg-white py-20 sm:py-24 lg:py-28">
+      <section
+        ref={trustRef}
+        className={`py-20 sm:py-24 lg:py-28 transition-all duration-500 ${trustVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ backgroundColor: 'var(--bg-cream)' }}
+      >
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
           <div className="text-center mb-12">
             <SectionEyebrow>Why trust our listings</SectionEyebrow>
@@ -336,7 +423,7 @@ export default function DirectoryHub() {
 
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
             {TRUST_STATS.map(({ value, label, icon: Icon, iconBg, iconBorder, iconText }) => (
-              <Card key={label} className="bg-[#FAF7F1] border-slate-200 rounded-2xl p-5 shadow-none text-center">
+              <Card key={label} className="card-premium rounded-2xl p-5 text-center" style={{ backgroundColor: 'var(--bg-surface)' }}>
                 <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center mx-auto mb-3', iconBg, iconBorder)}>
                   <Icon className={cn('w-4 h-4', iconText)} />
                 </div>
@@ -349,20 +436,28 @@ export default function DirectoryHub() {
       </section>
 
       {/* ══ BOLD STATEMENT ═══════════════════════════════════════════ */}
-      <section className="bg-[#211F1C] py-20 sm:py-24 lg:py-28 relative overflow-hidden">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-[#F5A623]/10 blur-[120px] pointer-events-none" />
+      <section
+        ref={statementRef}
+        className={`grid-texture noise-texture py-24 sm:py-28 lg:py-32 relative overflow-hidden transition-all duration-500 ${statementVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}
+      >
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.12), transparent 70%)' }} />
         <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
-          <h2 className="text-[36px] sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#F5A623] leading-[1.05]">
+          <h2 className="text-[40px] sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.02]" style={{ color: 'var(--gold)' }}>
             Zero Paid Rankings.
           </h2>
-          <p className="mt-5 text-base sm:text-lg text-white/60 max-w-xl mx-auto leading-relaxed">
+          <p className="mt-6 text-base sm:text-lg text-white/60 max-w-xl mx-auto leading-relaxed">
             Every company on this list earned its spot through real reviews — nothing else.
           </p>
         </div>
       </section>
 
       {/* ══ HOW IT WORKS ══════════════════════════════════════════════ */}
-      <section className="bg-[#FAF7F1] py-20 sm:py-24 lg:py-28 border-t border-slate-200">
+      <section
+        ref={howRef}
+        className={`py-20 sm:py-24 lg:py-28 border-t border-slate-200 transition-all duration-500 ${howVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ backgroundColor: 'var(--bg-surface)' }}
+      >
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
           <div className="text-center mb-12">
             <SectionEyebrow>How it works</SectionEyebrow>
@@ -377,7 +472,7 @@ export default function DirectoryHub() {
               { num: '2', color: 'text-amber-700 bg-amber-50 border-amber-200', title: 'Select your state', desc: 'All 50 US states covered. Find manufacturers close to your supply chain.' },
               { num: '3', color: 'text-green-700 bg-green-50 border-green-200', title: 'Browse the rankings', desc: 'Ranked by verified reviews and ratings. No pay-to-rank. No sponsored placements.' },
             ].map(({ num, color, title, desc }) => (
-              <Card key={num} className="bg-white border-slate-200 rounded-2xl p-7 shadow-none">
+              <Card key={num} className="card-premium rounded-2xl p-7">
                 <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center mb-4 text-[15px] font-bold tabular-nums shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)]', color)}>
                   {num}
                 </div>
@@ -390,7 +485,12 @@ export default function DirectoryHub() {
       </section>
 
       {/* ══ US STATES PANEL ═══════════════════════════════════════════ */}
-      <section className="bg-white py-20 sm:py-24 lg:py-28 border-t border-slate-200" id="states">
+      <section
+        ref={statesRef}
+        className={`py-20 sm:py-24 lg:py-28 border-t border-slate-200 transition-all duration-500 ${statesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ backgroundColor: 'var(--bg-surface-alt)' }}
+        id="states"
+      >
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
           <div className="flex items-baseline justify-between flex-wrap gap-3 mb-8">
@@ -408,7 +508,7 @@ export default function DirectoryHub() {
           <Card className="grid grid-cols-1 md:grid-cols-[240px_1fr] rounded-2xl overflow-hidden border-slate-200 shadow-sm p-0">
 
             {/* Left: state list */}
-            <ScrollArea className="h-[220px] md:h-[540px] bg-[#FAF7F1] border-b md:border-b-0 md:border-r border-slate-200">
+            <ScrollArea className="h-[220px] md:h-[540px] border-b md:border-b-0 md:border-r border-slate-200" style={{ backgroundColor: 'var(--bg-cream)' }}>
               <div className="py-1">
                 {US_STATES.map((state) => {
                   const active = selectedState === state.slug;
@@ -421,7 +521,7 @@ export default function DirectoryHub() {
                       className={cn(
                         'flex w-full text-left px-5 py-2 text-[13.5px] leading-tight border-l-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A2E4A] focus-visible:ring-inset',
                         active
-                          ? 'bg-white text-[#211F1C] font-semibold border-l-[#F5A623]'
+                          ? 'bg-white text-[#211F1C] font-semibold border-l-[#D4A017]'
                           : 'text-slate-500 font-normal border-l-transparent hover:bg-white/60 hover:text-slate-800'
                       )}
                     >
@@ -475,13 +575,12 @@ export default function DirectoryHub() {
       </section>
 
       {/* ══ CTA BAND ══════════════════════════════════════════════════ */}
-      <section className="bg-[#1A2E4A] py-20 sm:py-24 lg:py-28 relative overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-orange-500/10 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-indigo-500/8 blur-[100px] pointer-events-none" />
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }}
-        />
+      <section
+        ref={ctaRef}
+        className={`grid-texture py-20 sm:py-24 lg:py-28 relative overflow-hidden transition-all duration-500 ${ctaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}
+      >
+        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.10), transparent 70%)' }} />
         <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8">
           <div className="flex flex-wrap items-center justify-between gap-10">
             <div className="max-w-lg">
@@ -498,7 +597,7 @@ export default function DirectoryHub() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/list-your-company"
-                className="inline-flex items-center gap-2 bg-[#F5A623] hover:bg-[#D48E1A] text-[#1A2E4A] rounded-full px-7 py-3.5 text-sm font-semibold shadow-[0_4px_16px_rgba(245,166,35,0.35)] hover:shadow-[0_6px_20px_rgba(245,166,35,0.5)] transition-all"
+                className="inline-flex items-center gap-2 bg-[#D4A017] hover:bg-[#A87A0F] text-[#1A2E4A] rounded-full px-7 py-3.5 text-sm font-semibold shadow-[0_4px_16px_rgba(212,160,23,0.35)] hover:shadow-[0_6px_20px_rgba(212,160,23,0.5)] transition-all btn-scale"
               >
                 List Your Company
                 <ArrowRight className="w-[15px] h-[15px]" />
