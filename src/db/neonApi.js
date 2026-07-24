@@ -24,6 +24,7 @@ import {
   marketplace_responses,
 } from './schema';
 import { eq, and, inArray, isNull, gt, asc, desc, ilike, sql } from 'drizzle-orm';
+import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -109,12 +110,8 @@ export async function fetchCompanies(where = {}, orderKey = '-avg_rating', limit
   return q;
 }
 
-/**
- * Fetch companies by category slug, with optional state slug filter.
- * Used by /top/[category]/[state] page.
- */
-export async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200) {
-  // Resolve category (and sub-categories if parent)
+/** Resolves a category slug (including its subcategories, if it's a parent) to the set of matching, approved company IDs. Returns [] if the category or no linked companies exist. */
+async function resolveCategoryCompanyIds(categorySlug) {
   const [cat] = await db
     .select({ id: categories.id, is_parent: categories.is_parent })
     .from(categories)
@@ -135,9 +132,17 @@ export async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, 
     .select({ company_id: company_categories.company_id })
     .from(company_categories)
     .where(inArray(company_categories.category_id, categoryIds));
-  if (!links.length) return [];
 
-  const companyIds = [...new Set(links.map((l) => l.company_id))];
+  return [...new Set(links.map((l) => l.company_id))];
+}
+
+/**
+ * Fetch companies by category slug, with optional state slug filter.
+ * Used by /top/[category]/[state] page.
+ */
+export async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, filters = {}) {
+  const companyIds = await resolveCategoryCompanyIds(categorySlug);
+  if (!companyIds.length) return [];
 
   const conditions = [
     eq(companies.approved, true),
@@ -150,12 +155,56 @@ export async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, 
     conditions.push(eq(companies.hq_state_id, stateId));
   }
 
-  return db
+  if (filters.stateSlugs?.length) {
+    const resolvedIds = (
+      await Promise.all(filters.stateSlugs.map((s) => resolveStateId(String(s).toLowerCase())))
+    ).filter(Boolean);
+    if (!resolvedIds.length) return []; // none of the requested states matched
+    conditions.push(inArray(companies.hq_state_id, resolvedIds));
+  }
+
+  let rows = await db
     .select()
     .from(companies)
     .where(and(...conditions))
     .orderBy(orderCol(companies, orderKey))
     .limit(limit);
+
+  if (filters.employeeRanges?.length) {
+    const wanted = new Set(filters.employeeRanges);
+    rows = rows.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
+  }
+
+  return rows;
+}
+
+/**
+ * Returns per-state result counts for a category, for the filter sidebar.
+ * Scoped to the category only — not re-scoped by other active filters (v1 simplification).
+ */
+export async function fetchStateCountsForCategory(categorySlug) {
+  const companyIds = await resolveCategoryCompanyIds(categorySlug);
+  if (!companyIds.length) return [];
+
+  const rows = await db
+    .select({ hq_state_id: companies.hq_state_id, hq_state_label: companies.hq_state_label })
+    .from(companies)
+    .where(and(eq(companies.approved, true), inArray(companies.id, companyIds)));
+
+  const stateRows = await db.select().from(states);
+  const idToSlug = new Map(stateRows.map((s) => [s.id, s.slug]));
+
+  const counts = new Map(); // stateSlug -> { stateSlug, stateLabel, count }
+  for (const row of rows) {
+    if (!row.hq_state_id) continue;
+    const stateSlug = idToSlug.get(row.hq_state_id);
+    if (!stateSlug) continue;
+    const existing = counts.get(stateSlug);
+    if (existing) existing.count += 1;
+    else counts.set(stateSlug, { stateSlug, stateLabel: row.hq_state_label, count: 1 });
+  }
+
+  return [...counts.values()].sort((a, b) => b.count - a.count);
 }
 
 /** @deprecated Use fetchCompaniesByCategoryAndState instead */

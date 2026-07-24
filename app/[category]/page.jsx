@@ -28,7 +28,7 @@ export function generateStaticParams() {
 
 export default async function CategoryLandingPage({ params, searchParams }) {
   const { category: slug } = await params;
-  const { page: pageParam } = await searchParams;
+  const sp = await searchParams;
   if (!CATEGORY_MAP[slug]) notFound();
-  return renderCategoryPage({ category: slug, state: undefined, pageParam });
+  return renderCategoryPage({ category: slug, state: undefined, pageParam: sp.page, searchParams: sp });
 }

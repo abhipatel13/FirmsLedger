@@ -2,10 +2,11 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { CheckCircle, Star, MapPin, Shield, ArrowRight } from 'lucide-react';
-import { fetchCompaniesByCategoryAndState } from '@/db/neonApi';
+import { Shield } from 'lucide-react';
+import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS } from '@/lib/manufacturingCategories';
-import StateSelect from '@/components/StateSelect';
+import CompanyCard from '@/components/listing/CompanyCard';
+import FilterSidebar from '@/components/listing/FilterSidebar';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,63 +32,27 @@ const TOP_STATES = [
   { name: 'Michigan',      slug: 'michigan'     },
 ];
 
-const ALL_US_STATES = [
-  { name: 'Alabama',        slug: 'alabama',        abbr: 'AL' },
-  { name: 'Alaska',         slug: 'alaska',         abbr: 'AK' },
-  { name: 'Arizona',        slug: 'arizona',        abbr: 'AZ' },
-  { name: 'Arkansas',       slug: 'arkansas',       abbr: 'AR' },
-  { name: 'California',     slug: 'california',     abbr: 'CA' },
-  { name: 'Colorado',       slug: 'colorado',       abbr: 'CO' },
-  { name: 'Connecticut',    slug: 'connecticut',    abbr: 'CT' },
-  { name: 'Delaware',       slug: 'delaware',       abbr: 'DE' },
-  { name: 'Florida',        slug: 'florida',        abbr: 'FL' },
-  { name: 'Georgia',        slug: 'georgia',        abbr: 'GA' },
-  { name: 'Hawaii',         slug: 'hawaii',         abbr: 'HI' },
-  { name: 'Idaho',          slug: 'idaho',          abbr: 'ID' },
-  { name: 'Illinois',       slug: 'illinois',       abbr: 'IL' },
-  { name: 'Indiana',        slug: 'indiana',        abbr: 'IN' },
-  { name: 'Iowa',           slug: 'iowa',           abbr: 'IA' },
-  { name: 'Kansas',         slug: 'kansas',         abbr: 'KS' },
-  { name: 'Kentucky',       slug: 'kentucky',       abbr: 'KY' },
-  { name: 'Louisiana',      slug: 'louisiana',      abbr: 'LA' },
-  { name: 'Maine',          slug: 'maine',          abbr: 'ME' },
-  { name: 'Maryland',       slug: 'maryland',       abbr: 'MD' },
-  { name: 'Massachusetts',  slug: 'massachusetts',  abbr: 'MA' },
-  { name: 'Michigan',       slug: 'michigan',       abbr: 'MI' },
-  { name: 'Minnesota',      slug: 'minnesota',      abbr: 'MN' },
-  { name: 'Mississippi',    slug: 'mississippi',    abbr: 'MS' },
-  { name: 'Missouri',       slug: 'missouri',       abbr: 'MO' },
-  { name: 'Montana',        slug: 'montana',        abbr: 'MT' },
-  { name: 'Nebraska',       slug: 'nebraska',       abbr: 'NE' },
-  { name: 'Nevada',         slug: 'nevada',         abbr: 'NV' },
-  { name: 'New Hampshire',  slug: 'new-hampshire',  abbr: 'NH' },
-  { name: 'New Jersey',     slug: 'new-jersey',     abbr: 'NJ' },
-  { name: 'New Mexico',     slug: 'new-mexico',     abbr: 'NM' },
-  { name: 'New York',       slug: 'new-york',       abbr: 'NY' },
-  { name: 'North Carolina', slug: 'north-carolina', abbr: 'NC' },
-  { name: 'North Dakota',   slug: 'north-dakota',   abbr: 'ND' },
-  { name: 'Ohio',           slug: 'ohio',           abbr: 'OH' },
-  { name: 'Oklahoma',       slug: 'oklahoma',       abbr: 'OK' },
-  { name: 'Oregon',         slug: 'oregon',         abbr: 'OR' },
-  { name: 'Pennsylvania',   slug: 'pennsylvania',   abbr: 'PA' },
-  { name: 'Rhode Island',   slug: 'rhode-island',   abbr: 'RI' },
-  { name: 'South Carolina', slug: 'south-carolina', abbr: 'SC' },
-  { name: 'South Dakota',   slug: 'south-dakota',   abbr: 'SD' },
-  { name: 'Tennessee',      slug: 'tennessee',      abbr: 'TN' },
-  { name: 'Texas',          slug: 'texas',          abbr: 'TX' },
-  { name: 'Utah',           slug: 'utah',           abbr: 'UT' },
-  { name: 'Vermont',        slug: 'vermont',        abbr: 'VT' },
-  { name: 'Virginia',       slug: 'virginia',       abbr: 'VA' },
-  { name: 'Washington',     slug: 'washington',     abbr: 'WA' },
-  { name: 'West Virginia',  slug: 'west-virginia',  abbr: 'WV' },
-  { name: 'Wisconsin',      slug: 'wisconsin',      abbr: 'WI' },
-  { name: 'Wyoming',        slug: 'wyoming',        abbr: 'WY' },
-];
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function toTitleCase(slug) {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function parseFilterParams(searchParams) {
+  const statesParam = searchParams?.states;
+  const employeesParam = searchParams?.employees;
+  const activeStates = statesParam ? String(statesParam).split(',').filter(Boolean) : [];
+  const activeEmployeeRanges = employeesParam ? String(employeesParam).split(',').filter(Boolean) : [];
+  return { activeStates, activeEmployeeRanges };
+}
+
+function buildFilterQueryString(activeStates, activeEmployeeRanges, page) {
+  const params = new URLSearchParams();
+  if (activeStates.length) params.set('states', activeStates.join(','));
+  if (activeEmployeeRanges.length) params.set('employees', activeEmployeeRanges.join(','));
+  if (page > 1) params.set('page', String(page));
+  const query = params.toString();
+  return query ? `?${query}` : '';
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -139,35 +104,15 @@ export function generateStaticParams() {
   return [];
 }
 
-// ─── Star row ─────────────────────────────────────────────────────────────────
-
-function StarRow({ rating }) {
-  return (
-    <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <Star
-          key={n}
-          style={{
-            width: 13,
-            height: 13,
-            fill: n <= Math.round(rating) ? '#F5A623' : '#e2e8f0',
-            color: n <= Math.round(rating) ? '#F5A623' : '#e2e8f0',
-          }}
-        />
-      ))}
-    </span>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function CategoryStatePage({ params, searchParams }) {
   const { category, state } = await params;
-  const { page: pageParam } = await searchParams;
-  return renderCategoryPage({ category, state, pageParam });
+  const sp = await searchParams;
+  return renderCategoryPage({ category, state, pageParam: sp.page, searchParams: sp });
 }
 
-export async function renderCategoryPage({ category, state, pageParam }) {
+export async function renderCategoryPage({ category, state, pageParam, searchParams = {} }) {
   if (!VALID_CATEGORIES.has(category)) notFound();
 
   const cat = CATEGORY_MAP[category];
@@ -184,7 +129,11 @@ export async function renderCategoryPage({ category, state, pageParam }) {
 
     // No subcategory tagging exists in the DB yet, so this shows the parent
     // category's nationwide companies — same data source as the category page.
-    const companies = await fetchCompaniesByCategoryAndState(category, null, '-avg_rating', 500);
+    const { activeStates, activeEmployeeRanges } = parseFilterParams(searchParams);
+    const [companies, stateCounts] = await Promise.all([
+      fetchCompaniesByCategoryAndState(category, null, '-avg_rating', 500, { stateSlugs: activeStates, employeeRanges: activeEmployeeRanges }),
+      fetchStateCountsForCategory(category),
+    ]);
 
     const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
     const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
@@ -250,39 +199,10 @@ export async function renderCategoryPage({ category, state, pageParam }) {
                     Ranked by verified reviews and ratings. Updated monthly.
                   </p>
                 </div>
-                <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 24px', textAlign: 'center', flexShrink: 0 }}>
-                  <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</p>
-                  <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>verified listings</p>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
+                  <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>verified listings</span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Subcategory filter ── */}
-          <div style={{ borderBottom: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
-            <div style={{ maxWidth: 1152, margin: '0 auto', padding: '16px 24px' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {cat.subcategories.map((s) => (
-                  <Link
-                    key={s.slug}
-                    href={`/${category}/${s.slug}`}
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      padding: '6px 14px',
-                      borderRadius: 9999,
-                      border: s.slug === subcategory ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                      textDecoration: 'none',
-                      color: s.slug === subcategory ? '#ffffff' : '#475569',
-                      backgroundColor: s.slug === subcategory ? '#1A2E4A' : '#f8fafc',
-                      transition: 'all 0.12s',
-                      whiteSpace: 'nowrap',
-                    }}
-                    className={`subcat-pill${s.slug === subcategory ? ' active' : ''}`}
-                  >
-                    {s.name}
-                  </Link>
-                ))}
               </div>
             </div>
           </div>
@@ -302,93 +222,35 @@ export async function renderCategoryPage({ category, state, pageParam }) {
 
                 {companies.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '64px 24px', color: '#64748b' }}>
-                    <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No listings yet</p>
-                    <p style={{ fontSize: 14 }}>Be the first {sub.name} company in the US to get listed.</p>
-                    <Link href="/list-your-company" style={{ display: 'inline-flex', marginTop: 16, backgroundColor: '#0f172a', color: '#ffffff', fontSize: 13, fontWeight: 600, padding: '10px 20px', borderRadius: 8, textDecoration: 'none' }}>
-                      List Your Company
-                    </Link>
+                    {(activeStates.length || activeEmployeeRanges.length) ? (
+                      <>
+                        <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No companies match these filters</p>
+                        <Link href={basePath} style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
+                          Clear filters
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No listings yet</p>
+                        <p style={{ fontSize: 14 }}>Be the first {sub.name} company in the US to get listed.</p>
+                        <Link href="/list-your-company" style={{ display: 'inline-flex', marginTop: 16, backgroundColor: '#0f172a', color: '#ffffff', fontSize: 13, fontWeight: 600, padding: '10px 20px', borderRadius: 8, textDecoration: 'none' }}>
+                          List Your Company
+                        </Link>
+                      </>
+                    )}
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {pageCompanies.map((company, i) => {
-                    const index = rankOffset + i;
-                    return (
-                      <Link
-                        key={company.slug}
-                        href={`/company/${company.slug}`}
-                        style={{ display: 'block', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '20px 24px', textDecoration: 'none', transition: 'border-color 0.15s, box-shadow 0.15s' }}
-                        className="company-card"
-                      >
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-                          <div style={{
-                            width: 36, height: 36, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                            backgroundColor: index === 0 ? '#1A2E4A' : index === 1 ? '#243B58' : index === 2 ? '#f1f5f9' : '#f8fafc',
-                            color: index < 2 ? '#ffffff' : '#64748b', fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
-                          }}>
-                            #{index + 1}
-                          </div>
-
-                          {company.logo_url ? (
-                            <img src={company.logo_url} alt={`${company.name} logo`} width={52} height={52} loading="lazy" decoding="async" style={{ width: 52, height: 52, borderRadius: 10, objectFit: 'contain', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', flexShrink: 0 }} />
-                          ) : (
-                            <div style={{ width: 52, height: 52, backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                              <span style={{ fontSize: 20, fontWeight: 700, color: '#94a3b8' }}>{company.name.charAt(0)}</span>
-                            </div>
-                          )}
-
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                              <h3 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: 0 }}>{company.name}</h3>
-                              {company.is_verified && (
-                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: '#16a34a', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', padding: '2px 8px', borderRadius: 9999 }}>
-                                  <CheckCircle style={{ width: 10, height: 10 }} />
-                                  Verified
-                                </span>
-                              )}
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <StarRow rating={parseFloat(company.avg_rating) || 0} />
-                                <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>
-                                  {(parseFloat(company.avg_rating) || 0).toFixed(1)}
-                                </span>
-                              </div>
-                              <span style={{ color: '#e2e8f0' }}>·</span>
-                              <span style={{ fontSize: 12, color: '#94a3b8', fontVariantNumeric: 'tabular-nums' }}>
-                                {company.review_count || 0} reviews
-                              </span>
-                              {(company.hq_city || company.hq_state_label) && (
-                                <>
-                                  <span style={{ color: '#e2e8f0' }}>·</span>
-                                  <span style={{ fontSize: 12, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                    <MapPin style={{ width: 11, height: 11 }} />
-                                    {[company.hq_city, company.hq_state_label].filter(Boolean).join(', ')}
-                                  </span>
-                                </>
-                              )}
-                            </div>
-
-                            {company.description && (
-                              <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                {company.description}
-                              </p>
-                            )}
-                          </div>
-
-                          <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                            <ArrowRight style={{ width: 16, height: 16, color: '#94a3b8' }} />
-                          </div>
-                        </div>
-                      </Link>
-                    );})}
+                    {pageCompanies.map((company, i) => (
+                      <CompanyCard key={company.slug} company={company} rank={rankOffset + i} />
+                    ))}
                   </div>
                 )}
 
                 {totalPages > 1 && (
                   <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
                     <Link
-                      href={`${basePath}${currentPage - 1 > 1 ? `?page=${currentPage - 1}` : ''}`}
+                      href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage - 1)}`}
                       aria-disabled={currentPage === 1}
                       style={{
                         pointerEvents: currentPage === 1 ? 'none' : 'auto',
@@ -404,7 +266,7 @@ export async function renderCategoryPage({ category, state, pageParam }) {
                     {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
                       <Link
                         key={n}
-                        href={`${basePath}${n > 1 ? `?page=${n}` : ''}`}
+                        href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
                         aria-current={n === currentPage ? 'page' : undefined}
                         style={{
                           fontSize: 13, fontWeight: 600,
@@ -421,7 +283,7 @@ export async function renderCategoryPage({ category, state, pageParam }) {
                     ))}
 
                     <Link
-                      href={`${basePath}?page=${currentPage + 1}`}
+                      href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage + 1)}`}
                       aria-disabled={currentPage === totalPages}
                       style={{
                         pointerEvents: currentPage === totalPages ? 'none' : 'auto',
@@ -447,55 +309,16 @@ export async function renderCategoryPage({ category, state, pageParam }) {
               {/* ── Sidebar ── */}
               <aside style={{ width: 264, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }} className="listing-sidebar">
 
-                {/* State filter dropdown */}
-                <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>
-                  <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    Filter by State
-                  </h3>
-                  <StateSelect basePath={basePath} states={ALL_US_STATES} placeholder="Select a state…" />
-                </div>
-
-                {/* Other subcategories */}
-                <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>
-                  <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {cat.shortName} Subcategories
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {cat.subcategories.map((s) => (
-                      <Link
-                        key={s.slug}
-                        href={`/${category}/${s.slug}`}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '8px 10px',
-                          borderRadius: 8,
-                          fontSize: 13,
-                          textDecoration: 'none',
-                          transition: 'background 0.1s',
-                          color: s.slug === subcategory ? '#0f172a' : '#475569',
-                          backgroundColor: s.slug === subcategory ? '#ffffff' : 'transparent',
-                          fontWeight: s.slug === subcategory ? 600 : 400,
-                          border: s.slug === subcategory ? '1px solid #e2e8f0' : '1px solid transparent',
-                        }}
-                        className={`sidebar-cat-link${s.slug === subcategory ? ' active' : ''}`}
-                      >
-                        <span>{s.name}</span>
-                        {s.slug === subcategory && <span style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8' }}>Current</span>}
-                      </Link>
-                    ))}
-                  </div>
-                  <div style={{ borderTop: '1px solid #e2e8f0', marginTop: 10, paddingTop: 10 }}>
-                    <Link
-                      href={`/${category}`}
-                      style={{ fontSize: 12, color: '#64748b', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4, padding: '6px 10px', borderRadius: 6 }}
-                      className="breadcrumb-link"
-                    >
-                      ← All {cat.shortName}
-                    </Link>
-                  </div>
-                </div>
+                <FilterSidebar
+                  basePath={basePath}
+                  activeStates={activeStates}
+                  activeEmployeeRanges={activeEmployeeRanges}
+                  stateCounts={stateCounts}
+                  showStateFilter={true}
+                  subcategories={cat.subcategories}
+                  category={category}
+                  currentSubcategory={subcategory}
+                />
 
                 {/* CTA */}
                 <div style={{ backgroundColor: '#1A2E4A', borderRadius: 12, padding: 20 }}>
@@ -523,9 +346,7 @@ export async function renderCategoryPage({ category, state, pageParam }) {
             .listing-sidebar { width: 100% !important; }
           }
           .breadcrumb-link:hover { color: #0f172a !important; }
-          .company-card:hover { border-color: #94a3b8 !important; box-shadow: 0 4px 16px -4px rgba(15,23,42,0.07) !important; }
           .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
-          .subcat-pill:not(.active):hover { border-color: #1A2E4A !important; color: #1A2E4A !important; background-color: #ffffff !important; }
           .cta-btn:hover { background-color: #D48E1A !important; }
         `}</style>
       </>
@@ -535,7 +356,15 @@ export async function renderCategoryPage({ category, state, pageParam }) {
   // ── Branch: state listing (or nationwide when `state` is absent) ────────
   const categoryName = cat?.name || toTitleCase(category);
   const stateName    = state ? toTitleCase(state) : null;
-  const companies    = await fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', 500);
+  const { activeStates, activeEmployeeRanges } = parseFilterParams(searchParams);
+  const showStateFilter = !state; // nationwide only
+  const [companies, stateCounts] = await Promise.all([
+    fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', 500, {
+      stateSlugs: showStateFilter ? activeStates : [],
+      employeeRanges: activeEmployeeRanges,
+    }),
+    showStateFilter ? fetchStateCountsForCategory(category) : Promise.resolve([]),
+  ]);
   const pageTitle    = stateName ? `Top ${categoryName} in ${stateName}` : `Top ${categoryName} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
@@ -634,51 +463,13 @@ export async function renderCategoryPage({ category, state, pageParam }) {
                   Ranked by verified reviews and ratings. Updated monthly.
                 </p>
               </div>
-              <div style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: 12,
-                padding: '16px 24px',
-                textAlign: 'center',
-                flexShrink: 0,
-              }}>
-                <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</p>
-                <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>verified listings</p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
+                <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>verified listings</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* ── Subcategory filter ─────────────────────────────────── */}
-        {cat?.subcategories?.length > 0 && (
-          <div style={{ borderBottom: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
-            <div style={{ maxWidth: 1152, margin: '0 auto', padding: '16px 24px' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {cat.subcategories.map((sub) => (
-                  <Link
-                    key={sub.slug}
-                    href={`/${category}/${sub.slug}`}
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      padding: '6px 14px',
-                      borderRadius: 9999,
-                      border: '1px solid #e2e8f0',
-                      textDecoration: 'none',
-                      color: '#475569',
-                      backgroundColor: '#f8fafc',
-                      transition: 'all 0.12s',
-                      whiteSpace: 'nowrap',
-                    }}
-                    className="subcat-pill"
-                  >
-                    {sub.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ── Content ─────────────────────────────────────────────── */}
         <div style={{ maxWidth: 1152, margin: '0 auto', padding: '32px 24px 64px' }}>
@@ -706,138 +497,45 @@ export async function renderCategoryPage({ category, state, pageParam }) {
 
               {companies.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '64px 24px', color: '#64748b' }}>
-                  <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No listings yet</p>
-                  <p style={{ fontSize: 14 }}>Be the first {categoryName}{stateName ? ` in ${stateName}` : ' in the US'} to get listed.</p>
-                  <Link href="/list-your-company" style={{
-                    display: 'inline-flex',
-                    marginTop: 16,
-                    backgroundColor: '#0f172a',
-                    color: '#ffffff',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    padding: '10px 20px',
-                    borderRadius: 8,
-                    textDecoration: 'none',
-                  }}>
-                    List Your Company
-                  </Link>
+                  {(activeStates.length || activeEmployeeRanges.length) ? (
+                    <>
+                      <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No companies match these filters</p>
+                      <Link href={basePath} style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
+                        Clear filters
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No listings yet</p>
+                      <p style={{ fontSize: 14 }}>Be the first {categoryName}{stateName ? ` in ${stateName}` : ' in the US'} to get listed.</p>
+                      <Link href="/list-your-company" style={{
+                        display: 'inline-flex',
+                        marginTop: 16,
+                        backgroundColor: '#0f172a',
+                        color: '#ffffff',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        padding: '10px 20px',
+                        borderRadius: 8,
+                        textDecoration: 'none',
+                      }}>
+                        List Your Company
+                      </Link>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {pageCompanies.map((company, i) => {
-                  const index = rankOffset + i;
-                  return (
-                    <Link
-                      key={company.slug}
-                      href={`/company/${company.slug}`}
-                      style={{
-                        display: 'block',
-                        backgroundColor: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: 12,
-                        padding: '20px 24px',
-                        textDecoration: 'none',
-                        transition: 'border-color 0.15s, box-shadow 0.15s',
-                      }}
-                      className="company-card"
-                    >
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-
-                        {/* Rank badge */}
-                        <div style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 8,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          backgroundColor: index === 0 ? '#1A2E4A' : index === 1 ? '#243B58' : index === 2 ? '#f1f5f9' : '#f8fafc',
-                          color: index < 2 ? '#ffffff' : '#64748b',
-                          fontSize: 12,
-                          fontWeight: 700,
-                          fontVariantNumeric: 'tabular-nums',
-                        }}>
-                          #{index + 1}
-                        </div>
-
-                        {/* Logo */}
-                        {company.logo_url ? (
-                          <img src={company.logo_url} alt={`${company.name} logo`} width={52} height={52} loading="lazy" decoding="async" style={{ width: 52, height: 52, borderRadius: 10, objectFit: 'contain', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', flexShrink: 0 }} />
-                        ) : (
-                          <div style={{ width: 52, height: 52, backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <span style={{ fontSize: 20, fontWeight: 700, color: '#94a3b8' }}>{company.name.charAt(0)}</span>
-                          </div>
-                        )}
-
-                        {/* Details */}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <h3 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: 0 }}>
-                              {company.name}
-                            </h3>
-                            {company.is_verified && (
-                              <span style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                                fontSize: 10,
-                                fontWeight: 600,
-                                color: '#16a34a',
-                                backgroundColor: '#f0fdf4',
-                                border: '1px solid #bbf7d0',
-                                padding: '2px 8px',
-                                borderRadius: 9999,
-                              }}>
-                                <CheckCircle style={{ width: 10, height: 10 }} />
-                                Verified
-                              </span>
-                            )}
-                          </div>
-
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <StarRow rating={parseFloat(company.avg_rating) || 0} />
-                              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>
-                                {(parseFloat(company.avg_rating) || 0).toFixed(1)}
-                              </span>
-                            </div>
-                            <span style={{ color: '#e2e8f0' }}>·</span>
-                            <span style={{ fontSize: 12, color: '#94a3b8', fontVariantNumeric: 'tabular-nums' }}>
-                              {company.review_count || 0} reviews
-                            </span>
-                            {(company.hq_city || company.hq_state_label) && (
-                              <>
-                                <span style={{ color: '#e2e8f0' }}>·</span>
-                                <span style={{ fontSize: 12, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                  <MapPin style={{ width: 11, height: 11 }} />
-                                  {[company.hq_city, company.hq_state_label].filter(Boolean).join(', ')}
-                                </span>
-                              </>
-                            )}
-                          </div>
-
-                          {company.description && (
-                            <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                              {company.description}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* CTA arrow */}
-                        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                          <ArrowRight style={{ width: 16, height: 16, color: '#94a3b8' }} />
-                        </div>
-                      </div>
-                    </Link>
-                  );})}
+                  {pageCompanies.map((company, i) => (
+                    <CompanyCard key={company.slug} company={company} rank={rankOffset + i} />
+                  ))}
                 </div>
               )}
 
               {totalPages > 1 && (
                 <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
                   <Link
-                    href={`${basePath}${currentPage - 1 > 1 ? `?page=${currentPage - 1}` : ''}`}
+                    href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage - 1)}`}
                     aria-disabled={currentPage === 1}
                     style={{
                       pointerEvents: currentPage === 1 ? 'none' : 'auto',
@@ -853,7 +551,7 @@ export async function renderCategoryPage({ category, state, pageParam }) {
                   {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
                     <Link
                       key={n}
-                      href={`${basePath}${n > 1 ? `?page=${n}` : ''}`}
+                      href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
                       aria-current={n === currentPage ? 'page' : undefined}
                       style={{
                         fontSize: 13, fontWeight: 600,
@@ -870,7 +568,7 @@ export async function renderCategoryPage({ category, state, pageParam }) {
                   ))}
 
                   <Link
-                    href={`${basePath}?page=${currentPage + 1}`}
+                    href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage + 1)}`}
                     aria-disabled={currentPage === totalPages}
                     style={{
                       pointerEvents: currentPage === totalPages ? 'none' : 'auto',
@@ -929,35 +627,61 @@ export async function renderCategoryPage({ category, state, pageParam }) {
                 </div>
               </div>
 
-              {/* Top states */}
-              <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>
-                <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Top States
-                </h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {TOP_STATES.map((s) => (
-                    <Link
-                      key={s.slug}
-                      href={`/${category}/${s.slug}`}
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 500,
-                        padding: '5px 10px',
-                        borderRadius: 9999,
-                        border: '1px solid',
-                        textDecoration: 'none',
-                        transition: 'all 0.12s',
-                        borderColor: s.slug === state ? '#1A2E4A' : '#e2e8f0',
-                        backgroundColor: s.slug === state ? '#1A2E4A' : '#ffffff',
-                        color: s.slug === state ? '#ffffff' : '#475569',
-                      }}
-                      className={`sidebar-state-pill${s.slug === state ? ' active' : ''}`}
-                    >
-                      {s.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              {showStateFilter ? (
+                <FilterSidebar
+                  basePath={basePath}
+                  activeStates={activeStates}
+                  activeEmployeeRanges={activeEmployeeRanges}
+                  stateCounts={stateCounts}
+                  showStateFilter={true}
+                  subcategories={cat?.subcategories}
+                  category={category}
+                  currentSubcategory={null}
+                />
+              ) : (
+                <>
+                  {/* Top states */}
+                  <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>
+                    <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      Top States
+                    </h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {TOP_STATES.map((s) => (
+                        <Link
+                          key={s.slug}
+                          href={`/${category}/${s.slug}`}
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 500,
+                            padding: '5px 10px',
+                            borderRadius: 9999,
+                            border: '1px solid',
+                            textDecoration: 'none',
+                            transition: 'all 0.12s',
+                            borderColor: s.slug === state ? '#1A2E4A' : '#e2e8f0',
+                            backgroundColor: s.slug === state ? '#1A2E4A' : '#ffffff',
+                            color: s.slug === state ? '#ffffff' : '#475569',
+                          }}
+                          className={`sidebar-state-pill${s.slug === state ? ' active' : ''}`}
+                        >
+                          {s.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  <FilterSidebar
+                    basePath={basePath}
+                    activeStates={[]}
+                    activeEmployeeRanges={activeEmployeeRanges}
+                    stateCounts={[]}
+                    showStateFilter={false}
+                    subcategories={cat?.subcategories}
+                    category={category}
+                    currentSubcategory={null}
+                  />
+                </>
+              )}
 
               {/* CTA */}
               <div style={{ backgroundColor: '#1A2E4A', borderRadius: 12, padding: 20 }}>
@@ -1010,10 +734,8 @@ export async function renderCategoryPage({ category, state, pageParam }) {
           .listing-sidebar { width: 100% !important; }
         }
         .breadcrumb-link:hover { color: #0f172a !important; }
-        .company-card:hover { border-color: #94a3b8 !important; box-shadow: 0 4px 16px -4px rgba(15,23,42,0.07) !important; }
         .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
         .sidebar-state-pill:not(.active):hover { border-color: #94a3b8 !important; color: #0f172a !important; }
-        .subcat-pill:hover { border-color: #1A2E4A !important; color: #1A2E4A !important; background-color: #ffffff !important; }
         .cta-btn:hover { background-color: #D48E1A !important; }
       `}</style>
     </>
