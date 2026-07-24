@@ -36,6 +36,10 @@ export async function generateMetadata({ params }) {
     title: `${title} | ${SITE_NAME}`,
     description,
     alternates: { canonical },
+    // Ignores the subcategory param when querying companies (no per-
+    // subcategory tagging in the DB yet), so this renders the same list as
+    // the plain /{category}/{state} page — noindex to avoid duplicate content.
+    robots: { index: false, follow: true },
     openGraph: { title, description, type: 'website', url: canonical },
   };
 }

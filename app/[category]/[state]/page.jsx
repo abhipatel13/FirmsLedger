@@ -108,7 +108,10 @@ export async function generateMetadata({ params, searchParams }) {
       title: `${title} | ${SITE_NAME}`,
       description,
       alternates: { canonical },
-      robots: page > 1 ? { index: false, follow: true } : undefined,
+      // Subcategory hubs render the same nationwide company list as their
+      // parent category page (no per-subcategory tagging in the DB yet) —
+      // noindex until that data exists, to avoid duplicate-content pages.
+      robots: { index: false, follow: true },
       openGraph: { title, description, type: 'website', url: canonical },
     };
   }
