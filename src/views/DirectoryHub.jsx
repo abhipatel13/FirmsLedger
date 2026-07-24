@@ -149,20 +149,28 @@ const US_STATES = [
   { name: 'Hawaii', slug: 'hawaii', region: 'West' },
 ];
 
-const STATS = [
-  { value: '10', label: 'Categories' },
-  { value: '50', label: 'States covered' },
-  { value: '67', label: 'Companies listed' },
-  { value: '100%', label: 'Verified listings' },
-];
+const FALLBACK_COMPANY_COUNT = 67;
 
-const TRUST_STATS = [
-  { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
-  { value: '0', label: 'Paid rankings — ever', icon: CheckCircle, iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700' },
-  { value: '50', label: 'States covered', icon: Star, iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700' },
-  { value: '10', label: 'Categories', icon: Wrench, iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700' },
-  { value: '67', label: 'Companies listed', icon: Package, iconBg: 'bg-violet-50', iconBorder: 'border-violet-200', iconText: 'text-violet-700' },
-];
+function getHomepageStats(companyCount) {
+  const listedCompanies = String(Number(companyCount) > 0 ? companyCount : FALLBACK_COMPANY_COUNT);
+
+  return {
+    stats: [
+      { value: '10', label: 'Categories' },
+      { value: '50', label: 'States covered' },
+      { value: listedCompanies, label: 'Companies listed' },
+      { value: '100%', label: 'Verified listings' },
+    ],
+    trustStats: [
+      { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
+      { value: '0', label: 'Paid rankings — ever', icon: CheckCircle, iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700' },
+      { value: '50', label: 'States covered', icon: Star, iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700' },
+      { value: '10', label: 'Categories', icon: Wrench, iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700' },
+      { value: listedCompanies, label: 'Companies listed', icon: Package, iconBg: 'bg-violet-50', iconBorder: 'border-violet-200', iconText: 'text-violet-700' },
+    ],
+  };
+}
+
 
 // ─── Inline icons ────────────────────────────────────────────────────────────────
 
@@ -262,11 +270,12 @@ function SectionEyebrow({ children }) {
 
 const CATEGORIES_PREVIEW_COUNT = 4;
 
-export default function DirectoryHub() {
+export default function DirectoryHub({ companyCount = FALLBACK_COMPANY_COUNT }) {
   const [selectedState, setSelectedState] = useState('california');
   const [showAllCategories, setShowAllCategories] = useState(false);
   const activeState = US_STATES.find((s) => s.slug === selectedState);
   const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, CATEGORIES_PREVIEW_COUNT);
+  const { stats, trustStats } = getHomepageStats(companyCount);
 
   const [categoriesRef, categoriesVisible] = useFadeInOnScroll();
   const [trustRef, trustVisible] = useFadeInOnScroll();
@@ -323,7 +332,7 @@ export default function DirectoryHub() {
             <div className="relative">
               <div className="absolute -inset-8 rounded-full bg-[#D4A017]/10 blur-3xl pointer-events-none" />
               <div className="relative grid grid-cols-2 gap-2.5">
-                {STATS.map(({ value, label }) => (
+                {stats.map(({ value, label }) => (
                   <Card key={label} className="card-premium rounded-xl px-6 py-5" style={{ backgroundColor: 'var(--bg-surface)' }}>
                     <div className="text-3xl font-bold leading-none mb-1 tracking-tight tabular-nums" style={{ color: '#111827' }}>
                       <AnimatedCounter value={value} />
@@ -422,7 +431,7 @@ export default function DirectoryHub() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            {TRUST_STATS.map(({ value, label, icon: Icon, iconBg, iconBorder, iconText }) => (
+            {trustStats.map(({ value, label, icon: Icon, iconBg, iconBorder, iconText }) => (
               <Card key={label} className="card-premium rounded-2xl p-5 text-center" style={{ backgroundColor: 'var(--bg-surface)' }}>
                 <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center mx-auto mb-3', iconBg, iconBorder)}>
                   <Icon className={cn('w-4 h-4', iconText)} />

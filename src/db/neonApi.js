@@ -110,6 +110,21 @@ export async function fetchCompanies(where = {}, orderKey = '-avg_rating', limit
   return q;
 }
 
+export async function fetchApprovedCompanyCount() {
+  if (!db) return 67;
+
+  try {
+    const [row] = await db
+      .select({ count: sql`count(*)` })
+      .from(companies)
+      .where(eq(companies.approved, true));
+
+    return Number(row?.count ?? 0);
+  } catch {
+    return 67;
+  }
+}
+
 /** Resolves a category slug (including its subcategories, if it's a parent) to the set of matching, approved company IDs. Returns [] if the category or no linked companies exist. */
 async function resolveCategoryCompanyIds(categorySlug) {
   const [cat] = await db

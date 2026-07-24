@@ -459,7 +459,7 @@ export default function Layout({ children }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 40, alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 64 }}>
             <div style={{ maxWidth: 420 }}>
               <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 16 }}>
-                <img src="/logo.svg" alt="FirmsLedger" style={{ height: 40, width: 'auto' }} />
+                <img src="/logo-white.svg" alt="FirmsLedger" style={{ height: 40, width: 'auto' }} />
               </Link>
               <p style={{ fontSize: 15, fontWeight: 600, color: '#F9FAFB', marginBottom: 8, lineHeight: 1.5 }}>
                 Connecting you with America's top manufacturers.

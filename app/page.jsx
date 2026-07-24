@@ -1,8 +1,11 @@
 import DirectoryHub from '@/views/DirectoryHub';
 import JsonLd from '@/components/JsonLd';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
+import { fetchApprovedCompanyCount } from '@/db/neonApi';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
+
+export const revalidate = 300;
 
 export const metadata = {
   title: `Top Manufacturers by State — US Manufacturer Directory | ${SITE_NAME}`,
@@ -32,11 +35,13 @@ const websiteSchema = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const companyCount = await fetchApprovedCompanyCount();
+
   return (
     <>
       <JsonLd data={websiteSchema} />
-      <DirectoryHub />
+      <DirectoryHub companyCount={companyCount} />
     </>
   );
 }
