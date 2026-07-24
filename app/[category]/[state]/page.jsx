@@ -55,6 +55,35 @@ function buildFilterQueryString(activeStates, activeEmployeeRanges, page) {
   return query ? `?${query}` : '';
 }
 
+/**
+ * Builds a compact page-number list for pagination: always shows page 1 and
+ * the last page, a window around the current page, and '…' for any gaps —
+ * instead of rendering every page number (unusable once totalPages is large).
+ */
+function paginationRange(current, total) {
+  const delta = 1;
+  const range = [];
+  const withDots = [];
+  let prev;
+
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+      range.push(i);
+    }
+  }
+
+  for (const i of range) {
+    if (prev !== undefined) {
+      if (i - prev === 2) withDots.push(prev + 1);
+      else if (i - prev > 2) withDots.push('…');
+    }
+    withDots.push(i);
+    prev = i;
+  }
+
+  return withDots;
+}
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params, searchParams }) {
@@ -263,24 +292,28 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                       ← Prev
                     </Link>
 
-                    {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
-                      <Link
-                        key={n}
-                        href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
-                        aria-current={n === currentPage ? 'page' : undefined}
-                        style={{
-                          fontSize: 13, fontWeight: 600,
-                          minWidth: 34, textAlign: 'center',
-                          padding: '8px 10px', borderRadius: 8,
-                          textDecoration: 'none',
-                          color: n === currentPage ? '#ffffff' : '#475569',
-                          backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
-                          border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                        }}
-                      >
-                        {n}
-                      </Link>
-                    ))}
+                    {paginationRange(currentPage, totalPages).map((n, i) =>
+                      n === '…' ? (
+                        <span key={`dots-${i}`} style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>…</span>
+                      ) : (
+                        <Link
+                          key={n}
+                          href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
+                          aria-current={n === currentPage ? 'page' : undefined}
+                          style={{
+                            fontSize: 13, fontWeight: 600,
+                            minWidth: 34, textAlign: 'center',
+                            padding: '8px 10px', borderRadius: 8,
+                            textDecoration: 'none',
+                            color: n === currentPage ? '#ffffff' : '#475569',
+                            backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
+                            border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
+                          }}
+                        >
+                          {n}
+                        </Link>
+                      )
+                    )}
 
                     <Link
                       href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage + 1)}`}
@@ -548,24 +581,28 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     ← Prev
                   </Link>
 
-                  {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
-                    <Link
-                      key={n}
-                      href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
-                      aria-current={n === currentPage ? 'page' : undefined}
-                      style={{
-                        fontSize: 13, fontWeight: 600,
-                        minWidth: 34, textAlign: 'center',
-                        padding: '8px 10px', borderRadius: 8,
-                        textDecoration: 'none',
-                        color: n === currentPage ? '#ffffff' : '#475569',
-                        backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
-                        border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                      }}
-                    >
-                      {n}
-                    </Link>
-                  ))}
+                  {paginationRange(currentPage, totalPages).map((n, i) =>
+                    n === '…' ? (
+                      <span key={`dots-${i}`} style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>…</span>
+                    ) : (
+                      <Link
+                        key={n}
+                        href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
+                        aria-current={n === currentPage ? 'page' : undefined}
+                        style={{
+                          fontSize: 13, fontWeight: 600,
+                          minWidth: 34, textAlign: 'center',
+                          padding: '8px 10px', borderRadius: 8,
+                          textDecoration: 'none',
+                          color: n === currentPage ? '#ffffff' : '#475569',
+                          backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
+                          border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
+                        }}
+                      >
+                        {n}
+                      </Link>
+                    )
+                  )}
 
                   <Link
                     href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage + 1)}`}

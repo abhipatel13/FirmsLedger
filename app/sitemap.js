@@ -76,6 +76,8 @@ export default async function sitemap() {
   urls.push({ url: `${BASE_URL}/list-your-company`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
   urls.push({ url: `${BASE_URL}/claim-listing`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 });
   urls.push({ url: `${BASE_URL}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.4 });
+  urls.push({ url: `${BASE_URL}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.2 });
+  urls.push({ url: `${BASE_URL}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.2 });
 
   // ── Category hub pages: /{category} ─────────────────────────────────────
   for (const slug of CATEGORY_SLUGS) {
