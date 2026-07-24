@@ -99,16 +99,29 @@
 /* ── FirmsLedger design tokens ───────────────────────────────── */
 :root {
   /* Brand */
-  --navy:      #1A2E4A;
-  --navy-dark: #0F1824;
-  --navy-mid:  #243B58;
-  --gold:      #F5A623;
-  --gold-light:#FDCE6E;
-  --gold-dark: #D48E1A;
-  --star-color:#F5A623;
+  --navy:      #0F172A;
+  --navy-dark: #070D18;
+  --navy-mid:  #1A2E4A;
+  --gold:      #D4A017;
+  --gold-light:#E8B84B;
+  --gold-dark: #A87A0F;
+  --star-color:#D4A017;
   --max-width: 1380px;
 
-  /* Surface scale — white → light gray */
+  /* Backgrounds — premium palette */
+  --bg-page:        #FAFAF8;
+  --bg-surface:      #ffffff;
+  --bg-surface-alt:  #F5F1EA;
+  --bg-cream:        #F7F5F0;
+
+  /* Text */
+  --text-primary:   #111827;
+  --text-body:      #334155;
+  --text-secondary: #6B7280;
+  --text-muted:     #64748b;
+  --text-caption:   #94a3b8;
+
+  /* Surface scale — white → light gray (kept for pages not in this redesign) */
   --surface-page:   #ffffff;
   --surface-alt:    #f8fafc;
   --surface-subtle: #f1f5f9;
@@ -117,16 +130,17 @@
   /* Border */
   --border-light:  #e2e8f0;
   --border-normal: #cbd5e1;
-
-  /* Text */
-  --text-primary: #0f172a;
-  --text-body:    #334155;
-  --text-muted:   #64748b;
-  --text-caption: #94a3b8;
 }
 
 /* ── Typography scale ────────────────────────────────────────── */
 /* All headings use Inter; tracking tightened for display sizes */
+
+/* ── Brand color utilities ───────────────────────────────────── */
+.text-gold  { color: var(--gold); }
+.bg-gold    { background-color: var(--gold); }
+.border-gold{ border-color: var(--gold); }
+.text-navy  { color: var(--navy); }
+.bg-navy    { background-color: var(--navy); }
 
 /* ── Animations ──────────────────────────────────────────────── */
 @keyframes float {
@@ -177,17 +191,29 @@
   border-color: #cbd5e1 !important;
 }
 
+/* ── Card: premium (stronger shadow, border tint, lift) ─────── */
+.card-premium {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.10);
+  transition: box-shadow 250ms ease, transform 250ms ease, border-color 250ms ease;
+}
+.card-premium:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.06), 0 20px 40px -16px rgba(15, 23, 42, 0.18);
+  border-color: rgba(212, 160, 23, 0.35);
+}
+
 /* ── Button: gold gradient ───────────────────────────────────── */
 .btn-gradient {
-  background: linear-gradient(135deg, #F5A623 0%, #FDCE6E 100%);
-  color: #1A2E4A;
+  background: linear-gradient(135deg, #D4A017 0%, #E8B84B 100%);
+  color: #0F172A;
   font-weight: 600;
   transition: all 0.18s ease;
 }
 .btn-gradient:hover {
-  background: linear-gradient(135deg, #D48E1A 0%, #F5A623 100%);
+  background: linear-gradient(135deg, #A87A0F 0%, #D4A017 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.32);
+  box-shadow: 0 4px 16px rgba(212, 160, 23, 0.32);
 }
 
 /* ── Button: premium sweep ───────────────────────────────────── */
@@ -209,7 +235,7 @@
 
 /* ── Gradient text ───────────────────────────────────────────── */
 .text-gradient {
-  background: linear-gradient(135deg, #F5A623, #FDCE6E);
+  background: linear-gradient(135deg, #D4A017, #E8B84B);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -303,4 +329,51 @@
 .dot-grid {
   background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+/* ── Blueprint grid texture (hero, dark statement section) ──── */
+.grid-texture {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.grid-texture-dark {
+  background-image:
+    linear-gradient(rgba(15,23,42,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ── Noise overlay (SVG feTurbulence, no image asset) ────────── */
+.noise-texture {
+  position: relative;
+}
+.noise-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Animated link underline ─────────────────────────────────── */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 250ms ease;
+}
+.link-underline:hover {
+  background-size: 100% 1px;
+}
+
+/* ── Button: subtle scale + shadow on hover ──────────────────── */
+.btn-scale {
+  transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+.btn-scale:hover {
+  transform: scale(1.02);
 }
