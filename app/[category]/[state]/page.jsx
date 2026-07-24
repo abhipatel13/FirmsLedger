@@ -199,39 +199,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     Ranked by verified reviews and ratings. Updated monthly.
                   </p>
                 </div>
-                <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 24px', textAlign: 'center', flexShrink: 0 }}>
-                  <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</p>
-                  <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>verified listings</p>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
+                  <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>verified listings</span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Subcategory filter ── */}
-          <div style={{ borderBottom: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
-            <div style={{ maxWidth: 1152, margin: '0 auto', padding: '16px 24px' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {cat.subcategories.map((s) => (
-                  <Link
-                    key={s.slug}
-                    href={`/${category}/${s.slug}`}
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      padding: '6px 14px',
-                      borderRadius: 9999,
-                      border: s.slug === subcategory ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                      textDecoration: 'none',
-                      color: s.slug === subcategory ? '#ffffff' : '#475569',
-                      backgroundColor: s.slug === subcategory ? '#1A2E4A' : '#f8fafc',
-                      transition: 'all 0.12s',
-                      whiteSpace: 'nowrap',
-                    }}
-                    className={`subcat-pill${s.slug === subcategory ? ' active' : ''}`}
-                  >
-                    {s.name}
-                  </Link>
-                ))}
               </div>
             </div>
           </div>
@@ -344,49 +315,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   activeEmployeeRanges={activeEmployeeRanges}
                   stateCounts={stateCounts}
                   showStateFilter={true}
+                  subcategories={cat.subcategories}
+                  category={category}
+                  currentSubcategory={subcategory}
                 />
-
-                {/* Other subcategories */}
-                <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>
-                  <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {cat.shortName} Subcategories
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {cat.subcategories.map((s) => (
-                      <Link
-                        key={s.slug}
-                        href={`/${category}/${s.slug}`}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '8px 10px',
-                          borderRadius: 8,
-                          fontSize: 13,
-                          textDecoration: 'none',
-                          transition: 'background 0.1s',
-                          color: s.slug === subcategory ? '#0f172a' : '#475569',
-                          backgroundColor: s.slug === subcategory ? '#ffffff' : 'transparent',
-                          fontWeight: s.slug === subcategory ? 600 : 400,
-                          border: s.slug === subcategory ? '1px solid #e2e8f0' : '1px solid transparent',
-                        }}
-                        className={`sidebar-cat-link${s.slug === subcategory ? ' active' : ''}`}
-                      >
-                        <span>{s.name}</span>
-                        {s.slug === subcategory && <span style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8' }}>Current</span>}
-                      </Link>
-                    ))}
-                  </div>
-                  <div style={{ borderTop: '1px solid #e2e8f0', marginTop: 10, paddingTop: 10 }}>
-                    <Link
-                      href={`/${category}`}
-                      style={{ fontSize: 12, color: '#64748b', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4, padding: '6px 10px', borderRadius: 6 }}
-                      className="breadcrumb-link"
-                    >
-                      ← All {cat.shortName}
-                    </Link>
-                  </div>
-                </div>
 
                 {/* CTA */}
                 <div style={{ backgroundColor: '#1A2E4A', borderRadius: 12, padding: 20 }}>
@@ -415,7 +347,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           }
           .breadcrumb-link:hover { color: #0f172a !important; }
           .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
-          .subcat-pill:not(.active):hover { border-color: #1A2E4A !important; color: #1A2E4A !important; background-color: #ffffff !important; }
           .cta-btn:hover { background-color: #D48E1A !important; }
         `}</style>
       </>
@@ -532,51 +463,13 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   Ranked by verified reviews and ratings. Updated monthly.
                 </p>
               </div>
-              <div style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: 12,
-                padding: '16px 24px',
-                textAlign: 'center',
-                flexShrink: 0,
-              }}>
-                <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</p>
-                <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>verified listings</p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
+                <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>verified listings</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* ── Subcategory filter ─────────────────────────────────── */}
-        {cat?.subcategories?.length > 0 && (
-          <div style={{ borderBottom: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
-            <div style={{ maxWidth: 1152, margin: '0 auto', padding: '16px 24px' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {cat.subcategories.map((sub) => (
-                  <Link
-                    key={sub.slug}
-                    href={`/${category}/${sub.slug}`}
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      padding: '6px 14px',
-                      borderRadius: 9999,
-                      border: '1px solid #e2e8f0',
-                      textDecoration: 'none',
-                      color: '#475569',
-                      backgroundColor: '#f8fafc',
-                      transition: 'all 0.12s',
-                      whiteSpace: 'nowrap',
-                    }}
-                    className="subcat-pill"
-                  >
-                    {sub.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ── Content ─────────────────────────────────────────────── */}
         <div style={{ maxWidth: 1152, margin: '0 auto', padding: '32px 24px 64px' }}>
@@ -741,6 +634,9 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   activeEmployeeRanges={activeEmployeeRanges}
                   stateCounts={stateCounts}
                   showStateFilter={true}
+                  subcategories={cat?.subcategories}
+                  category={category}
+                  currentSubcategory={null}
                 />
               ) : (
                 <>
@@ -780,6 +676,9 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     activeEmployeeRanges={activeEmployeeRanges}
                     stateCounts={[]}
                     showStateFilter={false}
+                    subcategories={cat?.subcategories}
+                    category={category}
+                    currentSubcategory={null}
                   />
                 </>
               )}
@@ -837,7 +736,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         .breadcrumb-link:hover { color: #0f172a !important; }
         .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
         .sidebar-state-pill:not(.active):hover { border-color: #94a3b8 !important; color: #0f172a !important; }
-        .subcat-pill:hover { border-color: #1A2E4A !important; color: #1A2E4A !important; background-color: #ffffff !important; }
         .cta-btn:hover { background-color: #D48E1A !important; }
       `}</style>
     </>
