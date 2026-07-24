@@ -19,7 +19,7 @@ const CATEGORIES = [
     name: 'Electrical Components Manufacturers',
     shortName: 'Electrical Components',
     desc: 'Wiring systems, components, switchgear, and electrical equipment.',
-    iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700', dot: 'bg-amber-500',
+    iconBg: 'bg-gradient-to-br from-amber-50 to-amber-100', iconBorder: 'border-amber-200', iconText: 'text-amber-700', dot: 'bg-amber-500',
     icon: BoltIcon,
   },
   {
@@ -27,7 +27,7 @@ const CATEGORIES = [
     name: 'Mechanical Components Manufacturers',
     shortName: 'Mechanical Components',
     desc: 'CNC machining, precision parts, assemblies, and tooling.',
-    iconBg: 'bg-slate-100', iconBorder: 'border-slate-300', iconText: 'text-slate-700', dot: 'bg-slate-500',
+    iconBg: 'bg-gradient-to-br from-slate-100 to-slate-200', iconBorder: 'border-slate-300', iconText: 'text-slate-700', dot: 'bg-slate-500',
     icon: GearIcon,
   },
   {
@@ -35,7 +35,7 @@ const CATEGORIES = [
     name: 'Plastics & Packaging Manufacturers',
     shortName: 'Plastics & Packaging',
     desc: 'Injection molding, packaging materials, containers, and plastic components.',
-    iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700', dot: 'bg-green-500',
+    iconBg: 'bg-gradient-to-br from-green-50 to-green-100', iconBorder: 'border-green-200', iconText: 'text-green-700', dot: 'bg-green-500',
     icon: Package,
   },
   {
@@ -43,7 +43,7 @@ const CATEGORIES = [
     name: 'Metal Fabrication & Machining',
     shortName: 'Metal Fabrication',
     desc: 'Sheet metal, welding, stamping, and custom metal fabrication.',
-    iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700', dot: 'bg-blue-500',
+    iconBg: 'bg-gradient-to-br from-blue-50 to-blue-100', iconBorder: 'border-blue-200', iconText: 'text-blue-700', dot: 'bg-blue-500',
     icon: Wrench,
   },
   {
@@ -51,7 +51,7 @@ const CATEGORIES = [
     name: 'Electronics & Semiconductor Manufacturers',
     shortName: 'Electronics & Semiconductor',
     desc: 'PCBs, chips, electronic assemblies, and semiconductor components.',
-    iconBg: 'bg-violet-50', iconBorder: 'border-violet-200', iconText: 'text-violet-700', dot: 'bg-indigo-500',
+    iconBg: 'bg-gradient-to-br from-violet-50 to-violet-100', iconBorder: 'border-violet-200', iconText: 'text-violet-700', dot: 'bg-indigo-500',
     icon: Cpu,
   },
   {
@@ -59,7 +59,7 @@ const CATEGORIES = [
     name: 'Automotive Parts Manufacturers',
     shortName: 'Automotive Parts',
     desc: 'OEM and aftermarket automotive components and assemblies.',
-    iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700', dot: 'bg-red-500',
+    iconBg: 'bg-gradient-to-br from-rose-50 to-rose-100', iconBorder: 'border-rose-200', iconText: 'text-rose-700', dot: 'bg-red-500',
     icon: Car,
   },
   {
@@ -67,7 +67,7 @@ const CATEGORIES = [
     name: 'Textile & Apparel Manufacturers',
     shortName: 'Textile & Apparel',
     desc: 'Fabric production, garment manufacturing, and textile finishing.',
-    iconBg: 'bg-pink-50', iconBorder: 'border-pink-200', iconText: 'text-pink-700', dot: 'bg-pink-500',
+    iconBg: 'bg-gradient-to-br from-pink-50 to-pink-100', iconBorder: 'border-pink-200', iconText: 'text-pink-700', dot: 'bg-pink-500',
     icon: Shirt,
   },
   {
@@ -75,7 +75,7 @@ const CATEGORIES = [
     name: 'Furniture & Woodworking Manufacturers',
     shortName: 'Furniture & Woodworking',
     desc: 'Custom furniture, cabinetry, and woodworking production.',
-    iconBg: 'bg-orange-50', iconBorder: 'border-orange-200', iconText: 'text-orange-800', dot: 'bg-orange-400',
+    iconBg: 'bg-gradient-to-br from-orange-50 to-orange-100', iconBorder: 'border-orange-200', iconText: 'text-orange-800', dot: 'bg-orange-400',
     icon: Sofa,
   },
   {
@@ -83,7 +83,7 @@ const CATEGORIES = [
     name: 'Food & Beverage Processing',
     shortName: 'Food & Beverage',
     desc: 'Food processing equipment, packaging lines, and beverage production.',
-    iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-800', dot: 'bg-amber-600',
+    iconBg: 'bg-gradient-to-br from-amber-50 to-amber-100', iconBorder: 'border-amber-200', iconText: 'text-amber-800', dot: 'bg-amber-600',
     icon: UtensilsCrossed,
   },
   {
@@ -91,7 +91,7 @@ const CATEGORIES = [
     name: 'Medical Device Manufacturers',
     shortName: 'Medical Devices',
     desc: 'Diagnostic equipment, surgical instruments, and medical components.',
-    iconBg: 'bg-teal-50', iconBorder: 'border-teal-200', iconText: 'text-teal-700', dot: 'bg-teal-500',
+    iconBg: 'bg-gradient-to-br from-teal-50 to-teal-100', iconBorder: 'border-teal-200', iconText: 'text-teal-700', dot: 'bg-teal-500',
     icon: Stethoscope,
   },
 ];
@@ -156,35 +156,12 @@ const STATS = [
   { value: '100%', label: 'Verified listings' },
 ];
 
-const TRUST_TILES = [
-  {
-    number: '100%',
-    label: 'Listings reviewed before publishing',
-    desc: 'Every company submission goes through a manual approval step, and every review is independently verified before it goes live.',
-    icon: Shield,
-    iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700',
-  },
-  {
-    number: '0',
-    label: 'Paid rankings — ever',
-    desc: "Companies can't buy their way up the list. Rankings are purely performance-based, determined solely by verified ratings and reviews.",
-    icon: CheckCircle,
-    iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700',
-  },
-  {
-    number: null,
-    label: 'Real reviews only',
-    desc: 'All reviews come from verified clients — we never edit, hide, or filter ratings.',
-    icon: Star,
-    iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700',
-  },
-  {
-    number: '10',
-    label: 'Manufacturing categories',
-    desc: 'Electrical, mechanical, plastics, metal fabrication, electronics, automotive, textile, furniture, food, and medical.',
-    icon: Wrench,
-    iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700',
-  },
+const TRUST_STATS = [
+  { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
+  { value: '0', label: 'Paid rankings — ever', icon: CheckCircle, iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700' },
+  { value: '50', label: 'States covered', icon: Star, iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700' },
+  { value: '10', label: 'Categories', icon: Wrench, iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700' },
+  { value: '67', label: 'Companies listed', icon: Package, iconBg: 'bg-violet-50', iconBorder: 'border-violet-200', iconText: 'text-violet-700' },
 ];
 
 // ─── Inline icons ────────────────────────────────────────────────────────────────
@@ -218,7 +195,7 @@ function SectionEyebrow({ children }) {
 
 // ─── Main ────────────────────────────────────────────────────────────────────────
 
-const CATEGORIES_PREVIEW_COUNT = 3;
+const CATEGORIES_PREVIEW_COUNT = 4;
 
 export default function DirectoryHub() {
   const [selectedState, setSelectedState] = useState('california');
@@ -254,6 +231,7 @@ export default function DirectoryHub() {
                   { icon: CheckCircle, text: '100% verified listings' },
                   { icon: Shield, text: 'Zero paid rankings' },
                   { icon: Star, text: 'All 50 US states' },
+                  { icon: Package, text: 'Free to list' },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex items-center gap-1.5">
                     <Icon className="w-3.5 h-3.5 text-[#F5A623] flex-shrink-0" />
@@ -293,7 +271,7 @@ export default function DirectoryHub() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {visibleCategories.map((cat) => {
               const Icon = cat.icon;
               return (
@@ -311,25 +289,9 @@ export default function DirectoryHub() {
                     {cat.name}
                   </h3>
 
-                  <p className="text-[13px] leading-relaxed text-slate-500 mb-4">
+                  <p className="text-[13px] leading-relaxed text-slate-500 mb-4 line-clamp-1">
                     {cat.desc}
                   </p>
-
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {[
-                      { slug: 'california', label: 'California' },
-                      { slug: 'texas', label: 'Texas' },
-                      { slug: 'new-york', label: 'New York' },
-                    ].map(({ slug, label }) => (
-                      <Link
-                        key={slug}
-                        href={`/${cat.slug}/${slug}`}
-                        className="text-[11px] font-medium text-slate-500 bg-slate-50 border border-slate-200 rounded-full px-2.5 py-[3px] transition-colors hover:border-slate-400 hover:text-slate-900"
-                      >
-                        {label}
-                      </Link>
-                    ))}
-                  </div>
 
                   <Link
                     href={`/${cat.slug}`}
@@ -362,36 +324,40 @@ export default function DirectoryHub() {
       {/* ══ TRUST ═════════════════════════════════════════════════════ */}
       <section className="bg-white py-20 sm:py-24 lg:py-28">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-12 lg:gap-16 items-center">
-
-            <div>
-              <SectionEyebrow>Why trust our listings</SectionEyebrow>
-              <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight mb-4">
-                What makes this directory different
-              </h2>
-              <p className="text-slate-500 leading-relaxed max-w-sm">
-                Every listing and every review goes through manual verification before it ever reaches the public directory.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {TRUST_TILES.map(({ number, label, desc, icon: Icon, iconBg, iconBorder, iconText }) => (
-                <Card key={label} className="bg-[#FAF7F1] border-slate-200 rounded-2xl p-6 shadow-none">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center flex-shrink-0', iconBg, iconBorder)}>
-                      <Icon className={cn('w-4 h-4', iconText)} />
-                    </div>
-                    {number && (
-                      <span className="text-xl font-bold text-[#211F1C] tracking-tight tabular-nums">{number}</span>
-                    )}
-                  </div>
-                  <h3 className="text-sm font-semibold text-[#211F1C] mb-1.5 leading-snug">{label}</h3>
-                  <p className="text-[13px] leading-relaxed text-slate-500">{desc}</p>
-                </Card>
-              ))}
-            </div>
-
+          <div className="text-center mb-12">
+            <SectionEyebrow>Why trust our listings</SectionEyebrow>
+            <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight mb-4">
+              What makes this directory different
+            </h2>
+            <p className="text-slate-500 leading-relaxed max-w-md mx-auto">
+              Every listing and every review goes through manual verification before it ever reaches the public directory.
+            </p>
           </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            {TRUST_STATS.map(({ value, label, icon: Icon, iconBg, iconBorder, iconText }) => (
+              <Card key={label} className="bg-[#FAF7F1] border-slate-200 rounded-2xl p-5 shadow-none text-center">
+                <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center mx-auto mb-3', iconBg, iconBorder)}>
+                  <Icon className={cn('w-4 h-4', iconText)} />
+                </div>
+                <div className="text-2xl font-bold text-[#211F1C] tracking-tight tabular-nums mb-1">{value}</div>
+                <div className="text-xs text-slate-500 font-medium leading-snug">{label}</div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ BOLD STATEMENT ═══════════════════════════════════════════ */}
+      <section className="bg-[#211F1C] py-20 sm:py-24 lg:py-28 relative overflow-hidden">
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-[#F5A623]/10 blur-[120px] pointer-events-none" />
+        <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-[36px] sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#F5A623] leading-[1.05]">
+            Zero Paid Rankings.
+          </h2>
+          <p className="mt-5 text-base sm:text-lg text-white/60 max-w-xl mx-auto leading-relaxed">
+            Every company on this list earned its spot through real reviews — nothing else.
+          </p>
         </div>
       </section>
 
