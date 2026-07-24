@@ -63,6 +63,7 @@ const FOOTER_COMPANY = [
 export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen]   = useState(false);
   const [browseOpen, setBrowseOpen]   = useState(false);
+  const [scrolled, setScrolled]       = useState(false);
   const pathname  = usePathname();
   const browseRef = useRef(null);
 
@@ -72,7 +73,10 @@ export default function Layout({ children }) {
         setBrowseOpen(false);
       }
     }
-    function onScroll() { setBrowseOpen(false); }
+    function onScroll() {
+      setBrowseOpen(false);
+      setScrolled(window.scrollY > 8);
+    }
     document.addEventListener('mousedown', onClickOutside);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
@@ -90,12 +94,16 @@ export default function Layout({ children }) {
 
       {/* ══ NAVBAR ══════════════════════════════════════════════════ */}
       <header style={{
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid #e2e8f0',
+        backgroundColor: scrolled ? 'rgba(255,255,255,0.85)' : '#ffffff',
+        backdropFilter: scrolled ? 'blur(8px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(8px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(15,23,42,0.08)' : '1px solid #e2e8f0',
+        boxShadow: scrolled ? '0 4px 20px -8px rgba(15,23,42,0.10)' : 'none',
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        height: 64,
+        height: 72,
+        transition: 'background-color 200ms ease, box-shadow 200ms ease, border-color 200ms ease',
       }}>
         <div style={{
           maxWidth: 'var(--max-width)',
@@ -109,7 +117,7 @@ export default function Layout({ children }) {
 
           {/* Logo */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginRight: 16 }}>
-            <img src="/logo.svg" alt="FirmsLedger" style={{ height: 44, width: 'auto' }} />
+            <img src="/logo.svg" alt="FirmsLedger" style={{ height: 48, width: 'auto' }} />
           </Link>
 
           {/* Desktop nav */}
@@ -216,7 +224,7 @@ export default function Layout({ children }) {
                       style={{
                         fontSize: 13,
                         fontWeight: 500,
-                        color: '#1A2E4A',
+                        color: '#0F172A',
                         textDecoration: 'none',
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -286,21 +294,21 @@ export default function Layout({ children }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
-              backgroundColor: '#F5A623',
-              color: '#1A2E4A',
+              backgroundColor: '#D4A017',
+              color: '#0F172A',
               borderRadius: 9999,
               padding: '9px 22px',
               fontSize: 13.5,
               fontWeight: 600,
               textDecoration: 'none',
-              transition: 'background 0.15s, box-shadow 0.15s',
+              transition: 'background 0.15s, box-shadow 0.15s, transform 0.15s',
               fontFamily: 'inherit',
               flexShrink: 0,
               whiteSpace: 'nowrap',
-              boxShadow: '0 1px 6px rgba(245,166,35,0.25)',
+              boxShadow: '0 1px 6px rgba(212,160,23,0.25)',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#D48E1A'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(245,166,35,0.40)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#F5A623'; e.currentTarget.style.boxShadow = '0 1px 6px rgba(245,166,35,0.25)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#A87A0F'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(212,160,23,0.40)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#D4A017'; e.currentTarget.style.boxShadow = '0 1px 6px rgba(212,160,23,0.25)'; e.currentTarget.style.transform = 'scale(1)'; }}
           >
             List Your Company
           </Link>
@@ -423,8 +431,8 @@ export default function Layout({ children }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: '#F5A623',
-                  color: '#1A2E4A',
+                  backgroundColor: '#D4A017',
+                  color: '#0F172A',
                   borderRadius: 9999,
                   padding: '12px 20px',
                   fontSize: 14,
@@ -444,7 +452,7 @@ export default function Layout({ children }) {
       <main style={{ minWidth: 0, overflowX: 'hidden' }}>{children}</main>
 
       {/* ══ FOOTER ══════════════════════════════════════════════════ */}
-      <footer style={{ backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+      <footer style={{ backgroundColor: '#0B0F17', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '72px 24px 48px' }}>
 
           {/* Brand row */}
@@ -453,10 +461,10 @@ export default function Layout({ children }) {
               <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 16 }}>
                 <img src="/logo.svg" alt="FirmsLedger" style={{ height: 40, width: 'auto' }} />
               </Link>
-              <p style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', marginBottom: 8, lineHeight: 1.5 }}>
+              <p style={{ fontSize: 15, fontWeight: 600, color: '#F9FAFB', marginBottom: 8, lineHeight: 1.5 }}>
                 Connecting you with America's top manufacturers.
               </p>
-              <p style={{ fontSize: 14, lineHeight: 1.7, color: '#64748b', marginBottom: 20 }}>
+              <p style={{ fontSize: 14, lineHeight: 1.7, color: '#9CA3AF', marginBottom: 20 }}>
                 Discover verified US manufacturers across all 50 states and 11 categories. Ranked by real reviews — no paid placements, ever.
               </p>
             </div>
@@ -478,7 +486,7 @@ export default function Layout({ children }) {
 
           {/* Bottom bar */}
           <div style={{
-            borderTop: '1px solid #e2e8f0',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
             paddingTop: 24,
             display: 'flex',
             flexWrap: 'wrap',
@@ -486,19 +494,19 @@ export default function Layout({ children }) {
             alignItems: 'center',
             gap: 12,
           }}>
-            <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
+            <p style={{ fontSize: 13, color: '#6B7280', margin: 0 }}>
               {'© 2026 FirmsLedger — All rights reserved\u00a0·\u00a0'}
-              <Link href="/terms" style={{ color: '#94a3b8', textDecoration: 'none' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#64748b')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+              <Link href="/terms" className="link-underline" style={{ color: '#6B7280', textDecoration: 'none' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#D4A017')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#6B7280')}
               >Terms of Service</Link>
               {'\u00a0·\u00a0'}
-              <Link href="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#64748b')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+              <Link href="/privacy" className="link-underline" style={{ color: '#6B7280', textDecoration: 'none' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#D4A017')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#6B7280')}
               >Privacy Policy</Link>
             </p>
-            <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
+            <p style={{ fontSize: 13, color: '#6B7280', margin: 0 }}>
               Made for US manufacturers
             </p>
           </div>
@@ -528,7 +536,7 @@ export default function Layout({ children }) {
 function FooterCol({ heading, links }) {
   return (
     <div>
-      <h4 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 16, marginTop: 0, letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+      <h4 style={{ fontSize: 12, fontWeight: 600, color: '#F9FAFB', marginBottom: 16, marginTop: 0, letterSpacing: '0.02em', textTransform: 'uppercase' }}>
         {heading}
       </h4>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -536,9 +544,10 @@ function FooterCol({ heading, links }) {
           <Link
             key={href + label}
             href={href}
-            style={{ fontSize: 14, color: '#64748b', textDecoration: 'none', transition: 'color 0.12s', lineHeight: 1.4 }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#0f172a')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
+            className="link-underline"
+            style={{ fontSize: 14, color: '#9CA3AF', textDecoration: 'none', transition: 'color 0.12s', lineHeight: 1.4 }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#D4A017')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#9CA3AF')}
           >
             {label}
           </Link>
