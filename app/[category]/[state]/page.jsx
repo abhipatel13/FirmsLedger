@@ -414,7 +414,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             .listing-sidebar { width: 100% !important; }
           }
           .breadcrumb-link:hover { color: #0f172a !important; }
-          .company-card:hover { border-color: #94a3b8 !important; box-shadow: 0 4px 16px -4px rgba(15,23,42,0.07) !important; }
           .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
           .subcat-pill:not(.active):hover { border-color: #1A2E4A !important; color: #1A2E4A !important; background-color: #ffffff !important; }
           .cta-btn:hover { background-color: #D48E1A !important; }
@@ -836,7 +835,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           .listing-sidebar { width: 100% !important; }
         }
         .breadcrumb-link:hover { color: #0f172a !important; }
-        .company-card:hover { border-color: #94a3b8 !important; box-shadow: 0 4px 16px -4px rgba(15,23,42,0.07) !important; }
         .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
         .sidebar-state-pill:not(.active):hover { border-color: #94a3b8 !important; color: #0f172a !important; }
         .subcat-pill:hover { border-color: #1A2E4A !important; color: #1A2E4A !important; background-color: #ffffff !important; }
