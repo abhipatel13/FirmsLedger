@@ -267,31 +267,33 @@ export default function Layout({ children }) {
             >
               Contact
             </Link>
-
-            {/* Search icon */}
-            <Link
-              href="/search"
-              aria-label="Search"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 36,
-                height: 36,
-                borderRadius: 8,
-                color: '#475569',
-                textDecoration: 'none',
-                transition: 'all 0.12s',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; }}
-            >
-              <Search size={17} />
-            </Link>
           </nav>
 
           {/* Spacer */}
           <div style={{ flex: 1 }} />
+
+          {/* Search icon */}
+          <Link
+            href="/search"
+            aria-label="Search"
+            className="nav-desktop"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              color: '#475569',
+              textDecoration: 'none',
+              transition: 'all 0.12s',
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            <Search size={17} />
+          </Link>
 
           {/* CTA */}
           <Link

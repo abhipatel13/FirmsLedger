@@ -310,14 +310,14 @@ export default function DirectoryHub({ companyCount = FALLBACK_COMPANY_COUNT }) 
               </h1>
 
               <p className="text-lg text-[17px] leading-relaxed text-slate-600 mb-10 max-w-md">
-                Browse verified manufacturers across every US state by category — electrical, mechanical, automotive, and more. Ranked by real reviews.
+                Browse verified manufacturers across every USA state by category — electrical, mechanical, automotive, and more. Ranked by real reviews.
               </p>
 
               <div className="flex flex-wrap gap-5">
                 {[
                   { icon: CheckCircle, text: '100% verified listings' },
                   { icon: Shield, text: 'Zero paid rankings' },
-                  { icon: Star, text: 'All 50 US states' },
+                  { icon: Star, text: 'All 50 USA states' },
                   { icon: Package, text: 'Free to list' },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex items-center gap-1.5">
@@ -478,7 +478,7 @@ export default function DirectoryHub({ companyCount = FALLBACK_COMPANY_COUNT }) 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {[
               { num: '1', color: 'text-[#1A2E4A] bg-[#1A2E4A]/10 border-[#1A2E4A]/20', title: 'Pick a category', desc: 'Choose from Electrical Components, Mechanical Components, Automotive, and more.' },
-              { num: '2', color: 'text-amber-700 bg-amber-50 border-amber-200', title: 'Select your state', desc: 'All 50 US states covered. Find manufacturers close to your supply chain.' },
+              { num: '2', color: 'text-amber-700 bg-amber-50 border-amber-200', title: 'Select your state', desc: 'All 50 USA states covered. Find manufacturers close to your supply chain.' },
               { num: '3', color: 'text-green-700 bg-green-50 border-green-200', title: 'Browse the rankings', desc: 'Ranked by verified reviews and ratings. No pay-to-rank. No sponsored placements.' },
             ].map(({ num, color, title, desc }) => (
               <Card key={num} className="card-premium rounded-2xl p-7">
@@ -506,7 +506,7 @@ export default function DirectoryHub({ companyCount = FALLBACK_COMPANY_COUNT }) 
             <div>
               <SectionEyebrow>Browse by State</SectionEyebrow>
               <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight">
-                Every US state
+                Every USA state
               </h2>
             </div>
             <span className="text-[13px] text-slate-400 font-medium">
