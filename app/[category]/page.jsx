@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { fetchCategoryStats } from '@/db/neonApi';
 import { renderCategoryPage } from './[state]/page';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
@@ -11,8 +12,11 @@ export async function generateMetadata({ params }) {
   const { category: slug } = await params;
   const cat = CATEGORY_MAP[slug];
   if (!cat) return { title: `Category | ${SITE_NAME}` };
+  const stats = await fetchCategoryStats(slug);
   const title = `${cat.name} Directory — All 50 US States`;
-  const description = `Browse verified ${cat.noun} across all 50 US states on FirmsLedger. Find top-rated ${cat.noun} ranked by real customer reviews, not paid placements.`;
+  const description = stats.totalCount > 0
+    ? `Browse ${stats.verifiedCount} verified ${cat.noun} across all 50 US states. ${stats.totalCount} total listings with ${stats.medianRating ? `an average rating of ${stats.medianRating.toFixed(1)}` : 'verified reviews'}. Find top-rated ${cat.noun} ranked by real customer reviews, not paid placements.`
+    : `Browse verified ${cat.noun} across all 50 US states on FirmsLedger. Find top-rated ${cat.noun} ranked by real customer reviews, not paid placements.`;
   const canonical = `${_BASE}/${slug}`;
   return {
     title: `${title} | ${SITE_NAME}`,

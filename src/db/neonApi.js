@@ -222,6 +222,74 @@ export async function fetchStateCountsForCategory(categorySlug) {
   return [...counts.values()].sort((a, b) => b.count - a.count);
 }
 
+/**
+ * Returns live-computed stats for a category (+ optionally state) listing page.
+ * No hourly-rate field — deliberately absent (no such data exists).
+ */
+export async function fetchCategoryStats(categorySlug, stateSlug = null) {
+  const companyIds = await resolveCategoryCompanyIds(categorySlug);
+  if (!companyIds.length) {
+    return { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] };
+  }
+
+  const conditions = [
+    eq(companies.approved, true),
+    inArray(companies.id, companyIds),
+  ];
+
+  if (stateSlug) {
+    const stateId = await resolveStateId(stateSlug.toLowerCase());
+    if (stateId) conditions.push(eq(companies.hq_state_id, stateId));
+  }
+
+  const rows = await db
+    .select({
+      is_verified: companies.is_verified,
+      avg_rating: companies.avg_rating,
+      hq_state_id: companies.hq_state_id,
+      certifications: companies.certifications,
+    })
+    .from(companies)
+    .where(and(...conditions));
+
+  const totalCount = rows.length;
+  const verifiedCount = rows.filter((r) => r.is_verified).length;
+
+  // Median of avg_rating where avg_rating > 0 — computed in JS
+  const ratings = rows
+    .map((r) => parseFloat(r.avg_rating))
+    .filter((r) => !Number.isNaN(r) && r > 0)
+    .sort((a, b) => a - b);
+
+  let medianRating = null;
+  if (ratings.length > 0) {
+    const mid = Math.floor(ratings.length / 2);
+    medianRating = ratings.length % 2 === 0
+      ? Number(((ratings[mid - 1] + ratings[mid]) / 2).toFixed(2))
+      : ratings[mid];
+  }
+
+  // Distinct states (suppressed on state pages by the caller)
+  const uniqueStates = new Set(rows.map((r) => r.hq_state_id).filter(Boolean));
+  const statesCovered = uniqueStates.size;
+
+  // Up to 3 most common certification values
+  const certCounts = new Map();
+  for (const row of rows) {
+    if (row.certifications && Array.isArray(row.certifications)) {
+      for (const cert of row.certifications) {
+        certCounts.set(cert, (certCounts.get(cert) || 0) + 1);
+      }
+    }
+  }
+  const topSpecialties = [...certCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([cert]) => cert);
+
+  return { verifiedCount, totalCount, medianRating, statesCovered, topSpecialties };
+}
+
 /** @deprecated Use fetchCompaniesByCategoryAndState instead */
 export async function fetchCompaniesByCategory(categorySlug, orderKey = '-avg_rating', limit = 200) {
   return fetchCompaniesByCategoryAndState(categorySlug, null, orderKey, limit);

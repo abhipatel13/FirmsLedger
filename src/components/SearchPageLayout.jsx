@@ -143,7 +143,7 @@ export default function SearchPageLayout({
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Dark header — matches Directory */}
-      <div className="bg-[#1A2E4A] text-white">
+      <div className="text-white" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
         <div className="w-full px-4 sm:px-6 lg:px-10 pt-8 pb-7">
           {/* Breadcrumb */}
           {breadcrumbs.length > 0 && (
@@ -243,7 +243,7 @@ export default function SearchPageLayout({
         {children}
 
         {/* CTA banner */}
-        <div className="mt-10 bg-[#1A2E4A] text-white rounded-xl p-8 text-center">
+        <div className="mt-10 text-white rounded-xl p-8 text-center" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
           <h2 className="text-2xl font-bold mb-2">{ctaTitle}</h2>
           <p className="text-slate-300 mb-5">{ctaDescription}</p>
           <Link

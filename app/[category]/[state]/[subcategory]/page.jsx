@@ -297,7 +297,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
               </div>
 
               {/* CTA */}
-              <div style={{ backgroundColor: '#1A2E4A', borderRadius: 12, padding: 20 }}>
+              <div style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)', borderRadius: 12, padding: 20 }}>
                 <Shield style={{ width: 22, height: 22, color: 'rgba(255,255,255,0.7)', marginBottom: 12 }} />
                 <h3 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 6, marginTop: 0 }}>List Your Company</h3>
                 <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, marginBottom: 14, marginTop: 0 }}>

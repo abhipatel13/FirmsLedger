@@ -162,7 +162,7 @@ function ClaimListingContent() {
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Hero */}
-      <div className="bg-[#1A2E4A] text-white">
+      <div className="text-white" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
         <div className="w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-medium text-slate-300 mb-5">
@@ -329,7 +329,7 @@ function ClaimListingContent() {
               </div>
             </div>
 
-            <div className="bg-[#1A2E4A] rounded-2xl p-6 text-white">
+            <div className="rounded-2xl p-6 text-white" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
               <div className="flex items-center gap-2 mb-3">
                 <Shield className="w-5 h-5 text-[#F5A623]" />
                 <span className="font-bold text-sm">Secure & verified</span>

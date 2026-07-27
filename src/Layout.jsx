@@ -66,6 +66,12 @@ export default function Layout({ children }) {
   const [scrolled, setScrolled]       = useState(false);
   const pathname  = usePathname();
   const browseRef = useRef(null);
+  const browseOpenRef = useRef(false);
+  const scrolledRef   = useRef(false);
+
+  // Keep refs in sync so the scroll closure always reads current values
+  useEffect(() => { browseOpenRef.current = browseOpen; }, [browseOpen]);
+  useEffect(() => { scrolledRef.current   = scrolled;   }, [scrolled]);
 
   useEffect(() => {
     function onClickOutside(e) {
@@ -74,8 +80,9 @@ export default function Layout({ children }) {
       }
     }
     function onScroll() {
-      setBrowseOpen(false);
-      setScrolled(window.scrollY > 8);
+      if (browseOpenRef.current) setBrowseOpen(false);
+      const next = window.scrollY > 8;
+      if (next !== scrolledRef.current) setScrolled(next);
     }
     document.addEventListener('mousedown', onClickOutside);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -449,11 +456,14 @@ export default function Layout({ children }) {
       </header>
 
       {/* Main content */}
-      <main style={{ minWidth: 0, overflowX: 'hidden' }}>{children}</main>
+      {/* No overflow-x here: setting only one axis forces the CSS spec to resolve
+          the other to `auto`, which would give <main> its own scrollbar in
+          addition to the page's. html/body in index.css already clip overflow-x. */}
+      <main style={{ minWidth: 0 }}>{children}</main>
 
       {/* ══ FOOTER ══════════════════════════════════════════════════ */}
-      <footer style={{ backgroundColor: '#0B0F17', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '72px 24px 48px' }}>
+      <footer style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
+        <div className="px-6 lg:px-8" style={{ maxWidth: 'var(--max-width)', margin: '0 auto', paddingTop: 72, paddingBottom: 48 }}>
 
           {/* Brand row */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 40, alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 64 }}>
@@ -465,7 +475,7 @@ export default function Layout({ children }) {
                 Connecting you with America's top manufacturers.
               </p>
               <p style={{ fontSize: 14, lineHeight: 1.7, color: '#9CA3AF', marginBottom: 20 }}>
-                Discover verified US manufacturers across all 50 states and 11 categories. Ranked by real reviews — no paid placements, ever.
+                Discover verified USA manufacturers across all 50 states and 11 categories. Ranked by real reviews — no paid placements, ever.
               </p>
             </div>
           </div>
@@ -507,7 +517,7 @@ export default function Layout({ children }) {
               >Privacy Policy</Link>
             </p>
             <p style={{ fontSize: 13, color: '#6B7280', margin: 0 }}>
-              Made for US manufacturers
+              Made for USA manufacturers
             </p>
           </div>
         </div>

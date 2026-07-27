@@ -114,7 +114,7 @@ export default function ListYourCompany() {
             maskImage: 'linear-gradient(to bottom, black, transparent)',
           }}
         />
-        <div className="relative max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="relative mx-auto px-6 lg:px-8 py-16 sm:py-24" style={{ maxWidth: 'var(--max-width)' }}>
           <div className="grid lg:grid-cols-[1fr_1fr] gap-12 xl:gap-16 items-center">
 
             {/* Left: copy */}
@@ -197,7 +197,7 @@ export default function ListYourCompany() {
 
       {/* ── Process steps ─────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-[#e2e8f0]">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="mx-auto px-6 lg:px-8 py-6" style={{ maxWidth: 'var(--max-width)' }}>
           <div className="flex flex-wrap items-center gap-4 sm:gap-0">
             {STEPS.map((step, i) => (
               <React.Fragment key={step.n}>
@@ -220,8 +220,8 @@ export default function ListYourCompany() {
       </div>
 
       {/* ── Body ──────────────────────────────────────────────────────────── */}
-      <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-[#f8fafc]">
-        <div className="max-w-[1240px] mx-auto grid lg:grid-cols-[1fr_400px] gap-10 xl:gap-16 items-start">
+      <div className="px-6 lg:px-8 py-12 sm:py-16 bg-[#f8fafc]">
+        <div className="mx-auto grid lg:grid-cols-[1fr_400px] gap-10 xl:gap-16 items-start" style={{ maxWidth: 'var(--max-width)' }}>
 
           {/* ── Left: Benefits + form ──────────────────────────────────────── */}
           <div className="space-y-8">
