@@ -302,11 +302,11 @@ export default function DirectoryHub({ companyCount = FALLBACK_COMPANY_COUNT }) 
                 style={{ backgroundColor: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.12)', color: '#0F172A' }}
               >
                 <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: 'var(--gold)' }} />
-                US Manufacturer Directory
+                USA Manufacturer Directory
               </Badge>
 
               <h1 className="text-[40px] sm:text-5xl lg:text-[68px] font-bold leading-[1.06] tracking-tight text-[#211F1C] mb-6 max-w-lg">
-                Find top <span className="text-[#0F172A]">manufacturers</span> across the US
+                Find top <span className="text-[#0F172A]">manufacturers</span> across the USA
               </h1>
 
               <p className="text-lg text-[17px] leading-relaxed text-slate-600 mb-10 max-w-md">
