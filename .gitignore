@@ -42,3 +42,10 @@ supabase/.temp/
 skills-lock.json
 CLAUDE.md
 *.csv
+
+# Data Pipeline temporary/batch files
+pipeline/clean_and_import.cjs
+pipeline/staging_batch_200.db
+pipeline/staged_companies_batch_200.json
+pipeline/staged_companies_batch_200.csv
+
