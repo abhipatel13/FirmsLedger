@@ -50,5 +50,8 @@ pipeline/staged_companies_batch_200.json
 pipeline/staged_companies_batch_200.csv
 pipeline/fetch_existing.cjs
 pipeline/existing_companies.json
+pipeline/run_continuous.py
+pipeline/completed_queries.txt
+
 
 
