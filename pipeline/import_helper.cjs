@@ -46,14 +46,26 @@ function normalizeName(name) {
 }
 
 async function main() {
-  const stagedPath = path.join(__dirname, 'staged_companies.json');
+  let stagedPath = path.join(__dirname, 'staged_companies.json');
+  
+  const jsonIndex = process.argv.indexOf('--json');
+  if (jsonIndex !== -1 && process.argv[jsonIndex + 1]) {
+    stagedPath = path.resolve(process.argv[jsonIndex + 1]);
+  } else {
+    // Also support --json=path format
+    const eqIndex = process.argv.findIndex(arg => arg.startsWith('--json='));
+    if (eqIndex !== -1) {
+      stagedPath = path.resolve(process.argv[eqIndex].split('=')[1]);
+    }
+  }
+
   if (!fs.existsSync(stagedPath)) {
     console.error(`[!] Staged companies JSON file not found at: ${stagedPath}\nRun run_pipeline.py first to generate it.`);
     process.exit(1);
   }
 
   const stagedRecords = JSON.parse(fs.readFileSync(stagedPath, 'utf8'));
-  console.log(`[*] Loaded ${stagedRecords.length} staged companies for import.\n`);
+  console.log(`[*] Loaded ${stagedRecords.length} staged companies for import from ${path.basename(stagedPath)}.\n`);
 
   // Load existing metadata from DB for lookup and uniqueness constraints
   const categories = await sql`SELECT id, slug FROM categories`;
