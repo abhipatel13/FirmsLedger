@@ -150,22 +150,26 @@ const US_STATES = [
 ];
 
 const FALLBACK_COMPANY_COUNT = 67;
+const FALLBACK_CATEGORY_COUNT = 10;
+const FALLBACK_STATE_COUNT = 50;
 
-function getHomepageStats(companyCount) {
+function getHomepageStats(companyCount, categoryCount = FALLBACK_CATEGORY_COUNT, stateCount = FALLBACK_STATE_COUNT) {
   const listedCompanies = String(Number(companyCount) > 0 ? companyCount : FALLBACK_COMPANY_COUNT);
+  const totalCategories = String(Number(categoryCount) > 0 ? categoryCount : FALLBACK_CATEGORY_COUNT);
+  const totalStates = String(Number(stateCount) > 0 ? stateCount : FALLBACK_STATE_COUNT);
 
   return {
     stats: [
-      { value: '10', label: 'Categories' },
-      { value: '50', label: 'States covered' },
+      { value: totalCategories, label: 'Categories' },
+      { value: totalStates, label: 'States covered' },
       { value: listedCompanies, label: 'Companies listed' },
       { value: '100%', label: 'Verified listings' },
     ],
     trustStats: [
       { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
       { value: '0', label: 'Paid rankings — ever', icon: CheckCircle, iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700' },
-      { value: '50', label: 'States covered', icon: Star, iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700' },
-      { value: '10', label: 'Categories', icon: Wrench, iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700' },
+      { value: totalStates, label: 'States covered', icon: Star, iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700' },
+      { value: totalCategories, label: 'Categories', icon: Wrench, iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700' },
       { value: listedCompanies, label: 'Companies listed', icon: Package, iconBg: 'bg-violet-50', iconBorder: 'border-violet-200', iconText: 'text-violet-700' },
     ],
   };
@@ -270,12 +274,16 @@ function SectionEyebrow({ children }) {
 
 const CATEGORIES_PREVIEW_COUNT = 4;
 
-export default function DirectoryHub({ companyCount = FALLBACK_COMPANY_COUNT }) {
+export default function DirectoryHub({
+  companyCount = FALLBACK_COMPANY_COUNT,
+  categoryCount = FALLBACK_CATEGORY_COUNT,
+  stateCount = FALLBACK_STATE_COUNT
+}) {
   const [selectedState, setSelectedState] = useState('california');
   const [showAllCategories, setShowAllCategories] = useState(false);
   const activeState = US_STATES.find((s) => s.slug === selectedState);
   const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, CATEGORIES_PREVIEW_COUNT);
-  const { stats, trustStats } = getHomepageStats(companyCount);
+  const { stats, trustStats } = getHomepageStats(companyCount, categoryCount, stateCount);
 
   const [categoriesRef, categoriesVisible] = useFadeInOnScroll();
   const [trustRef, trustVisible] = useFadeInOnScroll();

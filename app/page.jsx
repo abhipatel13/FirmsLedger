@@ -1,7 +1,7 @@
 import DirectoryHub from '@/views/DirectoryHub';
 import JsonLd from '@/components/JsonLd';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
-import { fetchApprovedCompanyCount } from '@/db/neonApi';
+import { fetchHomepageStats } from '@/db/neonApi';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -36,12 +36,16 @@ const websiteSchema = {
 };
 
 export default async function HomePage() {
-  const companyCount = await fetchApprovedCompanyCount();
+  const { companyCount, categoryCount, stateCount } = await fetchHomepageStats();
 
   return (
     <>
       <JsonLd data={websiteSchema} />
-      <DirectoryHub companyCount={companyCount} />
+      <DirectoryHub
+        companyCount={companyCount}
+        categoryCount={categoryCount}
+        stateCount={stateCount}
+      />
     </>
   );
 }

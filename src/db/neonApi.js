@@ -125,6 +125,27 @@ export async function fetchApprovedCompanyCount() {
   }
 }
 
+export async function fetchHomepageStats() {
+  if (!db) {
+    return { companyCount: 67, categoryCount: 10, stateCount: 50 };
+  }
+
+  try {
+    const [compRow] = await db.select({ count: sql`count(*)` }).from(companies);
+    const [catRow] = await db.select({ count: sql`count(*)` }).from(categories);
+    const [stateRow] = await db.select({ count: sql`count(*)` }).from(states);
+
+    return {
+      companyCount: Number(compRow?.count ?? 67),
+      categoryCount: Number(catRow?.count ?? 10),
+      stateCount: Number(stateRow?.count ?? 50),
+    };
+  } catch (err) {
+    console.error('Error fetching homepage stats:', err);
+    return { companyCount: 67, categoryCount: 10, stateCount: 50 };
+  }
+}
+
 /** Resolves a category slug (including its subcategories, if it's a parent) to the set of matching, approved company IDs. Returns [] if the category or no linked companies exist. */
 async function resolveCategoryCompanyIds(categorySlug) {
   const [cat] = await db
