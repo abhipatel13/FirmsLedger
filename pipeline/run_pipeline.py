@@ -83,6 +83,8 @@ def main():
                 
     # 2. Crawler Phase (Enrichment)
     print("\n[*] Starting Crawler Phase...")
+    print("[*] Running pre-crawl duplicate check to skip crawling known duplicates...")
+    db.detect_duplicates()
     pending_crawls = db.get_pending_crawl_companies()
     print(f"[*] Found {len(pending_crawls)} websites pending crawl.")
     

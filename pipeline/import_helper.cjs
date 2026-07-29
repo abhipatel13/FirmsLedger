@@ -94,6 +94,13 @@ async function main() {
       continue;
     }
 
+    // Verify it is a United States company
+    if (!rec.address || !rec.address.includes('United States')) {
+      console.log(`  [skip-non-us] ${rec.company_name} (address does not contain 'United States')`);
+      skippedNoStateCount++;
+      continue;
+    }
+
     // Resolve State Reference
     const state = stateBySlug.get(rec.state_slug);
     if (!state) {

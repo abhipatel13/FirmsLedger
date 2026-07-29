@@ -126,9 +126,9 @@ class StagingDatabase:
 
     def get_pending_crawl_companies(self):
         """
-        Retrieves all companies that have websites and have not been crawled yet.
+        Retrieves all companies that have websites and have not been crawled yet, excluding duplicates.
         """
-        query = "SELECT id, website FROM staging_companies WHERE website IS NOT NULL AND website != '' AND crawl_status = 'pending'"
+        query = "SELECT id, website FROM staging_companies WHERE website IS NOT NULL AND website != '' AND crawl_status = 'pending' AND (import_status IS NULL OR import_status != 'duplicate')"
         with self._get_connection() as conn:
             return conn.execute(query).fetchall()
 
