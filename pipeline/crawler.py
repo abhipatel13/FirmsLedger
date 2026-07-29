@@ -7,28 +7,52 @@ import urllib.parse
 import requests
 from bs4 import BeautifulSoup
 
-from pipeline.crawl_utils import (
-    normalize_url,
-    is_low_value_url,
-    score_link,
-    classify_page_type,
-)
-from pipeline.content_extractor import (
-    get_clean_text,
-    extract_title,
-    extract_meta_description,
-    extract_headings,
-    extract_emails,
-    extract_phones,
-    extract_socials,
-    extract_certifications,
-    extract_items_by_keywords,
-    extract_description,
-    extract_years_in_business,
-    extract_locations,
-    extract_images,
-    extract_special_images,
-)
+try:
+    from pipeline.crawl_utils import (
+        normalize_url,
+        is_low_value_url,
+        score_link,
+        classify_page_type,
+    )
+    from pipeline.content_extractor import (
+        get_clean_text,
+        extract_title,
+        extract_meta_description,
+        extract_headings,
+        extract_emails,
+        extract_phones,
+        extract_socials,
+        extract_certifications,
+        extract_items_by_keywords,
+        extract_description,
+        extract_years_in_business,
+        extract_locations,
+        extract_images,
+        extract_special_images,
+    )
+except ImportError:
+    from crawl_utils import (
+        normalize_url,
+        is_low_value_url,
+        score_link,
+        classify_page_type,
+    )
+    from content_extractor import (
+        get_clean_text,
+        extract_title,
+        extract_meta_description,
+        extract_headings,
+        extract_emails,
+        extract_phones,
+        extract_socials,
+        extract_certifications,
+        extract_items_by_keywords,
+        extract_description,
+        extract_years_in_business,
+        extract_locations,
+        extract_images,
+        extract_special_images,
+    )
 
 PRODUCT_KEYWORDS = ["product", "part", "component", "assembly", "assemblies", "wiring", "cnc", "machined", "hardware"]
 SERVICE_KEYWORDS = ["service", "capability", "capabilities", "machining", "fabrication", "molding", "extrusion", "casting", "stamping", "coating"]
