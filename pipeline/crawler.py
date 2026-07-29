@@ -77,11 +77,20 @@ class CompanyWebsiteCrawler:
         heap = []  # (-score, order, url, link_text)
         heapq.heappush(heap, (-99, next(counter), start_url, "homepage"))
 
-        while heap and len(pages) < self.max_pages:
+        # Hard cap on total fetch *attempts* (not just successful pages). A page
+        # full of dead/slow links must not turn a "max_pages" crawl into
+        # unbounded HTTP requests: only successes count toward `pages`, so we
+        # also bound `attempts` at max_pages * 3 (allows some fetch failures
+        # without unbounded work).
+        max_attempts = self.max_pages * 3
+        attempts = 0
+
+        while heap and len(pages) < self.max_pages and attempts < max_attempts:
             neg_score, _, url, _link_text = heapq.heappop(heap)
             if url in visited or is_low_value_url(url):
                 continue
             visited.add(url)
+            attempts += 1
 
             print(f"  [~] Crawling page ({-neg_score}): {url}")
             html = self._fetch_url(url)

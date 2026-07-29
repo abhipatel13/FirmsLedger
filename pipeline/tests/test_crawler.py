@@ -90,3 +90,32 @@ def test_crawl_website_returns_failed_status_when_homepage_unreachable():
     crawler = CompanyWebsiteCrawler()
     result = crawler.crawl_website("https://unreachable-example.test")
     assert result["crawl_status"] == "failed"
+
+
+def test_crawl_website_bounds_total_fetch_attempts_when_links_are_dead():
+    """A homepage with many dead links must not turn into unbounded requests:
+    only successfully-parsed pages count toward `max_pages`, so total fetch
+    attempts (successes + failures) must be hard-capped too."""
+    many_links_html = "<html><body><h1>Acme</h1>" + "".join(
+        f'<a href="/dead-{i}">Dead {i}</a>' for i in range(50)
+    ) + "</body></html>"
+
+    call_count = {"n": 0}
+
+    def counting_fetch(self, url):
+        call_count["n"] += 1
+        if url == "https://acmemfg.com":
+            return many_links_html
+        return None  # every other page is unreachable
+
+    with patch.object(CompanyWebsiteCrawler, "_fetch_url", counting_fetch):
+        crawler = CompanyWebsiteCrawler(max_pages=5)
+        result = crawler.crawl_website("https://acmemfg.com")
+
+    # Homepage never parses into a "page" (only dead links found after it),
+    # so len(pages) never reaches max_pages -- the old code would keep
+    # popping/fetching from the heap until it was empty (up to 50 requests).
+    # The fix caps total attempts at max_pages * 3 inside the crawl loop, plus
+    # the one initial homepage fetch performed before the loop starts.
+    assert call_count["n"] <= 1 + (5 * 3)
+    assert result["crawl_status"] == "success"
