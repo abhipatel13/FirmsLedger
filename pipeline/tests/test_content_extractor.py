@@ -108,7 +108,7 @@ def test_extract_years_in_business():
 def test_extract_locations_finds_headquarters():
     text = get_clean_text(_soup())
     locations = extract_locations(text)
-    assert any("Dayton, Ohio" in loc for loc in locations)
+    assert "Dayton, Ohio" in locations
 
 
 def test_extract_images_includes_metadata_and_filters_icons():

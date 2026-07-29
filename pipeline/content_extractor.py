@@ -30,7 +30,7 @@ ABOUT_KEYWORDS = [
 YEAR_PATTERN = r'\b(?:founded|established|since)\s+(?:in\s+)?(\d{4})\b'
 
 LOCATION_KEYWORDS = ["headquarters", "headquartered", "located in", "based in"]
-LOCATION_PATTERN = r'([A-Z][a-zA-Z\s]+,\s*[A-Z]{2}\b)|([A-Z][a-zA-Z\s]+,\s*[A-Z][a-zA-Z]+)'
+LOCATION_PATTERN = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,\s*(?:[A-Z]{2}\b|[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*))\b'
 
 IMAGE_SKIP_HINTS = ("pixel", "icon", "arrow")
 
