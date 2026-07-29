@@ -17,7 +17,17 @@ def main():
     parser.add_argument("--db-path", type=str, default="pipeline/staging.db", help="Path to SQLite staging database")
     parser.add_argument("--csv-path", type=str, default="pipeline/staged_companies.csv", help="Path to export CSV file")
     parser.add_argument("--json-path", type=str, default="pipeline/staged_companies.json", help="Path to export JSON file")
+    parser.add_argument("--queries", type=str, nargs="+", default=None, help="List of custom search queries to scrape")
+    parser.add_argument("--category-slug", type=str, default=None, help="Explicit category slug to set for all scraped records")
     args = parser.parse_args()
+
+    # Fetch existing companies from production DB for duplicate prevention
+    print("[*] Fetching existing companies from production PostgreSQL database...")
+    try:
+        import subprocess
+        subprocess.run(["node", "pipeline/fetch_existing.cjs"], check=True)
+    except Exception as e:
+        print(f"[!] Warning: Could not run fetch_existing.cjs: {e}")
 
     # Initialize components
     db = StagingDatabase(db_path=args.db_path)
@@ -28,7 +38,10 @@ def main():
         scraper = GoogleMapsScraper(headless=True)
         
         # Test queries
-        if args.test_only:
+        if args.queries:
+            queries = args.queries
+            max_per_query = args.max_per_query
+        elif args.test_only:
             queries = ["PCB Manufacturer Dallas Texas"]
             max_per_query = 2
         else:
@@ -49,7 +62,9 @@ def main():
                 scraped_data = scraper.scrape_query(query, max_results=max_per_query)
                 for item in scraped_data:
                     # Add target subcategory/category tag hints for import step
-                    if "PCB" in query:
+                    if args.category_slug:
+                        item["google_category"] = args.category_slug
+                    elif "PCB" in query:
                         item["google_category"] = "pcb-manufacturing"
                     elif "CNC" in query:
                         item["google_category"] = "cnc-machining"

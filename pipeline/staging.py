@@ -136,9 +136,38 @@ class StagingDatabase:
         """
         Runs duplicate check over all pending records in the staging database.
         Marks duplicate rows and updates status to ready/duplicate.
+        Also checks against production database records if pipeline/existing_companies.json exists.
         """
         print("[*] Starting duplicate detection engine...")
         
+        # Load existing companies from production DB if exported
+        db_companies = []
+        json_path = "pipeline/existing_companies.json"
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, "r", encoding="utf-8") as f:
+                    db_companies = json.load(f)
+                print(f"[*] Loaded {len(db_companies)} existing production companies to check against.")
+            except Exception as e:
+                print(f"[!] Warning: Failed to load {json_path}: {e}")
+        else:
+            print("[*] No existing production companies file found. Only checking staging batch duplicates.")
+
+        # Pre-normalize existing production companies
+        norm_db_companies = []
+        for c in db_companies:
+            c_name = c.get("name") or ""
+            c_website = c.get("website") or ""
+            c_phone = c.get("phone") or ""
+            c_address = c.get("address") or ""
+            norm_db_companies.append({
+                "name": c_name,
+                "norm_name": self._normalize_name(c_name),
+                "norm_domain": self._normalize_domain(c_website),
+                "norm_phone": self._normalize_phone(c_phone),
+                "zip": self._extract_zip(c_address)
+            })
+
         # Load all records
         with self._get_connection() as conn:
             records = conn.execute("SELECT * FROM staging_companies ORDER BY id").fetchall()
@@ -160,42 +189,67 @@ class StagingDatabase:
             
             is_dup = False
             dup_of_id = None
+            dup_reason = ""
             
-            # Compare against already approved 'ready' records in this batch
-            for primary in ready_records:
-                p_id = primary["id"]
-                p_name = primary["company_name"]
-                p_website = primary["website"]
-                p_phone = primary["phone"]
-                p_address = primary["address"]
-                p_zip = primary["zip"]
-                
-                p_norm_name = self._normalize_name(p_name)
-                p_norm_phone = self._normalize_phone(p_phone)
-                p_norm_domain = self._normalize_domain(p_website)
-                
-                # Check 1: Match Domain (very reliable)
-                if norm_domain and p_norm_domain and norm_domain == p_norm_domain:
-                    print(f"  [!] Duplicate found: '{name}' matches '{p_name}' by Domain ({website})")
+            # 1. Compare against production DB companies
+            for db_c in norm_db_companies:
+                # Check 1: Match Domain
+                if norm_domain and db_c["norm_domain"] and norm_domain == db_c["norm_domain"]:
+                    print(f"  [!] Duplicate of DB: '{name}' matches '{db_c['name']}' by Domain ({website})")
                     is_dup = True
-                    dup_of_id = p_id
+                    dup_reason = f"DB Domain Match ({website})"
                     break
-                    
-                # Check 2: Match Phone (very reliable)
-                if norm_phone and p_norm_phone and norm_phone == p_norm_phone:
-                    print(f"  [!] Duplicate found: '{name}' matches '{p_name}' by Phone ({phone})")
+                # Check 2: Match Phone
+                if norm_phone and db_c["norm_phone"] and norm_phone == db_c["norm_phone"]:
+                    print(f"  [!] Duplicate of DB: '{name}' matches '{db_c['name']}' by Phone ({phone})")
                     is_dup = True
-                    dup_of_id = p_id
+                    dup_reason = f"DB Phone Match ({phone})"
                     break
-                    
-                # Check 3: Match Fuzzy Name + Zip Code / Area similarity
-                if p_zip and zip_code and p_zip[:5] == zip_code[:5]:
-                    name_similarity = difflib.SequenceMatcher(None, norm_name, p_norm_name).ratio()
+                # Check 3: Match Fuzzy Name + Zip Code
+                if db_c["zip"] and zip_code and db_c["zip"][:5] == zip_code[:5]:
+                    name_similarity = difflib.SequenceMatcher(None, norm_name, db_c["norm_name"]).ratio()
                     if name_similarity > 0.85:
-                        print(f"  [!] Duplicate found: '{name}' fuzzy matches '{p_name}' (Ratio: {name_similarity:.2f}) within ZIP {zip_code}")
+                        print(f"  [!] Duplicate of DB: '{name}' fuzzy matches '{db_c['name']}' (Ratio: {name_similarity:.2f}) within ZIP {zip_code}")
+                        is_dup = True
+                        dup_reason = f"DB Fuzzy Name Match ({name_similarity:.2f})"
+                        break
+            
+            if not is_dup:
+                # 2. Compare against already approved 'ready' records in this staging batch
+                for primary in ready_records:
+                    p_id = primary["id"]
+                    p_name = primary["company_name"]
+                    p_website = primary["website"]
+                    p_phone = primary["phone"]
+                    p_address = primary["address"]
+                    p_zip = primary["zip"]
+                    
+                    p_norm_name = self._normalize_name(p_name)
+                    p_norm_phone = self._normalize_phone(p_phone)
+                    p_norm_domain = self._normalize_domain(p_website)
+                    
+                    # Check 1: Match Domain (very reliable)
+                    if norm_domain and p_norm_domain and norm_domain == p_norm_domain:
+                        print(f"  [!] Duplicate found in batch: '{name}' matches '{p_name}' by Domain ({website})")
                         is_dup = True
                         dup_of_id = p_id
                         break
+                        
+                    # Check 2: Match Phone (very reliable)
+                    if norm_phone and p_norm_phone and norm_phone == p_norm_phone:
+                        print(f"  [!] Duplicate found in batch: '{name}' matches '{p_name}' by Phone ({phone})")
+                        is_dup = True
+                        dup_of_id = p_id
+                        break
+                        
+                    # Check 3: Match Fuzzy Name + Zip Code
+                    if p_zip and zip_code and p_zip[:5] == zip_code[:5]:
+                        name_similarity = difflib.SequenceMatcher(None, norm_name, p_norm_name).ratio()
+                        if name_similarity > 0.85:
+                            print(f"  [!] Duplicate found in batch: '{name}' fuzzy matches '{p_name}' (Ratio: {name_similarity:.2f}) within ZIP {zip_code}")
+                            is_dup = True
+                            dup_of_id = p_id
+                            break
             
             if is_dup:
                 # Mark as duplicate in SQLite
@@ -315,6 +369,13 @@ class StagingDatabase:
             'va': 'virginia', 'wa': 'washington', 'wv': 'west-virginia', 'wi': 'wisconsin', 'wy': 'wyoming'
         }
         return state_map.get(abbr.lower(), abbr.lower())
+
+    def _extract_zip(self, address):
+        if not address:
+            return ""
+        match = re.search(r'\b\d{5}(?:-\d{4})?\b', address)
+        return match.group(0)[:5] if match else ""
+
 
 # Quick test helper
 if __name__ == "__main__":
