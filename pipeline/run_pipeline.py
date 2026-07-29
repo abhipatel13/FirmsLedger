@@ -14,10 +14,13 @@ def main():
     parser.add_argument("--test-only", action="store_true", help="Run a quick 2-company test")
     parser.add_argument("--skip-scrape", action="store_true", help="Skip scraping and crawl/deduplicate existing database entries")
     parser.add_argument("--max-per-query", type=int, default=20, help="Maximum results to scrape per query")
+    parser.add_argument("--db-path", type=str, default="pipeline/staging.db", help="Path to SQLite staging database")
+    parser.add_argument("--csv-path", type=str, default="pipeline/staged_companies.csv", help="Path to export CSV file")
+    parser.add_argument("--json-path", type=str, default="pipeline/staged_companies.json", help="Path to export JSON file")
     args = parser.parse_args()
 
     # Initialize components
-    db = StagingDatabase()
+    db = StagingDatabase(db_path=args.db_path)
     crawler = CompanyWebsiteCrawler()
     
     # 1. Company Discovery Phase (Scraping)
@@ -86,8 +89,8 @@ def main():
 
     # 4. Export Clean Data to CSV
     print("\n[*] Exporting Staged Data...")
-    db.export_to_csv()
-    db.export_to_json()
+    db.export_to_csv(file_path=args.csv_path)
+    db.export_to_json(file_path=args.json_path)
     
     print("\n[+] Data acquisition pipeline run completed successfully.")
 
