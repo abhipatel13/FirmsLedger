@@ -158,7 +158,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
               </div>
               <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 24px', textAlign: 'center', flexShrink: 0 }}>
                 <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em' }}>{companies.length}</p>
-                <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>verified listings</p>
+                <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>total listings</p>
               </div>
             </div>
           </div>

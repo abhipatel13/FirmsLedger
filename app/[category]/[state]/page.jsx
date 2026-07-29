@@ -261,7 +261,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 </div>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
                   <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
-                  <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>verified listings</span>
+                  <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>total listings</span>
                 </div>
               </div>
             </div>
@@ -524,7 +524,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               </div>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
                 <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
-                <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>verified listings</span>
+                <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>total listings</span>
               </div>
             </div>
           </div>
