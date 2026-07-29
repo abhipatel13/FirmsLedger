@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { getCompanyDescription } from '@/utils';
 import {
   fetchCompanyByIdAny,
   fetchReviews,
@@ -88,7 +89,7 @@ export default async function CompanyProfilePage({ params }) {
         name: company.name,
         url: profileUrl,
         ...(company.logo_url && { logo: company.logo_url, image: company.logo_url }),
-        ...(company.description && { description: company.description }),
+        description: getCompanyDescription(company),
         ...(company.website && { sameAs: [company.website] }),
         ...(company.employee_count && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.employee_count } }),
         ...((company.hq_city || company.hq_state_label) && {

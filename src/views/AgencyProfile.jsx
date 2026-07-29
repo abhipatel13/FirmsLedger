@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl, getCompanyProfileUrl, getAgencyLogoUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -290,7 +290,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
               {agency.tagline && (
                 <p className="text-orange-500 text-sm font-medium mb-2">{agency.tagline}</p>
               )}
-              <ExpandableText text={agency.description} />
+              <ExpandableText text={getCompanyDescription(agency)} />
               {socialLinks.length > 0 && (
                 <div className="flex items-center gap-3 mt-4">
                   {socialLinks.map(({ url, Icon, color }, i) => (

@@ -64,11 +64,13 @@ export function getCompanyDescription(company: {
   name?: string | null;
   hq_city?: string | null;
   hq_state_label?: string | null;
+  hq_state?: string | null;
 } | null | undefined): string {
   if (!company) return '';
   if (company.description && company.description.trim()) return company.description.trim();
   const name = company.name || 'This company';
-  const locationParts = [company.hq_city, company.hq_state_label].filter(Boolean);
+  const state = company.hq_state_label || company.hq_state;
+  const locationParts = [company.hq_city, state].filter(Boolean);
   const locationStr = locationParts.length > 0 ? ` based in ${locationParts.join(', ')}` : '';
   return `${name} is a verified manufacturer${locationStr}. Connect to learn more about their capabilities, services, and operations.`;
 }
