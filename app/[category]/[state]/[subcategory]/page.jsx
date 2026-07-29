@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
 import { CheckCircle, Star, MapPin, Shield, ArrowRight } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
+import { ALL_US_STATES } from '@/lib/usStates';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ const PAGE_SIZE = 10;
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 const VALID_CATEGORIES = new Set(CATEGORY_SLUGS);
+const VALID_STATES = new Set(ALL_US_STATES.map((s) => s.slug));
 
 function toTitleCase(slug) {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -20,8 +22,20 @@ function toTitleCase(slug) {
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params, searchParams }) {
   const { category, state: subcategory, subcategory: state } = await params;
+
+  if (
+    VALID_STATES.has(category) &&
+    VALID_CATEGORIES.has(subcategory) &&
+    CATEGORY_MAP[subcategory]?.subcategories.some((s) => s.slug === state)
+  ) {
+    const sParams = await searchParams;
+    const query = new URLSearchParams(sParams).toString();
+    const target = query ? `/${subcategory}/${state}/${category}?${query}` : `/${subcategory}/${state}/${category}`;
+    permanentRedirect(target);
+  }
+
   const cat = CATEGORY_MAP[category];
   if (!cat) return { title: `Not Found | ${SITE_NAME}` };
 
@@ -64,6 +78,18 @@ function StarRow({ rating }) {
 
 export default async function SubcategoryStatePage({ params, searchParams }) {
   const { category, state: subcategory, subcategory: state } = await params;
+
+  if (
+    VALID_STATES.has(category) &&
+    VALID_CATEGORIES.has(subcategory) &&
+    CATEGORY_MAP[subcategory]?.subcategories.some((s) => s.slug === state)
+  ) {
+    const sp = await searchParams;
+    const query = new URLSearchParams(sp).toString();
+    const target = query ? `/${subcategory}/${state}/${category}?${query}` : `/${subcategory}/${state}/${category}`;
+    permanentRedirect(target);
+  }
+
   const { page: pageParam } = await searchParams;
   const cat = CATEGORY_MAP[category];
   if (!cat || !VALID_CATEGORIES.has(category)) notFound();

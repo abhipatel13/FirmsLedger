@@ -1,10 +1,11 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
 import { Shield, Info } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS } from '@/lib/manufacturingCategories';
+import { ALL_US_STATES } from '@/lib/usStates';
 import CompanyCard from '@/components/listing/CompanyCard';
 import FilterBar from '@/components/listing/FilterBar';
 import StatsBand from '@/components/listing/StatsBand';
@@ -17,6 +18,7 @@ const PAGE_SIZE = 10;
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 const VALID_CATEGORIES = new Set(CATEGORY_SLUGS);
+const VALID_STATES = new Set(ALL_US_STATES.map((s) => s.slug));
 
 const SIDEBAR_CATEGORIES_FULL = MANUFACTURING_CATEGORIES.map((c) => ({
   slug: c.slug,
@@ -96,6 +98,13 @@ export async function generateMetadata({ params, searchParams }) {
   const pageSuffix = page > 1 ? ` — Page ${page}` : '';
   const pageQuery = page > 1 ? `?page=${page}` : '';
 
+  if (VALID_STATES.has(category) && VALID_CATEGORIES.has(state)) {
+    const sParams = await searchParams;
+    const query = new URLSearchParams(sParams).toString();
+    const target = query ? `/${state}/${category}?${query}` : `/${state}/${category}`;
+    permanentRedirect(target);
+  }
+
   if (!VALID_CATEGORIES.has(category)) return { title: `Not Found | ${SITE_NAME}` };
 
   const cat = CATEGORY_MAP[category];
@@ -147,10 +156,21 @@ export function generateStaticParams() {
 export default async function CategoryStatePage({ params, searchParams }) {
   const { category, state } = await params;
   const sp = await searchParams;
+  if (VALID_STATES.has(category) && VALID_CATEGORIES.has(state)) {
+    const query = new URLSearchParams(sp).toString();
+    const target = query ? `/${state}/${category}?${query}` : `/${state}/${category}`;
+    permanentRedirect(target);
+  }
   return renderCategoryPage({ category, state, pageParam: sp.page, searchParams: sp });
 }
 
 export async function renderCategoryPage({ category, state, pageParam, searchParams = {} }) {
+  if (VALID_STATES.has(category) && VALID_CATEGORIES.has(state)) {
+    const query = new URLSearchParams(searchParams).toString();
+    const target = query ? `/${state}/${category}?${query}` : `/${state}/${category}`;
+    permanentRedirect(target);
+  }
+
   if (!VALID_CATEGORIES.has(category)) notFound();
 
   const cat = CATEGORY_MAP[category];
