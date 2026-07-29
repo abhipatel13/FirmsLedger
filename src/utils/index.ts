@@ -57,3 +57,18 @@ export function getAgencyLogoUrl(agency: {
   const name = encodeURIComponent(agency.name || '?');
   return `https://ui-avatars.com/api/?name=${name}&background=1A2E4A&color=fff&size=128&bold=true`;
 }
+
+/** Get the company description, falling back to a nice dynamic description if none exists */
+export function getCompanyDescription(company: {
+  description?: string | null;
+  name?: string | null;
+  hq_city?: string | null;
+  hq_state_label?: string | null;
+} | null | undefined): string {
+  if (!company) return '';
+  if (company.description && company.description.trim()) return company.description.trim();
+  const name = company.name || 'This company';
+  const locationParts = [company.hq_city, company.hq_state_label].filter(Boolean);
+  const locationStr = locationParts.length > 0 ? ` based in ${locationParts.join(', ')}` : '';
+  return `${name} is a verified manufacturer${locationStr}. Connect to learn more about their capabilities, services, and operations.`;
+}

@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Search, Star, MapPin, CheckCircle, ArrowRight, X } from 'lucide-react';
 import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
+import { getCompanyDescription } from '@/utils';
 
 function StarRow({ rating }) {
   return (
@@ -297,11 +298,9 @@ function SearchContent() {
                           </span>
                         )}
                       </div>
-                      {company.description && (
-                        <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                          {company.description}
-                        </p>
-                      )}
+                      <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {getCompanyDescription(company)}
+                      </p>
                     </div>
                     <ArrowRight style={{ width: 15, height: 15, color: '#cbd5e1', flexShrink: 0, marginTop: 2 }} />
                   </div>

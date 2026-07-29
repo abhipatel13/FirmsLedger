@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatEmployeeLabel } from '@/lib/employeeCount';
 import VisitWebsiteButton from './VisitWebsiteButton';
+import { getCompanyDescription } from '@/utils';
 
 function StarRow({ rating }) {
   return (
@@ -104,9 +105,9 @@ export default function CompanyCard({ company, rank }) {
               ) : null}
             </div>
 
-            {company.description ? (
-              <p className="line-clamp-3 text-sm leading-relaxed text-slate-500">{company.description}</p>
-            ) : null}
+            <p className="line-clamp-3 text-sm leading-relaxed text-slate-500">
+              {getCompanyDescription(company)}
+            </p>
 
             {certifications.length > 0 ? (
               <div className="mt-3 flex flex-wrap items-center gap-1.5">

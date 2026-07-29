@@ -6,6 +6,7 @@ import { CheckCircle, Star, MapPin, Shield, ArrowRight } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
+import { getCompanyDescription } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -223,9 +224,9 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                               </>
                             )}
                           </div>
-                          {company.description && (
-                            <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{company.description}</p>
-                          )}
+                          <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {getCompanyDescription(company)}
+                          </p>
                         </div>
                         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
                           <ArrowRight style={{ width: 16, height: 16, color: '#94a3b8' }} />

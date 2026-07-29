@@ -10,6 +10,7 @@ import CompanyCard from '@/components/listing/CompanyCard';
 import FilterBar from '@/components/listing/FilterBar';
 import StatsBand from '@/components/listing/StatsBand';
 import OtherCategoriesCard from '@/components/listing/OtherCategoriesCard';
+import { getCompanyDescription } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -209,7 +210,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         '@type': 'ListItem',
         position: i + 1,
         name: company.name,
-        description: company.description,
+        description: getCompanyDescription(company),
         url: `${_BASE}/company/${company.slug}`,
       })),
     };
@@ -441,7 +442,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
       '@type': 'ListItem',
       position: i + 1,
       name: company.name,
-      description: company.description,
+      description: getCompanyDescription(company),
       url: `${_BASE}/company/${company.slug}`,
     })),
   };
