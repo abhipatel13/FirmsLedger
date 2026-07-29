@@ -13,6 +13,7 @@ def main():
     parser = argparse.ArgumentParser(description="FirmsLedger Data Acquisition Pipeline")
     parser.add_argument("--test-only", action="store_true", help="Run a quick 2-company test")
     parser.add_argument("--skip-scrape", action="store_true", help="Skip scraping and crawl/deduplicate existing database entries")
+    parser.add_argument("--max-per-query", type=int, default=20, help="Maximum results to scrape per query")
     args = parser.parse_args()
 
     # Initialize components
@@ -37,7 +38,7 @@ def main():
                 "Electrical Components Illinois",
                 "Plastic Manufacturer Texas"
             ]
-            max_per_query = 20
+            max_per_query = args.max_per_query
 
         print(f"[*] Starting Discovery Scraper over {len(queries)} queries...")
         for query in queries:
