@@ -9,6 +9,7 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { Select, SelectGroup, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectLabel } from '@/components/ui/select';
 import { EMPLOYEE_BUCKETS } from '@/lib/employeeCount';
 import { ChevronDown, X } from 'lucide-react';
+import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 
 function toggle(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -137,6 +138,7 @@ export default function FilterBar({
   subcategories,
   category,
   currentSubcategory,
+  currentState,
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -179,6 +181,19 @@ export default function FilterBar({
     navigate([], []);
   }
 
+  function navigateToCategory(value) {
+    setOpenDropdown(null);
+    const pathState = currentState ? `/${currentState}` : '';
+    const newPath = `/${value}${pathState}`;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('page');
+
+    const query = params.toString();
+    const target = query ? `${newPath}?${query}` : newPath;
+    window.location.href = target;
+  }
+
   function navigateToSubcategory(value) {
     setOpenDropdown(null);
     startTransition(() => {
@@ -205,6 +220,42 @@ export default function FilterBar({
         paddingBottom: 4,
         scrollbarWidth: 'thin',
       }}>
+        {/* Category select */}
+        <div style={{ flexShrink: 0 }}>
+          <Select
+            value={category}
+            onValueChange={navigateToCategory}
+            open={openDropdown === 'category'}
+            onOpenChange={(next) => setOpenDropdown(next ? 'category' : null)}
+          >
+            <SelectTrigger
+              className="w-full bg-white text-sm"
+              style={{
+                height: 36,
+                minHeight: 36,
+                minWidth: 180,
+                padding: '8px 14px',
+                borderRadius: 8,
+                border: '1px solid #e2e8f0',
+                fontSize: 13,
+                gap: 6,
+              }}
+            >
+              <SelectValue placeholder="Select Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Categories</SelectLabel>
+                {MANUFACTURING_CATEGORIES.map((c) => (
+                  <SelectItem key={c.slug} value={c.slug}>
+                    {c.shortName}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Filter dropdowns */}
         {showStateFilter ? (
           <FilterDropdown

@@ -262,6 +262,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               subcategories={cat.subcategories}
               category={category}
               currentSubcategory={subcategory}
+              currentState={null}
             />
 
             {/* ── Ranked list ── */}
@@ -524,6 +525,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             subcategories={cat?.subcategories}
             category={category}
             currentSubcategory={null}
+            currentState={showStateFilter ? null : state}
           />
 
           {/* ── Ranked list ─────────────────────────────────────── */}
