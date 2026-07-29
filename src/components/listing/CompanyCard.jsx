@@ -39,10 +39,10 @@ export default function CompanyCard({ company, rank }) {
         <Link
           href={`/company/${company.slug}`}
           aria-label={company.name}
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-10"
         />
 
-        <CardContent className="relative z-[1] flex items-start gap-6 p-8">
+        <CardContent className="relative flex items-start gap-6 p-8">
           <div className={`flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold tabular-nums ${rankBg}`}>
             #{rank + 1}
           </div>
@@ -76,7 +76,7 @@ export default function CompanyCard({ company, rank }) {
               </div>
 
               {company.website ? (
-                <span className="relative z-[2]">
+                <span className="relative z-20">
                   <VisitWebsiteButton href={company.website} />
                 </span>
               ) : null}
