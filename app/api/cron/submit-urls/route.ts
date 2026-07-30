@@ -11,13 +11,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-// TODO(Step 5): replace getUnsubmittedUrls with direct Neon/Drizzle query on submission_logs
 import { submitUrls } from '@/lib/automation/urlSubmitter';
-
-async function getUnsubmittedUrls(_limit: number): Promise<string[]> {
-  // Stub — will be replaced in Step 5 with Drizzle query
-  return [];
-}
+import { getUnsubmittedUrls } from '@/db/neonApi';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   // ── Auth ──────────────────────────────────────────────────────────────────

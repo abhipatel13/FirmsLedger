@@ -57,10 +57,43 @@ export default function ListYourCompany() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await api.submitListingRequest({
+      let formattedWebsite = form.website.trim();
+      if (formattedWebsite && !/^https?:\/\//i.test(formattedWebsite)) {
+        formattedWebsite = 'https://' + formattedWebsite;
+      }
+
+      const submissionData = {
         ...form,
+        website: formattedWebsite || undefined,
         team_size: form.team_size || undefined,
-      });
+      };
+
+      await api.submitListingRequest(submissionData);
+
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+      if (accessKey) {
+        const location = [form.hq_city, form.hq_state].filter(Boolean).join(', ') || '—';
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: accessKey,
+            name: form.company_name,
+            email: form.email,
+            subject: `New Listing Request: ${form.company_name.slice(0, 60)}`,
+            message: [
+              `Company: ${form.company_name}`,
+              `Email: ${form.email}`,
+              `Phone: ${form.phone || '—'}`,
+              `Website: ${formattedWebsite || '—'}`,
+              `Location: ${location}`,
+              `Team Size: ${form.team_size || '—'}`,
+              form.message ? `Details: ${form.message}` : '',
+            ].filter(Boolean).join('\n'),
+          }),
+        }).catch((err) => console.error('Web3Forms client-side submit failed:', err));
+      }
+
       setSubmitted(true);
       toast.success('Your listing request has been submitted!');
     } catch (err) {
@@ -275,7 +308,7 @@ export default function ListYourCompany() {
                         value={form.company_name} onChange={e => set('company_name', e.target.value)} />
                     </Field>
                     <Field label="Website">
-                      <input className={INPUT} type="url" placeholder="https://yourcompany.com"
+                      <input className={INPUT} type="text" placeholder="https://yourcompany.com"
                         value={form.website} onChange={e => set('website', e.target.value)} />
                     </Field>
                     <Field label="Team Size">

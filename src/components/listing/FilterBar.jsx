@@ -260,24 +260,101 @@ export default function FilterBar({
         {showStateFilter ? (
           <FilterDropdown
             label="State"
-            activeCount={pendingStates.length}
+            activeCount={currentState ? 1 : 0}
             isOpen={openDropdown === 'state'}
             onToggle={() => setOpenDropdown(openDropdown === 'state' ? null : 'state')}
             onClose={() => setOpenDropdown((v) => (v === 'state' ? null : v))}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {stateCounts.map((s) => (
-                <Field key={s.stateSlug} orientation="horizontal" className="gap-2" style={{ padding: '4px 6px', margin: 0 }}>
-                  <Checkbox
-                    id={`fb-state-${s.stateSlug}`}
-                    checked={pendingStates.includes(s.stateSlug)}
-                    onCheckedChange={() => setPendingStates((prev) => toggle(prev, s.stateSlug))}
-                  />
-                  <FieldLabel htmlFor={`fb-state-${s.stateSlug}`} className="flex-1 text-sm font-normal" style={{ cursor: 'pointer' }}>
-                    {s.stateLabel} <span className="text-slate-400">({s.count})</span>
-                  </FieldLabel>
-                </Field>
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '4px 0' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenDropdown(null);
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.delete('page');
+                  params.delete('states');
+                  if (pendingEmployeeRanges.length) {
+                    params.set('employees', pendingEmployeeRanges.join(','));
+                  } else {
+                    params.delete('employees');
+                  }
+                  const query = params.toString();
+                  const targetUrl = query ? `/${category}?${query}` : `/${category}`;
+                  window.location.href = targetUrl;
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: 6,
+                  border: 'none',
+                  backgroundColor: !currentState ? '#f1f5f9' : 'transparent',
+                  color: !currentState ? '#0f172a' : '#475569',
+                  fontSize: 13,
+                  fontWeight: !currentState ? 600 : 400,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'background-color 0.1s',
+                  marginBottom: 4,
+                  borderBottom: '1px solid #e2e8f0',
+                }}
+                onMouseEnter={(e) => {
+                  if (currentState) e.currentTarget.style.backgroundColor = '#f8fafc';
+                }}
+                onMouseLeave={(e) => {
+                  if (currentState) e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                All States
+              </button>
+              {stateCounts.map((s) => {
+                const isSelected = s.stateSlug === currentState;
+                return (
+                  <button
+                    key={s.stateSlug}
+                    type="button"
+                    onClick={() => {
+                      setOpenDropdown(null);
+                      const params = new URLSearchParams(searchParams.toString());
+                      params.delete('page');
+                      params.delete('states');
+                      if (pendingEmployeeRanges.length) {
+                        params.set('employees', pendingEmployeeRanges.join(','));
+                      } else {
+                        params.delete('employees');
+                      }
+                      const query = params.toString();
+                      const targetUrl = query ? `/${category}/${s.stateSlug}?${query}` : `/${category}/${s.stateSlug}`;
+                      window.location.href = targetUrl;
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      border: 'none',
+                      backgroundColor: isSelected ? '#f1f5f9' : 'transparent',
+                      color: isSelected ? '#0f172a' : '#475569',
+                      fontSize: 13,
+                      fontWeight: isSelected ? 600 : 400,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'background-color 0.1s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isSelected) e.currentTarget.style.backgroundColor = '#f8fafc';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <span>{s.stateLabel}</span>
+                    <span className="text-xs text-slate-400">({s.count})</span>
+                  </button>
+                );
+              })}
             </div>
           </FilterDropdown>
         ) : null}

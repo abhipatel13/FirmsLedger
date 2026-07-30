@@ -6,7 +6,8 @@
  * and free ping services. Logs all attempts to Supabase.
  */
 
-import { getServiceSupabase } from './supabaseClient';
+import { db } from '@/db/client';
+import { submission_logs } from '@/db/schema';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -266,17 +267,20 @@ async function logResults(
   pageUrl: string,
   results: SubmissionResult[]
 ): Promise<void> {
-  const supabase = getServiceSupabase();
-  const rows = results.map((r) => ({
-    url: pageUrl,
-    platform: r.platform,
-    status: r.status,
-    response: r.response,
-    submitted_at: new Date().toISOString(),
-  }));
+  try {
+    const rows = results.map((r) => ({
+      url: pageUrl,
+      platform: r.platform,
+      status: r.status,
+      response: r.response ? JSON.stringify(r.response) : null,
+      submitted: r.status === 'success',
+      submitted_at: new Date(),
+    }));
 
-  const { error } = await supabase.from('submission_logs').insert(rows);
-  if (error) console.error('Failed to log submission results:', error.message);
+    await db.insert(submission_logs).values(rows);
+  } catch (error) {
+    console.error('Failed to log submission results:', error);
+  }
 }
 
 // ---------------------------------------------------------------------------

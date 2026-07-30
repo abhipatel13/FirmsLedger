@@ -9,7 +9,7 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 // Below this many approved companies, a /{category}/{state} page is a thin/
 // empty page — a soft-404 risk that wastes crawl budget. Keep it out of the
 // sitemap; it's still reachable via the category hub, just not pushed to Google.
-const MIN_LIVE_COMPANIES = 1;
+const MIN_LIVE_COMPANIES = 0;
 
 function slugifyState(name) {
   return String(name).trim().toLowerCase().replace(/\s+/g, '-');
