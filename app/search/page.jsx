@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { parseSearchIntent, canonicalPathFor } from '@/lib/searchIntent';
 import { Search, Star, MapPin, CheckCircle, ArrowRight, X } from 'lucide-react';
 import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
@@ -37,7 +38,27 @@ const selectStyle = {
   backgroundPosition: 'right 12px center',
 };
 
+/**
+ * Splits a raw query into the filters it implies plus the words left over.
+ * A category named in the text wins over a stale dropdown selection — typing is
+ * the more deliberate act, and otherwise "cnc machines" against a leftover
+ * Textile & Apparel filter is a silent zero-result dead end.
+ */
+function resolveQuery(rawQuery, cat, st) {
+  const intent = parseSearchIntent(rawQuery);
+  const usedIntent = !!(intent.categorySlug || intent.stateSlug);
+  return {
+    intent,
+    // Words the filters already cover are dropped, so they are not also required
+    // to appear in a company's name or description.
+    text: usedIntent ? intent.rest : rawQuery,
+    cat: intent.categorySlug || cat,
+    st: intent.stateSlug || st,
+  };
+}
+
 function SearchContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef(null);
 
@@ -54,11 +75,38 @@ function SearchContent() {
     const q = searchParams.get('q') || '';
     const cat = searchParams.get('category') || '';
     const st = searchParams.get('state') || '';
-    if (q.length >= 2 || cat || st) {
-      runSearch(q, cat, st);
+    const resolved = resolveQuery(q, cat, st);
+
+    // A query naming both a category and a state has a real page of its own —
+    // send it there instead of showing a results list.
+    if (resolved.intent.categorySlug && resolved.intent.stateSlug) {
+      router.replace(canonicalPathFor(resolved.intent));
+      return;
+    }
+
+    if (resolved.cat !== cat) setCategory(resolved.cat);
+    if (resolved.st !== st) setState(resolved.st);
+    if (resolved.text.length >= 2 || resolved.cat || resolved.st) {
+      runSearch(resolved.text, resolved.cat, resolved.st);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    clearTimeout(debounceRef.current);
+    const resolved = resolveQuery(query, category, state);
+
+    if (resolved.intent.categorySlug && resolved.intent.stateSlug) {
+      router.push(canonicalPathFor(resolved.intent));
+      return;
+    }
+
+    setCategory(resolved.cat);
+    setState(resolved.st);
+    runSearch(resolved.text, resolved.cat, resolved.st);
+    syncUrl(query, resolved.cat, resolved.st);
+  }
 
   async function runSearch(q, cat, st) {
     const hasQuery = q && q.trim().length >= 2;
@@ -95,8 +143,13 @@ function SearchContent() {
     setQuery(val);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      runSearch(val, category, state);
-      syncUrl(val, category, state);
+      // Live results only — the redirect to a canonical page happens on submit,
+      // so typing is never interrupted mid-word.
+      const resolved = resolveQuery(val, category, state);
+      if (resolved.cat !== category) setCategory(resolved.cat);
+      if (resolved.st !== state) setState(resolved.st);
+      runSearch(resolved.text, resolved.cat, resolved.st);
+      syncUrl(val, resolved.cat, resolved.st);
     }, 300);
   }
 
@@ -145,8 +198,8 @@ function SearchContent() {
             Find verified US manufacturers by name, category, and state.
           </p>
 
-          {/* Search input + filters */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+          {/* Search input + filters — a real form so Enter submits */}
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             <div style={{ position: 'relative', flex: '1 1 260px', minWidth: 220 }}>
               <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: '#94a3b8', pointerEvents: 'none' }} />
               <input
@@ -175,6 +228,8 @@ function SearchContent() {
               />
               {query && (
                 <button
+                  type="button"
+                  aria-label="Clear search"
                   onClick={handleClear}
                   style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, display: 'flex', alignItems: 'center' }}
                 >
@@ -196,7 +251,7 @@ function SearchContent() {
                 <option key={s.slug} value={s.slug}>{s.name}</option>
               ))}
             </select>
-          </div>
+          </form>
 
           {(category || state) && (
             <button

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db/client';
 import { companies, categories, company_categories, states } from '@/db/schema';
 import { eq, and, ilike, or, inArray } from 'drizzle-orm';
+import { searchTokens } from '@/lib/searchIntent';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -19,14 +20,26 @@ export async function GET(request) {
   const conditions = [eq(companies.approved, true)];
 
   if (hasQuery) {
-    const pattern = `%${q}%`;
-    conditions.push(
-      or(
-        ilike(companies.name, pattern),
-        ilike(companies.description, pattern),
-        ilike(companies.hq_city, pattern),
-      )
-    );
+    // Match each significant word separately instead of the whole phrase as one
+    // literal substring — "cnc machines in california" has to match a company
+    // whose name says "Machining" and whose state says "California", which no
+    // single contiguous %pattern% ever could. Words are stemmed so machines /
+    // machine / machining all match, and stopwords are dropped so "in" is not
+    // required to appear anywhere.
+    const tokens = searchTokens(q);
+    if (!tokens.length && !hasFilter) return NextResponse.json([]);
+
+    for (const token of tokens) {
+      const pattern = `%${token}%`;
+      conditions.push(
+        or(
+          ilike(companies.name, pattern),
+          ilike(companies.description, pattern),
+          ilike(companies.hq_city, pattern),
+          ilike(companies.hq_state_label, pattern),
+        )
+      );
+    }
   }
 
   if (categorySlug) {
