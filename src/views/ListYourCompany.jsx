@@ -441,7 +441,7 @@ export default function ListYourCompany() {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-const INPUT = 'w-full h-10 rounded-xl border border-[#e2e8f0] bg-[#f1f5f9] px-3 text-sm text-[#0f172a] placeholder-[#9a9a9a] focus:outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] transition-colors';
+const INPUT = 'w-full h-10 rounded-xl border border-[#e2e8f0] bg-[#f1f5f9] px-3 text-sm text-[#0f172a] placeholder-[#0f172a] focus:outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] transition-colors';
 
 function Field({ label, required, children }) {
   return (

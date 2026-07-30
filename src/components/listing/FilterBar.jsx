@@ -6,10 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
-import { Select, SelectGroup, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectLabel } from '@/components/ui/select';
 import { EMPLOYEE_BUCKETS } from '@/lib/employeeCount';
 import { ChevronDown, X } from 'lucide-react';
-import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
+import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
 
 function toggle(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -129,6 +128,37 @@ function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, childre
   );
 }
 
+function OptionButton({ selected, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'block',
+        width: '100%',
+        padding: '8px 12px',
+        borderRadius: 6,
+        border: 'none',
+        backgroundColor: selected ? '#f1f5f9' : 'transparent',
+        color: selected ? '#0f172a' : '#475569',
+        fontSize: 13,
+        fontWeight: selected ? 600 : 400,
+        cursor: 'pointer',
+        textAlign: 'left',
+        transition: 'background-color 0.1s',
+      }}
+      onMouseEnter={(e) => {
+        if (!selected) e.currentTarget.style.backgroundColor = '#f8fafc';
+      }}
+      onMouseLeave={(e) => {
+        if (!selected) e.currentTarget.style.backgroundColor = 'transparent';
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function FilterBar({
   basePath,
   activeStates,
@@ -220,41 +250,26 @@ export default function FilterBar({
         paddingBottom: 4,
         scrollbarWidth: 'thin',
       }}>
-        {/* Category select */}
-        <div style={{ flexShrink: 0 }}>
-          <Select
-            value={category}
-            onValueChange={navigateToCategory}
-            open={openDropdown === 'category'}
-            onOpenChange={(next) => setOpenDropdown(next ? 'category' : null)}
-          >
-            <SelectTrigger
-              className="w-full bg-white text-sm"
-              style={{
-                height: 36,
-                minHeight: 36,
-                minWidth: 180,
-                padding: '8px 14px',
-                borderRadius: 8,
-                border: '1px solid #e2e8f0',
-                fontSize: 13,
-                gap: 6,
-              }}
-            >
-              <SelectValue placeholder="Select Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Categories</SelectLabel>
-                {MANUFACTURING_CATEGORIES.map((c) => (
-                  <SelectItem key={c.slug} value={c.slug}>
-                    {c.shortName}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Category */}
+        <FilterDropdown
+          label={CATEGORY_MAP[category]?.shortName ?? 'Select Category'}
+          activeCount={0}
+          isOpen={openDropdown === 'category'}
+          onToggle={() => setOpenDropdown(openDropdown === 'category' ? null : 'category')}
+          onClose={() => setOpenDropdown((v) => (v === 'category' ? null : v))}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '4px 0' }}>
+            {MANUFACTURING_CATEGORIES.map((c) => (
+              <OptionButton
+                key={c.slug}
+                selected={c.slug === category}
+                onClick={() => navigateToCategory(c.slug)}
+              >
+                {c.shortName}
+              </OptionButton>
+            ))}
+          </div>
+        </FilterDropdown>
 
         {/* Filter dropdowns */}
         {showStateFilter ? (
@@ -382,43 +397,33 @@ export default function FilterBar({
           </div>
         </FilterDropdown>
 
-        {/* Subcategory select */}
+        {/* Subcategory */}
         {subcategories?.length > 0 ? (
-          <div style={{ flexShrink: 0 }}>
-            <Select
-              value={currentSubcategory ?? '__all__'}
-              onValueChange={navigateToSubcategory}
-              open={openDropdown === 'subcategory'}
-              onOpenChange={(next) => setOpenDropdown(next ? 'subcategory' : null)}
-            >
-              <SelectTrigger
-                className="w-full bg-white text-sm"
-                style={{
-                  height: 36,
-                  minHeight: 36,
-                  minWidth: 168,
-                  padding: '8px 14px',
-                  borderRadius: 8,
-                  border: '1px solid #e2e8f0',
-                  fontSize: 13,
-                  gap: 6,
-                }}
+          <FilterDropdown
+            label={subcategories.find((s) => s.slug === currentSubcategory)?.name ?? 'All subcategories'}
+            activeCount={currentSubcategory ? 1 : 0}
+            isOpen={openDropdown === 'subcategory'}
+            onToggle={() => setOpenDropdown(openDropdown === 'subcategory' ? null : 'subcategory')}
+            onClose={() => setOpenDropdown((v) => (v === 'subcategory' ? null : v))}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '4px 0' }}>
+              <OptionButton
+                selected={!currentSubcategory}
+                onClick={() => navigateToSubcategory('__all__')}
               >
-                <SelectValue placeholder="All subcategories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Subcategories</SelectLabel>
-                  <SelectItem value="__all__">All subcategories</SelectItem>
-                  {subcategories.map((s) => (
-                    <SelectItem key={s.slug} value={s.slug}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+                All subcategories
+              </OptionButton>
+              {subcategories.map((s) => (
+                <OptionButton
+                  key={s.slug}
+                  selected={s.slug === currentSubcategory}
+                  onClick={() => navigateToSubcategory(s.slug)}
+                >
+                  {s.name}
+                </OptionButton>
+              ))}
+            </div>
+          </FilterDropdown>
         ) : null}
 
         {/* Spacer */}
