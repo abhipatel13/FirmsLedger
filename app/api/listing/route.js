@@ -32,22 +32,29 @@ export async function POST(request) {
     if (WEB3FORMS_KEY) {
       const location = [hq_city, hq_state].filter(Boolean).join(', ') || '—';
       try {
-        await fetch('https://api.web3forms.com/submit', {
+        const emailRes = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
             access_key: WEB3FORMS_KEY,
-            subject: `New Listing Request: ${company_name.slice(0, 60)}`,
-            from_name: 'FirmsLedger Listings',
-            company: company_name,
+            name: company_name,
             email: contact_email,
-            phone: contact_phone || '—',
-            website: website || '—',
-            location,
-            category: category_slug || '—',
-            message: description || '—',
+            subject: `New Listing Request: ${company_name.slice(0, 60)}`,
+            message: [
+              `Company: ${company_name}`,
+              `Email: ${contact_email}`,
+              `Phone: ${contact_phone || '—'}`,
+              `Website: ${website || '—'}`,
+              `Location: ${location}`,
+              `Category: ${category_slug || '—'}`,
+              description ? `Details: ${description}` : '',
+            ].filter(Boolean).join('\n'),
           }),
         });
+        const emailData = await emailRes.json().catch(() => ({}));
+        if (!emailRes.ok || !emailData.success) {
+          console.error('Web3Forms listing error:', emailData);
+        }
       } catch (err) {
         console.error('Listing notify email failed:', err);
       }
