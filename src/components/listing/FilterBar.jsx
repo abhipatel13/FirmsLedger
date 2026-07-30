@@ -209,10 +209,10 @@ export default function FilterBar({
   dropdowns.push({ key: 'employees', label: 'Employees', count: pendingEmployeeRanges.length });
 
   return (
-    <div>
+    <div style={{ margin: '16px 0 28px 0' }}>
       <div className="filter-bar-row" style={{
         display: 'flex',
-        alignItems: 'flex-end',
+        alignItems: 'center',
         gap: 10,
         flexWrap: 'nowrap',
         overflowX: 'auto',
@@ -396,7 +396,7 @@ export default function FilterBar({
       </div>
 
       <style>{`
-        @media (max-width: 640px) {
+        @media (max-width: 1024px) {
           .filter-bar-row { flex-wrap: wrap !important; overflow-x: visible !important; }
           .filter-bar-spacer { display: none !important; }
         }

@@ -12,6 +12,7 @@ import {
   Package, Warehouse, Train, Bus, Bike, Rocket, Satellite,
   Landmark, Gavel, Coins, TrendingUp, Tractor, Wheat,
   Droplet, Flame, Sun, Wind, Beaker, Microscope,
+  Settings, Scissors, Armchair,
 } from 'lucide-react';
 
 const RULES = [
@@ -87,6 +88,17 @@ export function pickIconByText(text) {
 }
 
 export function pickCategoryIcon(cat) {
+  const slug = cat?.slug || '';
+  if (slug.includes('electrical-components')) return Zap;
+  if (slug.includes('mechanical-components')) return Settings;
+  if (slug.includes('plastics-packaging')) return Package;
+  if (slug.includes('metal-fabrication')) return Hammer;
+  if (slug.includes('electronics-semiconductor')) return Cpu;
+  if (slug.includes('automotive-parts')) return Car;
+  if (slug.includes('textile-apparel')) return Scissors;
+  if (slug.includes('furniture-woodworking')) return Armchair;
+  if (slug.includes('food-beverage-processing')) return Utensils;
+  if (slug.includes('medical-devices')) return HeartPulse;
   return pickIconByText(`${cat?.name || ''} ${cat?.slug || ''}`);
 }
 

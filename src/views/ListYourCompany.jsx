@@ -242,14 +242,14 @@ export default function ListYourCompany() {
             <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-2xl overflow-hidden">
               <div className="px-6 sm:px-8 py-6 border-b border-[#e2e8f0]">
                 <h2 className="text-xl font-medium text-[#0f172a]" style={{ letterSpacing: '-0.5px' }}>Tell us about your company</h2>
-                <p className="text-slate-500 text-sm mt-1">All fields marked * are required. We'll review your listing within 1–2 business days.</p>
+                <p className="text-slate-700 text-sm mt-1">All fields marked * are required. We'll review your listing within 1–2 business days.</p>
               </div>
 
               <form onSubmit={handleSubmit} className="px-6 sm:px-8 py-7 space-y-6">
 
                 {/* Contact */}
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Contact Details</p>
+                  <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-3">Contact Details</p>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <Field label="Your Name" required>
                       <input className={INPUT} required placeholder="Jane Doe"
@@ -268,7 +268,7 @@ export default function ListYourCompany() {
 
                 {/* Company */}
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Company Information</p>
+                  <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-3">Company Information</p>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <Field label="Company Name" required>
                       <input className={INPUT} required placeholder="Acme Agency"
@@ -289,7 +289,7 @@ export default function ListYourCompany() {
 
                 {/* Location */}
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Location</p>
+                  <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-3">Location</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     <Field label="City">
                       <input className={INPUT} placeholder="New York"
@@ -308,7 +308,7 @@ export default function ListYourCompany() {
 
                 {/* About */}
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">About Your Company</p>
+                  <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-3">About Your Company</p>
                   <textarea
                     className={`${INPUT} resize-none`}
                     rows={4}
@@ -413,7 +413,7 @@ const INPUT = 'w-full h-10 rounded-xl border border-[#e2e8f0] bg-[#f1f5f9] px-3 
 function Field({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-slate-600 mb-1.5">
+      <label className="block text-xs font-medium text-slate-900 mb-1.5">
         {label}{required && <span className="text-orange-500 ml-0.5">*</span>}
       </label>
       {children}
