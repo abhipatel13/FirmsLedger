@@ -28,25 +28,29 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Contact email is required' }, { status: 400 });
     }
 
-    // Send notification email via Web3Forms (fire-and-forget)
+    // Send notification email via Web3Forms
     if (WEB3FORMS_KEY) {
       const location = [hq_city, hq_state].filter(Boolean).join(', ') || '—';
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: `New Listing Request: ${company_name.slice(0, 60)}`,
-          from_name: 'FirmsLedger Listings',
-          company: company_name,
-          email: contact_email,
-          phone: contact_phone || '—',
-          website: website || '—',
-          location,
-          category: category_slug || '—',
-          message: description || '—',
-        }),
-      }).catch((err) => console.error('Listing notify email failed:', err));
+      try {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            subject: `New Listing Request: ${company_name.slice(0, 60)}`,
+            from_name: 'FirmsLedger Listings',
+            company: company_name,
+            email: contact_email,
+            phone: contact_phone || '—',
+            website: website || '—',
+            location,
+            category: category_slug || '—',
+            message: description || '—',
+          }),
+        });
+      } catch (err) {
+        console.error('Listing notify email failed:', err);
+      }
     }
 
     const [row] = await db.insert(listing_requests).values({
