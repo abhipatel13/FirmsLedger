@@ -87,18 +87,11 @@ export function pickIconByText(text) {
   return Building2;
 }
 
+import { visualsFor } from './categoryRegistry';
+
 export function pickCategoryIcon(cat) {
-  const slug = cat?.slug || '';
-  if (slug.includes('electrical-components')) return Zap;
-  if (slug.includes('mechanical-components')) return Settings;
-  if (slug.includes('plastics-packaging')) return Package;
-  if (slug.includes('metal-fabrication')) return Hammer;
-  if (slug.includes('electronics-semiconductor')) return Cpu;
-  if (slug.includes('automotive-parts')) return Car;
-  if (slug.includes('textile-apparel')) return Scissors;
-  if (slug.includes('furniture-woodworking')) return Armchair;
-  if (slug.includes('food-beverage-processing')) return Utensils;
-  if (slug.includes('medical-devices')) return HeartPulse;
+  const visuals = visualsFor(cat?.slug || cat?.name);
+  if (visuals) return visuals.icon;
   return pickIconByText(`${cat?.name || ''} ${cat?.slug || ''}`);
 }
 
@@ -120,8 +113,17 @@ const COLOR_POOL = [
 ];
 
 export function colorFor(key) {
+  const visuals = visualsFor(key);
+  if (visuals && visuals.tw) return visuals.tw;
+
   let hash = 0;
   const s = key || '';
   for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
-  return COLOR_POOL[hash % COLOR_POOL.length];
+  const colorStr = COLOR_POOL[hash % COLOR_POOL.length];
+  const parts = colorStr.split(' ');
+  return {
+    bg: parts[0],
+    border: parts[1],
+    text: parts[2],
+  };
 }

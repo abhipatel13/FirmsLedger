@@ -203,13 +203,13 @@ export default function Home() {
                 {parentCategories.map((cat) => {
                   const href = getDirectoryUrl(cat.slug);
                   const IconComp = pickCategoryIcon(cat);
-                  const colorClass = colorFor(cat.slug);
+                  const { bg: bgClass, border: borderClass, text: textClass } = colorFor(cat.slug);
 
                   return (
                     <Link key={cat.id} href={href} className="group">
                       <div className="bg-white border border-slate-100 rounded-2xl p-5 card-hover h-full flex flex-col">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg border flex items-center justify-center flex-shrink-0 ${colorClass}`}>
+                          <div className={`w-10 h-10 rounded-lg border flex items-center justify-center flex-shrink-0 ${bgClass} ${borderClass} ${textClass}`}>
                             <IconComp className="w-5 h-5" />
                           </div>
                           <h3 className="font-bold text-[#1A2E4A] text-[15px] flex-1 group-hover:text-orange-600 transition-colors">

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, startTransition } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
@@ -12,10 +12,6 @@ import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCateg
 
 function toggle(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
-}
-
-function sameSet(a, b) {
-  return a.length === b.length && a.every((v) => b.includes(v));
 }
 
 function useClickOutside(refs, handler) {
@@ -160,8 +156,6 @@ function OptionButton({ selected, onClick, children }) {
 }
 
 export default function FilterBar({
-  basePath,
-  activeStates,
   activeEmployeeRanges,
   stateCounts,
   showStateFilter,
@@ -170,73 +164,62 @@ export default function FilterBar({
   currentSubcategory,
   currentState,
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [pendingStates, setPendingStates] = useState(activeStates);
+  const [pendingCategory, setPendingCategory] = useState(category);
+  const [pendingSubcategory, setPendingSubcategory] = useState(currentSubcategory ?? null);
+  const [pendingState, setPendingState] = useState(currentState ?? null);
   const [pendingEmployeeRanges, setPendingEmployeeRanges] = useState(activeEmployeeRanges);
   const [openDropdown, setOpenDropdown] = useState(null);
 
   useEffect(() => {
-    setPendingStates(activeStates);
+    setPendingCategory(category);
+    setPendingSubcategory(currentSubcategory ?? null);
+    setPendingState(currentState ?? null);
     setPendingEmployeeRanges(activeEmployeeRanges);
-  }, [activeStates, activeEmployeeRanges]);
+  }, [category, currentSubcategory, currentState, activeEmployeeRanges]);
 
-  const isDirty = !sameSet(pendingStates, activeStates) || !sameSet(pendingEmployeeRanges, activeEmployeeRanges);
-  const hasActiveFilters = activeStates.length > 0 || activeEmployeeRanges.length > 0;
-
-  function navigate(nextStates, nextEmployeeRanges) {
-    const params = new URLSearchParams(searchParams.toString());
-    if (nextStates.length) params.set('states', nextStates.join(',')); else params.delete('states');
-    if (nextEmployeeRanges.length) params.set('employees', nextEmployeeRanges.join(',')); else params.delete('employees');
-    params.delete('page');
-    const query = params.toString();
-    const target = query ? `${basePath}?${query}` : basePath;
-    // Next 15 + React 18 in this project: router.push/replace silently fails
-    // to commit search-param-only navigations on this route (confirmed via
-    // direct testing — the RSC fetch succeeds but the URL never updates).
-    // A full navigation is the reliable fix until the app moves to React 19.
-    window.location.href = target;
-  }
+  const showClear = !!pendingSubcategory || !!pendingState || pendingEmployeeRanges.length > 0 ||
+    !!currentState || !!currentSubcategory || activeEmployeeRanges.length > 0;
 
   function handleShowResults() {
     setOpenDropdown(null);
-    navigate(pendingStates, pendingEmployeeRanges);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('page');
+    if (pendingEmployeeRanges.length) {
+      params.set('employees', pendingEmployeeRanges.join(','));
+    } else {
+      params.delete('employees');
+    }
+
+    let path = `/${pendingCategory}`;
+    if (pendingSubcategory) path += `/${pendingSubcategory}`;
+    if (pendingState)       path += `/${pendingState}`;
+
+    const query = params.toString();
+    window.location.href = query ? `${path}?${query}` : path;
   }
 
   function handleClearFilters() {
-    setPendingStates([]);
+    setPendingSubcategory(null);
+    setPendingState(null);
     setPendingEmployeeRanges([]);
     setOpenDropdown(null);
-    navigate([], []);
-  }
-
-  function navigateToCategory(value) {
-    setOpenDropdown(null);
-    const pathState = currentState ? `/${currentState}` : '';
-    const newPath = `/${value}${pathState}`;
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete('page');
-
+    params.delete('employees');
+    params.delete('states');
     const query = params.toString();
-    const target = query ? `${newPath}?${query}` : newPath;
-    window.location.href = target;
+    const path = `/${pendingCategory}`;
+    window.location.href = query ? `${path}?${query}` : path;
   }
 
-  function navigateToSubcategory(value) {
+  function selectCategory(slug) {
+    setPendingCategory(slug);
+    setPendingSubcategory(null); // Reset subcategory when category changes
     setOpenDropdown(null);
-    startTransition(() => {
-      router.push(value === '__all__' ? `/${category}` : `/${category}/${value}`);
-    });
   }
-
-  const dropdowns = [];
-
-  if (showStateFilter) {
-    dropdowns.push({ key: 'state', label: 'State', count: pendingStates.length });
-  }
-  dropdowns.push({ key: 'employees', label: 'Employees', count: pendingEmployeeRanges.length });
 
   return (
     <div style={{ margin: '16px 0 28px 0' }}>
@@ -252,7 +235,7 @@ export default function FilterBar({
       }}>
         {/* Category */}
         <FilterDropdown
-          label={CATEGORY_MAP[category]?.shortName ?? 'Select Category'}
+          label={CATEGORY_MAP[pendingCategory]?.shortName ?? 'Select Category'}
           activeCount={0}
           isOpen={openDropdown === 'category'}
           onToggle={() => setOpenDropdown(openDropdown === 'category' ? null : 'category')}
@@ -262,8 +245,8 @@ export default function FilterBar({
             {MANUFACTURING_CATEGORIES.map((c) => (
               <OptionButton
                 key={c.slug}
-                selected={c.slug === category}
-                onClick={() => navigateToCategory(c.slug)}
+                selected={c.slug === pendingCategory}
+                onClick={() => selectCategory(c.slug)}
               >
                 {c.shortName}
               </OptionButton>
@@ -271,11 +254,11 @@ export default function FilterBar({
           </div>
         </FilterDropdown>
 
-        {/* Filter dropdowns */}
+        {/* State Filter */}
         {showStateFilter ? (
           <FilterDropdown
-            label="State"
-            activeCount={currentState ? 1 : 0}
+            label={stateCounts.find((s) => s.stateSlug === pendingState)?.stateLabel ?? 'State'}
+            activeCount={pendingState ? 1 : 0}
             isOpen={openDropdown === 'state'}
             onToggle={() => setOpenDropdown(openDropdown === 'state' ? null : 'state')}
             onClose={() => setOpenDropdown((v) => (v === 'state' ? null : v))}
@@ -284,18 +267,8 @@ export default function FilterBar({
               <button
                 type="button"
                 onClick={() => {
+                  setPendingState(null);
                   setOpenDropdown(null);
-                  const params = new URLSearchParams(searchParams.toString());
-                  params.delete('page');
-                  params.delete('states');
-                  if (pendingEmployeeRanges.length) {
-                    params.set('employees', pendingEmployeeRanges.join(','));
-                  } else {
-                    params.delete('employees');
-                  }
-                  const query = params.toString();
-                  const targetUrl = query ? `/${category}?${query}` : `/${category}`;
-                  window.location.href = targetUrl;
                 }}
                 style={{
                   display: 'block',
@@ -303,10 +276,10 @@ export default function FilterBar({
                   padding: '8px 12px',
                   borderRadius: 6,
                   border: 'none',
-                  backgroundColor: !currentState ? '#f1f5f9' : 'transparent',
-                  color: !currentState ? '#0f172a' : '#475569',
+                  backgroundColor: !pendingState ? '#f1f5f9' : 'transparent',
+                  color: !pendingState ? '#0f172a' : '#475569',
                   fontSize: 13,
-                  fontWeight: !currentState ? 600 : 400,
+                  fontWeight: !pendingState ? 600 : 400,
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'background-color 0.1s',
@@ -314,33 +287,23 @@ export default function FilterBar({
                   borderBottom: '1px solid #e2e8f0',
                 }}
                 onMouseEnter={(e) => {
-                  if (currentState) e.currentTarget.style.backgroundColor = '#f8fafc';
+                  if (pendingState) e.currentTarget.style.backgroundColor = '#f8fafc';
                 }}
                 onMouseLeave={(e) => {
-                  if (currentState) e.currentTarget.style.backgroundColor = 'transparent';
+                  if (pendingState) e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 All States
               </button>
               {stateCounts.map((s) => {
-                const isSelected = s.stateSlug === currentState;
+                const isSelected = s.stateSlug === pendingState;
                 return (
                   <button
                     key={s.stateSlug}
                     type="button"
                     onClick={() => {
+                      setPendingState(s.stateSlug);
                       setOpenDropdown(null);
-                      const params = new URLSearchParams(searchParams.toString());
-                      params.delete('page');
-                      params.delete('states');
-                      if (pendingEmployeeRanges.length) {
-                        params.set('employees', pendingEmployeeRanges.join(','));
-                      } else {
-                        params.delete('employees');
-                      }
-                      const query = params.toString();
-                      const targetUrl = query ? `/${category}/${s.stateSlug}?${query}` : `/${category}/${s.stateSlug}`;
-                      window.location.href = targetUrl;
                     }}
                     style={{
                       display: 'flex',
@@ -374,6 +337,7 @@ export default function FilterBar({
           </FilterDropdown>
         ) : null}
 
+        {/* Employees */}
         <FilterDropdown
           label="Employees"
           activeCount={pendingEmployeeRanges.length}
@@ -398,26 +362,32 @@ export default function FilterBar({
         </FilterDropdown>
 
         {/* Subcategory */}
-        {subcategories?.length > 0 ? (
+        {subcategories?.length > 0 && pendingCategory === category ? (
           <FilterDropdown
-            label={subcategories.find((s) => s.slug === currentSubcategory)?.name ?? 'All subcategories'}
-            activeCount={currentSubcategory ? 1 : 0}
+            label={subcategories.find((s) => s.slug === pendingSubcategory)?.name ?? 'All subcategories'}
+            activeCount={pendingSubcategory ? 1 : 0}
             isOpen={openDropdown === 'subcategory'}
             onToggle={() => setOpenDropdown(openDropdown === 'subcategory' ? null : 'subcategory')}
             onClose={() => setOpenDropdown((v) => (v === 'subcategory' ? null : v))}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '4px 0' }}>
               <OptionButton
-                selected={!currentSubcategory}
-                onClick={() => navigateToSubcategory('__all__')}
+                selected={!pendingSubcategory}
+                onClick={() => {
+                  setPendingSubcategory(null);
+                  setOpenDropdown(null);
+                }}
               >
                 All subcategories
               </OptionButton>
               {subcategories.map((s) => (
                 <OptionButton
                   key={s.slug}
-                  selected={s.slug === currentSubcategory}
-                  onClick={() => navigateToSubcategory(s.slug)}
+                  selected={s.slug === pendingSubcategory}
+                  onClick={() => {
+                    setPendingSubcategory(s.slug);
+                    setOpenDropdown(null);
+                  }}
                 >
                   {s.name}
                 </OptionButton>
@@ -433,7 +403,6 @@ export default function FilterBar({
         <Button
           type="button"
           onClick={handleShowResults}
-          disabled={!isDirty}
           className="bg-[#1A2E4A] text-white hover:bg-[#243B58] disabled:opacity-50"
           style={{
             height: 36,
@@ -449,7 +418,7 @@ export default function FilterBar({
         </Button>
 
         {/* Clear filters */}
-        {hasActiveFilters || isDirty ? (
+        {showClear ? (
           <button
             type="button"
             onClick={handleClearFilters}
