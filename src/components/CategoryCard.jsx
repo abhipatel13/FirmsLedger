@@ -4,8 +4,7 @@ import { pickCategoryIcon, colorFor } from '@/lib/categoryIcon';
 
 export default function CategoryCard({ href, cat, name, description }) {
   const Icon = pickCategoryIcon(cat || { name });
-  const colorClasses = colorFor(cat?.slug || name);
-  const [bgClass, borderClass, textClass] = colorClasses.split(' ');
+  const { bg: bgClass, border: borderClass, text: textClass } = colorFor(cat?.slug || name);
 
   return (
     <Link

@@ -4,25 +4,26 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Menu, X, ChevronDown, ArrowRight, Search,
-  Zap, Cog, Package, Wrench, Cpu, Car, Shirt, Sofa, UtensilsCrossed, Stethoscope,
+  Menu, X, ChevronDown, ArrowRight, Search, Zap,
 } from 'lucide-react';
+
+import { visualsFor } from '@/lib/categoryRegistry';
 
 /* ── Manufacturing categories ──────────────────────────────────────
    Icon + muted accent palette kept in sync with the category cards on
    the homepage (src/views/DirectoryHub.jsx) for a consistent icon
    system across the site — no decorative colored dots. */
 const NAV_CATEGORIES = [
-  { slug: 'electrical-components',     name: 'Electrical Components',          desc: 'Wiring, switchgear & components',      icon: Zap,            bg: '#fef9ee', border: '#fde68a', color: '#92400e' },
-  { slug: 'mechanical-components',     name: 'Mechanical Components',          desc: 'CNC machining & precision parts',       icon: Cog,            bg: '#f8fafc', border: '#e2e8f0', color: '#1e3a5f' },
-  { slug: 'plastics-packaging',        name: 'Plastics & Packaging',           desc: 'Injection molding & packaging',         icon: Package,        bg: '#f0fdf4', border: '#bbf7d0', color: '#166534' },
-  { slug: 'metal-fabrication',         name: 'Metal Fabrication',              desc: 'Sheet metal, welding & stamping',       icon: Wrench,         bg: '#eff6ff', border: '#bfdbfe', color: '#1e3a8a' },
-  { slug: 'electronics-semiconductor', name: 'Electronics & Semiconductor',    desc: 'PCBs, chips & assemblies',              icon: Cpu,            bg: '#f5f3ff', border: '#ddd6fe', color: '#4c1d95' },
-  { slug: 'automotive-parts',          name: 'Automotive Parts',               desc: 'OEM & aftermarket components',          icon: Car,            bg: '#fff1f2', border: '#fecdd3', color: '#9f1239' },
-  { slug: 'textile-apparel',           name: 'Textile & Apparel',              desc: 'Fabric & garment manufacturing',        icon: Shirt,          bg: '#fdf2f8', border: '#f9a8d4', color: '#831843' },
-  { slug: 'furniture-woodworking',     name: 'Furniture & Woodworking',        desc: 'Custom furniture & cabinetry',          icon: Sofa,           bg: '#fffbeb', border: '#fde68a', color: '#78350f' },
-  { slug: 'food-beverage-processing',  name: 'Food & Beverage Processing',     desc: 'Processing & packaging lines',          icon: UtensilsCrossed, bg: '#fff7ed', border: '#fed7aa', color: '#7c2d12' },
-  { slug: 'medical-devices',           name: 'Medical Devices',                desc: 'Diagnostic & surgical equipment',       icon: Stethoscope,    bg: '#f0fdfa', border: '#99f6e4', color: '#134e4a' },
+  { slug: 'electrical-components',     name: 'Electrical Components',          desc: 'Wiring, switchgear & components' },
+  { slug: 'mechanical-components',     name: 'Mechanical Components',          desc: 'CNC machining & precision parts' },
+  { slug: 'plastics-packaging',        name: 'Plastics & Packaging',           desc: 'Injection molding & packaging' },
+  { slug: 'metal-fabrication',         name: 'Metal Fabrication',              desc: 'Sheet metal, welding & stamping' },
+  { slug: 'electronics-semiconductor', name: 'Electronics & Semiconductor',    desc: 'PCBs, chips & assemblies' },
+  { slug: 'automotive-parts',          name: 'Automotive Parts',               desc: 'OEM & aftermarket components' },
+  { slug: 'textile-apparel',           name: 'Textile & Apparel',              desc: 'Fabric & garment manufacturing' },
+  { slug: 'furniture-woodworking',     name: 'Furniture & Woodworking',        desc: 'Custom furniture & cabinetry' },
+  { slug: 'food-beverage-processing',  name: 'Food & Beverage Processing',     desc: 'Processing & packaging lines' },
+  { slug: 'medical-devices',           name: 'Medical Devices',                desc: 'Diagnostic & surgical equipment' },
 ];
 
 /* ── Footer data ───────────────────────────────────────────────── */
@@ -184,7 +185,9 @@ export default function Layout({ children }) {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                     {NAV_CATEGORIES.map((cat) => {
-                      const Icon = cat.icon;
+                      const visuals = visualsFor(cat.slug);
+                      const Icon = visuals?.icon || Zap;
+                      const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
                       return (
                         <Link
                           key={cat.slug}
@@ -206,14 +209,14 @@ export default function Layout({ children }) {
                             width: 30,
                             height: 30,
                             borderRadius: 8,
-                            backgroundColor: cat.bg,
-                            border: `1px solid ${cat.border}`,
+                            backgroundColor: hex.bg,
+                            border: `1px solid ${hex.border}`,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexShrink: 0,
                           }}>
-                            <Icon size={14} color={cat.color} strokeWidth={2} />
+                            <Icon size={14} color={hex.color} strokeWidth={2} />
                           </span>
                           <div style={{ minWidth: 0 }}>
                             <p style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', margin: 0, lineHeight: 1.3 }}>{cat.name}</p>
@@ -383,42 +386,47 @@ export default function Layout({ children }) {
             <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', padding: '8px 12px 4px', margin: 0 }}>
               Categories
             </p>
-            {NAV_CATEGORIES.map(({ slug, name, icon: Icon, bg, border, color }) => (
-              <Link
-                key={slug}
-                href={`/${slug}`}
-                onClick={() => setMobileOpen(false)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: '#0f172a',
-                  textDecoration: 'none',
-                  padding: '9px 12px',
-                  borderRadius: 8,
-                  transition: 'background 0.1s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <span style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 7,
-                  backgroundColor: bg,
-                  border: `1px solid ${border}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <Icon size={13} color={color} strokeWidth={2} />
-                </span>
-                {name}
-              </Link>
-            ))}
+             {NAV_CATEGORIES.map(({ slug, name }) => {
+              const visuals = visualsFor(slug);
+              const Icon = visuals?.icon || Zap;
+              const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
+              return (
+                <Link
+                  key={slug}
+                  href={`/${slug}`}
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: '#0f172a',
+                    textDecoration: 'none',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    transition: 'background 0.1s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <span style={{
+                    width: 26,
+                    height: 26,
+                    borderRadius: 7,
+                    backgroundColor: hex.bg,
+                    border: `1px solid ${hex.border}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <Icon size={13} color={hex.color} strokeWidth={2} />
+                  </span>
+                  {name}
+                </Link>
+              );
+            })}
 
             <div style={{ borderTop: '1px solid #e2e8f0', margin: '8px 0', paddingTop: 8 }}>
               <Link

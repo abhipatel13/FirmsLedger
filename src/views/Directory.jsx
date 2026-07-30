@@ -373,7 +373,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
             {pagedAgencies.map((agency, index) => {
               const rank = (safePage - 1) * PAGE_SIZE + index + 1;
               const Icon = pickAgencyIcon(agency);
-              const tileColor = colorFor(agency.slug || agency.name || '');
+              const { bg: bgClass, border: borderClass, text: textClass } = colorFor(agency.slug || agency.name || '');
               const isTopThree = rank <= 3;
               return (
               <div
@@ -400,7 +400,7 @@ export default function Directory({ initialCategorySlug, initialCategoryData, un
                         />
                       ) : (
                         <div
-                          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-md border flex items-center justify-center ${tileColor}`}
+                          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-md border flex items-center justify-center ${bgClass} ${borderClass} ${textClass}`}
                           aria-hidden="true"
                         >
                           <Icon className="w-7 h-7" />

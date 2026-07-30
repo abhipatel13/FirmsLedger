@@ -184,8 +184,7 @@ export default function Categories() {
                     const children = getChildren(parent.id);
                     const Icon = pickCategoryIcon(parent);
                     const parentHref = getCategoryHref(parent);
-                    const colorClasses = colorFor(parent.slug || parent.name);
-                    const [bgClass, borderClass, textClass] = colorClasses.split(' ');
+                    const { bg: bgClass, border: borderClass, text: textClass } = colorFor(parent.slug || parent.name);
                     const filteredChildren = search
                       ? children.filter((c) => c.name.toLowerCase().includes(searchLower))
                       : children;
@@ -303,8 +302,7 @@ export default function Categories() {
                   }>
                     {filteredStandalone.map((cat) => {
                       const Icon = pickCategoryIcon(cat);
-                      const colorClasses = colorFor(cat.slug || cat.name);
-                      const [bgClass, borderClass, textClass] = colorClasses.split(' ');
+                      const { bg: bgClass, border: borderClass, text: textClass } = colorFor(cat.slug || cat.name);
                       return (
                         <Link
                           key={cat.id}

@@ -26,7 +26,7 @@ export default function AgencyCard({ agency, rank }) {
   const topReview = agency.top_review;
 
   const Icon = pickAgencyIcon(agency);
-  const tileColor = colorFor(agency.slug || agency.name || '');
+  const { bg: bgClass, border: borderClass, text: textClass } = colorFor(agency.slug || agency.name || '');
   const hasLogo = !!agency.logo_url;
 
   const detailRows = [
@@ -66,11 +66,11 @@ export default function AgencyCard({ agency, rank }) {
                 alt=""
                 loading="lazy"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                className={`w-14 h-14 rounded-lg object-contain border border-slate-100 bg-white flex-shrink-0 ${tileColor.includes('bg-') ? '' : ''}`}
+                className="w-14 h-14 rounded-lg object-contain border border-slate-100 bg-white flex-shrink-0"
               />
             ) : (
               <div
-                className={`w-14 h-14 rounded-lg border flex items-center justify-center flex-shrink-0 ${tileColor}`}
+                className={`w-14 h-14 rounded-lg border flex items-center justify-center flex-shrink-0 ${bgClass} ${borderClass} ${textClass}`}
                 aria-hidden="true"
               >
                 <Icon className="w-6 h-6" />
