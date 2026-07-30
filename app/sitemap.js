@@ -72,6 +72,7 @@ export default async function sitemap() {
 
   // ── Core pages ────────────────────────────────────────────────────────────
   urls.push({ url: `${BASE_URL}/`, lastModified: now, changeFrequency: 'daily', priority: 1.0 });
+  urls.push({ url: `${BASE_URL}/search`, lastModified: now, changeFrequency: 'daily', priority: 0.9 });
   urls.push({ url: `${BASE_URL}/browse`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
   urls.push({ url: `${BASE_URL}/list-your-company`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
   urls.push({ url: `${BASE_URL}/claim-listing`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 });
