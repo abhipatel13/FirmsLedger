@@ -23,11 +23,25 @@ implementation time. Ratios and thresholds are what matter.
 | `companies.is_verified` | `false` for all rows |
 
 `avg_rating` was populated by scraping/seeding and is backed by no review.
-`app/company/[slug]/page.jsx:104` emits it as schema.org `aggregateRating`
-with `reviewCount: 0` — invalid markup, and structured-data spam under
-Google's guidelines. This is currently masked because company pages are
-`noindex`; un-indexing them without fixing it creates live manual-action
-exposure.
+
+**This is latent, not live.** Verified on 2026-07-31:
+`approved = true AND avg_rating > 0` returns **0 rows** — every rated row sits
+in the unapproved pool. The `aggregateRating` block at
+`app/company/[slug]/page.jsx:103` is additionally guarded by
+`company.review_count > 0`, which is never true, so it does not currently
+emit.
+
+Phase 2 is what activates it. Approving ~1,007 companies, most carrying a
+fabricated 4.5–5.0, would simultaneously:
+
+- render star ratings on ~938 listing cards (`src/components/AgencyCard.jsx:101`
+  renders whenever `rating > 0`), and
+- flip `medianRating` from `null` to a number, so every category and
+  category/state meta description begins claiming "an average rating of 4.9".
+
+This is the reason Phase 1 must precede Phase 2. `aggregateRating` stays
+dormant either way while `review_count` is 0, but the block is removed anyway
+so a future `review_count` backfill cannot silently publish invalid markup.
 
 Separately, `src/db/neonApi.js:277` computes
 `verifiedCount = rows.filter(r => r.is_verified).length`, which is always
@@ -37,8 +51,16 @@ and category/state page, so Google currently receives:
 > "Browse 0 verified electrical components manufacturers in California. 12
 > total listings…"
 
+Because `medianRating` is currently `null`, those same descriptions take the
+fallback branch and render "12 total listings with **verified reviews**" —
+also false, and live today.
+
 Marketing copy across the site also claims "ranked by real reviews", "real
 client reviews", and "verified client reviews — no fake testimonials".
+
+`src/components/AgencyCard.jsx:85` gates its "Verified" badge on
+`agency.verified`, but the column is `is_verified`. The badge has never
+rendered; it is dead code and is removed rather than fixed.
 
 ### Cause 2 — 84% of submitted pages are empty
 
