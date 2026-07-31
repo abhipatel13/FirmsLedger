@@ -100,15 +100,6 @@ export default async function CompanyProfilePage({ params }) {
             addressCountry: 'US',
           },
         }),
-        ...(company.avg_rating && company.review_count > 0 && {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: company.avg_rating,
-            reviewCount: company.review_count,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        }),
       }
     : null;
 
