@@ -1,6 +1,6 @@
 import { db } from '@/db/client';
 import { states, categories, companies, company_categories } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNotNull } from 'drizzle-orm';
 import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
 
@@ -9,7 +9,7 @@ const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 // Below this many approved companies, a /{category}/{state} page is a thin/
 // empty page — a soft-404 risk that wastes crawl budget. Keep it out of the
 // sitemap; it's still reachable via the category hub, just not pushed to Google.
-const MIN_LIVE_COMPANIES = 0;
+const MIN_LIVE_COMPANIES = 5;
 
 function slugifyState(name) {
   return String(name).trim().toLowerCase().replace(/\s+/g, '-');
@@ -101,9 +101,22 @@ export default async function sitemap() {
     }
   }
 
-  // NOTE: /company/{slug} pages are intentionally excluded — they are
-  // noindex'd (see app/company/[slug]/page.jsx), so they should not appear
-  // in the sitemap as canonical entry points.
+  // ── Company profiles: /company/{slug} ───────────────────────────────────
+  // Mirrors isIndexable() in app/company/[slug]/page.jsx — approved and
+  // carrying a real description. Keep the two predicates in agreement.
+  try {
+    const profiles = await db
+      .select({ slug: companies.slug })
+      .from(companies)
+      .where(and(eq(companies.approved, true), isNotNull(companies.description)));
+
+    for (const p of profiles) {
+      if (!p.slug) continue;
+      urls.push({ url: `${BASE_URL}/company/${p.slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
+    }
+  } catch {
+    // DB unavailable at build time — omit profiles rather than fail the sitemap.
+  }
 
   return urls;
 }

@@ -44,7 +44,7 @@ export async function generateMetadata({ params, searchParams }) {
   const subName  = sub?.name || toTitleCase(subcategory);
   const stateName = toTitleCase(state);
   const title = `${subName} Manufacturers in ${stateName}`;
-  const description = `Find verified ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. Ranked by real reviews, no paid placements.`;
+  const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
   const canonical = `${_BASE}/${category}/${subcategory}/${state}`;
 
   return {
@@ -153,7 +153,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                   {pageTitle}
                 </h1>
                 <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  Ranked by verified reviews and ratings. Updated monthly.
+                  Grouped by category and location. Updated monthly.
                 </p>
               </div>
               <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 24px', textAlign: 'center', flexShrink: 0 }}>

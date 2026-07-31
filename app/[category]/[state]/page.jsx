@@ -117,8 +117,8 @@ export async function generateMetadata({ params, searchParams }) {
     const title = `${subName} Manufacturers — All 50 US States${pageSuffix}`;
     const stats = await fetchCategoryStats(category);
     const description = stats.totalCount > 0
-      ? `Browse ${stats.verifiedCount} verified ${subName.toLowerCase()} manufacturers across the US. ${stats.totalCount} total listings with ${stats.medianRating ? `an average rating of ${stats.medianRating.toFixed(1)}` : 'verified reviews'}. Part of the ${cat?.name} directory on FirmsLedger.`
-      : `Find verified ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare top-rated companies. Part of the ${cat?.name} directory on FirmsLedger.`;
+      ? `Browse ${stats.totalCount} ${subName.toLowerCase()} manufacturers across the US. Compare capabilities, location, and company size. Part of the ${cat?.name} directory on FirmsLedger.`
+      : `Find ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare companies. Part of the ${cat?.name} directory on FirmsLedger.`;
     const canonical = `${_BASE}/${category}/${state}${pageQuery}`;
     return {
       title: `${title} | ${SITE_NAME}`,
@@ -135,8 +135,8 @@ export async function generateMetadata({ params, searchParams }) {
   const title        = `${categoryName} in ${stateName}${pageSuffix}`;
   const stats        = await fetchCategoryStats(category, state);
   const description  = stats.totalCount > 0
-    ? `Browse ${stats.verifiedCount} verified ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. ${stats.totalCount} total listings with ${stats.medianRating ? `an average rating of ${stats.medianRating.toFixed(1)}` : 'verified reviews'}. No paid placements.`
-    : `Find verified ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare companies by rating, reviews, and specialization. No paid placements.`;
+    ? `Browse ${stats.totalCount} ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare capabilities, location, and company size. No paid placements.`
+    : `Find ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare companies by location, size, and specialization. No paid placements.`;
   const canonical    = `${_BASE}/${category}/${state}${pageQuery}`;
 
   return {
@@ -256,7 +256,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     {pageTitle}
                   </h1>
                   <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5, maxWidth: 520 }}>
-                    Ranked by verified reviews and ratings. Updated monthly.
+                    Grouped by category and location. Updated monthly.
                   </p>
                 </div>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
@@ -378,7 +378,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               )}
 
               <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 24, lineHeight: 1.6 }}>
-                Rankings are based on verified reviews and ratings only. Paid placements are never accepted.{' '}
+                Listings are grouped by category and location. Paid placements are never accepted.{' '}
                 <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
                   Add your company
                 </Link>
@@ -424,6 +424,12 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     showStateFilter ? fetchStateCountsForCategory(category) : Promise.resolve([]),
     fetchCategoryStats(category, state || undefined),
   ]);
+
+  // A category/state combination with no approved companies is a thin page.
+  // 404 it rather than serving an empty 200 that Google files as a soft 404.
+  // Nationwide (`state` absent) is exempt — it is a hub, not a listing.
+  if (state && companies.length === 0) notFound();
+
   const pageTitle    = stateName ? `Top ${categoryName} in ${stateName}` : `Top ${categoryName} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
@@ -519,7 +525,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   {pageTitle}
                 </h1>
                 <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  Ranked by verified reviews and ratings. Updated monthly.
+                  Grouped by category and location. Updated monthly.
                 </p>
               </div>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
@@ -662,7 +668,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             )}
 
             <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 24, lineHeight: 1.6 }}>
-              Rankings are based on verified reviews and ratings only. Paid placements are never accepted.{' '}
+              Listings are grouped by category and location. Paid placements are never accepted.{' '}
               <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
                 Add your company
               </Link>

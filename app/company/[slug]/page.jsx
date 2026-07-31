@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
@@ -26,6 +26,13 @@ function stripInternalFields(row) {
   return clean;
 }
 
+// Only profiles with real content are indexable. A name-and-address stub adds
+// no value in search results and dilutes site-wide quality signals.
+// Mirrored as a SQL predicate in app/sitemap.js — keep the two in agreement.
+function isIndexable(company) {
+  return Boolean(company?.approved) && typeof company?.description === 'string' && company.description.trim() !== '';
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const company = await fetchCompanyByIdAny(slug).catch(() => null);
@@ -40,7 +47,7 @@ export async function generateMetadata({ params }) {
   return {
     title: companyName,
     description,
-    robots: { index: false, follow: true },
+    robots: isIndexable(company) ? undefined : { index: false, follow: true },
     alternates: { canonical },
     openGraph: {
       title: `${companyName} | ${SITE_NAME}`,
@@ -98,15 +105,6 @@ export default async function CompanyProfilePage({ params }) {
             ...(company.hq_city && { addressLocality: company.hq_city }),
             ...(company.hq_state_label && { addressRegion: company.hq_state_label }),
             addressCountry: 'US',
-          },
-        }),
-        ...(company.avg_rating && company.review_count > 0 && {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: company.avg_rating,
-            reviewCount: company.review_count,
-            bestRating: 5,
-            worstRating: 1,
           },
         }),
       }
