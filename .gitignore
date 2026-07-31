@@ -58,3 +58,6 @@ gathered_companies_today.csv
 
 
 __pycache__/
+
+# pending/ CSVs are regenerated from the DB; keep the scripts, not the snapshots
+pending/*.csv
