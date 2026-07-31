@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
   const cat = CATEGORY_MAP[slug];
   if (!cat) return { title: `Category | ${SITE_NAME}` };
   const stats = await fetchCategoryStats(slug);
-  const title = `${cat.name} Directory — All 50 US States`;
+  const title = `Top ${Math.min(stats.totalCount, 10)} ${cat.name} in the US`;
   const description = stats.totalCount > 0
     ? `Browse ${stats.totalCount} ${cat.noun} across all 50 US states. Compare capabilities, location, and company size. No paid placements.`
     : `Browse ${cat.noun} across all 50 US states on FirmsLedger. Compare capabilities, location, and company size. No paid placements.`;

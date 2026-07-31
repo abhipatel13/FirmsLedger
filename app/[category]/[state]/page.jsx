@@ -44,6 +44,12 @@ function toTitleCase(slug) {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
+// "Top 10" only when the page actually lists 10. A thinner page gets its real
+// count so the heading never claims more than the list below it delivers.
+function topN(count) {
+  return Math.min(count, PAGE_SIZE);
+}
+
 function parseFilterParams(searchParams) {
   const statesParam = searchParams?.states;
   const employeesParam = searchParams?.employees;
@@ -114,8 +120,10 @@ export async function generateMetadata({ params, searchParams }) {
   if (ALL_SUBCATEGORY_SLUGS.has(state)) {
     const sub = cat?.subcategories.find((s) => s.slug === state);
     const subName = sub?.name || toTitleCase(state);
-    const title = `${subName} Manufacturers — All 50 US States${pageSuffix}`;
     const stats = await fetchCategoryStats(category);
+    const title = page > 1
+      ? `${subName} Manufacturers — All 50 US States${pageSuffix}`
+      : `Top ${topN(stats.totalCount)} ${subName} Manufacturers in the US`;
     const description = stats.totalCount > 0
       ? `Browse ${stats.totalCount} ${subName.toLowerCase()} manufacturers across the US. Compare capabilities, location, and company size. Part of the ${cat?.name} directory on FirmsLedger.`
       : `Find ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare companies. Part of the ${cat?.name} directory on FirmsLedger.`;
@@ -132,8 +140,10 @@ export async function generateMetadata({ params, searchParams }) {
   // State listing
   const categoryName = cat?.name || toTitleCase(category);
   const stateName    = toTitleCase(state);
-  const title        = `${categoryName} in ${stateName}${pageSuffix}`;
   const stats        = await fetchCategoryStats(category, state);
+  const title        = page > 1
+    ? `${categoryName} in ${stateName}${pageSuffix}`
+    : `Top ${topN(stats.totalCount)} ${categoryName} in ${stateName}`;
   const description  = stats.totalCount > 0
     ? `Browse ${stats.totalCount} ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare capabilities, location, and company size. No paid placements.`
     : `Find ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare companies by location, size, and specialization. No paid placements.`;
@@ -184,7 +194,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     const subcategory = state;
     const canonical = `${_BASE}/${category}/${subcategory}`;
     const basePath = `/${category}/${subcategory}`;
-    const pageTitle = `Top ${sub.name} Manufacturers in the US`;
 
     // No subcategory tagging exists in the DB yet, so this shows the parent
     // category's nationwide companies — same data source as the category page.
@@ -199,6 +208,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
     const pageCompanies = companies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
     const rankOffset    = (currentPage - 1) * PAGE_SIZE;
+    const pageTitle     = `Top ${topN(companies.length)} ${sub.name} Manufacturers in the US`;
 
     const itemListJsonLd = {
       '@context': 'https://schema.org',
@@ -430,7 +440,9 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
   // Nationwide (`state` absent) is exempt — it is a hub, not a listing.
   if (state && companies.length === 0) notFound();
 
-  const pageTitle    = stateName ? `Top ${categoryName} in ${stateName}` : `Top ${categoryName} in the US`;
+  const pageTitle    = stateName
+    ? `Top ${topN(companies.length)} ${categoryName} in ${stateName}`
+    : `Top ${topN(companies.length)} ${categoryName} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
   const totalPages   = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
