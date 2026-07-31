@@ -31,7 +31,7 @@ const siteJsonLd = [
     url: BASE_URL,
     logo: `${BASE_URL}/icon.svg`,
     sameAs: ['https://twitter.com/firmsledger'],
-    description: 'The trusted US manufacturer directory. Find verified manufacturers across all 50 states — bike, electrical, mechanical, metal fabrication, electronics, automotive, and more. Ranked by real reviews.',
+    description: 'The US manufacturer directory. Find manufacturers across all 50 states — electrical, mechanical, metal fabrication, electronics, automotive, and more. No paid placements.',
   },
   {
     '@context': 'https://schema.org',
@@ -49,10 +49,10 @@ const siteJsonLd = [
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'FirmsLedger – US Manufacturer Directory | Find Verified Manufacturers',
+    default: 'FirmsLedger – US Manufacturer Directory | Find Manufacturers by State',
     template: '%s | FirmsLedger',
   },
-  description: 'Find the top US manufacturers by category and state. Verified listings, real client reviews, zero paid rankings. Browse bike, electrical, mechanical, automotive, and 11 more manufacturing categories across all 50 states.',
+  description: 'Find US manufacturers by category and state. Zero paid rankings. Browse electrical, mechanical, automotive, and more manufacturing categories across all 50 states.',
   openGraph: {
     type: 'website',
     locale: 'en',

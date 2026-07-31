@@ -26,7 +26,7 @@ const SECTIONS = [
   },
   {
     heading: '3. Company Listings and Reviews',
-    body: 'Companies may submit information to be listed on the Site. Reviews are intended to reflect genuine customer experiences. We reserve the right to remove any listing or review that we determine, in our sole discretion, to be fraudulent, abusive, or in violation of these terms. Rankings are based on verified reviews and ratings only — paid placement does not affect ranking position.',
+    body: 'Companies may submit information to be listed on the Site. Reviews, where present, are intended to reflect genuine customer experiences. We reserve the right to remove any listing or review that we determine, in our sole discretion, to be fraudulent, abusive, or in violation of these terms. Listings are organised by category and location — paid placement does not affect listing position.',
   },
   {
     heading: '4. User Conduct',

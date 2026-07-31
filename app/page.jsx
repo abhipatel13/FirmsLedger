@@ -9,11 +9,11 @@ export const revalidate = 300;
 
 export const metadata = {
   title: `Top Manufacturers by State — US Manufacturer Directory | ${SITE_NAME}`,
-  description: 'Find the top verified manufacturers in your state. Browse bike, electrical, mechanical, and more by category and location.',
+  description: 'Find manufacturers in your state. Browse electrical, mechanical, and more by category and location.',
   alternates: { canonical: _BASE },
   openGraph: {
     title: `FirmsLedger — US Manufacturer Directory`,
-    description: 'Browse verified manufacturers by category and state. Find the best in your area.',
+    description: 'Browse manufacturers by category and state. Find companies in your area.',
     type: 'website',
     url: _BASE,
   },
@@ -24,7 +24,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: SITE_NAME,
   url: _BASE,
-  description: 'US manufacturer directory. Find top verified manufacturers by category and state.',
+  description: 'US manufacturer directory. Find manufacturers by category and state.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {

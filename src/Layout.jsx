@@ -485,7 +485,7 @@ export default function Layout({ children }) {
                 Connecting you with America's top manufacturers.
               </p>
               <p style={{ fontSize: 14, lineHeight: 1.7, color: '#9CA3AF', marginBottom: 20 }}>
-                Discover verified USA manufacturers across all 50 states and 11 categories. Ranked by real reviews — no paid placements, ever.
+                Discover USA manufacturers across all 50 states and 11 categories — no paid placements, ever.
               </p>
             </div>
           </div>

@@ -21,7 +21,7 @@ const BENEFITS = [
   {
     icon: Shield,
     title: 'Build Trust & Credibility',
-    desc: 'A verified listing with reviews and ratings signals reliability to potential clients.',
+    desc: 'A complete listing with your capabilities and location signals reliability to potential clients.',
   },
   {
     icon: Zap,

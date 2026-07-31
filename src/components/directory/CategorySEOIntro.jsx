@@ -27,7 +27,7 @@ export default function CategorySEOIntro({ category, location, total = 0 }) {
             size.
           </p>
           <p>
-            {category.description || `Selecting the right ${lower} partner is a decisive factor for success in today's market. The companies featured here have been vetted for quality, transparency, and verified client reviews — no pay-to-rank, no fake testimonials.`}
+            {category.description || `Selecting the right ${lower} partner is a decisive factor for success in today's market. The companies listed here are organised by location and capability — no pay-to-rank placements.`}
           </p>
           <p>
             Whether you are a startup looking for a flexible, cost-effective {lower} provider or an established

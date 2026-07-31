@@ -256,7 +256,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     {pageTitle}
                   </h1>
                   <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5, maxWidth: 520 }}>
-                    Ranked by verified reviews and ratings. Updated monthly.
+                    Grouped by category and location. Updated monthly.
                   </p>
                 </div>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
@@ -378,7 +378,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               )}
 
               <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 24, lineHeight: 1.6 }}>
-                Rankings are based on verified reviews and ratings only. Paid placements are never accepted.{' '}
+                Listings are grouped by category and location. Paid placements are never accepted.{' '}
                 <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
                   Add your company
                 </Link>
@@ -519,7 +519,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   {pageTitle}
                 </h1>
                 <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  Ranked by verified reviews and ratings. Updated monthly.
+                  Grouped by category and location. Updated monthly.
                 </p>
               </div>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
@@ -662,7 +662,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             )}
 
             <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 24, lineHeight: 1.6 }}>
-              Rankings are based on verified reviews and ratings only. Paid placements are never accepted.{' '}
+              Listings are grouped by category and location. Paid placements are never accepted.{' '}
               <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
                 Add your company
               </Link>

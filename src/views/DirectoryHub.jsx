@@ -154,7 +154,7 @@ function getHomepageStats(companyCount, categoryCount = FALLBACK_CATEGORY_COUNT,
       { value: totalCategories, label: 'Categories' },
       { value: totalStates, label: 'States covered' },
       { value: listedCompanies, label: 'Companies listed' },
-      { value: '100%', label: 'Verified listings' },
+      { value: '50', label: 'States covered' },
     ],
     trustStats: [
       { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
@@ -287,12 +287,12 @@ export default function DirectoryHub({
             </h1>
 
             <p className="text-lg text-[17px] leading-relaxed text-slate-600 mb-10">
-              Browse verified manufacturers across every USA state by category — electrical, mechanical, automotive, and more. Ranked by real reviews.
+              Browse manufacturers across every USA state by category — electrical, mechanical, automotive, and more. No paid placements.
             </p>
 
             <div className="flex flex-wrap justify-center gap-5">
               {[
-                { icon: CheckCircle, text: '100% verified listings' },
+                { icon: CheckCircle, text: 'All 50 states covered' },
                 { icon: Shield, text: 'Zero paid rankings' },
                 { icon: Star, text: 'All 50 USA states' },
                 { icon: Package, text: 'Free to list' },
@@ -494,7 +494,7 @@ export default function DirectoryHub({
             Zero Paid Rankings.
           </h2>
           <p className="mt-6 text-base sm:text-lg text-white/60 max-w-xl mx-auto leading-relaxed">
-            Every company on this list earned its spot through real reviews — nothing else.
+            Every company on this list is here on merit — no company can pay for placement.
           </p>
         </div>
       </section>
@@ -517,7 +517,7 @@ export default function DirectoryHub({
             {[
               { num: '1', color: 'text-[#1A2E4A] bg-[#1A2E4A]/10 border-[#1A2E4A]/20', title: 'Pick a category', desc: 'Choose from Electrical Components, Mechanical Components, Automotive, and more.' },
               { num: '2', color: 'text-amber-700 bg-amber-50 border-amber-200', title: 'Select your state', desc: 'All 50 USA states covered. Find manufacturers close to your supply chain.' },
-              { num: '3', color: 'text-green-700 bg-green-50 border-green-200', title: 'Browse the rankings', desc: 'Ranked by verified reviews and ratings. No pay-to-rank. No sponsored placements.' },
+              { num: '3', color: 'text-green-700 bg-green-50 border-green-200', title: 'Browse the listings', desc: 'Grouped by category and location. No pay-to-rank. No sponsored placements.' },
             ].map(({ num, color, title, desc }) => (
               <Card key={num} className="card-premium rounded-2xl p-7">
                 <div className={cn('w-9 h-9 rounded-lg border flex items-center justify-center mb-4 text-[15px] font-bold tabular-nums shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)]', color)}>
@@ -638,7 +638,7 @@ export default function DirectoryHub({
                 Get your company in front of buyers
               </h2>
               <p className="text-base leading-relaxed text-white/60">
-                Join FirmsLedger and appear in state-level ranked lists. Verified listings reach procurement managers actively searching for manufacturers.
+                Join FirmsLedger and appear in state-level category lists that reach procurement managers actively searching for manufacturers.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">

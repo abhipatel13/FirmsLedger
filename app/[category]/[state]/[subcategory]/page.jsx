@@ -153,7 +153,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                   {pageTitle}
                 </h1>
                 <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  Ranked by verified reviews and ratings. Updated monthly.
+                  Grouped by category and location. Updated monthly.
                 </p>
               </div>
               <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 24px', textAlign: 'center', flexShrink: 0 }}>

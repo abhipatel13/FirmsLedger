@@ -9,7 +9,7 @@ export const metadata = {
   alternates: { canonical: `${_BASE}/browse` },
   openGraph: {
     title: `Browse All Industries | ${SITE_NAME}`,
-    description: `Find verified manufacturers across 10 industries and 84+ subcategories across the US.`,
+    description: `Find manufacturers across 10 industries and 84+ subcategories across the US.`,
     type: 'website',
     url: `${_BASE}/browse`,
   },

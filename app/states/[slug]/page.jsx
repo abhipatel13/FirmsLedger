@@ -162,7 +162,7 @@ export default async function StateHubPage({ params }) {
               Manufacturers in {state.name}
             </h1>
             <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 560, marginBottom: 0 }}>
-              Browse verified manufacturers in {state.name} — ranked by real customer reviews. Choose a category to explore.
+              Browse manufacturers in {state.name} by category. Choose a category to explore.
             </p>
           </div>
         </div>
