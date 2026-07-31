@@ -85,7 +85,7 @@ export async function generateMetadata({ params }) {
   if (!state) return { title: `State | ${SITE_NAME}` };
 
   const title       = `Manufacturers in ${state.name} | ${SITE_NAME}`;
-  const description = `Find verified manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more — ranked by real customer reviews.`;
+  const description = `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`;
   const canonical   = `${_BASE}/states/${slug}`;
 
   return {
@@ -106,7 +106,7 @@ export default async function StateHubPage({ params }) {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: `Manufacturers in ${state.name}`,
-    description: `Browse verified manufacturers across all categories in ${state.name}.`,
+    description: `Browse manufacturers across all categories in ${state.name}.`,
     url: `${_BASE}/states/${slug}`,
     provider: { '@type': 'Organization', name: SITE_NAME, url: _BASE },
   };

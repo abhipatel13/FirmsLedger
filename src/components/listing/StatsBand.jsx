@@ -33,11 +33,7 @@ export default function StatsBand({ stats, categoryNoun, stateName, showStatesCo
     <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
       <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '24px 24px 28px' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-          <StatTile value={stats.verifiedCount} label="Verified Companies" />
           <StatTile value={stats.totalCount} label="Total Listings" />
-          {stats.medianRating !== null ? (
-            <StatTile value={stats.medianRating.toFixed(1)} label="Avg Rating" />
-          ) : null}
           {showStatesCovered ? (
             <StatTile value={stats.statesCovered} label="States Covered" />
           ) : null}
@@ -55,9 +51,8 @@ export default function StatsBand({ stats, categoryNoun, stateName, showStatesCo
         }}>
           <ShieldCheck size={16} style={{ color: '#D4A017', flexShrink: 0, marginTop: 2 }} />
           <p style={{ fontSize: 13, lineHeight: 1.6, color: '#475569', margin: 0 }}>
-            <strong style={{ color: '#0f172a' }}>How this list is built:</strong> rankings come entirely from verified
-            customer ratings and reviews{stats.verifiedCount > 0 ? ` — ${stats.verifiedCount} companies hold verified badges` : ''}.
-            No company can pay for a higher position.
+            <strong style={{ color: '#0f172a' }}>How this list is built:</strong> companies are grouped by category
+            and location. No company can pay for a higher position.
             {stats.topSpecialties.length > 0 ? ` Top specialties: ${stats.topSpecialties.join(', ')}.` : ''}
             {' '}Browse {stats.totalCount} {categoryNoun}{stateName ? ` in ${stateName}` : ' across the US'}.
           </p>

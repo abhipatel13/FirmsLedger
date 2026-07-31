@@ -117,8 +117,8 @@ export async function generateMetadata({ params, searchParams }) {
     const title = `${subName} Manufacturers — All 50 US States${pageSuffix}`;
     const stats = await fetchCategoryStats(category);
     const description = stats.totalCount > 0
-      ? `Browse ${stats.verifiedCount} verified ${subName.toLowerCase()} manufacturers across the US. ${stats.totalCount} total listings with ${stats.medianRating ? `an average rating of ${stats.medianRating.toFixed(1)}` : 'verified reviews'}. Part of the ${cat?.name} directory on FirmsLedger.`
-      : `Find verified ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare top-rated companies. Part of the ${cat?.name} directory on FirmsLedger.`;
+      ? `Browse ${stats.totalCount} ${subName.toLowerCase()} manufacturers across the US. Compare capabilities, location, and company size. Part of the ${cat?.name} directory on FirmsLedger.`
+      : `Find ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare companies. Part of the ${cat?.name} directory on FirmsLedger.`;
     const canonical = `${_BASE}/${category}/${state}${pageQuery}`;
     return {
       title: `${title} | ${SITE_NAME}`,
@@ -135,8 +135,8 @@ export async function generateMetadata({ params, searchParams }) {
   const title        = `${categoryName} in ${stateName}${pageSuffix}`;
   const stats        = await fetchCategoryStats(category, state);
   const description  = stats.totalCount > 0
-    ? `Browse ${stats.verifiedCount} verified ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. ${stats.totalCount} total listings with ${stats.medianRating ? `an average rating of ${stats.medianRating.toFixed(1)}` : 'verified reviews'}. No paid placements.`
-    : `Find verified ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare companies by rating, reviews, and specialization. No paid placements.`;
+    ? `Browse ${stats.totalCount} ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare capabilities, location, and company size. No paid placements.`
+    : `Find ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare companies by location, size, and specialization. No paid placements.`;
   const canonical    = `${_BASE}/${category}/${state}${pageQuery}`;
 
   return {

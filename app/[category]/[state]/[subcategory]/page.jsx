@@ -44,7 +44,7 @@ export async function generateMetadata({ params, searchParams }) {
   const subName  = sub?.name || toTitleCase(subcategory);
   const stateName = toTitleCase(state);
   const title = `${subName} Manufacturers in ${stateName}`;
-  const description = `Find verified ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. Ranked by real reviews, no paid placements.`;
+  const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
   const canonical = `${_BASE}/${category}/${subcategory}/${state}`;
 
   return {

@@ -15,8 +15,8 @@ export async function generateMetadata({ params }) {
   const stats = await fetchCategoryStats(slug);
   const title = `${cat.name} Directory — All 50 US States`;
   const description = stats.totalCount > 0
-    ? `Browse ${stats.verifiedCount} verified ${cat.noun} across all 50 US states. ${stats.totalCount} total listings with ${stats.medianRating ? `an average rating of ${stats.medianRating.toFixed(1)}` : 'verified reviews'}. Find top-rated ${cat.noun} ranked by real customer reviews, not paid placements.`
-    : `Browse verified ${cat.noun} across all 50 US states on FirmsLedger. Find top-rated ${cat.noun} ranked by real customer reviews, not paid placements.`;
+    ? `Browse ${stats.totalCount} ${cat.noun} across all 50 US states. Compare capabilities, location, and company size. No paid placements.`
+    : `Browse ${cat.noun} across all 50 US states on FirmsLedger. Compare capabilities, location, and company size. No paid placements.`;
   const canonical = `${_BASE}/${slug}`;
   return {
     title: `${title} | ${SITE_NAME}`,
