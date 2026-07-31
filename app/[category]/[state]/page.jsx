@@ -424,6 +424,12 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     showStateFilter ? fetchStateCountsForCategory(category) : Promise.resolve([]),
     fetchCategoryStats(category, state || undefined),
   ]);
+
+  // A category/state combination with no approved companies is a thin page.
+  // 404 it rather than serving an empty 200 that Google files as a soft 404.
+  // Nationwide (`state` absent) is exempt — it is a hub, not a listing.
+  if (state && companies.length === 0) notFound();
+
   const pageTitle    = stateName ? `Top ${categoryName} in ${stateName}` : `Top ${categoryName} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 

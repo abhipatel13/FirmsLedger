@@ -148,7 +148,7 @@ function ClaimListingContent() {
             1 business day to complete your {PLANS[form.plan]?.name || 'Pro'} setup{form.plan !== 'free' ? ' and payment' : ''}.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/directory">
+            <Link href="/browse">
               <Button className="bg-[#1A2E4A] hover:bg-[#1a2f4a] text-white font-semibold px-6 h-11 rounded-lg">
                 Browse Directory
               </Button>
