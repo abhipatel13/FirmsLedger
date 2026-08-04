@@ -14,7 +14,10 @@ import { getCompanyDescription } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
-const PAGE_SIZE = 10;
+// One indexable page has to satisfy "top 9", "top 10", "top 20", "top 25" — a
+// bigger first page means the larger N subsumes the smaller instead of the
+// remainder landing on a noindexed ?page=2.
+const PAGE_SIZE = 25;
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -46,7 +49,7 @@ function toTitleCase(slug) {
 
 // "Top 10" only when the page actually lists 10. A thinner page gets its real
 // count so the heading never claims more than the list below it delivers.
-function topN(count) {
+export function topN(count) {
   return Math.min(count, PAGE_SIZE);
 }
 

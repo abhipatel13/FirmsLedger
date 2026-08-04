@@ -59,6 +59,7 @@ export const companies = pgTable('companies', {
   products:        text('products').array(),
   industries_served: text('industries_served').array(),
   capabilities:    text('capabilities').array(),
+  images:          text('images').array(),
   naics_code:      text('naics_code'),
   linkedin_url:    text('linkedin_url'),
   data_source:     text('data_source').default('manual'),

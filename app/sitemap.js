@@ -1,6 +1,6 @@
 import { db } from '@/db/client';
 import { states, categories, companies, company_categories } from '@/db/schema';
-import { eq, and, isNotNull } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
 
@@ -105,22 +105,10 @@ export default async function sitemap() {
     }
   }
 
-  // ── Company profiles: /company/{slug} ───────────────────────────────────
-  // Mirrors isIndexable() in app/company/[slug]/page.jsx — approved and
-  // carrying a real description. Keep the two predicates in agreement.
-  try {
-    const profiles = await db
-      .select({ slug: companies.slug })
-      .from(companies)
-      .where(and(eq(companies.approved, true), isNotNull(companies.description)));
-
-    for (const p of profiles) {
-      if (!p.slug) continue;
-      urls.push({ url: `${BASE_URL}/company/${p.slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
-    }
-  } catch {
-    // DB unavailable at build time — omit profiles rather than fail the sitemap.
-  }
+  // Company profiles (/company/{slug}) are deliberately NOT listed. ~3000 thin
+  // profile URLs would drown the ~500 listing pages that actually rank. They
+  // stay indexable and reachable via links from the listing pages — we just
+  // don't spend sitemap signal on them.
 
   return urls;
 }
