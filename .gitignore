@@ -48,9 +48,7 @@ pipeline/clean_and_import.cjs
 pipeline/staging_batch_200.db
 pipeline/staged_companies_batch_200.json
 pipeline/staged_companies_batch_200.csv
-pipeline/fetch_existing.cjs
 pipeline/existing_companies.json
-pipeline/run_continuous.py
 pipeline/completed_queries.txt
 pipeline/export_today_csv.cjs
 gathered_companies_today.csv

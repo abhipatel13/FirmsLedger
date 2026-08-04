@@ -45,6 +45,11 @@ function normalizeName(name) {
     .trim();
 }
 
+function sanitizeString(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/\u0000/g, '');
+}
+
 async function main() {
   let stagedPath = path.join(__dirname, 'staged_companies.json');
   
@@ -114,33 +119,45 @@ async function main() {
     const slug = uniqueSlug(baseSlug, existingSlugs);
     existingSlugs.add(slug);
 
-    // Prep record
+    // Prep record with sanitization
     const companyData = {
-      name: rec.company_name,
+      name: sanitizeString(rec.company_name),
       slug,
-      website: rec.website || null,
-      phone: rec.phone || null,
-      address: rec.address || null,
-      hq_city: rec.city || null,
+      website: sanitizeString(rec.website) || null,
+      phone: sanitizeString(rec.phone) || null,
+      address: sanitizeString(rec.address) || null,
+      hq_city: sanitizeString(rec.city) || null,
       hq_state_id: state.id,
       hq_state_label: state.name,
-      description: rec.raw_description || null,
-      products: rec.raw_products || [],
-      capabilities: rec.raw_services || [],
-      industries_served: rec.raw_industries || [],
-      certifications: rec.raw_certifications || [],
-      contact_email: rec.raw_email || null,
+      description: sanitizeString(rec.raw_description) || null,
+      products: (rec.raw_products || []).map(sanitizeString),
+      capabilities: (rec.raw_services || []).map(sanitizeString),
+      industries_served: (rec.raw_industries || []).map(sanitizeString),
+      certifications: (rec.raw_certifications || []).map(sanitizeString),
+      contact_email: sanitizeString(rec.raw_email) || null,
       avg_rating: String(rec.rating || 0.0),
       review_count: parseInt(rec.reviews || 0),
       data_source: rec.source || 'google_maps',
-      source_url: rec.source_url || null,
+      source_url: sanitizeString(rec.source_url) || null,
       approved: false, // Must be verified by admin
       is_verified: false,
-      featured: false
+      featured: false,
+      images: []
     };
 
+    if (rec.images) {
+      try {
+        const parsedImages = typeof rec.images === 'string' ? JSON.parse(rec.images) : rec.images;
+        if (Array.isArray(parsedImages)) {
+          companyData.images = parsedImages.map(img => sanitizeString(img.url)).filter(Boolean);
+        }
+      } catch (err) {
+        // Ignore or log parsing error
+      }
+    }
+
     if (!COMMIT) {
-      console.log(`  [dry-run] Would insert: ${companyData.name} (${companyData.hq_city}, ${companyData.hq_state_label})`);
+      console.log(`  [dry-run] Would insert: ${companyData.name} (${companyData.hq_city}, ${companyData.hq_state_label}) with ${companyData.images.length} images`);
       insertedCount++;
       continue;
     }
@@ -152,14 +169,14 @@ async function main() {
           name, slug, website, phone, address, hq_city, hq_state_id, hq_state_label,
           description, products, capabilities, industries_served, certifications,
           contact_email, avg_rating, review_count, data_source, source_url,
-          approved, is_verified, featured
+          approved, is_verified, featured, images
         ) VALUES (
           ${companyData.name}, ${companyData.slug}, ${companyData.website}, ${companyData.phone},
           ${companyData.address}, ${companyData.hq_city}, ${companyData.hq_state_id}, ${companyData.hq_state_label},
           ${companyData.description}, ${companyData.products}, ${companyData.capabilities},
           ${companyData.industries_served}, ${companyData.certifications}, ${companyData.contact_email},
           ${companyData.avg_rating}, ${companyData.review_count}, ${companyData.data_source}, ${companyData.source_url},
-          ${companyData.approved}, ${companyData.is_verified}, ${companyData.featured}
+          ${companyData.approved}, ${companyData.is_verified}, ${companyData.featured}, ${companyData.images}
         ) RETURNING id
       `;
 

@@ -17,6 +17,7 @@ def main():
     parser.add_argument("--db-path", type=str, default="pipeline/staging.db", help="Path to SQLite staging database")
     parser.add_argument("--csv-path", type=str, default="pipeline/staged_companies.csv", help="Path to export CSV file")
     parser.add_argument("--json-path", type=str, default="pipeline/staged_companies.json", help="Path to export JSON file")
+    parser.add_argument("--existing-companies-path", type=str, default="pipeline/existing_companies.json", help="Path to existing companies file")
     parser.add_argument("--queries", type=str, nargs="+", default=None, help="List of custom search queries to scrape")
     parser.add_argument("--category-slug", type=str, default=None, help="Explicit category slug to set for all scraped records")
     args = parser.parse_args()
@@ -25,12 +26,12 @@ def main():
     print("[*] Fetching existing companies from production PostgreSQL database...")
     try:
         import subprocess
-        subprocess.run(["node", "pipeline/fetch_existing.cjs"], check=True)
+        subprocess.run(["node", "pipeline/fetch_existing.cjs", args.existing_companies_path], check=True)
     except Exception as e:
         print(f"[!] Warning: Could not run fetch_existing.cjs: {e}")
 
     # Initialize components
-    db = StagingDatabase(db_path=args.db_path)
+    db = StagingDatabase(db_path=args.db_path, existing_companies_path=args.existing_companies_path)
     crawler = CompanyWebsiteCrawler()
     
     # 1. Company Discovery Phase (Scraping)
@@ -88,17 +89,29 @@ def main():
     pending_crawls = db.get_pending_crawl_companies()
     print(f"[*] Found {len(pending_crawls)} websites pending crawl.")
     
-    for idx, row in enumerate(pending_crawls):
-        company_id = row["id"]
-        website = row["website"]
-        print(f"[{idx+1}/{len(pending_crawls)}] Crawling website ID {company_id}: {website}")
+    if pending_crawls:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
         
-        try:
-            crawl_data = crawler.crawl_website(website)
-            db.update_crawl_results(company_id, crawl_data)
-        except Exception as e:
-            print(f"  [!] Error crawling website {website}: {e}")
-            db.update_crawl_results(company_id, {"crawl_status": "failed"})
+        def crawl_worker(row):
+            company_id = row["id"]
+            website = row["website"]
+            try:
+                crawl_data = crawler.crawl_website(website)
+                db.update_crawl_results(company_id, crawl_data)
+                return company_id, website, True
+            except Exception as e:
+                print(f"  [!] Error crawling website {website}: {e}")
+                db.update_crawl_results(company_id, {"crawl_status": "failed"})
+                return company_id, website, False
+
+        max_workers = 5
+        print(f"[*] Executing crawls in parallel with {max_workers} threads...")
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {executor.submit(crawl_worker, row): row for row in pending_crawls}
+            for idx, future in enumerate(as_completed(futures)):
+                comp_id, web, success = future.result()
+                status_str = "success" if success else "failed"
+                print(f"[{idx+1}/{len(pending_crawls)}] Finished crawling {web} -> {status_str}")
 
     # 3. Deduplication & Cleanup Phase
     print("\n[*] Starting Deduplication Phase...")

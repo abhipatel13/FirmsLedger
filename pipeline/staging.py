@@ -6,8 +6,9 @@ import difflib
 import urllib.parse
 
 class StagingDatabase:
-    def __init__(self, db_path="pipeline/staging.db"):
+    def __init__(self, db_path="pipeline/staging.db", existing_companies_path="pipeline/existing_companies.json"):
         self.db_path = db_path
+        self.existing_companies_path = existing_companies_path
         self._init_db()
 
     def _get_connection(self):
@@ -142,7 +143,7 @@ class StagingDatabase:
         
         # Load existing companies from production DB if exported
         db_companies = []
-        json_path = "pipeline/existing_companies.json"
+        json_path = self.existing_companies_path
         if os.path.exists(json_path):
             try:
                 with open(json_path, "r", encoding="utf-8") as f:
