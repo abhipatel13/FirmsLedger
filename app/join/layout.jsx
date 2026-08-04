@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Join FirmsLedger',
+  title: 'Join',
   robots: { index: false, follow: false },
 };
 

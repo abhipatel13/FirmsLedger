@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import WriteReviewForm from '@/components/WriteReviewForm';
 
 export const metadata = {
-  title: 'Write a Review | FirmsLedger',
+  title: 'Write a Review',
   robots: { index: false, follow: false },
 };
 

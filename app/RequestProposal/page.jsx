@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import RequestProposalForm from '@/components/RequestProposalForm';
 
 export const metadata = {
-  title: 'Request a Proposal | FirmsLedger',
+  title: 'Request a Proposal',
   robots: { index: false, follow: false },
 };
 

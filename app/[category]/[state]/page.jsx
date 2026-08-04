@@ -1,7 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL } from '@/lib/seo';
 import { Shield, Info } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS } from '@/lib/manufacturingCategories';
@@ -115,7 +115,7 @@ export async function generateMetadata({ params, searchParams }) {
     permanentRedirect(target);
   }
 
-  if (!VALID_CATEGORIES.has(category)) return { title: `Not Found | ${SITE_NAME}` };
+  if (!VALID_CATEGORIES.has(category)) return { title: 'Not Found' };
 
   const cat = CATEGORY_MAP[category];
 
@@ -132,7 +132,7 @@ export async function generateMetadata({ params, searchParams }) {
       : `Find ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare companies. Part of the ${cat?.name} directory on FirmsLedger.`;
     const canonical = `${_BASE}/${category}/${state}${pageQuery}`;
     return {
-      title: `${title} | ${SITE_NAME}`,
+      title,
       description,
       alternates: { canonical },
       robots: { index: false, follow: true },
@@ -153,7 +153,7 @@ export async function generateMetadata({ params, searchParams }) {
   const canonical    = `${_BASE}/${category}/${state}${pageQuery}`;
 
   return {
-    title: `${title} | ${SITE_NAME}`,
+    title,
     description,
     alternates: { canonical },
     robots: page > 1 ? { index: false, follow: true } : undefined,

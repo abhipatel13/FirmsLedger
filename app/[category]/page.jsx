@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL } from '@/lib/seo';
 import { fetchCategoryStats } from '@/db/neonApi';
 import { renderCategoryPage, topN } from './[state]/page';
 
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params }) {
   const { category: slug } = await params;
   const cat = CATEGORY_MAP[slug];
-  if (!cat) return { title: `Category | ${SITE_NAME}` };
+  if (!cat) return { title: 'Category' };
   const stats = await fetchCategoryStats(slug);
   const title = `Top ${topN(stats.totalCount)} ${cat.name} in the US`;
   const description = stats.totalCount > 0
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }) {
     : `Browse ${cat.noun} across all 50 US states on FirmsLedger. Compare capabilities, location, and company size. No paid placements.`;
   const canonical = `${_BASE}/${slug}`;
   return {
-    title: `${title} | ${SITE_NAME}`,
+    title,
     description,
     alternates: { canonical },
     openGraph: { title, description, type: 'website', url: canonical },

@@ -3,7 +3,7 @@ import { BASE_URL, SITE_NAME } from '@/lib/seo';
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
-  title: `Terms of Service | ${SITE_NAME}`,
+  title: 'Terms of Service',
   description: 'Terms of Service for FirmsLedger, the US manufacturer and supplier directory.',
   alternates: { canonical: `${_BASE}/terms` },
   robots: { index: true, follow: true },

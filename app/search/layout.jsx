@@ -1,9 +1,9 @@
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL } from '@/lib/seo';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
-  title: `Search Manufacturers & Suppliers | ${SITE_NAME}`,
+  title: 'Search Manufacturers & Suppliers',
   description: 'Search US manufacturers and suppliers by category and state on FirmsLedger.',
   alternates: { canonical: `${_BASE}/search` },
   // Query-driven results, not stable indexable content — the dedicated

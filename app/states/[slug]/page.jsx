@@ -82,9 +82,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const state = STATE_MAP[slug];
-  if (!state) return { title: `State | ${SITE_NAME}` };
+  if (!state) return { title: 'State' };
 
-  const title       = `Manufacturers in ${state.name} | ${SITE_NAME}`;
+  const title       = `Manufacturers in ${state.name}`;
   const description = `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`;
   const canonical   = `${_BASE}/states/${slug}`;
 
@@ -92,7 +92,7 @@ export async function generateMetadata({ params }) {
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, type: 'website', url: canonical },
+    openGraph: { title: `${title} | ${SITE_NAME}`, description, type: 'website', url: canonical },
     twitter: { card: 'summary_large_image' },
   };
 }
