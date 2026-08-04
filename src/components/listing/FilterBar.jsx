@@ -25,7 +25,7 @@ function useClickOutside(refs, handler) {
   }, [refs, handler]);
 }
 
-function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, children }) {
+export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, children }) {
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
   const [coords, setCoords] = useState(null);

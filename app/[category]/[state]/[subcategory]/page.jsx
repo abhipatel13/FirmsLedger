@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL } from '@/lib/seo';
 import { CheckCircle, Star, MapPin, Shield, ArrowRight } from 'lucide-react';
-import { fetchCompaniesByCategoryAndState } from '@/db/neonApi';
+import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import { getCompanyDescription } from '@/utils';
+import StateFilterDropdown from '@/components/listing/StateFilterDropdown';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +39,7 @@ export async function generateMetadata({ params, searchParams }) {
   }
 
   const cat = CATEGORY_MAP[category];
-  if (!cat) return { title: `Not Found | ${SITE_NAME}` };
+  if (!cat) return { title: 'Not Found' };
 
   const sub = cat.subcategories.find((s) => s.slug === subcategory);
   const subName  = sub?.name || toTitleCase(subcategory);
@@ -48,7 +49,7 @@ export async function generateMetadata({ params, searchParams }) {
   const canonical = `${_BASE}/${category}/${subcategory}/${state}`;
 
   return {
-    title: `${title} | ${SITE_NAME}`,
+    title,
     description,
     alternates: { canonical },
     // Ignores the subcategory param when querying companies (no per-
@@ -102,7 +103,10 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
   const pageTitle = `${sub.name} Manufacturers in ${stateName}`;
 
   // Fetch companies — pass both category and subcategory for filtering
-  const companies = await fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500);
+  const [companies, stateCounts] = await Promise.all([
+    fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500),
+    fetchStateCountsForCategory(category),
+  ]);
 
   const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
   const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
@@ -160,6 +164,15 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                 <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em' }}>{companies.length}</p>
                 <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>total listings</p>
               </div>
+            </div>
+
+            <div style={{ margin: '20px 0 0 0' }}>
+              <StateFilterDropdown
+                stateCounts={stateCounts}
+                currentState={state}
+                category={category}
+                subcategory={subcategory}
+              />
             </div>
           </div>
         </div>
