@@ -10,7 +10,7 @@ function StatTile({ value, label }) {
       borderRadius: 10,
       padding: '16px 12px',
     }}>
-      <p style={{ fontSize: 24, fontWeight: 700, color: '#D4A017', margin: 0, fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
+      <p style={{ fontSize: 24, fontWeight: 700, color: '#1A2E4A', margin: 0, fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </p>
       <p style={{ fontSize: 12, color: '#64748b', margin: '4px 0 0', whiteSpace: 'nowrap' }}>{label}</p>
@@ -22,7 +22,7 @@ export default function StatsBand({ stats, categoryNoun, stateName, showStatesCo
   if (stats.totalCount === 0) {
     return (
       <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '20px 24px' }}>
+        <div className="mx-auto max-w-[var(--max-width)] px-4 py-5 sm:px-6 sm:py-6">
           <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Be the first to get listed in this category.</p>
         </div>
       </div>
@@ -31,8 +31,13 @@ export default function StatsBand({ stats, categoryNoun, stateName, showStatesCo
 
   return (
     <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-      <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '24px 24px 28px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+      <div className="mx-auto max-w-[var(--max-width)] px-4 pt-4 pb-5 sm:px-6 sm:pt-6 sm:pb-7">
+        <div 
+          className="grid gap-3 sm:flex sm:flex-wrap"
+          style={{
+            gridTemplateColumns: showStatesCovered ? '1fr 1fr' : '1fr',
+          }}
+        >
           <StatTile value={stats.totalCount} label="Total Listings" />
           {showStatesCovered ? (
             <StatTile value={stats.statesCovered} label="States Covered" />
@@ -43,13 +48,13 @@ export default function StatsBand({ stats, categoryNoun, stateName, showStatesCo
           display: 'flex',
           gap: 10,
           alignItems: 'flex-start',
-          marginTop: 14,
-          padding: '12px 16px',
+          marginTop: 12,
+          padding: '12px 14px',
           borderRadius: 10,
-          backgroundColor: 'rgba(212,160,23,0.08)',
-          border: '1px solid rgba(212,160,23,0.25)',
+          backgroundColor: 'rgba(26, 46, 74, 0.04)',
+          border: '1px solid rgba(26, 46, 74, 0.12)',
         }}>
-          <ShieldCheck size={16} style={{ color: '#D4A017', flexShrink: 0, marginTop: 2 }} />
+          <ShieldCheck size={16} style={{ color: '#1A2E4A', flexShrink: 0, marginTop: 2 }} />
           <p style={{ fontSize: 13, lineHeight: 1.6, color: '#475569', margin: 0 }}>
             <strong style={{ color: '#0f172a' }}>How this list is built:</strong> companies are grouped by category
             and location. No company can pay for a higher position.
@@ -61,3 +66,4 @@ export default function StatsBand({ stats, categoryNoun, stateName, showStatesCo
     </div>
   );
 }
+

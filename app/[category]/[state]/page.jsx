@@ -247,7 +247,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
           {/* ── Header ── */}
           <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-            <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '40px 24px 36px' }}>
+            <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
               {/* Breadcrumb */}
               <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
@@ -284,7 +284,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <StatsBand stats={stats} categoryNoun={cat?.noun || 'manufacturers'} stateName={null} showStatesCovered />
 
           {/* ── Content ── */}
-          <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '32px 24px 64px' }}>
+          <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
 
             {/* ── Filter Bar ── */}
             <FilterBar
@@ -491,7 +491,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
         {/* ── Page header ─────────────────────────────────────────── */}
         <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-          <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '40px 24px 36px' }}>
+          <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
             {/* Breadcrumb */}
             <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
@@ -555,7 +555,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         <StatsBand stats={stats} categoryNoun={cat?.noun || categoryName.toLowerCase()} stateName={stateName} showStatesCovered={!stateName} />
 
         {/* ── Content ─────────────────────────────────────────────── */}
-        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '32px 24px 64px' }}>
+        <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
 
           {/* ── Filter Bar ── */}
           <FilterBar
