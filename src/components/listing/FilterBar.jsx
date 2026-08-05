@@ -60,6 +60,7 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
         style={{
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           gap: 6,
           padding: '8px 14px',
           borderRadius: 8,
@@ -70,12 +71,14 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
           fontSize: 13,
           fontWeight: 500,
           cursor: 'pointer',
-          whiteSpace: 'nowrap',
           fontFamily: 'inherit',
           transition: 'border-color 0.1s',
+          minWidth: 0,
         }}
       >
-        {label}
+        <span className="truncate text-left flex-1" style={{ minWidth: 0 }}>
+          {label}
+        </span>
         {activeCount > 0 ? (
           <span style={{
             display: 'inline-flex',
@@ -89,11 +92,12 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
             fontSize: 10,
             fontWeight: 700,
             padding: '0 5px',
+            flexShrink: 0,
           }}>
             {activeCount}
           </span>
         ) : null}
-        <ChevronDown size={14} style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
+        <ChevronDown size={14} style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }} />
       </button>
 
       {isOpen && coords ? (

@@ -49,9 +49,11 @@ export default function CompanyCard({ company, rank }) {
             {/* Rank, Logo, and Mobile Header Info */}
             <div className="flex items-center sm:items-start gap-3 sm:gap-4 w-full sm:w-auto shrink-0">
               {/* Rank badge */}
-              <div className={`flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-[11px] sm:text-xs font-bold tabular-nums ${rankBg}`}>
-                #{rank + 1}
-              </div>
+              {typeof rank === 'number' && (
+                <div className={`flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-[11px] sm:text-xs font-bold tabular-nums ${rankBg}`}>
+                  #{rank + 1}
+                </div>
+              )}
 
               {/* Logo */}
               {company.logo_url ? (

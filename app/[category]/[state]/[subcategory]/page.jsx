@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL } from '@/lib/seo';
-import { CheckCircle, Star, MapPin, Shield, ArrowRight } from 'lucide-react';
+import { Shield } from 'lucide-react';
+import CompanyCard from '@/components/listing/CompanyCard';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
@@ -72,17 +73,7 @@ export function generateStaticParams() {
   return [];
 }
 
-// ─── Stars ────────────────────────────────────────────────────────────────────
 
-function StarRow({ rating }) {
-  return (
-    <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} style={{ width: 13, height: 13, fill: n <= Math.round(rating) ? '#F5A623' : '#e2e8f0', color: n <= Math.round(rating) ? '#F5A623' : '#e2e8f0' }} />
-      ))}
-    </span>
-  );
-}
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -212,60 +203,13 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {pageCompanies.map((company, i) => {
-                  const index = rankOffset + i;
-                  return (
-                    <Link
+                  {pageCompanies.map((company, i) => (
+                    <CompanyCard
                       key={company.slug}
-                      href={`/company/${company.slug}`}
-                      style={{ display: 'block', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '20px 24px', textDecoration: 'none', transition: 'border-color 0.15s, box-shadow 0.15s' }}
-                      className="company-card"
-                    >
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-                        <div style={{ width: 36, height: 36, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, backgroundColor: index === 0 ? '#1A2E4A' : index < 3 ? '#243B58' : '#f8fafc', color: index < 2 ? '#ffffff' : '#64748b', fontSize: 12, fontWeight: 700 }}>
-                          #{index + 1}
-                        </div>
-                        {company.logo_url ? (
-                          <img src={company.logo_url} alt={company.name} style={{ width: 52, height: 52, borderRadius: 10, objectFit: 'contain', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', flexShrink: 0 }} />
-                        ) : (
-                          <div style={{ width: 52, height: 52, backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <span style={{ fontSize: 20, fontWeight: 700, color: '#94a3b8' }}>{company.name.charAt(0)}</span>
-                          </div>
-                        )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <h3 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: 0 }}>{company.name}</h3>
-                            {company.is_verified && (
-                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: '#16a34a', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', padding: '2px 8px', borderRadius: 9999 }}>
-                                <CheckCircle style={{ width: 10, height: 10 }} /> Verified
-                              </span>
-                            )}
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-                            <StarRow rating={parseFloat(company.avg_rating) || 0} />
-                            <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{(parseFloat(company.avg_rating) || 0).toFixed(1)}</span>
-                            <span style={{ color: '#e2e8f0' }}>·</span>
-                            <span style={{ fontSize: 12, color: '#94a3b8' }}>{company.review_count || 0} reviews</span>
-                            {(company.hq_city || company.hq_state_label) && (
-                              <>
-                                <span style={{ color: '#e2e8f0' }}>·</span>
-                                <span style={{ fontSize: 12, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                  <MapPin style={{ width: 11, height: 11 }} />
-                                  {[company.hq_city, company.hq_state_label].filter(Boolean).join(', ')}
-                                </span>
-                              </>
-                            )}
-                          </div>
-                          <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                            {getCompanyDescription(company)}
-                          </p>
-                        </div>
-                        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                          <ArrowRight style={{ width: 16, height: 16, color: '#94a3b8' }} />
-                        </div>
-                      </div>
-                    </Link>
-                  );})}
+                      company={company}
+                      rank={rankOffset + i}
+                    />
+                  ))}
                 </div>
               )}
 

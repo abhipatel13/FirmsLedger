@@ -552,8 +552,34 @@ export default function DirectoryHub({
 
           <Card className="grid grid-cols-1 md:grid-cols-[240px_1fr] rounded-2xl overflow-hidden border-slate-200 shadow-sm p-0">
 
-            {/* Left: state list */}
-            <ScrollArea className="h-[220px] md:h-[540px] border-b md:border-b-0 md:border-r border-slate-200" style={{ backgroundColor: 'var(--bg-cream)' }}>
+            {/* Mobile: state select dropdown */}
+            <div className="block md:hidden px-5 pt-5 pb-1 border-b border-slate-200" style={{ backgroundColor: 'var(--bg-cream)' }}>
+              <label htmlFor="state-select" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                Select State
+              </label>
+              <div className="relative">
+                <select
+                  id="state-select"
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                  className="w-full h-11 px-3 pr-10 text-[13.5px] font-medium text-slate-700 bg-white border border-slate-200 rounded-xl appearance-none outline-none focus:border-[#1A2E4A] focus:ring-1 focus:ring-[#1A2E4A]"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 12px center',
+                  }}
+                >
+                  {US_STATES.map((state) => (
+                    <option key={state.slug} value={state.slug}>
+                      {state.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Desktop: state list scroll area */}
+            <ScrollArea className="hidden md:block md:h-[540px] md:border-r border-slate-200" style={{ backgroundColor: 'var(--bg-cream)' }}>
               <div className="py-1">
                 {US_STATES.map((state) => {
                   const active = selectedState === state.slug;

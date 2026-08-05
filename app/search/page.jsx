@@ -4,20 +4,11 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { parseSearchIntent, canonicalPathFor } from '@/lib/searchIntent';
-import { Search, Star, MapPin, CheckCircle, ArrowRight, X } from 'lucide-react';
+import { Search, ArrowRight, X } from 'lucide-react';
+import CompanyCard from '@/components/listing/CompanyCard';
 import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import { getCompanyDescription } from '@/utils';
-
-function StarRow({ rating }) {
-  return (
-    <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} style={{ width: 12, height: 12, fill: n <= Math.round(rating) ? '#F5A623' : '#e2e8f0', color: n <= Math.round(rating) ? '#F5A623' : '#e2e8f0' }} />
-      ))}
-    </span>
-  );
-}
 
 const selectStyle = {
   height: 52,
@@ -318,48 +309,10 @@ function SearchContent() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {results.map((company) => (
-                <Link
+                <CompanyCard
                   key={company.slug}
-                  href={`/company/${company.slug}`}
-                  style={{ display: 'block', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '18px 20px', textDecoration: 'none', transition: 'border-color 0.15s, box-shadow 0.15s' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.boxShadow = '0 4px 16px -4px rgba(15,23,42,0.07)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                    {company.logo_url ? (
-                      <img src={company.logo_url} alt={company.name} style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'contain', border: '1px solid #e2e8f0', flexShrink: 0 }} />
-                    ) : (
-                      <div style={{ width: 44, height: 44, backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#94a3b8' }}>{company.name.charAt(0)}</span>
-                      </div>
-                    )}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{company.name}</span>
-                        {company.is_verified && (
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 600, color: '#16a34a', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', padding: '2px 7px', borderRadius: 9999 }}>
-                            <CheckCircle style={{ width: 9, height: 9 }} /> Verified
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: company.description ? 6 : 0 }}>
-                        <StarRow rating={parseFloat(company.avg_rating) || 0} />
-                        <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>{(parseFloat(company.avg_rating) || 0).toFixed(1)}</span>
-                        <span style={{ fontSize: 12, color: '#94a3b8' }}>{company.review_count || 0} reviews</span>
-                        {(company.hq_city || company.hq_state_label) && (
-                          <span style={{ fontSize: 12, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 3 }}>
-                            <MapPin style={{ width: 11, height: 11 }} />
-                            {[company.hq_city, company.hq_state_label].filter(Boolean).join(', ')}
-                          </span>
-                        )}
-                      </div>
-                      <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {getCompanyDescription(company)}
-                      </p>
-                    </div>
-                    <ArrowRight style={{ width: 15, height: 15, color: '#cbd5e1', flexShrink: 0, marginTop: 2 }} />
-                  </div>
-                </Link>
+                  company={company}
+                />
               ))}
             </div>
           </>
