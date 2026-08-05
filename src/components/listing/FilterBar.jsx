@@ -97,29 +97,56 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
 
       {isOpen && coords ? (
         createPortal(
-          <div
-            ref={dropdownRef}
-            style={{
-              position: 'fixed',
-              top: coords.top,
-              left: coords.left,
-              zIndex: 9999,
-              minWidth: 220,
-              maxWidth: 240,
-              maxHeight: 300,
-              overflowY: 'auto',
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: 10,
-              boxShadow: '0 8px 24px -4px rgba(15,23,42,0.12)',
-              padding: 8,
-            }}
-          >
-            {children}
-          </div>,
+          <>
+            <div className="filter-dropdown-backdrop" onClick={onClose} />
+            <div
+              ref={dropdownRef}
+              className="filter-dropdown-panel"
+              style={{
+                position: 'fixed',
+                top: coords.top,
+                left: coords.left,
+                zIndex: 9999,
+                minWidth: 220,
+                maxWidth: 240,
+                maxHeight: 300,
+                overflowY: 'auto',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: 10,
+                boxShadow: '0 8px 24px -4px rgba(15,23,42,0.12)',
+                padding: 8,
+              }}
+            >
+              {children}
+            </div>
+          </>,
           document.body
         )
       ) : null}
+
+      <style>{`
+        .filter-dropdown-backdrop { display: none; }
+        @media (max-width: 640px) {
+          .filter-dropdown-backdrop {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.35);
+            z-index: 9998;
+          }
+          .filter-dropdown-panel {
+            top: auto !important;
+            left: 12px !important;
+            right: 12px !important;
+            bottom: 12px !important;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            max-height: 60vh !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

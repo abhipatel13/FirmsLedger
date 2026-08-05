@@ -193,6 +193,8 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
     { url: agency.instagram_url,Icon: InstagramIcon, color: 'text-[#E1306C]' },
   ].filter(s => s.url);
 
+  const hasMetrics = !!(agency.hourly_rate || agency.team_size || agency.founded_year);
+
   return (
     <div className="min-h-screen bg-[#ffffff]">
 
@@ -284,7 +286,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Overview ─────────────────────────────────────────────────────── */}
         <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg overflow-hidden">
-          <div className="grid md:grid-cols-[1fr_220px_160px] divide-y md:divide-y-0 md:divide-x divide-slate-200">
+          <div className={`grid divide-y md:divide-y-0 md:divide-x divide-slate-200 ${hasMetrics ? 'md:grid-cols-[1fr_220px_160px]' : 'md:grid-cols-[1fr_220px]'}`}>
             {/* Description + social */}
             <div className="p-6">
               {agency.tagline && (
@@ -325,26 +327,28 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
             </div>
 
             {/* Key metrics */}
-            <div className="p-6 space-y-4">
-              {agency.hourly_rate && (
-                <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <DollarSign className="w-4 h-4 text-orange-500" />
-                  {agency.hourly_rate}
-                </div>
-              )}
-              {agency.team_size && (
-                <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <Users className="w-4 h-4 text-orange-500" />
-                  {agency.team_size}
-                </div>
-              )}
-              {agency.founded_year && (
-                <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <Calendar className="w-4 h-4 text-orange-500" />
-                  {agency.founded_year}
-                </div>
-              )}
-            </div>
+            {hasMetrics && (
+              <div className="p-6 space-y-4">
+                {agency.hourly_rate && (
+                  <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                    <DollarSign className="w-4 h-4 text-orange-500" />
+                    {agency.hourly_rate}
+                  </div>
+                )}
+                {agency.team_size && (
+                  <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                    <Users className="w-4 h-4 text-orange-500" />
+                    {agency.team_size}
+                  </div>
+                )}
+                {agency.founded_year && (
+                  <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                    <Calendar className="w-4 h-4 text-orange-500" />
+                    {agency.founded_year}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
