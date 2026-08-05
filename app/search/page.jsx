@@ -308,10 +308,11 @@ function SearchContent() {
               {results.length} result{results.length !== 1 ? 's' : ''} for {summaryParts.join(' · ')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {results.map((company) => (
+              {results.map((company, i) => (
                 <CompanyCard
                   key={company.slug}
                   company={company}
+                  rank={i}
                 />
               ))}
             </div>

@@ -4,7 +4,7 @@ import JsonLd from '@/components/JsonLd';
 import { BASE_URL } from '@/lib/seo';
 import { Shield } from 'lucide-react';
 import CompanyCard from '@/components/listing/CompanyCard';
-import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory } from '@/db/neonApi';
+import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import { getCompanyDescription } from '@/utils';
@@ -12,7 +12,11 @@ import FilterBar from '@/components/listing/FilterBar';
 
 export const dynamic = 'force-dynamic';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 25;
+
+function topN(count) {
+  return Math.min(count, PAGE_SIZE);
+}
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -53,7 +57,8 @@ export async function generateMetadata({ params, searchParams }) {
   const sub = cat.subcategories.find((s) => s.slug === subcategory);
   const subName  = sub?.name || toTitleCase(subcategory);
   const stateName = toTitleCase(state);
-  const title = `${subName} Manufacturers in ${stateName}`;
+  const stats = await fetchCategoryStats(subcategory, state);
+  const title = `Top ${topN(stats.totalCount)} ${subName} Manufacturers in ${stateName}`;
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
   const canonical = `${_BASE}/${category}/${subcategory}/${state}`;
 
@@ -61,10 +66,7 @@ export async function generateMetadata({ params, searchParams }) {
     title,
     description,
     alternates: { canonical },
-    // Ignores the subcategory param when querying companies (no per-
-    // subcategory tagging in the DB yet), so this renders the same list as
-    // the plain /{category}/{state} page — noindex to avoid duplicate content.
-    robots: { index: false, follow: true },
+    robots: { index: true, follow: true },
     openGraph: { title, description, type: 'website', url: canonical },
   };
 }
@@ -103,18 +105,20 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
   if (!sub) notFound();
 
   const stateName = toTitleCase(state);
-  const pageTitle = `${sub.name} Manufacturers in ${stateName}`;
 
-  // Fetch companies — pass both category and subcategory for filtering
+  // Fetch companies — filtered by the subcategory slug, not the parent category
   const [companies, stateCounts] = await Promise.all([
-    fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500, {
+    fetchCompaniesByCategoryAndState(subcategory, state, '-avg_rating', 500, {
       employeeRanges: activeEmployeeRanges,
     }),
-    fetchStateCountsForCategory(category),
+    fetchStateCountsForCategory(subcategory),
   ]);
 
   const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
   const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+  const pageTitle = currentPage === 1
+    ? `Top ${topN(companies.length)} ${sub.name} Manufacturers in ${stateName}`
+    : `${sub.name} Manufacturers in ${stateName}`;
   const pageCompanies = companies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
   const rankOffset     = (currentPage - 1) * PAGE_SIZE;
   const basePath       = `/${category}/${subcategory}/${state}`;
