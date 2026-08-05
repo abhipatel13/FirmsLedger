@@ -131,9 +131,11 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
         @media (max-width: 1024px) {
           .filter-dropdown-wrapper {
             width: 100%;
+            min-width: 0;
           }
           .filter-dropdown-trigger {
             width: 100% !important;
+            min-width: 0 !important;
             justify-content: space-between !important;
           }
         }
