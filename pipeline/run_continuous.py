@@ -95,6 +95,14 @@ def main():
     query_queue = [item for idx, item in enumerate(all_combinations) if idx % args.total_workers == (args.worker_id - 1)]
     print(f"[*] Partitioned queue: Worker {args.worker_id} will process {len(query_queue)} of the total {len(all_combinations)} queries.")
     
+    # 1. Startup fetch of existing PostgreSQL companies
+    print("[*] Performing startup fetch of existing companies from production PostgreSQL...")
+    try:
+        import subprocess
+        subprocess.run(["node", "pipeline/fetch_existing.cjs", existing_companies_json], check=True)
+    except Exception as e:
+        print(f"[!] Warning: Could not run startup fetch_existing.cjs: {e}")
+        
     total_new_imported = 0
     
     for idx, item in enumerate(query_queue):
@@ -112,16 +120,17 @@ def main():
         print(f"[*] Category: {slug}")
         print("-" * 50)
         
-        # 1. Run the discovery & crawl pipeline
+        # 2. Run the discovery & crawl pipeline
         cmd_pipeline = [
-            sys.executable, "pipeline/run_pipeline.py",
+            sys.executable, "-u", "pipeline/run_pipeline.py",
             "--queries", query,
             "--category-slug", slug,
             "--max-per-query", "25",
             "--db-path", staged_db,
             "--csv-path", staged_csv,
             "--json-path", staged_json,
-            "--existing-companies-path", existing_companies_json
+            "--existing-companies-path", existing_companies_json,
+            "--skip-fetch"
         ]
         
         try:
@@ -141,7 +150,7 @@ def main():
             except Exception as e:
                 print(f"[!] Warning: Could not parse staged_json: {e}")
                 
-        # 3. Import if staged records found
+        # 4. Import if staged records found
         if has_staged:
             print("[*] Importing clean records to production PostgreSQL DB...")
             cmd_import = ["node", "pipeline/import_helper.cjs", "--commit", "--json", staged_json]
@@ -169,6 +178,13 @@ def main():
     print(f"      Continuous Enrichment Run Finished / Stopped - Worker {args.worker_id}")
     print(f"      Total new unique companies imported: {total_new_imported}")
     print("=" * 60)
+    
+    if total_new_imported > 0:
+        print("[*] Running final dated CSV export...")
+        try:
+            subprocess.run(["node", "pipeline/export_today_csv_dated.cjs"], check=True)
+        except Exception as e:
+            print(f"[!] Warning: Could not run final export: {e}")
 
 if __name__ == "__main__":
     main()

@@ -20,15 +20,19 @@ def main():
     parser.add_argument("--existing-companies-path", type=str, default="pipeline/existing_companies.json", help="Path to existing companies file")
     parser.add_argument("--queries", type=str, nargs="+", default=None, help="List of custom search queries to scrape")
     parser.add_argument("--category-slug", type=str, default=None, help="Explicit category slug to set for all scraped records")
+    parser.add_argument("--skip-fetch", action="store_true", help="Skip fetching existing companies from production DB")
     args = parser.parse_args()
 
     # Fetch existing companies from production DB for duplicate prevention
-    print("[*] Fetching existing companies from production PostgreSQL database...")
-    try:
-        import subprocess
-        subprocess.run(["node", "pipeline/fetch_existing.cjs", args.existing_companies_path], check=True)
-    except Exception as e:
-        print(f"[!] Warning: Could not run fetch_existing.cjs: {e}")
+    if not args.skip_fetch:
+        print("[*] Fetching existing companies from production PostgreSQL database...")
+        try:
+            import subprocess
+            subprocess.run(["node", "pipeline/fetch_existing.cjs", args.existing_companies_path], check=True)
+        except Exception as e:
+            print(f"[!] Warning: Could not run fetch_existing.cjs: {e}")
+    else:
+        print("[*] Skipping fetch of existing companies from production DB (using cached file).")
 
     # Initialize components
     db = StagingDatabase(db_path=args.db_path, existing_companies_path=args.existing_companies_path)
@@ -123,6 +127,8 @@ def main():
     db.export_to_json(file_path=args.json_path)
     
     print("\n[+] Data acquisition pipeline run completed successfully.")
+    import os
+    os._exit(0)
 
 if __name__ == "__main__":
     main()

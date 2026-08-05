@@ -49,10 +49,17 @@ pipeline/staging_batch_200.db
 pipeline/staged_companies_batch_200.json
 pipeline/staged_companies_batch_200.csv
 pipeline/existing_companies.json
+pipeline/existing_companies_w*.json
 pipeline/completed_queries.txt
+pipeline/completed_queries_w*.txt
 pipeline/export_today_csv.cjs
 gathered_companies_today.csv
-
+pipeline/staging_w*.db
+pipeline/staged_companies_w*.json
+pipeline/staged_companies_w*.csv
+pipeline/.venv/
+scraped-data/worker*.log
+scraped-data/loop_runner.log
 
 
 __pycache__/

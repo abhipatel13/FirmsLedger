@@ -89,6 +89,8 @@ async function main() {
   let skippedDupCount = 0;
   let skippedNoStateCount = 0;
 
+  const companiesToInsert = [];
+
   for (const rec of stagedRecords) {
     const normName = normalizeName(rec.company_name);
 
@@ -156,45 +158,101 @@ async function main() {
       }
     }
 
-    if (!COMMIT) {
-      console.log(`  [dry-run] Would insert: ${companyData.name} (${companyData.hq_city}, ${companyData.hq_state_label}) with ${companyData.images.length} images`);
-      insertedCount++;
-      continue;
+    // Resolve Category Reference
+    const categorySlug = rec.google_category; // mapped from search query in run_pipeline.py
+    const category = categoryBySlug.get(categorySlug);
+    if (category) {
+      companyData.categoryId = category.id;
     }
 
-    // Write to production DB
-    try {
-      const [insertedRow] = await sql`
+    companiesToInsert.push(companyData);
+  }
+
+  if (!COMMIT) {
+    for (const companyData of companiesToInsert) {
+      console.log(`  [dry-run] Would insert: ${companyData.name} (${companyData.hq_city}, ${companyData.hq_state_label}) with ${companyData.images.length} images`);
+      insertedCount++;
+    }
+  } else {
+    // Commit in batches of 100
+    const BATCH_SIZE = 100;
+    for (let i = 0; i < companiesToInsert.length; i += BATCH_SIZE) {
+      const batch = companiesToInsert.slice(i, i + BATCH_SIZE);
+      console.log(`[*] Committing batch ${Math.floor(i / BATCH_SIZE) + 1} of ${Math.ceil(companiesToInsert.length / BATCH_SIZE)} (${batch.length} companies)...`);
+
+      const values = [];
+      const params = [];
+      let paramIndex = 1;
+
+      for (const company of batch) {
+        const rowPlaceholders = [];
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.name);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.slug);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.website);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.phone);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.address);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.hq_city);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.hq_state_id);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.hq_state_label);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.description);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.products);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.capabilities);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.industries_served);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.certifications);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.contact_email);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.avg_rating);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.review_count);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.data_source);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.source_url);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.approved);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.is_verified);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.featured);
+        rowPlaceholders.push(`$${paramIndex++}`); params.push(company.images);
+        
+        values.push(`(${rowPlaceholders.join(', ')})`);
+      }
+
+      if (values.length === 0) continue;
+
+      const queryText = `
         INSERT INTO companies (
           name, slug, website, phone, address, hq_city, hq_state_id, hq_state_label,
           description, products, capabilities, industries_served, certifications,
           contact_email, avg_rating, review_count, data_source, source_url,
           approved, is_verified, featured, images
-        ) VALUES (
-          ${companyData.name}, ${companyData.slug}, ${companyData.website}, ${companyData.phone},
-          ${companyData.address}, ${companyData.hq_city}, ${companyData.hq_state_id}, ${companyData.hq_state_label},
-          ${companyData.description}, ${companyData.products}, ${companyData.capabilities},
-          ${companyData.industries_served}, ${companyData.certifications}, ${companyData.contact_email},
-          ${companyData.avg_rating}, ${companyData.review_count}, ${companyData.data_source}, ${companyData.source_url},
-          ${companyData.approved}, ${companyData.is_verified}, ${companyData.featured}, ${companyData.images}
-        ) RETURNING id
+        ) VALUES ${values.join(', ')}
+        RETURNING id, name, slug
       `;
 
-      // Resolve Category Reference
-      const categorySlug = rec.google_category; // mapped from search query in run_pipeline.py
-      const category = categoryBySlug.get(categorySlug);
-      if (category) {
-        await sql`
-          INSERT INTO company_categories (company_id, category_id)
-          VALUES (${insertedRow.id}, ${category.id})
-          ON CONFLICT DO NOTHING
-        `;
-      }
+      try {
+        const insertedRows = await sql(queryText, params);
+        
+        // Build batch insert for company_categories
+        const categoryValues = [];
+        const categoryParams = [];
+        let catParamIdx = 1;
 
-      console.log(`  [inserted] ${companyData.name} (${companyData.hq_city}, ${companyData.hq_state_label})`);
-      insertedCount++;
-    } catch (err) {
-      console.error(`  [error] Failed to insert ${companyData.name}:`, err.message);
+        for (const insertedRow of insertedRows) {
+          const original = batch.find(c => c.slug === insertedRow.slug);
+          if (original && original.categoryId) {
+            categoryValues.push(`($${catParamIdx++}, $${catParamIdx++})`);
+            categoryParams.push(insertedRow.id, original.categoryId);
+          }
+          console.log(`  [inserted] ${insertedRow.name}`);
+          insertedCount++;
+        }
+
+        if (categoryValues.length > 0) {
+          const catQueryText = `
+            INSERT INTO company_categories (company_id, category_id)
+            VALUES ${categoryValues.join(', ')}
+            ON CONFLICT DO NOTHING
+          `;
+          await sql(catQueryText, categoryParams);
+        }
+      } catch (err) {
+        console.error(`  [error] Failed to commit batch starting with ${batch[0].name}:`, err.message);
+      }
     }
   }
 
