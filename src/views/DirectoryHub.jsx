@@ -151,9 +151,10 @@ function getHomepageStats(companyCount, categoryCount = FALLBACK_CATEGORY_COUNT,
 
   return {
     stats: [
-      { value: totalCategories, label: 'Categories' },
+      { value: totalCategories, label: 'Categories & Specialties' },
       { value: totalStates, label: 'States covered' },
       { value: listedCompanies, label: 'Companies listed' },
+      { value: '100%', label: 'Verified Listings' },
     ],
     trustStats: [
       { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
@@ -266,60 +267,58 @@ export default function DirectoryHub({
   return (
     <div className="bg-white">
 
-      {/* ══ HERO ══════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden border-b border-slate-200 py-16 sm:py-20 lg:py-24" style={{ backgroundColor: 'var(--bg-page)' }}>
-        <div className="grid-texture-dark absolute inset-0 opacity-40 pointer-events-none" />
-        <div className="absolute -top-40 -left-20 w-[520px] h-[520px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.08), transparent 70%)' }} />
-        <div className="absolute -bottom-40 -right-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(15,23,42,0.05), transparent 70%)' }} />
+      {/* ══ HERO & SEARCH CONTAINER ══════════════════════════════════ */}
+      <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28 border-b border-slate-900" style={{ background: 'linear-gradient(160deg, #0F172A 0%, #070D18 100%)' }}>
+        <div className="grid-texture absolute inset-0 opacity-20 pointer-events-none" />
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.12), transparent 70%)' }} />
+        <div className="absolute -bottom-40 -right-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(15,23,42,0.15), transparent 70%)' }} />
+        
         <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8">
-          <div className="text-center mx-auto max-w-[760px]">
+          <div className="text-center mx-auto max-w-[800px] mb-12">
             <Badge
               className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 mb-8 font-semibold text-[11px] tracking-wider uppercase"
-              style={{ backgroundColor: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.12)', color: '#0F172A' }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#F9FAFB' }}
             >
               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: 'var(--gold)' }} />
               USA Manufacturer Directory
             </Badge>
 
-            <h1 className="text-3xl xs:text-[40px] sm:text-5xl lg:text-[68px] font-bold leading-[1.06] tracking-tight text-[#211F1C] mb-6">
-              Find top <span className="text-[#0F172A]">manufacturers</span> across the USA
+            <h1 className="text-3xl xs:text-[40px] sm:text-5xl lg:text-[68px] font-bold leading-[1.06] tracking-tight text-white mb-6">
+              Find top <span className="text-gradient">manufacturers</span> across the USA
             </h1>
 
-            <p className="text-lg text-[17px] leading-relaxed text-slate-600 mb-10">
-              Browse manufacturers across every USA state by category — electrical, mechanical, automotive, and more. No paid placements.
+            <p className="text-lg text-[17px] leading-relaxed text-slate-300 mb-8 max-w-2xl mx-auto">
+              Browse independent, verified manufacturers across every USA state by category — electrical, mechanical, automotive, and more. Zero paid placements.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-5">
+            <div className="flex flex-wrap justify-center gap-4">
               {[
                 { icon: CheckCircle, text: 'All 50 states covered' },
                 { icon: Shield, text: 'Zero paid rankings' },
-                { icon: Star, text: 'All 50 USA states' },
+                { icon: Star, text: 'Independent reviews' },
                 { icon: Package, text: 'Free to list' },
               ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-1.5">
+                <div key={text} className="flex items-center gap-1.5 bg-slate-800/40 border border-slate-700/50 rounded-full px-3.5 py-1">
                   <Icon className="w-3.5 h-3.5 text-gold flex-shrink-0" />
-                  <span className="text-[13px] font-medium text-slate-600">{text}</span>
+                  <span className="text-[12.5px] font-medium text-slate-300">{text}</span>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ══ DARK SEARCH BAND ══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden py-12 sm:py-16 border-b border-slate-800" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
-        <div className="grid-texture absolute inset-0 opacity-10 pointer-events-none" />
-        <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8">
-          <HeroSearch categories={CATEGORIES} states={US_STATES} />
+          {/* Unified Search form */}
+          <div className="max-w-[840px] mx-auto">
+            <HeroSearch categories={CATEGORIES} states={US_STATES} />
+          </div>
 
           {/* Popular Subcategory Chips */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 max-w-[720px] mx-auto">
-            <span className="text-[#6B7280] font-bold text-[11px] uppercase tracking-wider mr-2">Popular:</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 max-w-[760px] mx-auto">
+            <span className="text-slate-500 font-bold text-[11px] uppercase tracking-wider mr-2">Popular:</span>
             {POPULAR_SUBCATEGORIES.map((sub) => (
               <Link
                 key={sub.label}
                 href={sub.href}
-                className="text-xs text-[#9CA3AF] bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.12)] px-3 py-1.5 rounded-lg hover:text-[#D4A017] hover:border-[rgba(212,160,23,0.4)] transition-all duration-200"
+                className="text-xs text-slate-400 bg-slate-800/40 border border-slate-700/50 px-3 py-1.5 rounded-lg hover:text-[#D4A017] hover:border-[#D4A017]/45 transition-all duration-200"
               >
                 {sub.label}
               </Link>
@@ -327,16 +326,16 @@ export default function DirectoryHub({
           </div>
 
           {/* 1px divider */}
-          <div className="border-t border-[rgba(255,255,255,0.08)] my-8 max-w-[720px] mx-auto" />
+          <div className="border-t border-slate-800/60 my-10 max-w-[840px] mx-auto" />
 
           {/* Stats Row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-[720px] mx-auto text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-[840px] mx-auto text-center">
             {stats.map(({ value, label }) => (
               <div key={label} className="space-y-1">
-                <div className="text-3xl font-bold leading-none tracking-tight text-[#F9FAFB] tabular-nums">
+                <div className="text-3xl md:text-4xl font-bold leading-none tracking-tight text-white tabular-nums">
                   <AnimatedCounter value={value} />
                 </div>
-                <div className="text-xs text-[#9CA3AF] font-medium">{label}</div>
+                <div className="text-xs text-slate-400 font-medium tracking-wide uppercase">{label}</div>
               </div>
             ))}
           </div>
@@ -547,7 +546,7 @@ export default function DirectoryHub({
               </h2>
             </div>
             <span className="text-[13px] text-slate-400 font-medium">
-              50 states · 10 categories each
+              {stateCount} states · {CATEGORIES.length} categories each
             </span>
           </div>
 
