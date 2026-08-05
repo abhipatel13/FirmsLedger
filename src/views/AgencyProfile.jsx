@@ -356,18 +356,20 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
         {/* ── Services Offered (from linked categories) ────────────────────── */}
         {categories.length > 0 && (
           <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
-            <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Services Offered</h2>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={getDirectoryUrl(cat.slug)}
-                  className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3.5 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 transition-colors"
-                >
-                  <CheckCircle className="w-3.5 h-3.5 text-orange-500" />
-                  {cat.name}
-                </Link>
-              ))}
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-lg font-bold text-[#1A2E4A] shrink-0">Services Offered</h2>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={getDirectoryUrl(cat.slug)}
+                    className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3.5 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5 text-orange-500" />
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         )}

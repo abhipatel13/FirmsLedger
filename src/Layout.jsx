@@ -129,7 +129,7 @@ export default function Layout({ children }) {
           </Link>
 
           {/* Desktop nav */}
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 2 }} className="nav-desktop">
+          <nav className="hidden lg:flex items-center gap-2">
 
             {/* Browse mega-menu */}
             <div
@@ -279,9 +279,8 @@ export default function Layout({ children }) {
           <Link
             href="/search"
             aria-label="Search"
-            className="nav-desktop"
+            className="hidden lg:flex"
             style={{
-              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               width: 36,
@@ -301,9 +300,8 @@ export default function Layout({ children }) {
           {/* CTA */}
           <Link
             href="/list-your-company"
-            className="nav-desktop"
+            className="hidden lg:inline-flex"
             style={{
-              display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
               backgroundColor: '#D4A017',
@@ -330,13 +328,12 @@ export default function Layout({ children }) {
             type="button"
             onClick={() => setMobileOpen(v => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            className="nav-mobile"
+            className="lg:hidden flex"
             style={{
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               padding: 8,
-              display: 'none',
               alignItems: 'center',
               justifyContent: 'center',
               minWidth: 44,
@@ -534,14 +531,6 @@ export default function Layout({ children }) {
       </footer>
 
       <style>{`
-        @media (max-width: 1024px) {
-          .nav-desktop { display: none !important; }
-          .nav-mobile  { display: flex !important; }
-        }
-        @media (min-width: 1025px) {
-          .nav-mobile  { display: none !important; }
-          .nav-desktop { display: flex !important; }
-        }
         @media (max-width: 768px) {
           .footer-cols { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
         }

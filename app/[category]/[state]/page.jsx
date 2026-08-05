@@ -428,13 +428,13 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
   const categoryName = cat?.name || toTitleCase(category);
   const stateName    = state ? toTitleCase(state) : null;
   const { activeStates, activeEmployeeRanges } = parseFilterParams(searchParams);
-  const showStateFilter = !state; // nationwide only
+  const showStateFilter = true; // Always show state filter dropdown
   const [companies, stateCounts, stats] = await Promise.all([
     fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', 500, {
-      stateSlugs: showStateFilter ? activeStates : [],
+      stateSlugs: !state ? activeStates : [],
       employeeRanges: activeEmployeeRanges,
     }),
-    showStateFilter ? fetchStateCountsForCategory(category) : Promise.resolve([]),
+    fetchStateCountsForCategory(category),
     fetchCategoryStats(category, state || undefined),
   ]);
 
@@ -567,7 +567,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             subcategories={cat?.subcategories}
             category={category}
             currentSubcategory={null}
-            currentState={showStateFilter ? null : state}
+            currentState={state || null}
           />
 
           {/* ── Ranked list ─────────────────────────────────────── */}

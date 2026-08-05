@@ -7,7 +7,7 @@ import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory } from '@
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import { getCompanyDescription } from '@/utils';
-import StateFilterDropdown from '@/components/listing/StateFilterDropdown';
+import FilterBar from '@/components/listing/FilterBar';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +20,14 @@ const VALID_STATES = new Set(ALL_US_STATES.map((s) => s.slug));
 
 function toTitleCase(slug) {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function buildFilterQueryString(activeEmployeeRanges, page) {
+  const params = new URLSearchParams();
+  if (activeEmployeeRanges.length) params.set('employees', activeEmployeeRanges.join(','));
+  if (page > 1) params.set('page', String(page));
+  const query = params.toString();
+  return query ? `?${query}` : '';
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -92,7 +100,11 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
     permanentRedirect(target);
   }
 
-  const { page: pageParam } = await searchParams;
+  const sParams = await searchParams;
+  const pageParam = sParams?.page;
+  const employeesParam = sParams?.employees;
+  const activeEmployeeRanges = employeesParam ? String(employeesParam).split(',').filter(Boolean) : [];
+
   const cat = CATEGORY_MAP[category];
   if (!cat || !VALID_CATEGORIES.has(category)) notFound();
 
@@ -104,7 +116,9 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
 
   // Fetch companies — pass both category and subcategory for filtering
   const [companies, stateCounts] = await Promise.all([
-    fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500),
+    fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500, {
+      employeeRanges: activeEmployeeRanges,
+    }),
     fetchStateCountsForCategory(category),
   ]);
 
@@ -167,11 +181,16 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
             </div>
 
             <div style={{ margin: '20px 0 0 0' }}>
-              <StateFilterDropdown
+              <FilterBar
+                basePath={basePath}
+                activeStates={[]}
+                activeEmployeeRanges={activeEmployeeRanges}
                 stateCounts={stateCounts}
-                currentState={state}
+                showStateFilter={true}
+                subcategories={cat?.subcategories}
                 category={category}
-                subcategory={subcategory}
+                currentSubcategory={subcategory}
+                currentState={state}
               />
             </div>
           </div>
@@ -253,7 +272,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
               {totalPages > 1 && (
                 <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
                   <Link
-                    href={`${basePath}${currentPage - 1 > 1 ? `?page=${currentPage - 1}` : ''}`}
+                    href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, currentPage - 1)}`}
                     aria-disabled={currentPage === 1}
                     style={{
                       pointerEvents: currentPage === 1 ? 'none' : 'auto',
@@ -269,7 +288,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                   {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
                     <Link
                       key={n}
-                      href={`${basePath}${n > 1 ? `?page=${n}` : ''}`}
+                      href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, n)}`}
                       style={{
                         fontSize: 13, fontWeight: 600,
                         minWidth: 34, textAlign: 'center',
@@ -285,7 +304,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                   ))}
 
                   <Link
-                    href={`${basePath}?page=${currentPage + 1}`}
+                    href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, currentPage + 1)}`}
                     aria-disabled={currentPage === totalPages}
                     style={{
                       pointerEvents: currentPage === totalPages ? 'none' : 'auto',

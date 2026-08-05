@@ -154,7 +154,6 @@ function getHomepageStats(companyCount, categoryCount = FALLBACK_CATEGORY_COUNT,
       { value: totalCategories, label: 'Categories' },
       { value: totalStates, label: 'States covered' },
       { value: listedCompanies, label: 'Companies listed' },
-      { value: '50', label: 'States covered' },
     ],
     trustStats: [
       { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
@@ -282,7 +281,7 @@ export default function DirectoryHub({
               USA Manufacturer Directory
             </Badge>
 
-            <h1 className="text-[40px] sm:text-5xl lg:text-[68px] font-bold leading-[1.06] tracking-tight text-[#211F1C] mb-6">
+            <h1 className="text-3xl xs:text-[40px] sm:text-5xl lg:text-[68px] font-bold leading-[1.06] tracking-tight text-[#211F1C] mb-6">
               Find top <span className="text-[#0F172A]">manufacturers</span> across the USA
             </h1>
 
