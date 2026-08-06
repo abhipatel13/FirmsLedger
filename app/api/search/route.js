@@ -91,6 +91,9 @@ export async function GET(request) {
       review_count: companies.review_count,
       logo_url: companies.logo_url,
       is_verified: companies.is_verified,
+      website: companies.website,
+      employee_count: companies.employee_count,
+      certifications: companies.certifications,
     })
     .from(companies)
     .where(and(...conditions))

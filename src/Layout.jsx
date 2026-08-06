@@ -113,7 +113,7 @@ export default function Layout({ children }) {
         height: 72,
         transition: 'background-color 200ms ease, box-shadow 200ms ease, border-color 200ms ease',
       }}>
-        <div style={{
+        <div className="nav-container" style={{
           maxWidth: 'var(--max-width)',
           margin: '0 auto',
           padding: '0 24px',
@@ -124,7 +124,7 @@ export default function Layout({ children }) {
         }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginRight: 16 }}>
+          <Link href="/" className="nav-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginRight: 16 }}>
             <img src="/logo.svg" alt="FirmsLedger" style={{ height: 48, width: 'auto' }} />
           </Link>
 
@@ -327,7 +327,7 @@ export default function Layout({ children }) {
             type="button"
             onClick={() => setMobileOpen(v => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            className="lg:hidden flex"
+            className="lg:hidden flex nav-hamburger"
             style={{
               background: 'none',
               border: 'none',
@@ -533,6 +533,23 @@ export default function Layout({ children }) {
         }
         @media (max-width: 480px) {
           .footer-cols { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 767px) {
+          .nav-container {
+            position: relative;
+            flex-direction: row-reverse !important;
+          }
+          .nav-logo {
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            margin-right: 0 !important;
+          }
+          .nav-hamburger {
+            margin-left: 0 !important;
+            margin-right: auto !important;
+          }
         }
       `}</style>
     </div>
