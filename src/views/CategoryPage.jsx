@@ -48,10 +48,10 @@ export default function CategoryPage({ searchParams }) {
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <Link href={createPageUrl('Home')} className="hover:text-orange-600 transition-colors">Home</Link>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-900 font-semibold">{category.name}</span>
+          <div className="flex flex-nowrap items-center gap-2 text-sm text-slate-600 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <Link href={createPageUrl('Home')} className="hover:text-orange-600 transition-colors flex-shrink-0">Home</Link>
+            <ChevronRight className="w-4 h-4 text-slate-400 flex-shrink-0" />
+            <span className="text-slate-900 font-semibold flex-shrink-0">{category.name}</span>
           </div>
         </div>
       </div>

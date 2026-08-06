@@ -7,18 +7,18 @@ const SITE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.co
 
 export default function Breadcrumb({ items, dark = false }) {
   const homeClass = dark
-    ? 'flex items-center gap-1 text-slate-300 hover:text-white transition-colors'
-    : 'flex items-center gap-1 text-slate-600 hover:text-orange-600 transition-colors';
+    ? 'flex items-center gap-1 text-slate-300 hover:text-white transition-colors flex-shrink-0'
+    : 'flex items-center gap-1 text-slate-600 hover:text-orange-600 transition-colors flex-shrink-0';
 
-  const chevronClass = dark ? 'w-4 h-4 text-slate-500' : 'w-4 h-4 text-slate-400';
+  const chevronClass = dark ? 'w-4 h-4 text-slate-500 flex-shrink-0' : 'w-4 h-4 text-slate-400 flex-shrink-0';
 
   const linkClass = dark
-    ? 'text-slate-300 hover:text-white transition-colors font-medium'
-    : 'text-slate-600 hover:text-orange-600 transition-colors font-medium';
+    ? 'text-slate-300 hover:text-white transition-colors font-medium flex-shrink-0'
+    : 'text-slate-600 hover:text-orange-600 transition-colors font-medium flex-shrink-0';
 
   const currentClass = dark
-    ? 'text-white font-semibold'
-    : 'text-slate-900 font-semibold';
+    ? 'text-white font-semibold flex-shrink-0'
+    : 'text-slate-900 font-semibold flex-shrink-0';
 
   // Build BreadcrumbList JSON-LD
   const breadcrumbItems = [
@@ -41,7 +41,7 @@ export default function Breadcrumb({ items, dark = false }) {
   };
 
   return (
-    <nav className="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+    <nav className="flex items-center gap-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide flex-nowrap" aria-label="Breadcrumb">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}

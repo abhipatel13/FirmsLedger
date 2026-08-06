@@ -296,12 +296,21 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
               {/* Breadcrumb */}
-              <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
-                <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
-                <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-                <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>{cat.shortName}</Link>
-                <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{sub.name}</span>
+              <nav className="scrollbar-hide" style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: 20,
+                flexWrap: 'nowrap',
+                overflowX: 'auto',
+                whiteSpace: 'nowrap',
+                WebkitOverflowScrolling: 'touch',
+              }}>
+                <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Home</Link>
+                <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+                <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{cat.shortName}</Link>
+                <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{sub.name}</span>
               </nav>
 
               {/* Category badge */}
@@ -565,21 +574,30 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
             {/* Breadcrumb */}
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
-              <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>
+            <nav className="scrollbar-hide" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 20,
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+            }}>
+              <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>
                 Home
               </Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
               {stateName ? (
                 <>
-                  <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>
+                  <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>
                     {categoryName}
                   </Link>
-                  <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-                  <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{stateName}</span>
+                  <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+                  <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{stateName}</span>
                 </>
               ) : (
-                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{categoryName}</span>
+                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{categoryName}</span>
               )}
             </nav>
 

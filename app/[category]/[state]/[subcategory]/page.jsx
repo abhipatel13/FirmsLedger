@@ -182,14 +182,23 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
           <div style={{ maxWidth: 1152, margin: '0 auto', padding: '40px 24px 36px' }}>
 
             {/* Breadcrumb */}
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
-              <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <Link href={`/${category}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>{cat.shortName}</Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>{sub.name}</span>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <Link href={`/${category}/${state}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>{stateName}</Link>
+            <nav className="scrollbar-hide" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 20,
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+            }}>
+              <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Home</Link>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <Link href={`/${category}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{cat.shortName}</Link>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, flexShrink: 0 }}>{sub.name}</span>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <Link href={`/${category}/${state}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{stateName}</Link>
             </nav>
 
             {/* Category badge */}
