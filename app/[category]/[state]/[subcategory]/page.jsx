@@ -129,7 +129,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home',            item: _BASE },
       { '@type': 'ListItem', position: 2, name: cat.shortName,     item: `${_BASE}/${category}` },
-      { '@type': 'ListItem', position: 3, name: sub.name,          item: `${_BASE}/${category}/${subcategory}/${state}` },
+      { '@type': 'ListItem', position: 3, name: sub.name,          item: `${_BASE}/${category}/${subcategory}` },
       { '@type': 'ListItem', position: 4, name: stateName,         item: `${_BASE}/${category}/${subcategory}/${state}` },
     ],
   };
