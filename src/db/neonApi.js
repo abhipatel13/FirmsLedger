@@ -25,6 +25,7 @@ import {
 } from './schema';
 import { eq, and, inArray, isNull, gt, asc, desc, ilike, sql } from 'drizzle-orm';
 import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
+import { cache } from 'react';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -176,7 +177,7 @@ async function resolveCategoryCompanyIds(categorySlug) {
  * Fetch companies by category slug, with optional state slug filter.
  * Used by /top/[category]/[state] page.
  */
-export async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, filters = {}) {
+export const fetchCompaniesByCategoryAndState = cache(async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, filters = {}) {
   const companyIds = await resolveCategoryCompanyIds(categorySlug);
   if (!companyIds.length) return [];
 
@@ -212,7 +213,7 @@ export async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, 
   }
 
   return rows;
-}
+});
 
 /**
  * Returns per-state result counts for a category, for the filter sidebar.
@@ -247,7 +248,7 @@ export async function fetchStateCountsForCategory(categorySlug) {
  * Returns live-computed stats for a category (+ optionally state) listing page.
  * No hourly-rate field — deliberately absent (no such data exists).
  */
-export async function fetchCategoryStats(categorySlug, stateSlug = null) {
+export const fetchCategoryStats = cache(async function fetchCategoryStats(categorySlug, stateSlug = null) {
   const companyIds = await resolveCategoryCompanyIds(categorySlug);
   if (!companyIds.length) {
     return { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] };
@@ -309,7 +310,7 @@ export async function fetchCategoryStats(categorySlug, stateSlug = null) {
     .map(([cert]) => cert);
 
   return { verifiedCount, totalCount, medianRating, statesCovered, topSpecialties };
-}
+});
 
 /** @deprecated Use fetchCompaniesByCategoryAndState instead */
 export async function fetchCompaniesByCategory(categorySlug, orderKey = '-avg_rating', limit = 200) {
@@ -322,7 +323,7 @@ export async function fetchCompanyById(id) {
   return row ?? null;
 }
 
-export async function fetchCompanyByIdAny(idOrSlug) {
+export const fetchCompanyByIdAny = cache(async function fetchCompanyByIdAny(idOrSlug) {
   if (!idOrSlug) return null;
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -341,7 +342,7 @@ export async function fetchCompanyByIdAny(idOrSlug) {
     .where(and(eq(companies.slug, idOrSlug), eq(companies.approved, true)))
     .limit(1);
   return row ?? null;
-}
+});
 
 /**
  * Create a company. Pass hq_state_slug (e.g. 'california') and we resolve it

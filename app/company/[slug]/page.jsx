@@ -5,6 +5,7 @@ import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
 import { getCompanyDescription } from '@/utils';
+import { ALL_US_STATES } from '@/lib/usStates';
 import {
   fetchCompanyByIdAny,
   fetchReviews,
@@ -110,14 +111,44 @@ export default async function CompanyProfilePage({ params }) {
       }
     : null;
 
+  const breadcrumbItems = [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE }
+  ];
+
+  const primaryCategory = companyCategories?.[0];
+  const stateObj = company?.hq_state_label ? ALL_US_STATES.find(s => s.name === company.hq_state_label) : null;
+
+  let currentPos = 2;
+  if (primaryCategory) {
+    breadcrumbItems.push({
+      '@type': 'ListItem',
+      position: currentPos++,
+      name: primaryCategory.name,
+      item: `${_BASE}/${primaryCategory.slug}`
+    });
+    
+    if (stateObj) {
+      breadcrumbItems.push({
+        '@type': 'ListItem',
+        position: currentPos++,
+        name: `${primaryCategory.name} in ${stateObj.name}`,
+        item: `${_BASE}/${primaryCategory.slug}/${stateObj.slug}`
+      });
+    }
+  }
+
+  breadcrumbItems.push({
+    '@type': 'ListItem',
+    position: currentPos,
+    name: company.name,
+    item: profileUrl
+  });
+
   const breadcrumbJsonLd = company
     ? {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE },
-          { '@type': 'ListItem', position: 2, name: company.name, item: profileUrl },
-        ],
+        itemListElement: breadcrumbItems,
       }
     : null;
 

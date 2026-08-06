@@ -252,9 +252,7 @@ export default function DirectoryHub({
   popularSearches = [],
 }) {
   const [selectedState, setSelectedState] = useState('california');
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const activeState = US_STATES.find((s) => s.slug === selectedState);
-  const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, CATEGORIES_PREVIEW_COUNT);
   const { stats, trustStats } = getHomepageStats(companyCount, categoryCount, stateCount);
 
   const [categoriesRef, categoriesVisible] = useFadeInOnScroll();
@@ -359,7 +357,7 @@ export default function DirectoryHub({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {visibleCategories.map((cat) => {
+            {CATEGORIES.map((cat) => {
               const visuals = visualsFor(cat.slug);
               const Icon = visuals?.icon || Package;
               const tw = visuals?.tw || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' };
@@ -394,19 +392,6 @@ export default function DirectoryHub({
               );
             })}
           </div>
-
-          {CATEGORIES.length > CATEGORIES_PREVIEW_COUNT && (
-            <div className="text-center mt-8">
-              <button
-                type="button"
-                onClick={() => setShowAllCategories((v) => !v)}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A2E4A] border border-slate-300 rounded-full px-5 py-2.5 hover:border-slate-400 hover:bg-white transition-colors"
-              >
-                {showAllCategories ? 'Show less' : `View more categories (${CATEGORIES.length - CATEGORIES_PREVIEW_COUNT})`}
-                <ArrowRight className={cn('w-3.5 h-3.5 transition-transform', showAllCategories && 'rotate-90')} />
-              </button>
-            </div>
-          )}
 
           {/* ── Popular Searches Section ── */}
           {popularSearches && popularSearches.length > 0 && (
@@ -584,20 +569,19 @@ export default function DirectoryHub({
                 {US_STATES.map((state) => {
                   const active = selectedState === state.slug;
                   return (
-                    <button
+                    <Link
                       key={state.slug}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => setSelectedState(state.slug)}
+                      href={`/states/${state.slug}`}
+                      onMouseEnter={() => setSelectedState(state.slug)}
                       className={cn(
-                        'flex w-full text-left px-5 py-2 text-[13.5px] leading-tight border-l-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A2E4A] focus-visible:ring-inset',
+                        'flex w-full text-left px-5 py-2 text-[13.5px] leading-tight border-l-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A2E4A] focus-visible:ring-inset no-underline',
                         active
                           ? 'bg-white text-[#211F1C] font-semibold border-l-[#D4A017]'
                           : 'text-slate-500 font-normal border-l-transparent hover:bg-white/60 hover:text-slate-800'
                       )}
                     >
                       {state.name}
-                    </button>
+                    </Link>
                   );
                 })}
               </div>

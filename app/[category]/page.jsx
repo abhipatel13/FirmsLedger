@@ -6,8 +6,6 @@ import { renderCategoryPage, topN } from './[state]/page';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata({ params }) {
   const { category: slug } = await params;
   const cat = CATEGORY_MAP[slug];

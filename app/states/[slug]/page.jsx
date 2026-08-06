@@ -111,6 +111,16 @@ export default async function StateHubPage({ params }) {
     provider: { '@type': 'Organization', name: SITE_NAME, url: _BASE },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE },
+      { '@type': 'ListItem', position: 2, name: 'States', item: `${_BASE}/#states` },
+      { '@type': 'ListItem', position: 3, name: state.name, item: `${_BASE}/states/${slug}` },
+    ],
+  };
+
   const otherStates = ALL_STATES.filter((s) => s.slug !== slug).slice(0, 24);
 
   return (
@@ -119,6 +129,7 @@ export default async function StateHubPage({ params }) {
         .state-pill:hover { border-color: #94a3b8 !important; color: #0f172a !important; }
       `}</style>
       <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
 
       <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 

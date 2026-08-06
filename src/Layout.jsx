@@ -162,94 +162,93 @@ export default function Layout({ children }) {
               </button>
 
               {/* Mega-menu panel */}
-              {browseOpen && (
-                <div
-                  className="animate-slide-down"
-                  style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 8px)',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: 16,
-                    boxShadow: '0 16px 48px -8px rgba(15,23,42,0.12), 0 4px 16px -4px rgba(15,23,42,0.06)',
-                    width: 560,
-                    padding: 16,
-                    zIndex: 100,
-                  }}
-                >
-                  <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#94a3b8', margin: '0 8px 12px', fontFamily: 'inherit' }}>
-                    Manufacturing Categories
-                  </p>
+              <div
+                className="animate-slide-down"
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 16,
+                  boxShadow: '0 16px 48px -8px rgba(15,23,42,0.12), 0 4px 16px -4px rgba(15,23,42,0.06)',
+                  width: 560,
+                  padding: 16,
+                  zIndex: 100,
+                  display: browseOpen ? 'block' : 'none',
+                }}
+              >
+                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#94a3b8', margin: '0 8px 12px', fontFamily: 'inherit' }}>
+                  Manufacturing Categories
+                </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                    {NAV_CATEGORIES.map((cat) => {
-                      const visuals = visualsFor(cat.slug);
-                      const Icon = visuals?.icon || Zap;
-                      const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
-                      return (
-                        <Link
-                          key={cat.slug}
-                          href={`/${cat.slug}`}
-                          onClick={() => setBrowseOpen(false)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: 10,
-                            padding: '8px 10px',
-                            borderRadius: 8,
-                            textDecoration: 'none',
-                            transition: 'background 0.1s',
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                        >
-                          <span style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: 8,
-                            backgroundColor: hex.bg,
-                            border: `1px solid ${hex.border}`,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}>
-                            <Icon size={14} color={hex.color} strokeWidth={2} />
-                          </span>
-                          <div style={{ minWidth: 0 }}>
-                            <p style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', margin: 0, lineHeight: 1.3 }}>{cat.name}</p>
-                            <p style={{ fontSize: 11.5, color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.3 }}>{cat.desc}</p>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-
-                  <div style={{ borderTop: '1px solid #f1f5f9', marginTop: 12, paddingTop: 12 }}>
-                    <Link
-                      href="/browse"
-                      onClick={() => setBrowseOpen(false)}
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 500,
-                        color: '#0F172A',
-                        textDecoration: 'none',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        padding: '4px 10px',
-                        borderRadius: 6,
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-                    >
-                      Browse all categories <ArrowRight size={12} />
-                    </Link>
-                  </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                  {NAV_CATEGORIES.map((cat) => {
+                    const visuals = visualsFor(cat.slug);
+                    const Icon = visuals?.icon || Zap;
+                    const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
+                    return (
+                      <Link
+                        key={cat.slug}
+                        href={`/${cat.slug}`}
+                        onClick={() => setBrowseOpen(false)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 10,
+                          padding: '8px 10px',
+                          borderRadius: 8,
+                          textDecoration: 'none',
+                          transition: 'background 0.1s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                      >
+                        <span style={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: 8,
+                          backgroundColor: hex.bg,
+                          border: `1px solid ${hex.border}`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}>
+                          <Icon size={14} color={hex.color} strokeWidth={2} />
+                        </span>
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', margin: 0, lineHeight: 1.3 }}>{cat.name}</p>
+                          <p style={{ fontSize: 11.5, color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.3 }}>{cat.desc}</p>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
-              )}
+
+                <div style={{ borderTop: '1px solid #f1f5f9', marginTop: 12, paddingTop: 12 }}>
+                  <Link
+                    href="/browse"
+                    onClick={() => setBrowseOpen(false)}
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: '#0F172A',
+                      textDecoration: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      padding: '4px 10px',
+                      borderRadius: 6,
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                  >
+                    Browse all categories <ArrowRight size={12} />
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* Contact */}
@@ -347,119 +346,117 @@ export default function Layout({ children }) {
         </div>
 
         {/* Mobile menu */}
-        {mobileOpen && (
-          <div style={{
-            backgroundColor: '#ffffff',
-            borderTop: '1px solid #e2e8f0',
-            padding: '8px 16px 20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1,
-            maxHeight: '80vh',
-            overflowY: 'auto',
-          }}>
+        <div style={{
+          backgroundColor: '#ffffff',
+          borderTop: '1px solid #e2e8f0',
+          padding: '8px 16px 20px',
+          display: mobileOpen ? 'flex' : 'none',
+          flexDirection: 'column',
+          gap: 1,
+          maxHeight: '80vh',
+          overflowY: 'auto',
+        }}>
 
-            {/* Mobile search bar */}
-            <Link
-              href="/search"
-              onClick={() => setMobileOpen(false)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                padding: '10px 12px',
-                borderRadius: 8,
-                textDecoration: 'none',
-                backgroundColor: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                marginBottom: 8,
-                marginTop: 8,
-              }}
-            >
-              <Search size={16} style={{ color: '#94a3b8', flexShrink: 0 }} />
-              <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 400 }}>Search manufacturers...</span>
-            </Link>
+          {/* Mobile search bar */}
+          <Link
+            href="/search"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '10px 12px',
+              borderRadius: 8,
+              textDecoration: 'none',
+              backgroundColor: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+          >
+            <Search size={16} style={{ color: '#94a3b8', flexShrink: 0 }} />
+            <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 400 }}>Search manufacturers...</span>
+          </Link>
 
-            <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', padding: '8px 12px 4px', margin: 0 }}>
-              Categories
-            </p>
-             {NAV_CATEGORIES.map(({ slug, name }) => {
-              const visuals = visualsFor(slug);
-              const Icon = visuals?.icon || Zap;
-              const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
-              return (
-                <Link
-                  key={slug}
-                  href={`/${slug}`}
-                  onClick={() => setMobileOpen(false)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: '#0f172a',
-                    textDecoration: 'none',
-                    padding: '9px 12px',
-                    borderRadius: 8,
-                    transition: 'background 0.1s',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                >
-                  <span style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: 7,
-                    backgroundColor: hex.bg,
-                    border: `1px solid ${hex.border}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <Icon size={13} color={hex.color} strokeWidth={2} />
-                  </span>
-                  {name}
-                </Link>
-              );
-            })}
-
-            <div style={{ borderTop: '1px solid #e2e8f0', margin: '8px 0', paddingTop: 8 }}>
+          <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', padding: '8px 12px 4px', margin: 0 }}>
+            Categories
+          </p>
+           {NAV_CATEGORIES.map(({ slug, name }) => {
+            const visuals = visualsFor(slug);
+            const Icon = visuals?.icon || Zap;
+            const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
+            return (
               <Link
-                href="/contact"
-                onClick={() => setMobileOpen(false)}
-                style={{ display: 'block', fontSize: 14, fontWeight: 500, color: '#475569', textDecoration: 'none', padding: '9px 12px', borderRadius: 8 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-              >
-                Contact
-              </Link>
-            </div>
-
-            <div style={{ marginTop: 4 }}>
-              <Link
-                href="/list-your-company"
+                key={slug}
+                href={`/${slug}`}
                 onClick={() => setMobileOpen(false)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#D4A017',
-                  color: '#0F172A',
-                  borderRadius: 9999,
-                  padding: '12px 20px',
+                  gap: 10,
                   fontSize: 14,
-                  fontWeight: 600,
+                  fontWeight: 500,
+                  color: '#0f172a',
                   textDecoration: 'none',
-                  fontFamily: 'inherit',
+                  padding: '9px 12px',
+                  borderRadius: 8,
+                  transition: 'background 0.1s',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
-                List Your Company
+                <span style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 7,
+                  backgroundColor: hex.bg,
+                  border: `1px solid ${hex.border}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <Icon size={13} color={hex.color} strokeWidth={2} />
+                </span>
+                {name}
               </Link>
-            </div>
+            );
+          })}
+
+          <div style={{ borderTop: '1px solid #e2e8f0', margin: '8px 0', paddingTop: 8 }}>
+            <Link
+              href="/contact"
+              onClick={() => setMobileOpen(false)}
+              style={{ display: 'block', fontSize: 14, fontWeight: 500, color: '#475569', textDecoration: 'none', padding: '9px 12px', borderRadius: 8 }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              Contact
+            </Link>
           </div>
-        )}
+
+          <div style={{ marginTop: 4 }}>
+            <Link
+              href="/list-your-company"
+              onClick={() => setMobileOpen(false)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#D4A017',
+                color: '#0F172A',
+                borderRadius: 9999,
+                padding: '12px 20px',
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: 'none',
+                fontFamily: 'inherit',
+              }}
+            >
+              List Your Company
+            </Link>
+          </div>
+        </div>
       </header>
 
       {/* Main content */}

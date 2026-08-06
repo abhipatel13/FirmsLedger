@@ -35,17 +35,42 @@ function buildFilterQueryString(activeEmployeeRanges, page) {
   return query ? `?${query}` : '';
 }
 
+function paginationRange(current, total) {
+  const delta = 3;
+  const range = [];
+  const withDots = [];
+  let prev;
+
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+      range.push(i);
+    }
+  }
+
+  for (const i of range) {
+    if (prev !== undefined) {
+      if (i - prev === 2) withDots.push(prev + 1);
+      else if (i - prev > 2) withDots.push('…');
+    }
+    withDots.push(i);
+    prev = i;
+  }
+
+  return withDots;
+}
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params, searchParams }) {
   const { category, state: subcategory, subcategory: state } = await params;
+  const sParams = (await searchParams) || {};
+  const { page: pageParam } = sParams;
 
   if (
     VALID_STATES.has(category) &&
     VALID_CATEGORIES.has(subcategory) &&
     CATEGORY_MAP[subcategory]?.subcategories.some((s) => s.slug === state)
   ) {
-    const sParams = await searchParams;
     const query = new URLSearchParams(sParams).toString();
     const target = query ? `/${subcategory}/${state}/${category}?${query}` : `/${subcategory}/${state}/${category}`;
     permanentRedirect(target);
@@ -57,16 +82,28 @@ export async function generateMetadata({ params, searchParams }) {
   const sub = cat.subcategories.find((s) => s.slug === subcategory);
   const subName  = sub?.name || toTitleCase(subcategory);
   const stateName = toTitleCase(state);
+  
+  // Fetch matching companies to clamp page number correctly
+  const companies = await fetchCompaniesByCategoryAndState(subcategory, state, '-avg_rating', 500);
+  const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
+  const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+  
+  const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
+  const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
+
+  const title = clampedPage > 1
+    ? `${subName} in ${stateName}${pageSuffix}`
+    : `Top ${topN(companies.length)} ${subName} Manufacturers in ${stateName}`;
+    
   const stats = await fetchCategoryStats(subcategory, state);
-  const title = `Top ${topN(stats.totalCount)} ${subName} Manufacturers in ${stateName}`;
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
-  const canonical = `${_BASE}/${category}/${subcategory}/${state}`;
+  const canonical = `${_BASE}/${category}/${subcategory}/${state}${pageQuery}`;
 
   return {
     title,
     description,
     alternates: { canonical },
-    robots: { index: true, follow: true },
+    robots: (clampedPage > 1 || companies.length < 5) ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: { title, description, type: 'website', url: canonical },
   };
 }
@@ -233,23 +270,28 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                     ← Prev
                   </Link>
 
-                  {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
-                    <Link
-                      key={n}
-                      href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, n)}`}
-                      style={{
-                        fontSize: 13, fontWeight: 600,
-                        minWidth: 34, textAlign: 'center',
-                        padding: '8px 10px', borderRadius: 8,
-                        textDecoration: 'none',
-                        color: n === currentPage ? '#ffffff' : '#475569',
-                        backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
-                        border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                      }}
-                    >
-                      {n}
-                    </Link>
-                  ))}
+                  {paginationRange(currentPage, totalPages).map((n, i) =>
+                    n === '…' ? (
+                      <span key={`dots-${i}`} style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>…</span>
+                    ) : (
+                      <Link
+                        key={n}
+                        href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, n)}`}
+                        aria-current={n === currentPage ? 'page' : undefined}
+                        style={{
+                          fontSize: 13, fontWeight: 600,
+                          minWidth: 34, textAlign: 'center',
+                          padding: '8px 10px', borderRadius: 8,
+                          textDecoration: 'none',
+                          color: n === currentPage ? '#ffffff' : '#475569',
+                          backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
+                          border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
+                        }}
+                      >
+                        {n}
+                      </Link>
+                    )
+                  )}
 
                   <Link
                     href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, currentPage + 1)}`}

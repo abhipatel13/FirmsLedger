@@ -9,7 +9,7 @@ import { Search, ChevronRight, ArrowRight, Grid3X3, List, X } from 'lucide-react
 import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
 import { pickCategoryIcon, colorFor } from '@/lib/categoryIcon';
 
-export default function Categories() {
+export default function Categories({ initialCategories }) {
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [expandedIds, setExpandedIds] = useState(new Set());
@@ -17,6 +17,7 @@ export default function Categories() {
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: () => api.entities.Category.list(),
+    initialData: initialCategories ?? undefined,
   });
 
   const { parentCategories, standaloneCategories } = useMemo(() => {
