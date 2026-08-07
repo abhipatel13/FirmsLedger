@@ -8,12 +8,7 @@ export default function robots() {
         allow: '/',
         disallow: [
           '/admin',
-          '/AdminDashboard',
-          '/AgencyDashboard',
-          '/AgencyProfile',
-          '/InviteAgency',
           '/api/',
-          '/join',
         ],
       },
     ],

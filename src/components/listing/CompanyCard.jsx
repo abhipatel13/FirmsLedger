@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { CheckCircle, MapPin, Star, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -57,13 +58,11 @@ export default function CompanyCard({ company, rank }) {
 
               {/* Logo */}
               {company.logo_url ? (
-                <img
+                <Image
                   src={company.logo_url}
                   alt={`${company.name} logo`}
                   width={72}
                   height={72}
-                  loading="lazy"
-                  decoding="async"
                   className="size-14 sm:size-[72px] shrink-0 rounded-xl border border-slate-200 bg-white object-contain"
                 />
               ) : (

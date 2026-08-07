@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { toast } from 'sonner';
 import {
   CheckCircle, Building2, Shield, ArrowRight, Crown,
@@ -199,7 +200,7 @@ function ClaimListingContent() {
                 {agency && (
                   <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
                     {agency.logo_url ? (
-                      <img src={agency.logo_url} alt={agency.name} className="w-12 h-12 rounded-lg object-contain border border-slate-100" />
+                      <Image src={agency.logo_url} alt={agency.name} width={48} height={48} className="w-12 h-12 rounded-lg object-contain border border-slate-100" />
                     ) : (
                       <div className="w-12 h-12 bg-[#1A2E4A] rounded-lg flex items-center justify-center">
                         <span className="text-lg font-bold text-orange-400">{agency.name?.charAt(0)}</span>

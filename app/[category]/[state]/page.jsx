@@ -8,9 +8,15 @@ import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY
 import { ALL_US_STATES } from '@/lib/usStates';
 import CompanyCard from '@/components/listing/CompanyCard';
 import FilterBar from '@/components/listing/FilterBar';
-import StatsBand from '@/components/listing/StatsBand';
 import OtherCategoriesCard from '@/components/listing/OtherCategoriesCard';
 import { getCompanyDescription } from '@/utils';
+import {
+  generateDynamicCategoryStateMetaDescription,
+  generateDynamicCategoryStateAboveFoldText,
+  generateDynamicCategoryStateOnPageText,
+  generateCategoryStateFAQs,
+  getNeighboringStates
+} from '@/lib/seoDescription';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,7 +82,7 @@ function buildFilterQueryString(activeStates, activeEmployeeRanges, page) {
  * instead of rendering every page number (unusable once totalPages is large).
  */
 function paginationRange(current, total) {
-  const delta = 1;
+  const delta = 3;
   const range = [];
   const withDots = [];
   let prev;
@@ -103,13 +109,11 @@ function paginationRange(current, total) {
 
 export async function generateMetadata({ params, searchParams }) {
   const { category, state } = await params;
-  const { page: pageParam } = (await searchParams) || {};
-  const page = parseInt(pageParam, 10) || 1;
-  const pageSuffix = page > 1 ? ` — Page ${page}` : '';
-  const pageQuery = page > 1 ? `?page=${page}` : '';
+  const sParams = (await searchParams) || {};
+  const { page: pageParam } = sParams;
+  const { activeStates, activeEmployeeRanges } = parseFilterParams(sParams);
 
   if (VALID_STATES.has(category) && VALID_CATEGORIES.has(state)) {
-    const sParams = await searchParams;
     const query = new URLSearchParams(sParams).toString();
     const target = query ? `/${state}/${category}?${query}` : `/${state}/${category}`;
     permanentRedirect(target);
@@ -123,10 +127,26 @@ export async function generateMetadata({ params, searchParams }) {
   if (ALL_SUBCATEGORY_SLUGS.has(state)) {
     const sub = cat?.subcategories.find((s) => s.slug === state);
     const subName = sub?.name || toTitleCase(state);
+    
+    // Fetch matching companies to clamp page number correctly
+    const companies = await fetchCompaniesByCategoryAndState(category, null, '-avg_rating', 500, {
+      stateSlugs: activeStates,
+      employeeRanges: activeEmployeeRanges,
+    });
+    
+    const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
+    const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+    
+    const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
+    const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
+
+    const title = clampedPage > 1
+      ? `${subName} — US Directory${pageSuffix}`
+      : `Top ${topN(companies.length)} ${subName} Manufacturers in the US`;
+      
+    // Fetch stats using cache
     const stats = await fetchCategoryStats(category);
-    const title = page > 1
-      ? `${subName} Manufacturers — All 50 US States${pageSuffix}`
-      : `Top ${topN(stats.totalCount)} ${subName} Manufacturers in the US`;
+    
     const description = stats.totalCount > 0
       ? `Browse ${stats.totalCount} ${subName.toLowerCase()} manufacturers across the US. Compare capabilities, location, and company size. Part of the ${cat?.name} directory on FirmsLedger.`
       : `Find ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare companies. Part of the ${cat?.name} directory on FirmsLedger.`;
@@ -143,20 +163,45 @@ export async function generateMetadata({ params, searchParams }) {
   // State listing
   const categoryName = cat?.name || toTitleCase(category);
   const stateName    = toTitleCase(state);
-  const stats        = await fetchCategoryStats(category, state);
-  const title        = page > 1
-    ? `${categoryName} in ${stateName}${pageSuffix}`
-    : `Top ${topN(stats.totalCount)} ${categoryName} in ${stateName}`;
-  const description  = stats.totalCount > 0
-    ? `Browse ${stats.totalCount} ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare capabilities, location, and company size. No paid placements.`
-    : `Find ${cat?.noun || categoryName.toLowerCase()} in ${stateName}. Compare companies by location, size, and specialization. No paid placements.`;
+  
+  // Fetch matching companies to clamp page number correctly
+  const companies = await fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', 500, {
+    stateSlugs: !state ? activeStates : [],
+    employeeRanges: activeEmployeeRanges,
+  });
+  
+  const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
+  const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+  
+  const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
+  const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
+
+  const shortCatName = cat?.shortName || categoryName;
+  const title = clampedPage > 1
+    ? `${shortCatName} in ${stateName}${pageSuffix}`
+    : `Top ${topN(companies.length)} ${shortCatName} in ${stateName}`;
+    
+  // Fetch stats using cache
+  const stats = await fetchCategoryStats(category, state);
+
+  const description = state
+    ? generateDynamicCategoryStateMetaDescription({
+        categorySlug: category,
+        categoryName: shortCatName,
+        stateSlug: state,
+        stateName,
+        totalCount: stats.totalCount || companies.length,
+      })
+    : stats.totalCount > 0
+      ? `Browse ${stats.totalCount} ${cat?.noun || categoryName.toLowerCase()} in the US. Compare capabilities, location, and company size. No paid placements.`
+      : `Find ${cat?.noun || categoryName.toLowerCase()} in the US. Compare companies by location, size, and specialization. No paid placements.`;
   const canonical    = `${_BASE}/${category}/${state}${pageQuery}`;
 
   return {
     title,
     description,
     alternates: { canonical },
-    robots: page > 1 ? { index: false, follow: true } : undefined,
+    robots: (clampedPage > 1 || companies.length < 5) ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: { title, description, type: 'website', url: canonical },
   };
 }
@@ -250,12 +295,21 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
               {/* Breadcrumb */}
-              <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
-                <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
-                <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-                <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>{cat.shortName}</Link>
-                <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{sub.name}</span>
+              <nav className="scrollbar-hide" style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: 20,
+                flexWrap: 'nowrap',
+                overflowX: 'auto',
+                whiteSpace: 'nowrap',
+                WebkitOverflowScrolling: 'touch',
+              }}>
+                <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Home</Link>
+                <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+                <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{cat.shortName}</Link>
+                <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{sub.name}</span>
               </nav>
 
               {/* Category badge */}
@@ -263,7 +317,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 <span style={{ fontSize: 11, fontWeight: 700, color: cat.accentText, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{cat.shortName}</span>
               </div>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
                 <div>
                   <h1 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: 10, marginTop: 0 }}>
                     {pageTitle}
@@ -272,16 +326,35 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     Grouped by category and location. Updated monthly.
                   </p>
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
-                  <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>total listings</span>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  backgroundColor: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 9999,
+                  padding: '8px 16px',
+                  boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
+                  flexShrink: 0,
+                  gap: 14,
+                  height: 'fit-content'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.totalCount}</span>
+                    <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>listings</span>
+                  </div>
+                  {stats?.statesCovered > 0 && (
+                    <>
+                      <div style={{ width: 1, height: 16, backgroundColor: '#cbd5e1' }} />
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                        <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.statesCovered}</span>
+                        <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>states</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-
-          {/* ── Stats strip ── */}
-          <StatsBand stats={stats} categoryNoun={cat?.noun || 'manufacturers'} stateName={null} showStatesCovered />
 
           {/* ── Content ── */}
           <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
@@ -444,8 +517,8 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
   if (state && companies.length === 0) notFound();
 
   const pageTitle    = stateName
-    ? `Top ${topN(companies.length)} ${categoryName} in ${stateName}`
-    : `Top ${topN(companies.length)} ${categoryName} in the US`;
+    ? `Top ${topN(companies.length)} ${cat?.shortName || categoryName} in ${stateName}`
+    : `Top ${topN(companies.length)} ${cat?.shortName || categoryName} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
   const totalPages   = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
@@ -482,10 +555,35 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     itemListElement: breadcrumbItems,
   };
 
+  const faqJsonLd = state
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: generateCategoryStateFAQs({
+          categorySlug: category,
+          categoryName: cat?.shortName || categoryName,
+          stateSlug: state,
+          stateName,
+          totalCount: companies.length,
+          verifiedCount: stats.verifiedCount,
+          medianRating: stats.medianRating,
+          topSpecialties: stats.topSpecialties,
+        }).map((faq) => ({
+          '@type': 'Question',
+          name: faq.q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.a,
+          },
+        })),
+      }
+    : null;
+
   return (
     <>
       <JsonLd data={itemListJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
 
       <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
@@ -494,21 +592,30 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
             {/* Breadcrumb */}
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
-              <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>
+            <nav className="scrollbar-hide" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 20,
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+            }}>
+              <Link href="/" className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>
                 Home
               </Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
               {stateName ? (
                 <>
-                  <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>
+                  <Link href={`/${category}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>
                     {categoryName}
                   </Link>
-                  <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-                  <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{stateName}</span>
+                  <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+                  <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{stateName}</span>
                 </>
               ) : (
-                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{categoryName}</span>
+                <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{categoryName}</span>
               )}
             </nav>
 
@@ -526,7 +633,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{categoryName}</span>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <h1 style={{
                   fontSize: 'clamp(28px, 4vw, 44px)',
@@ -539,20 +646,51 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 }}>
                   {pageTitle}
                 </h1>
-                <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  Grouped by category and location. Updated monthly.
-                </p>
+                {state ? (
+                  <p style={{ fontSize: 14, color: '#475569', margin: 0, lineHeight: 1.6, maxWidth: 640 }}>
+                    {generateDynamicCategoryStateAboveFoldText({
+                      categorySlug: category,
+                      categoryName: cat?.shortName || categoryName,
+                      stateSlug: state,
+                      stateName,
+                      totalCount: companies.length
+                    })}
+                  </p>
+                ) : (
+                  <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
+                    Grouped by category and location. Updated monthly.
+                  </p>
+                )}
               </div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
-                <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>total listings</span>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: 9999,
+                padding: '8px 16px',
+                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
+                flexShrink: 0,
+                gap: 14,
+                height: 'fit-content'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.totalCount}</span>
+                  <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>listings</span>
+                </div>
+                {!stateName && stats?.statesCovered > 0 && (
+                  <>
+                    <div style={{ width: 1, height: 16, backgroundColor: '#cbd5e1' }} />
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.statesCovered}</span>
+                      <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>states</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
-
-        {/* ── Stats strip ── */}
-        <StatsBand stats={stats} categoryNoun={cat?.noun || categoryName.toLowerCase()} stateName={stateName} showStatesCovered={!stateName} />
 
         {/* ── Content ─────────────────────────────────────────────── */}
         <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
@@ -585,7 +723,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             )}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <h2 style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
-                All {categoryName}{stateName ? ` in ${stateName}` : ' in the US'}
+                All {cat?.shortName || categoryName}{stateName ? ` in ${stateName}` : ' in the US'}
               </h2>
               <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>Sorted by rating</p>
             </div>
@@ -699,36 +837,60 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               stateName={stateName}
             />
 
-            {!showStateFilter ? (
-              <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18, marginTop: 14 }}>
+            {/* Browse by Specialty in State */}
+            {stateName && cat?.subcategories && cat.subcategories.length > 0 && (
+              <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18, marginTop: 14 }}>
                 <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Top States
+                  Browse {cat.shortName || categoryName} in {stateName} by Specialty
                 </h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {TOP_STATES.map((s) => (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px 16px' }}>
+                  {cat.subcategories.map((sub) => (
                     <Link
-                      key={s.slug}
-                      href={`/${category}/${s.slug}`}
+                      key={sub.slug}
+                      href={`/${category}/${sub.slug}/${state}`}
+                      className="specialty-link"
                       style={{
-                        fontSize: 12,
-                        fontWeight: 500,
-                        padding: '5px 10px',
-                        borderRadius: 9999,
-                        border: '1px solid',
+                        fontSize: 13,
+                        color: '#475569',
                         textDecoration: 'none',
-                        transition: 'all 0.12s',
-                        borderColor: s.slug === state ? '#1A2E4A' : '#e2e8f0',
-                        backgroundColor: s.slug === state ? '#1A2E4A' : '#ffffff',
-                        color: s.slug === state ? '#ffffff' : '#475569',
+                        transition: 'color 0.12s',
                       }}
-                      className={`sidebar-state-pill${s.slug === state ? ' active' : ''}`}
                     >
-                      {s.name}
+                      {sub.name} in {stateName}
                     </Link>
                   ))}
                 </div>
               </div>
-            ) : null}
+            )}
+
+            <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18, marginTop: 14 }}>
+              <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Top States
+              </h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {TOP_STATES.map((s) => (
+                  <Link
+                    key={s.slug}
+                    href={`/${category}/${s.slug}`}
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 500,
+                      padding: '5px 10px',
+                      borderRadius: 9999,
+                      border: '1px solid',
+                      textDecoration: 'none',
+                      transition: 'all 0.12s',
+                      borderColor: s.slug === state ? '#1A2E4A' : '#e2e8f0',
+                      backgroundColor: s.slug === state ? '#1A2E4A' : '#ffffff',
+                      color: s.slug === state ? '#ffffff' : '#475569',
+                    }}
+                    className={`sidebar-state-pill${s.slug === state ? ' active' : ''}`}
+                  >
+                    {s.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             {/* CTA */}
             <div style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)', borderRadius: 12, padding: 20, marginTop: 14 }}>
@@ -759,10 +921,12 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           </div>
         </div>
 
-        {/* ── Category description (nationwide category page only) ── */}
-        {!stateName && cat?.longDescription && (
-          <section style={{ backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', paddingTop: 48, paddingBottom: 48 }} className="px-6 lg:px-8">
+        {/* ── Category description / FAQ / Related Links (rendered on both nationwide and state pages) ── */}
+        {((!stateName && cat?.longDescription) || (stateName && companies.length > 0)) && (
+          <section style={{ backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', paddingTop: 48, paddingBottom: 64 }} className="px-6 lg:px-8">
             <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              
+              {/* Main description card */}
               <div style={{
                 backgroundColor: '#ffffff',
                 border: '1px solid #e2e8f0',
@@ -772,6 +936,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 display: 'flex',
                 gap: 20,
                 alignItems: 'flex-start',
+                marginBottom: 32,
               }}>
                 <div style={{
                   display: 'flex',
@@ -785,15 +950,104 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 }}>
                   <Info size={17} style={{ color: '#D4A017' }} />
                 </div>
-                <div style={{ minWidth: 0 }}>
+                <div style={{ minWidth: 0, flex: 1 }}>
                   <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', letterSpacing: '-0.01em', margin: '0 0 10px' }}>
-                    About {cat.shortName}
+                    {stateName ? `About ${cat.shortName} in ${stateName}` : `About ${cat.shortName}`}
                   </h2>
                   <p style={{ fontSize: 14, lineHeight: 1.75, color: '#475569', margin: 0, maxWidth: 820 }}>
-                    {cat.longDescription}
+                    {stateName
+                      ? generateDynamicCategoryStateOnPageText({
+                          categorySlug: category,
+                          categoryName: cat.shortName,
+                          stateSlug: state,
+                          stateName,
+                          totalCount: companies.length,
+                          verifiedCount: stats.verifiedCount,
+                          medianRating: stats.medianRating,
+                          topSpecialties: stats.topSpecialties,
+                          subcategories: cat.subcategories,
+                        })
+                      : cat.longDescription}
                   </p>
                 </div>
               </div>
+
+              {/* FAQ Block (State pages only) */}
+              {stateName && (
+                <div style={{
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 12,
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.04)',
+                  padding: '28px 32px',
+                  marginBottom: 32,
+                }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', letterSpacing: '-0.01em', margin: '0 0 20px' }}>
+                    Frequently Asked Questions
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    {generateCategoryStateFAQs({
+                      categorySlug: category,
+                      categoryName: cat.shortName,
+                      stateSlug: state,
+                      stateName,
+                      totalCount: companies.length,
+                      verifiedCount: stats.verifiedCount,
+                      medianRating: stats.medianRating,
+                      topSpecialties: stats.topSpecialties,
+                    }).map((faq, i) => (
+                      <div key={i} style={{ borderBottom: i < 2 ? '1px solid #f1f5f9' : 'none', paddingBottom: i < 2 ? 20 : 0 }}>
+                        <h4 style={{ fontSize: 14.5, fontWeight: 600, color: '#0f172a', margin: '0 0 8px' }}>
+                          {faq.q}
+                        </h4>
+                        <p style={{ fontSize: 13.5, lineHeight: 1.6, color: '#475569', margin: 0 }}>
+                          {faq.a}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Related/Neighboring States Horizontal Links */}
+              {stateName && (
+                <div style={{
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 12,
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.04)',
+                  padding: '24px 32px',
+                }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748b', letterSpacing: '0.05em', textTransform: 'uppercase', margin: '0 0 16px' }}>
+                    Related Markets in the Region
+                  </h3>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {getNeighboringStates(state).map((ns) => (
+                      <Link
+                        key={ns.slug}
+                        href={`/${category}/${ns.slug}`}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          backgroundColor: '#f8fafc',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 9999,
+                          padding: '6px 14px',
+                          fontSize: 13,
+                          fontWeight: 500,
+                          color: '#475569',
+                          textDecoration: 'none',
+                          transition: 'all 0.12s',
+                        }}
+                        className="sidebar-state-pill"
+                      >
+                        {ns.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
             </div>
           </section>
         )}
@@ -804,6 +1058,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
         .sidebar-state-pill:not(.active):hover { border-color: #94a3b8 !important; color: #0f172a !important; }
         .cta-btn:hover { background-color: #D48E1A !important; }
+        .specialty-link:hover { color: #F5A623 !important; }
       `}</style>
     </>
   );

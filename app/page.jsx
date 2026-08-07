@@ -29,9 +29,9 @@ const websiteSchema = {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${_BASE}/top/{category_slug}/{state_slug}`,
+      urlTemplate: `${_BASE}/search?q={search_term_string}`,
     },
-    'query-input': 'required name=category_slug required name=state_slug',
+    'query-input': 'required name=search_term_string',
   },
 };
 

@@ -9,6 +9,7 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { EMPLOYEE_BUCKETS } from '@/lib/employeeCount';
 import { ChevronDown, X } from 'lucide-react';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
+import { ALL_US_STATES } from '@/lib/usStates';
 
 function toggle(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -144,37 +145,6 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
   );
 }
 
-function OptionButton({ selected, onClick, children }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        display: 'block',
-        width: '100%',
-        padding: '8px 12px',
-        borderRadius: 6,
-        border: 'none',
-        backgroundColor: selected ? '#f1f5f9' : 'transparent',
-        color: selected ? '#0f172a' : '#475569',
-        fontSize: 13,
-        fontWeight: selected ? 600 : 400,
-        cursor: 'pointer',
-        textAlign: 'left',
-        transition: 'background-color 0.1s',
-      }}
-      onMouseEnter={(e) => {
-        if (!selected) e.currentTarget.style.backgroundColor = '#f8fafc';
-      }}
-      onMouseLeave={(e) => {
-        if (!selected) e.currentTarget.style.backgroundColor = 'transparent';
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
 export default function FilterBar({
   activeEmployeeRanges,
   stateCounts,
@@ -186,60 +156,136 @@ export default function FilterBar({
 }) {
   const searchParams = useSearchParams();
 
-  const [pendingCategory, setPendingCategory] = useState(category);
-  const [pendingSubcategory, setPendingSubcategory] = useState(currentSubcategory ?? null);
-  const [pendingState, setPendingState] = useState(currentState ?? null);
+  const [pendingCategory, setPendingCategory] = useState(category || '');
+  const [pendingSubcategory, setPendingSubcategory] = useState(currentSubcategory || '');
+  const [pendingState, setPendingState] = useState(currentState || '');
   const [pendingEmployeeRanges, setPendingEmployeeRanges] = useState(activeEmployeeRanges);
   const [openDropdown, setOpenDropdown] = useState(null);
 
+  // Local search query states
+  const [catSearch, setCatSearch] = useState('');
+  const [stateSearch, setStateSearch] = useState('');
+  const [subSearch, setSubSearch] = useState('');
+
   useEffect(() => {
-    setPendingCategory(category);
-    setPendingSubcategory(currentSubcategory ?? null);
-    setPendingState(currentState ?? null);
+    setPendingCategory(category || '');
+    setPendingSubcategory(currentSubcategory || '');
+    setPendingState(currentState || '');
     setPendingEmployeeRanges(activeEmployeeRanges);
   }, [category, currentSubcategory, currentState, activeEmployeeRanges]);
 
-  const showClear = !!pendingSubcategory || !!pendingState || pendingEmployeeRanges.length > 0 ||
-    !!currentState || !!currentSubcategory || activeEmployeeRanges.length > 0;
+  // Reset local search inputs when dropdown changes
+  useEffect(() => {
+    setCatSearch('');
+    setStateSearch('');
+    setSubSearch('');
+  }, [openDropdown]);
+
+  const showClear = !!pendingCategory || !!pendingSubcategory || !!pendingState || pendingEmployeeRanges.length > 0 ||
+                    !!category || !!currentSubcategory || !!currentState || activeEmployeeRanges.length > 0;
 
   function handleShowResults() {
     setOpenDropdown(null);
     const params = new URLSearchParams(searchParams.toString());
     params.delete('page');
+
     if (pendingEmployeeRanges.length) {
       params.set('employees', pendingEmployeeRanges.join(','));
     } else {
       params.delete('employees');
     }
 
-    let path = `/${pendingCategory}`;
-    if (pendingSubcategory) path += `/${pendingSubcategory}`;
-    if (pendingState)       path += `/${pendingState}`;
+    const isSearchPage = window.location.pathname === '/search';
 
-    const query = params.toString();
-    window.location.href = query ? `${path}?${query}` : path;
+    if (isSearchPage) {
+      if (pendingCategory) params.set('category', pendingCategory);
+      else params.delete('category');
+
+      if (pendingState) params.set('state', pendingState);
+      else params.delete('state');
+
+      if (pendingSubcategory) params.set('subcategory', pendingSubcategory);
+      else params.delete('subcategory');
+
+      const query = params.toString();
+      window.location.href = query ? `/search?${query}` : '/search';
+    } else {
+      // Canonical pathing redirect
+      let path = `/${pendingCategory}`;
+      if (pendingSubcategory) path += `/${pendingSubcategory}`;
+      if (pendingState)       path += `/${pendingState}`;
+
+      params.delete('category');
+      params.delete('state');
+      params.delete('subcategory');
+
+      const query = params.toString();
+      window.location.href = query ? `${path}?${query}` : path;
+    }
   }
 
   function handleClearFilters() {
-    setPendingSubcategory(null);
-    setPendingState(null);
+    setPendingCategory('');
+    setPendingState('');
+    setPendingSubcategory('');
     setPendingEmployeeRanges([]);
     setOpenDropdown(null);
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete('page');
     params.delete('employees');
-    params.delete('states');
-    const query = params.toString();
-    const path = `/${pendingCategory}`;
-    window.location.href = query ? `${path}?${query}` : path;
+    params.delete('category');
+    params.delete('subcategory');
+    params.delete('state');
+
+    const q = params.get('q');
+    const isSearchPage = window.location.pathname === '/search';
+
+    if (isSearchPage) {
+      const query = q ? `q=${encodeURIComponent(q)}` : '';
+      window.location.href = query ? `/search?${query}` : '/search';
+    } else {
+      const pathnameParts = window.location.pathname.split('/').filter(Boolean);
+      const rootCategory = pathnameParts[0] || category || '';
+      const path = rootCategory ? `/${rootCategory}` : '/search';
+      window.location.href = q ? `${path}?q=${encodeURIComponent(q)}` : path;
+    }
   }
 
   function selectCategory(slug) {
     setPendingCategory(slug);
-    setPendingSubcategory(null); // Reset subcategory when category changes
+    setPendingSubcategory(''); // Reset subcategory when category changes
     setOpenDropdown(null);
   }
+
+  // Gather subcategories for the selected category
+  const activeCatObj = CATEGORY_MAP[pendingCategory];
+  const subList = activeCatObj?.subcategories || subcategories || [];
+
+  // Filtered dropdown options based on local search inputs
+  const filteredCategories = MANUFACTURING_CATEGORIES.filter((c) =>
+    c.shortName.toLowerCase().includes(catSearch.toLowerCase())
+  );
+
+  // Merge stateCounts with ALL_US_STATES so all states are always available to filter,
+  // but those with results appear at the top.
+  const stateCountsMap = new Map(stateCounts?.map((s) => [s.stateSlug, s]) || []);
+  const mergedStates = [
+    ...(stateCounts || []),
+    ...ALL_US_STATES.filter((s) => !stateCountsMap.has(s.slug)).map((s) => ({
+      stateSlug: s.slug,
+      stateLabel: s.name,
+      count: 0,
+    })),
+  ];
+
+  const filteredStates = mergedStates.filter((s) =>
+    s.stateLabel.toLowerCase().includes(stateSearch.toLowerCase())
+  );
+
+  const filteredSubcategories = subList.filter((s) =>
+    s.name.toLowerCase().includes(subSearch.toLowerCase())
+  );
 
   return (
     <div style={{ margin: '16px 0 28px 0' }}>
@@ -254,16 +300,46 @@ export default function FilterBar({
               onToggle={() => setOpenDropdown(openDropdown === 'category' ? null : 'category')}
               onClose={() => setOpenDropdown((v) => (v === 'category' ? null : v))}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '4px 0' }}>
-                {MANUFACTURING_CATEGORIES.map((c) => (
-                  <OptionButton
+              <div style={{ display: 'flex', gap: 6, padding: '4px 6px 8px', borderBottom: '1px solid #e2e8f0', marginBottom: 6 }}>
+                <input
+                  type="text"
+                  value={catSearch}
+                  onChange={(e) => setCatSearch(e.target.value)}
+                  placeholder="Search categories..."
+                  style={{
+                    flex: 1,
+                    height: 32,
+                    padding: '0 8px',
+                    fontSize: 12,
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 6,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, maxHeight: 200, overflowY: 'auto' }}>
+                <button
+                  type="button"
+                  onClick={() => selectCategory('')}
+                  className={`filter-option-btn${!pendingCategory ? ' selected' : ''}`}
+                >
+                  All Categories
+                </button>
+                {filteredCategories.map((c) => (
+                  <button
                     key={c.slug}
-                    selected={c.slug === pendingCategory}
+                    type="button"
                     onClick={() => selectCategory(c.slug)}
+                    className={`filter-option-btn${c.slug === pendingCategory ? ' selected' : ''}`}
                   >
                     {c.shortName}
-                  </OptionButton>
+                  </button>
                 ))}
+                {filteredCategories.length === 0 && (
+                  <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: 13, textAlign: 'center' }}>
+                    No matches
+                  </div>
+                )}
               </div>
             </FilterDropdown>
           </div>
@@ -277,39 +353,35 @@ export default function FilterBar({
               onToggle={() => setOpenDropdown(openDropdown === 'state' ? null : 'state')}
               onClose={() => setOpenDropdown((v) => (v === 'state' ? null : v))}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '4px 0' }}>
+              <div style={{ display: 'flex', gap: 6, padding: '4px 6px 8px', borderBottom: '1px solid #e2e8f0', marginBottom: 6 }}>
+                <input
+                  type="text"
+                  value={stateSearch}
+                  onChange={(e) => setStateSearch(e.target.value)}
+                  placeholder="Search states..."
+                  style={{
+                    flex: 1,
+                    height: 32,
+                    padding: '0 8px',
+                    fontSize: 12,
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 6,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, maxHeight: 200, overflowY: 'auto' }}>
                 <button
                   type="button"
                   onClick={() => {
-                    setPendingState(null);
+                    setPendingState('');
                     setOpenDropdown(null);
                   }}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: 6,
-                    border: 'none',
-                    backgroundColor: !pendingState ? '#f1f5f9' : 'transparent',
-                    color: !pendingState ? '#0f172a' : '#475569',
-                    fontSize: 13,
-                    fontWeight: !pendingState ? 600 : 400,
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'background-color 0.1s',
-                    marginBottom: 4,
-                    borderBottom: '1px solid #e2e8f0',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (pendingState) e.currentTarget.style.backgroundColor = '#f8fafc';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (pendingState) e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
+                  className={`filter-option-btn${!pendingState ? ' selected' : ''}`}
                 >
                   All States
                 </button>
-                {stateCounts.map((s) => {
+                {filteredStates.map((s) => {
                   const isSelected = s.stateSlug === pendingState;
                   return (
                     <button
@@ -319,34 +391,22 @@ export default function FilterBar({
                         setPendingState(s.stateSlug);
                         setOpenDropdown(null);
                       }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        padding: '8px 12px',
-                        borderRadius: 6,
-                        border: 'none',
-                        backgroundColor: isSelected ? '#f1f5f9' : 'transparent',
-                        color: isSelected ? '#0f172a' : '#475569',
-                        fontSize: 13,
-                        fontWeight: isSelected ? 600 : 400,
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        transition: 'background-color 0.1s',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isSelected) e.currentTarget.style.backgroundColor = '#f8fafc';
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
-                      }}
+                      className={`filter-option-btn${isSelected ? ' selected' : ''}`}
                     >
-                      <span>{s.stateLabel}</span>
-                      <span className="text-xs text-slate-400">({s.count})</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <span>{s.stateLabel}</span>
+                        {s.count !== null && s.count !== undefined && s.count > 0 && (
+                          <span className="text-xs text-slate-400">({s.count})</span>
+                        )}
+                      </div>
                     </button>
                   );
                 })}
+                {filteredStates.length === 0 && (
+                  <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: 13, textAlign: 'center' }}>
+                    No matches
+                  </div>
+                )}
               </div>
             </FilterDropdown>
           ) : null}
@@ -376,36 +436,63 @@ export default function FilterBar({
           </FilterDropdown>
 
           {/* Subcategory */}
-          {subcategories?.length > 0 && pendingCategory === category ? (
+          {subList?.length > 0 ? (
             <FilterDropdown
-              label={subcategories.find((s) => s.slug === pendingSubcategory)?.name ?? 'All subcategories'}
+              label={subList.find((s) => s.slug === pendingSubcategory)?.name ?? 'All subcategories'}
               activeCount={pendingSubcategory ? 1 : 0}
               isOpen={openDropdown === 'subcategory'}
               onToggle={() => setOpenDropdown(openDropdown === 'subcategory' ? null : 'subcategory')}
               onClose={() => setOpenDropdown((v) => (v === 'subcategory' ? null : v))}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '4px 0' }}>
-                <OptionButton
-                  selected={!pendingSubcategory}
+              <div style={{ display: 'flex', gap: 6, padding: '4px 6px 8px', borderBottom: '1px solid #e2e8f0', marginBottom: 6 }}>
+                <input
+                  type="text"
+                  value={subSearch}
+                  onChange={(e) => setSubSearch(e.target.value)}
+                  placeholder="Search subcategories..."
+                  style={{
+                    flex: 1,
+                    height: 32,
+                    padding: '0 8px',
+                    fontSize: 12,
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 6,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, maxHeight: 200, overflowY: 'auto' }}>
+                <button
+                  type="button"
                   onClick={() => {
-                    setPendingSubcategory(null);
+                    setPendingSubcategory('');
                     setOpenDropdown(null);
                   }}
+                  className={`filter-option-btn${!pendingSubcategory ? ' selected' : ''}`}
                 >
                   All subcategories
-                </OptionButton>
-                {subcategories.map((s) => (
-                  <OptionButton
-                    key={s.slug}
-                    selected={s.slug === pendingSubcategory}
-                    onClick={() => {
-                      setPendingSubcategory(s.slug);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    {s.name}
-                  </OptionButton>
-                ))}
+                </button>
+                {filteredSubcategories.map((s) => {
+                  const isSelected = s.slug === pendingSubcategory;
+                  return (
+                    <button
+                      key={s.slug}
+                      type="button"
+                      onClick={() => {
+                        setPendingSubcategory(s.slug);
+                        setOpenDropdown(null);
+                      }}
+                      className={`filter-option-btn${isSelected ? ' selected' : ''}`}
+                    >
+                      {s.name}
+                    </button>
+                  );
+                })}
+                {filteredSubcategories.length === 0 && (
+                  <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: 13, textAlign: 'center' }}>
+                    No matches
+                  </div>
+                )}
               </div>
             </FilterDropdown>
           ) : null}
@@ -481,6 +568,32 @@ export default function FilterBar({
           display: flex;
           align-items: center;
           gap: 10px;
+        }
+
+        .filter-option-btn {
+          display: block;
+          width: 100%;
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: none;
+          font-size: 13px;
+          cursor: pointer;
+          text-align: left;
+          transition: background-color 0.1s;
+          margin-bottom: 2px;
+        }
+        .filter-option-btn.selected {
+          background-color: #f1f5f9;
+          color: #0f172a;
+          font-weight: 600;
+        }
+        .filter-option-btn:not(.selected) {
+          background-color: transparent;
+          color: #475569;
+          font-weight: 400;
+        }
+        .filter-option-btn:not(.selected):hover {
+          background-color: #f8fafc;
         }
 
         /* Mobile / Tablet layouts */

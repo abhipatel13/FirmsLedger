@@ -111,6 +111,16 @@ export default async function StateHubPage({ params }) {
     provider: { '@type': 'Organization', name: SITE_NAME, url: _BASE },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE },
+      { '@type': 'ListItem', position: 2, name: 'States', item: `${_BASE}/#states` },
+      { '@type': 'ListItem', position: 3, name: state.name, item: `${_BASE}/states/${slug}` },
+    ],
+  };
+
   const otherStates = ALL_STATES.filter((s) => s.slug !== slug).slice(0, 24);
 
   return (
@@ -119,6 +129,7 @@ export default async function StateHubPage({ params }) {
         .state-pill:hover { border-color: #94a3b8 !important; color: #0f172a !important; }
       `}</style>
       <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
 
       <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
@@ -127,12 +138,21 @@ export default async function StateHubPage({ params }) {
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
 
             {/* Breadcrumb */}
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
-              <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>States</span>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{state.name}</span>
+            <nav className="scrollbar-hide" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 20,
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+            }}>
+              <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Home</Link>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>States</span>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{state.name}</span>
             </nav>
 
             {/* Region badge */}

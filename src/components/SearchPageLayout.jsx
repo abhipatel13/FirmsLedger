@@ -147,14 +147,14 @@ export default function SearchPageLayout({
         <div className="w-full px-4 sm:px-6 lg:px-10 pt-8 pb-7">
           {/* Breadcrumb */}
           {breadcrumbs.length > 0 && (
-            <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-400 mb-4">
+            <nav className="flex flex-nowrap items-center gap-1.5 text-sm text-slate-400 mb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
               {breadcrumbs.map((crumb, i) => (
-                <span key={i} className="flex items-center gap-1.5">
-                  {i > 0 && <span className="text-slate-600">/</span>}
+                <span key={i} className="flex items-center gap-1.5 flex-shrink-0">
+                  {i > 0 && <span className="text-slate-600 flex-shrink-0">/</span>}
                   {crumb.href ? (
-                    <Link href={crumb.href} className="hover:text-white transition-colors">{crumb.label}</Link>
+                    <Link href={crumb.href} className="hover:text-white transition-colors flex-shrink-0">{crumb.label}</Link>
                   ) : (
-                    <span className="text-white font-medium">{crumb.label}</span>
+                    <span className="text-white font-medium flex-shrink-0">{crumb.label}</span>
                   )}
                 </span>
               ))}

@@ -76,7 +76,8 @@ export default async function sitemap() {
 
   // ── Core pages ────────────────────────────────────────────────────────────
   urls.push({ url: `${BASE_URL}/`, lastModified: now, changeFrequency: 'daily', priority: 1.0 });
-  urls.push({ url: `${BASE_URL}/search`, lastModified: now, changeFrequency: 'daily', priority: 0.9 });
+  // /search is noindexed (app/search/layout.jsx) — /{category}/{state} pages
+  // are the canonical crawlable listings, so it doesn't belong in the sitemap.
   urls.push({ url: `${BASE_URL}/browse`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
   urls.push({ url: `${BASE_URL}/list-your-company`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
   urls.push({ url: `${BASE_URL}/claim-listing`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 });
@@ -102,6 +103,19 @@ export default async function sitemap() {
         if (count < MIN_LIVE_COMPANIES) continue;
       }
       urls.push({ url: `${BASE_URL}/${slug}/${stateSlug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+    }
+  }
+
+  // ── Subcategory + state pages: /{category}/{subcategory}/{state} ───────
+  for (const cat of MANUFACTURING_CATEGORIES) {
+    for (const sub of cat.subcategories) {
+      for (const stateSlug of STATE_SLUGS) {
+        if (combos) {
+          const count = combos.get(`${sub.slug}|${stateSlug}`) || 0;
+          if (count < MIN_LIVE_COMPANIES) continue;
+        }
+        urls.push({ url: `${BASE_URL}/${cat.slug}/${sub.slug}/${stateSlug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 });
+      }
     }
   }
 

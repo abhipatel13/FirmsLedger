@@ -35,17 +35,42 @@ function buildFilterQueryString(activeEmployeeRanges, page) {
   return query ? `?${query}` : '';
 }
 
+function paginationRange(current, total) {
+  const delta = 3;
+  const range = [];
+  const withDots = [];
+  let prev;
+
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+      range.push(i);
+    }
+  }
+
+  for (const i of range) {
+    if (prev !== undefined) {
+      if (i - prev === 2) withDots.push(prev + 1);
+      else if (i - prev > 2) withDots.push('…');
+    }
+    withDots.push(i);
+    prev = i;
+  }
+
+  return withDots;
+}
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params, searchParams }) {
   const { category, state: subcategory, subcategory: state } = await params;
+  const sParams = (await searchParams) || {};
+  const { page: pageParam } = sParams;
 
   if (
     VALID_STATES.has(category) &&
     VALID_CATEGORIES.has(subcategory) &&
     CATEGORY_MAP[subcategory]?.subcategories.some((s) => s.slug === state)
   ) {
-    const sParams = await searchParams;
     const query = new URLSearchParams(sParams).toString();
     const target = query ? `/${subcategory}/${state}/${category}?${query}` : `/${subcategory}/${state}/${category}`;
     permanentRedirect(target);
@@ -57,16 +82,28 @@ export async function generateMetadata({ params, searchParams }) {
   const sub = cat.subcategories.find((s) => s.slug === subcategory);
   const subName  = sub?.name || toTitleCase(subcategory);
   const stateName = toTitleCase(state);
+  
+  // Fetch matching companies to clamp page number correctly
+  const companies = await fetchCompaniesByCategoryAndState(subcategory, state, '-avg_rating', 500);
+  const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
+  const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+  
+  const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
+  const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
+
+  const title = clampedPage > 1
+    ? `${subName} in ${stateName}${pageSuffix}`
+    : `Top ${topN(companies.length)} ${subName} Manufacturers in ${stateName}`;
+    
   const stats = await fetchCategoryStats(subcategory, state);
-  const title = `Top ${topN(stats.totalCount)} ${subName} Manufacturers in ${stateName}`;
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
-  const canonical = `${_BASE}/${category}/${subcategory}/${state}`;
+  const canonical = `${_BASE}/${category}/${subcategory}/${state}${pageQuery}`;
 
   return {
     title,
     description,
     alternates: { canonical },
-    robots: { index: true, follow: true },
+    robots: (clampedPage > 1 || companies.length < 5) ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: { title, description, type: 'website', url: canonical },
   };
 }
@@ -129,7 +166,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home',            item: _BASE },
       { '@type': 'ListItem', position: 2, name: cat.shortName,     item: `${_BASE}/${category}` },
-      { '@type': 'ListItem', position: 3, name: sub.name,          item: `${_BASE}/${category}/${subcategory}/${state}` },
+      { '@type': 'ListItem', position: 3, name: sub.name,          item: `${_BASE}/${category}/${subcategory}` },
       { '@type': 'ListItem', position: 4, name: stateName,         item: `${_BASE}/${category}/${subcategory}/${state}` },
     ],
   };
@@ -142,17 +179,26 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
 
         {/* ── Page header ── */}
         <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-          <div style={{ maxWidth: 1152, margin: '0 auto', padding: '40px 24px 36px' }}>
+          <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
             {/* Breadcrumb */}
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
-              <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <Link href={`/${category}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>{cat.shortName}</Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>{sub.name}</span>
-              <span style={{ color: '#cbd5e1', fontSize: 13 }}>/</span>
-              <Link href={`/${category}/${state}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500 }}>{stateName}</Link>
+            <nav className="scrollbar-hide" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 20,
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+            }}>
+              <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Home</Link>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <Link href={`/${category}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{cat.shortName}</Link>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, flexShrink: 0 }}>{sub.name}</span>
+              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
+              <Link href={`/${category}/${state}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{stateName}</Link>
             </nav>
 
             {/* Category badge */}
@@ -160,7 +206,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
               <span style={{ fontSize: 11, fontWeight: 700, color: cat.accentText, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{cat.shortName}</span>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <h1 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: 10, marginTop: 0 }}>
                   {pageTitle}
@@ -169,31 +215,42 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                   Grouped by category and location. Updated monthly.
                 </p>
               </div>
-              <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 24px', textAlign: 'center', flexShrink: 0 }}>
-                <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em' }}>{companies.length}</p>
-                <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>total listings</p>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: 9999,
+                padding: '8px 16px',
+                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
+                flexShrink: 0,
+                height: 'fit-content'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{companies.length}</span>
+                  <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>listings</span>
+                </div>
               </div>
             </div>
 
-            <div style={{ margin: '20px 0 0 0' }}>
-              <FilterBar
-                basePath={basePath}
-                activeStates={[]}
-                activeEmployeeRanges={activeEmployeeRanges}
-                stateCounts={stateCounts}
-                showStateFilter={true}
-                subcategories={cat?.subcategories}
-                category={category}
-                currentSubcategory={subcategory}
-                currentState={state}
-              />
-            </div>
           </div>
         </div>
 
         {/* ── Content ── */}
-        <div style={{ maxWidth: 1152, margin: '0 auto', padding: '32px 24px 64px' }}>
-          <div style={{ display: 'flex', flexDirection: 'row', gap: 28 }} className="listing-layout">
+        <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
+          <FilterBar
+            basePath={basePath}
+            activeStates={[]}
+            activeEmployeeRanges={activeEmployeeRanges}
+            stateCounts={stateCounts}
+            showStateFilter={true}
+            subcategories={cat?.subcategories}
+            category={category}
+            currentSubcategory={subcategory}
+            currentState={state}
+          />
+
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 28, marginTop: 24 }} className="listing-layout">
 
             {/* ── Company list ── */}
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -233,23 +290,28 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                     ← Prev
                   </Link>
 
-                  {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) => (
-                    <Link
-                      key={n}
-                      href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, n)}`}
-                      style={{
-                        fontSize: 13, fontWeight: 600,
-                        minWidth: 34, textAlign: 'center',
-                        padding: '8px 10px', borderRadius: 8,
-                        textDecoration: 'none',
-                        color: n === currentPage ? '#ffffff' : '#475569',
-                        backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
-                        border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                      }}
-                    >
-                      {n}
-                    </Link>
-                  ))}
+                  {paginationRange(currentPage, totalPages).map((n, i) =>
+                    n === '…' ? (
+                      <span key={`dots-${i}`} style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>…</span>
+                    ) : (
+                      <Link
+                        key={n}
+                        href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, n)}`}
+                        aria-current={n === currentPage ? 'page' : undefined}
+                        style={{
+                          fontSize: 13, fontWeight: 600,
+                          minWidth: 34, textAlign: 'center',
+                          padding: '8px 10px', borderRadius: 8,
+                          textDecoration: 'none',
+                          color: n === currentPage ? '#ffffff' : '#475569',
+                          backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
+                          border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
+                        }}
+                      >
+                        {n}
+                      </Link>
+                    )
+                  )}
 
                   <Link
                     href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, currentPage + 1)}`}

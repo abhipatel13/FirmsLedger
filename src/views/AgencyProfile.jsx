@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription } from '@/utils';
 import { api } from '@/api/apiClient';
@@ -14,6 +15,7 @@ import {
   MessageSquare, ArrowRight, Phone, ChevronDown, ChevronUp, User,
   DollarSign,
 } from 'lucide-react';
+import { ALL_US_STATES } from '@/lib/usStates';
 
 // ─── Brand palette ────────────────────────────────────────────────────────────
 // Orange shades + navy accents — matches FirmsLedger brand
@@ -75,6 +77,7 @@ function DonutLabel({ viewBox, total }) {
 export default function AgencyProfile({ companySlug, initialCompany, initialReviews, initialCategories, initialSimilar }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [failedImages, setFailedImages] = useState(new Set());
   const router = useRouter();
   const queryId = searchParams?.get('id') ?? null;
   const identifier = companySlug || queryId;
@@ -167,6 +170,9 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
   }
 
   // ── Derived data ────────────────────────────────────────────────────────────
+  const primaryCategory = categories?.[0];
+  const stateObj = agency?.hq_state_label ? ALL_US_STATES.find(s => s.name === agency.hq_state_label) : null;
+
   const serviceFocus   = Array.isArray(agency.service_focus)  ? agency.service_focus  : [];
   const industryFocus  = Array.isArray(agency.industry_focus) ? agency.industry_focus : [];
   const clientFocus    = agency.client_focus && typeof agency.client_focus === 'object' ? agency.client_focus : {};
@@ -201,13 +207,46 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          {/* Visual Breadcrumbs */}
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-slate-500 mb-6 font-medium">
+            <Link href="/" className="hover:text-slate-900 transition-colors">
+              Home
+            </Link>
+            {primaryCategory && (
+              <>
+                <span className="text-slate-300">/</span>
+                <Link href={`/${primaryCategory.slug}`} className="hover:text-slate-900 transition-colors">
+                  {primaryCategory.name}
+                </Link>
+              </>
+            )}
+            {primaryCategory && stateObj && (
+              <>
+                <span className="text-slate-300">/</span>
+                <Link href={`/${primaryCategory.slug}/${stateObj.slug}`} className="hover:text-slate-900 transition-colors">
+                  {primaryCategory.shortName || primaryCategory.name} in {stateObj.name}
+                </Link>
+              </>
+            )}
+            {stateObj && (
+              <>
+                <span className="text-slate-300">/</span>
+                <Link href={`/states/${stateObj.slug}`} className="hover:text-slate-900 transition-colors">
+                  {stateObj.name} Hub
+                </Link>
+              </>
+            )}
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-semibold truncate max-w-[200px] sm:max-w-xs">{agency.name}</span>
+          </nav>
+
           <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
             {agency.logo_url ? (
-              <img src={agency.logo_url} alt={agency.name}
+              <Image src={agency.logo_url} alt={agency.name} width={96} height={96}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-contain border border-slate-200 bg-white flex-shrink-0" />
             ) : (
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-3 flex-shrink-0">
-                <img src="/logo-icon.svg" alt="" className="w-full h-full" />
+                <Image src="/logo-icon.svg" alt="" width={64} height={64} className="w-full h-full" />
               </div>
             )}
 
@@ -428,12 +467,21 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                   href={getCompanyProfileUrl(c)}
                   className="flex items-center gap-3 border border-slate-200 rounded-lg p-4 hover:border-orange-300 hover:shadow-sm transition-all"
                 >
-                  <img
-                    src={getAgencyLogoUrl(c)}
+                  <Image
+                    src={
+                      failedImages.has(c.id)
+                        ? `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`
+                        : getAgencyLogoUrl(c)
+                    }
                     alt={c.name}
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
+                    width={48}
+                    height={48}
+                    onError={() => {
+                      setFailedImages((prev) => {
+                        const next = new Set(prev);
+                        next.add(c.id);
+                        return next;
+                      });
                     }}
                     className="w-12 h-12 rounded-md object-contain border border-slate-100 bg-white flex-shrink-0"
                   />

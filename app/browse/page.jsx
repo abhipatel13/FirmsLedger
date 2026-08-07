@@ -1,5 +1,6 @@
 import Categories from '@/views/Categories';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
+import { api } from '@/api/apiClient';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -15,6 +16,7 @@ export const metadata = {
   },
 };
 
-export default function BrowsePage() {
-  return <Categories />;
+export default async function BrowsePage() {
+  const initialCategories = await api.entities.Category.list();
+  return <Categories initialCategories={initialCategories} />;
 }

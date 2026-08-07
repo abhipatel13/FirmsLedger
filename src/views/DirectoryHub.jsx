@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight, CheckCircle, Star, Shield, Package, Wrench, Cpu, Car,
-  Shirt, Sofa, UtensilsCrossed, Stethoscope,
+  Shirt, Sofa, UtensilsCrossed, Stethoscope, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -252,9 +252,7 @@ export default function DirectoryHub({
   popularSearches = [],
 }) {
   const [selectedState, setSelectedState] = useState('california');
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const activeState = US_STATES.find((s) => s.slug === selectedState);
-  const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, CATEGORIES_PREVIEW_COUNT);
   const { stats, trustStats } = getHomepageStats(companyCount, categoryCount, stateCount);
 
   const [categoriesRef, categoriesVisible] = useFadeInOnScroll();
@@ -263,6 +261,52 @@ export default function DirectoryHub({
   const [howRef, howVisible] = useFadeInOnScroll();
   const [statesRef, statesVisible] = useFadeInOnScroll();
   const [ctaRef, ctaVisible] = useFadeInOnScroll();
+
+  const scrollContainerRef = useRef(null);
+  const [isAtStart, setIsAtStart] = useState(true);
+  const [isAtEnd, setIsAtEnd] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const updateScrollButtons = () => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      setIsAtStart(el.scrollLeft <= 5);
+      setIsAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 5);
+
+      const cardWidth = el.querySelector('.category-card-wrapper')?.clientWidth || el.clientWidth;
+      const index = Math.round(el.scrollLeft / cardWidth);
+      setActiveIndex(index);
+    }
+  };
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      el.addEventListener('scroll', updateScrollButtons, { passive: true });
+      updateScrollButtons();
+      window.addEventListener('resize', updateScrollButtons);
+      return () => {
+        el.removeEventListener('scroll', updateScrollButtons);
+        window.removeEventListener('resize', updateScrollButtons);
+      };
+    }
+  }, []);
+
+  const scrollPrev = () => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      const cardWidth = el.querySelector('.category-card-wrapper')?.clientWidth || 300;
+      el.scrollBy({ left: -(cardWidth + 20), behavior: 'smooth' });
+    }
+  };
+
+  const scrollNext = () => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      const cardWidth = el.querySelector('.category-card-wrapper')?.clientWidth || 300;
+      el.scrollBy({ left: cardWidth + 20, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="bg-white">
@@ -351,62 +395,144 @@ export default function DirectoryHub({
       >
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
-          <div className="text-center mb-12">
-            <SectionEyebrow>Browse by Category</SectionEyebrow>
-            <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight">
-              Popular manufacturing categories
-            </h2>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 gap-6">
+            <div className="text-center sm:text-left w-full sm:w-auto">
+              <SectionEyebrow>Browse by Category</SectionEyebrow>
+              <h2 className="text-[28px] sm:text-4xl font-bold tracking-tight text-[#211F1C] leading-tight">
+                Popular manufacturing categories
+              </h2>
+            </div>
+            <div className="hidden sm:flex gap-2.5">
+              <button
+                type="button"
+                onClick={scrollPrev}
+                disabled={isAtStart}
+                className={cn(
+                  "flex items-center justify-center w-10 h-10 rounded-full border transition-all duration-200",
+                  isAtStart
+                    ? "border-slate-200 text-slate-300 cursor-not-allowed"
+                    : "border-slate-300 text-[#1A2E4A] hover:border-slate-400 hover:bg-slate-50 cursor-pointer active:scale-95"
+                )}
+                aria-label="Previous categories"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={scrollNext}
+                disabled={isAtEnd}
+                className={cn(
+                  "flex items-center justify-center w-10 h-10 rounded-full border transition-all duration-200",
+                  isAtEnd
+                    ? "border-slate-200 text-slate-300 cursor-not-allowed"
+                    : "border-slate-300 text-[#1A2E4A] hover:border-slate-400 hover:bg-slate-50 cursor-pointer active:scale-95"
+                )}
+                aria-label="Next categories"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {visibleCategories.map((cat) => {
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-5 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide -mx-6 px-6 lg:-mx-8 lg:px-8"
+          >
+            {CATEGORIES.map((cat) => {
               const visuals = visualsFor(cat.slug);
               const Icon = visuals?.icon || Package;
               const tw = visuals?.tw || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' };
               return (
-                <Card
+                <div
                   key={cat.slug}
-                  className="card-premium bg-white rounded-2xl p-0 flex flex-col h-full overflow-hidden"
+                  className="category-card-wrapper snap-start shrink-0 w-full sm:w-[calc(50%-10px)] md:w-[calc(33.33%-14px)] lg:w-[calc(25%-15px)]"
                 >
-                  <div className={cn('h-[3px] w-full', tw.dot)} />
-                  <div className="p-6 flex flex-col flex-1">
-                  <div className={cn('w-10 h-10 rounded-lg border flex items-center justify-center mb-4', tw.bg, tw.border)}>
-                    <Icon className={cn('w-[18px] h-[18px]', tw.text)} />
-                  </div>
-
-                  <h3 className="text-[15px] font-semibold text-[#211F1C] mb-2 leading-snug flex-1">
-                    {cat.name}
-                  </h3>
-
-                  <p className="text-[13px] leading-relaxed text-slate-500 mb-4 line-clamp-1">
-                    {cat.desc}
-                  </p>
-
-                  <Link
-                    href={`/${cat.slug}`}
-                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1A2E4A] group"
+                  <Card
+                    className="card-premium bg-white rounded-2xl p-0 flex flex-col h-full overflow-hidden"
                   >
-                    View all states
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                  </div>
-                </Card>
+                    <div className={cn('h-[3px] w-full', tw.dot)} />
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className={cn('w-10 h-10 rounded-lg border flex items-center justify-center mb-4', tw.bg, tw.border)}>
+                        <Icon className={cn('w-[18px] h-[18px]', tw.text)} />
+                      </div>
+
+                      <h3 className="text-[15px] font-semibold text-[#211F1C] mb-2 leading-snug flex-1">
+                        {cat.name}
+                      </h3>
+
+                      <p className="text-[13px] leading-relaxed text-slate-500 mb-4 line-clamp-1">
+                        {cat.desc}
+                      </p>
+
+                      <Link
+                        href={`/${cat.slug}`}
+                        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1A2E4A] group"
+                      >
+                        View all states
+                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                    </div>
+                  </Card>
+                </div>
               );
             })}
           </div>
 
-          {CATEGORIES.length > CATEGORIES_PREVIEW_COUNT && (
-            <div className="text-center mt-8">
+          {/* Carousel pagination dots centered horizontally under cards in mobile view */}
+          <div className="flex sm:hidden justify-center gap-1.5 mt-6">
+            {CATEGORIES.map((_, i) => (
               <button
+                key={i}
                 type="button"
-                onClick={() => setShowAllCategories((v) => !v)}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A2E4A] border border-slate-300 rounded-full px-5 py-2.5 hover:border-slate-400 hover:bg-white transition-colors"
-              >
-                {showAllCategories ? 'Show less' : `View more categories (${CATEGORIES.length - CATEGORIES_PREVIEW_COUNT})`}
-                <ArrowRight className={cn('w-3.5 h-3.5 transition-transform', showAllCategories && 'rotate-90')} />
-              </button>
-            </div>
-          )}
+                onClick={() => {
+                  const el = scrollContainerRef.current;
+                  if (el) {
+                    const cardWidth = el.querySelector('.category-card-wrapper')?.clientWidth || el.clientWidth;
+                    el.scrollTo({ left: i * (cardWidth + 20), behavior: 'smooth' });
+                  }
+                }}
+                className={cn(
+                  "w-2 h-2 rounded-full transition-all duration-300",
+                  activeIndex === i
+                    ? "bg-[#1A2E4A] w-5"
+                    : "bg-slate-300 hover:bg-slate-400"
+                )}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Slider arrows centered horizontally under cards in mobile view */}
+          <div className="flex sm:hidden justify-center gap-3 mt-6">
+            <button
+              type="button"
+              onClick={scrollPrev}
+              disabled={isAtStart}
+              className={cn(
+                "flex items-center justify-center w-11 h-11 rounded-full border transition-all duration-200",
+                isAtStart
+                  ? "border-slate-200 text-slate-300 cursor-not-allowed"
+                  : "border-slate-300 text-[#1A2E4A] hover:border-slate-400 hover:bg-slate-50 cursor-pointer active:scale-95"
+              )}
+              aria-label="Previous categories"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={scrollNext}
+              disabled={isAtEnd}
+              className={cn(
+                "flex items-center justify-center w-11 h-11 rounded-full border transition-all duration-200",
+                isAtEnd
+                  ? "border-slate-200 text-slate-300 cursor-not-allowed"
+                  : "border-slate-300 text-[#1A2E4A] hover:border-slate-400 hover:bg-slate-50 cursor-pointer active:scale-95"
+              )}
+              aria-label="Next categories"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
 
           {/* ── Popular Searches Section ── */}
           {popularSearches && popularSearches.length > 0 && (
@@ -584,20 +710,19 @@ export default function DirectoryHub({
                 {US_STATES.map((state) => {
                   const active = selectedState === state.slug;
                   return (
-                    <button
+                    <Link
                       key={state.slug}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => setSelectedState(state.slug)}
+                      href={`/states/${state.slug}`}
+                      onMouseEnter={() => setSelectedState(state.slug)}
                       className={cn(
-                        'flex w-full text-left px-5 py-2 text-[13.5px] leading-tight border-l-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A2E4A] focus-visible:ring-inset',
+                        'flex w-full text-left px-5 py-2 text-[13.5px] leading-tight border-l-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A2E4A] focus-visible:ring-inset no-underline',
                         active
                           ? 'bg-white text-[#211F1C] font-semibold border-l-[#D4A017]'
                           : 'text-slate-500 font-normal border-l-transparent hover:bg-white/60 hover:text-slate-800'
                       )}
                     >
                       {state.name}
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
