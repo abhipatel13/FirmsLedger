@@ -8,7 +8,6 @@ import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY
 import { ALL_US_STATES } from '@/lib/usStates';
 import CompanyCard from '@/components/listing/CompanyCard';
 import FilterBar from '@/components/listing/FilterBar';
-import StatsBand from '@/components/listing/StatsBand';
 import OtherCategoriesCard from '@/components/listing/OtherCategoriesCard';
 import { getCompanyDescription } from '@/utils';
 import {
@@ -318,7 +317,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 <span style={{ fontSize: 11, fontWeight: 700, color: cat.accentText, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{cat.shortName}</span>
               </div>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
                 <div>
                   <h1 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: 10, marginTop: 0 }}>
                     {pageTitle}
@@ -327,16 +326,35 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     Grouped by category and location. Updated monthly.
                   </p>
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
-                  <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>total listings</span>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  backgroundColor: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 9999,
+                  padding: '8px 16px',
+                  boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
+                  flexShrink: 0,
+                  gap: 14,
+                  height: 'fit-content'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.totalCount}</span>
+                    <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>listings</span>
+                  </div>
+                  {stats?.statesCovered > 0 && (
+                    <>
+                      <div style={{ width: 1, height: 16, backgroundColor: '#cbd5e1' }} />
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                        <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.statesCovered}</span>
+                        <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>states</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-
-          {/* ── Stats strip ── */}
-          <StatsBand stats={stats} categoryNoun={cat?.noun || 'manufacturers'} stateName={null} showStatesCovered />
 
           {/* ── Content ── */}
           <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
@@ -615,7 +633,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{categoryName}</span>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <h1 style={{
                   fontSize: 'clamp(28px, 4vw, 44px)',
@@ -644,16 +662,35 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   </p>
                 )}
               </div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 9999, padding: '6px 14px', flexShrink: 0 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{companies.length}</span>
-                <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>total listings</span>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: 9999,
+                padding: '8px 16px',
+                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
+                flexShrink: 0,
+                gap: 14,
+                height: 'fit-content'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.totalCount}</span>
+                  <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>listings</span>
+                </div>
+                {!stateName && stats?.statesCovered > 0 && (
+                  <>
+                    <div style={{ width: 1, height: 16, backgroundColor: '#cbd5e1' }} />
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.statesCovered}</span>
+                      <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>states</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
-
-        {/* ── Stats strip ── */}
-        <StatsBand stats={stats} categoryNoun={cat?.noun || categoryName.toLowerCase()} stateName={stateName} showStatesCovered={!stateName} />
 
         {/* ── Content ─────────────────────────────────────────────── */}
         <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
@@ -811,14 +848,13 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     <Link
                       key={sub.slug}
                       href={`/${category}/${sub.slug}/${state}`}
+                      className="specialty-link"
                       style={{
                         fontSize: 13,
                         color: '#475569',
                         textDecoration: 'none',
                         transition: 'color 0.12s',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = '#F5A623')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = '#475569')}
                     >
                       {sub.name} in {stateName}
                     </Link>
@@ -1022,6 +1058,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         .sidebar-cat-link:not(.active):hover { background-color: #ffffff !important; color: #0f172a !important; }
         .sidebar-state-pill:not(.active):hover { border-color: #94a3b8 !important; color: #0f172a !important; }
         .cta-btn:hover { background-color: #D48E1A !important; }
+        .specialty-link:hover { color: #F5A623 !important; }
       `}</style>
     </>
   );

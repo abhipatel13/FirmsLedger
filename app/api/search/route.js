@@ -3,16 +3,26 @@ import { db } from '@/db/client';
 import { companies, categories, company_categories, states } from '@/db/schema';
 import { eq, and, ilike, or, inArray } from 'drizzle-orm';
 import { searchTokens } from '@/lib/searchIntent';
+import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const q            = (searchParams.get('q') || '').trim();
   const categorySlug  = (searchParams.get('category') || '').trim();
+  const subcategorySlug = (searchParams.get('subcategory') || '').trim();
   const stateSlug     = (searchParams.get('state') || '').trim();
+  const employeesParam = (searchParams.get('employees') || '').trim();
+
+  const categorySlugs = categorySlug ? categorySlug.split(',').filter(Boolean) : [];
+  const subcategorySlugs = subcategorySlug ? subcategorySlug.split(',').filter(Boolean) : [];
+  const allCategorySlugs = [...categorySlugs, ...subcategorySlugs];
+
+  const stateSlugs    = stateSlug ? stateSlug.split(',').filter(Boolean) : [];
+  const employeeRanges = employeesParam ? employeesParam.split(',').filter(Boolean) : [];
 
   // Need at least a real text query or one filter — otherwise there's nothing to search on.
   const hasQuery  = q.length >= 2;
-  const hasFilter = !!categorySlug || !!stateSlug;
+  const hasFilter = allCategorySlugs.length > 0 || stateSlugs.length > 0 || employeeRanges.length > 0;
   if (!hasQuery && !hasFilter) {
     return NextResponse.json([]);
   }
@@ -42,21 +52,22 @@ export async function GET(request) {
     }
   }
 
-  if (categorySlug) {
-    const [cat] = await db
+  if (allCategorySlugs.length) {
+    const matchedCats = await db
       .select({ id: categories.id, is_parent: categories.is_parent })
       .from(categories)
-      .where(eq(categories.slug, categorySlug))
-      .limit(1);
+      .where(inArray(categories.slug, allCategorySlugs));
 
-    if (!cat) return NextResponse.json([]);
+    if (!matchedCats.length) return NextResponse.json([]);
 
-    let categoryIds = [cat.id];
-    if (cat.is_parent) {
+    let categoryIds = matchedCats.map((c) => c.id);
+    const parentIds = matchedCats.filter((c) => c.is_parent).map((c) => c.id);
+
+    if (parentIds.length) {
       const subs = await db
         .select({ id: categories.id })
         .from(categories)
-        .where(eq(categories.parent_id, cat.id));
+        .where(inArray(categories.parent_id, parentIds));
       categoryIds.push(...subs.map((s) => s.id));
     }
 
@@ -69,18 +80,17 @@ export async function GET(request) {
     conditions.push(inArray(companies.id, [...new Set(links.map((l) => l.company_id))]));
   }
 
-  if (stateSlug) {
-    const [state] = await db
+  if (stateSlugs.length) {
+    const matchedStates = await db
       .select({ id: states.id })
       .from(states)
-      .where(eq(states.slug, stateSlug))
-      .limit(1);
+      .where(inArray(states.slug, stateSlugs));
 
-    if (!state) return NextResponse.json([]);
-    conditions.push(eq(companies.hq_state_id, state.id));
+    if (!matchedStates.length) return NextResponse.json([]);
+    conditions.push(inArray(companies.hq_state_id, matchedStates.map((s) => s.id)));
   }
 
-  const results = await db
+  let results = await db
     .select({
       slug: companies.slug,
       name: companies.name,
@@ -98,6 +108,11 @@ export async function GET(request) {
     .from(companies)
     .where(and(...conditions))
     .limit(50);
+
+  if (employeeRanges.length) {
+    const wanted = new Set(employeeRanges);
+    results = results.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
+  }
 
   return NextResponse.json(results);
 }

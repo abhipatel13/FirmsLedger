@@ -179,7 +179,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
 
         {/* ── Page header ── */}
         <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-          <div style={{ maxWidth: 1152, margin: '0 auto', padding: '40px 24px 36px' }}>
+          <div className="mx-auto max-w-[var(--max-width)] px-4 pt-6 pb-5 sm:px-6 sm:pt-10 sm:pb-9">
 
             {/* Breadcrumb */}
             <nav className="scrollbar-hide" style={{
@@ -206,7 +206,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
               <span style={{ fontSize: 11, fontWeight: 700, color: cat.accentText, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{cat.shortName}</span>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <h1 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: 10, marginTop: 0 }}>
                   {pageTitle}
@@ -215,31 +215,42 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                   Grouped by category and location. Updated monthly.
                 </p>
               </div>
-              <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 24px', textAlign: 'center', flexShrink: 0 }}>
-                <p style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.03em' }}>{companies.length}</p>
-                <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>total listings</p>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: 9999,
+                padding: '8px 16px',
+                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
+                flexShrink: 0,
+                height: 'fit-content'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{companies.length}</span>
+                  <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>listings</span>
+                </div>
               </div>
             </div>
 
-            <div style={{ margin: '20px 0 0 0' }}>
-              <FilterBar
-                basePath={basePath}
-                activeStates={[]}
-                activeEmployeeRanges={activeEmployeeRanges}
-                stateCounts={stateCounts}
-                showStateFilter={true}
-                subcategories={cat?.subcategories}
-                category={category}
-                currentSubcategory={subcategory}
-                currentState={state}
-              />
-            </div>
           </div>
         </div>
 
         {/* ── Content ── */}
-        <div style={{ maxWidth: 1152, margin: '0 auto', padding: '32px 24px 64px' }}>
-          <div style={{ display: 'flex', flexDirection: 'row', gap: 28 }} className="listing-layout">
+        <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
+          <FilterBar
+            basePath={basePath}
+            activeStates={[]}
+            activeEmployeeRanges={activeEmployeeRanges}
+            stateCounts={stateCounts}
+            showStateFilter={true}
+            subcategories={cat?.subcategories}
+            category={category}
+            currentSubcategory={subcategory}
+            currentState={state}
+          />
+
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 28, marginTop: 24 }} className="listing-layout">
 
             {/* ── Company list ── */}
             <div style={{ flex: 1, minWidth: 0 }}>
