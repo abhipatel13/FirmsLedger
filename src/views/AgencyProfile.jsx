@@ -241,7 +241,15 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
           <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
             {agency.logo_url ? (
-              <img src={agency.logo_url} alt={agency.name} width={96} height={96}
+              // Plain <img> is intentional — next/image would proxy every logo
+              // request through the server, defeating the browser → Cloudflare
+              // edge → R2 immutable-cache path.
+              <img src={agency.logo_url} alt={`${agency.name} logo`} width={96} height={96}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/logo-icon.svg';
+                  e.currentTarget.alt = '';
+                }}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-contain border border-slate-200 bg-white flex-shrink-0" />
             ) : (
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-3 flex-shrink-0">

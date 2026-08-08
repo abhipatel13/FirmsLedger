@@ -4,6 +4,7 @@ scripts/data/
 #env
 .env
 .env.*
+!.env.example
 .env.local
 
 # Logs
@@ -66,3 +67,10 @@ __pycache__/
 
 # pending/ CSVs are regenerated from the DB; keep the scripts, not the snapshots
 pending/*.csv
+
+# Logo pipeline generated files
+scripts/logo-pipeline/input.csv
+scripts/logo-pipeline/state.jsonl
+scripts/logo-pipeline/results.csv
+scripts/logo-pipeline/unprocessable.csv
+scripts/logo-pipeline/html_cache/

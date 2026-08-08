@@ -43,6 +43,11 @@ export const companies = pgTable('companies', {
   description:     text('description'),
   website:         text('website'),
   logo_url:        text('logo_url'),
+  logo_status:     text('logo_status').default('pending'),
+  logo_source:     text('logo_source'),
+  logo_original_url: text('logo_original_url'),
+  logo_updated_at: timestamp('logo_updated_at', { withTimezone: true }),
+  logo_error:      text('logo_error'),
   founded_year:    integer('founded_year'),
   employee_count:  text('employee_count'),
   // State FK — source of truth
