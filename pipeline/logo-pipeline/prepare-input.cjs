@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * S0 — Build scripts/logo-pipeline/input.csv from the two local CSV snapshots.
+ * S0 — Build pipeline/logo-pipeline/input.csv from the two local CSV snapshots.
  *
  * Joins approved companies (pending/approved-2026-07-31.csv: id, name, slug)
  * with website data (companies_2026-07-31.csv: slug, website) on lowercased,
@@ -9,7 +9,7 @@
  *
  * Zero network calls. Zero Neon calls. Runs once.
  *
- *   node scripts/logo-pipeline/prepare-input.cjs
+ *   node pipeline/logo-pipeline/prepare-input.cjs
  */
 
 const fs = require('fs');

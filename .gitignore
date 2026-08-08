@@ -69,8 +69,8 @@ __pycache__/
 pending/*.csv
 
 # Logo pipeline generated files
-scripts/logo-pipeline/input.csv
-scripts/logo-pipeline/state.jsonl
-scripts/logo-pipeline/results.csv
-scripts/logo-pipeline/unprocessable.csv
-scripts/logo-pipeline/html_cache/
+pipeline/logo-pipeline/input.csv
+pipeline/logo-pipeline/state.jsonl
+pipeline/logo-pipeline/results.csv
+pipeline/logo-pipeline/unprocessable.csv
+pipeline/logo-pipeline/html_cache/

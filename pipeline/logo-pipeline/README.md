@@ -33,19 +33,19 @@ domain when nothing else works).
 
 ```bash
 # 1. Build input.csv (local CSV join, no network, no Neon)
-node scripts/logo-pipeline/prepare-input.cjs
+node pipeline/logo-pipeline/prepare-input.cjs
 
 # 2. Sanity-check a tiny batch first
-node scripts/logo-pipeline/index.cjs --dry-run --limit 10
+node pipeline/logo-pipeline/index.cjs --dry-run --limit 10
 
 # 3. Then run real batches
-node scripts/logo-pipeline/index.cjs --limit 300 --concurrency 5 --resume
+node pipeline/logo-pipeline/index.cjs --limit 300 --concurrency 5 --resume
 
 # Retry only transient failures (not not_found rows)
-node scripts/logo-pipeline/index.cjs --retry-failed --limit 100
+node pipeline/logo-pipeline/index.cjs --retry-failed --limit 100
 
 # Point at a different input file
-node scripts/logo-pipeline/index.cjs --from input.csv
+node pipeline/logo-pipeline/index.cjs --from input.csv
 ```
 
 ## Flags
@@ -57,7 +57,7 @@ node scripts/logo-pipeline/index.cjs --from input.csv
 | `--dry-run`     | Discover + download + normalize only — no R2 write.                |
 | `--retry-failed`| Re-attempt rows with `failed` status only (not `not_found`).       |
 | `--resume`      | Accepted for clarity; resume is always on. Terminal rows are always skipped unless `--retry-failed`. |
-| `--from PATH`   | Input CSV path (default `scripts/logo-pipeline/input.csv`).        |
+| `--from PATH`   | Input CSV path (default `pipeline/logo-pipeline/input.csv`).        |
 
 ## Output files (generated, gitignored)
 

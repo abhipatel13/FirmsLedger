@@ -6,10 +6,10 @@
  * company homepages and logo images. R2 uploads default to dry-run until real
  * R2 credentials exist in the environment.
  *
- *   node scripts/logo-pipeline/index.cjs --limit 300 --concurrency 5 --resume
- *   node scripts/logo-pipeline/index.cjs --dry-run --limit 50
- *   node scripts/logo-pipeline/index.cjs --retry-failed --limit 100
- *   node scripts/logo-pipeline/index.cjs --from input.csv
+ *   node pipeline/logo-pipeline/index.cjs --limit 300 --concurrency 5 --resume
+ *   node pipeline/logo-pipeline/index.cjs --dry-run --limit 50
+ *   node pipeline/logo-pipeline/index.cjs --retry-failed --limit 100
+ *   node pipeline/logo-pipeline/index.cjs --from input.csv
  *
  * Cost controls (do not raise without a reason):
  *   --limit 300 default; never unbounded. --concurrency capped at 5.
