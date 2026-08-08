@@ -177,9 +177,8 @@ export async function generateMetadata({ params, searchParams }) {
   const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
 
   const shortCatName = cat?.shortName || categoryName;
-  const title = clampedPage > 1
-    ? `${shortCatName} in ${stateName}${pageSuffix}`
-    : `Top ${topN(companies.length)} ${shortCatName} in ${stateName}`;
+  const titleNoun = cat?.titleNoun || `${shortCatName} Companies`;
+  const title = `${titleNoun} in ${stateName}${pageSuffix}`;
     
   // Fetch stats using cache
   const stats = await fetchCategoryStats(category, state);
@@ -516,9 +515,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
   // Nationwide (`state` absent) is exempt — it is a hub, not a listing.
   if (state && companies.length === 0) notFound();
 
+  const pageTitleNoun = cat?.titleNoun || `${cat?.shortName || categoryName} Companies`;
   const pageTitle    = stateName
-    ? `Top ${topN(companies.length)} ${cat?.shortName || categoryName} in ${stateName}`
-    : `Top ${topN(companies.length)} ${cat?.shortName || categoryName} in the US`;
+    ? `${pageTitleNoun} in ${stateName}`
+    : `${pageTitleNoun} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
   const totalPages   = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));

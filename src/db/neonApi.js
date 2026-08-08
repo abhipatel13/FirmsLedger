@@ -219,30 +219,28 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
  * Returns per-state result counts for a category, for the filter sidebar.
  * Scoped to the category only — not re-scoped by other active filters (v1 simplification).
  */
-export async function fetchStateCountsForCategory(categorySlug) {
+export const fetchStateCountsForCategory = cache(async function fetchStateCountsForCategory(categorySlug) {
   const companyIds = await resolveCategoryCompanyIds(categorySlug);
   if (!companyIds.length) return [];
 
   const rows = await db
-    .select({ hq_state_id: companies.hq_state_id, hq_state_label: companies.hq_state_label })
+    .select({
+      hq_state_id: companies.hq_state_id,
+      hq_state_label: companies.hq_state_label,
+      count: sql`count(*)`.mapWith(Number),
+    })
     .from(companies)
-    .where(and(eq(companies.approved, true), inArray(companies.id, companyIds)));
+    .where(and(eq(companies.approved, true), inArray(companies.id, companyIds)))
+    .groupBy(companies.hq_state_id, companies.hq_state_label);
 
   const stateRows = await db.select().from(states);
   const idToSlug = new Map(stateRows.map((s) => [s.id, s.slug]));
 
-  const counts = new Map(); // stateSlug -> { stateSlug, stateLabel, count }
-  for (const row of rows) {
-    if (!row.hq_state_id) continue;
-    const stateSlug = idToSlug.get(row.hq_state_id);
-    if (!stateSlug) continue;
-    const existing = counts.get(stateSlug);
-    if (existing) existing.count += 1;
-    else counts.set(stateSlug, { stateSlug, stateLabel: row.hq_state_label, count: 1 });
-  }
-
-  return [...counts.values()].sort((a, b) => b.count - a.count);
-}
+  return rows
+    .filter((row) => row.hq_state_id && idToSlug.has(row.hq_state_id))
+    .map((row) => ({ stateSlug: idToSlug.get(row.hq_state_id), stateLabel: row.hq_state_label, count: row.count }))
+    .sort((a, b) => b.count - a.count);
+});
 
 /**
  * Returns live-computed stats for a category (+ optionally state) listing page.
