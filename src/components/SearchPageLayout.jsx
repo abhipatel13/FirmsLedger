@@ -31,7 +31,8 @@ function CompanyListItem({ company, rank }) {
               alt={company.name}
               loading="lazy"
               onError={(e) => {
-                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = getAgencyLogoUrl({ name: company.name });
               }}
               className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white"
             />

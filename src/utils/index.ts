@@ -41,12 +41,27 @@ export function getCompanyProfileUrl(agency: { slug?: string | null; id?: string
 }
 
 /**
+ * Build a local initials-avatar data URI — no network request, so it can never
+ * 400 through the Next.js image optimizer (unlike the ui-avatars.com service
+ * this replaced, whose host isn't in next.config.mjs remotePatterns).
+ */
+function initialsAvatarDataUri(name: string): string {
+  const initials = (name || '?')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() || '')
+    .join('') || '?';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" fill="#1A2E4A"/><text x="50%" y="50%" dy=".1em" fill="#fff" font-family="Arial, sans-serif" font-size="52" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${initials}</text></svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+/**
  * Resolve a logo URL for a company. We deliberately skip Google's favicon API
  * — it always returns a generic globe placeholder for unknown domains, which
- * onError can't detect. Default to ui-avatars so every card shows clean
- * brand-colored initials when no real logo is curated.
+ * onError can't detect.
  *   1. agency.logo_url   (curator-supplied)
- *   2. ui-avatars with the company name
+ *   2. local initials avatar
  */
 export function getAgencyLogoUrl(agency: {
   logo_url?: string | null;
@@ -54,8 +69,7 @@ export function getAgencyLogoUrl(agency: {
 } | null | undefined): string {
   if (!agency) return '';
   if (agency.logo_url) return agency.logo_url;
-  const name = encodeURIComponent(agency.name || '?');
-  return `https://ui-avatars.com/api/?name=${name}&background=1A2E4A&color=fff&size=128&bold=true`;
+  return initialsAvatarDataUri(agency.name || '?');
 }
 
 /** Get the company description, falling back to a nice dynamic description if none exists */

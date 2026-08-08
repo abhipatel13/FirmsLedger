@@ -77,7 +77,6 @@ function DonutLabel({ viewBox, total }) {
 export default function AgencyProfile({ companySlug, initialCompany, initialReviews, initialCategories, initialSimilar }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [failedImages, setFailedImages] = useState(new Set());
   const router = useRouter();
   const queryId = searchParams?.get('id') ?? null;
   const identifier = companySlug || queryId;
@@ -242,7 +241,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
           <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
             {agency.logo_url ? (
-              <Image src={agency.logo_url} alt={agency.name} width={96} height={96}
+              <img src={agency.logo_url} alt={agency.name} width={96} height={96}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-contain border border-slate-200 bg-white flex-shrink-0" />
             ) : (
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-3 flex-shrink-0">
@@ -467,21 +466,14 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                   href={getCompanyProfileUrl(c)}
                   className="flex items-center gap-3 border border-slate-200 rounded-lg p-4 hover:border-orange-300 hover:shadow-sm transition-all"
                 >
-                  <Image
-                    src={
-                      failedImages.has(c.id)
-                        ? `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`
-                        : getAgencyLogoUrl(c)
-                    }
+                  <img
+                    src={getAgencyLogoUrl(c)}
                     alt={c.name}
                     width={48}
                     height={48}
-                    onError={() => {
-                      setFailedImages((prev) => {
-                        const next = new Set(prev);
-                        next.add(c.id);
-                        return next;
-                      });
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getAgencyLogoUrl({ name: c.name });
                     }}
                     className="w-12 h-12 rounded-md object-contain border border-slate-100 bg-white flex-shrink-0"
                   />
