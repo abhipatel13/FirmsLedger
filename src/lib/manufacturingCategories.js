@@ -180,7 +180,7 @@ export const MANUFACTURING_CATEGORIES = [
     slug: 'food-beverage-processing',
     name: 'Food & Beverage Processing Equipment Manufacturers',
     shortName: 'Food & Beverage Processing',
-    titleNoun: 'Food & Beverage Processing Companies',
+    titleNoun: 'Food & Beverage Companies',
     noun: 'food & beverage processing companies',
     desc: 'Food processing equipment, packaging lines, and beverage production companies across the US.',
     longDescription: "Food & Beverage Processing Equipment Manufacturers build the machinery used to produce, package, and move food and drink — food and dairy/meat processing systems, filling and bottling machines, packaging equipment, and conveyor systems. This segment serves food and beverage producers, co-packers, and distributors that need equipment meeting food-safety and sanitation standards (FDA, USDA, 3-A). Buyers typically evaluate suppliers on throughput capacity, sanitary design, and compatibility with existing production lines.",
