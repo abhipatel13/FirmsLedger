@@ -606,7 +606,9 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     {categoryName}
                   </Link>
                   <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
-                  <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{stateName}</span>
+                  <Link href={`/states/${state}`} className="breadcrumb-link" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>
+                    {stateName} Hub
+                  </Link>
                 </>
               ) : (
                 <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{categoryName}</span>
