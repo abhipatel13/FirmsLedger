@@ -216,6 +216,22 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
 });
 
 /**
+ * Interim subcategory filter: narrows a fetched company list down to companies
+ * whose `name` or `description` mentions any of the subcategory's keywords.
+ * Applied in-app because the `companies` table has no subcategory column yet —
+ * real subcategory tagging is a separate follow-up. An empty/absent keyword list
+ * passes everything through untouched.
+ */
+export function filterCompaniesBySubcategoryKeywords(companies, keywords) {
+  if (!keywords?.length) return companies;
+  const needles = keywords.map((k) => String(k).toLowerCase());
+  return companies.filter((c) => {
+    const haystack = `${c.name || ''} ${c.description || ''}`.toLowerCase();
+    return needles.some((k) => haystack.includes(k));
+  });
+}
+
+/**
  * Returns per-state result counts for a category, for the filter sidebar.
  * Scoped to the category only — not re-scoped by other active filters (v1 simplification).
  */

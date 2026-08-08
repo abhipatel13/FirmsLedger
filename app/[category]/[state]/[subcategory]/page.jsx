@@ -4,7 +4,7 @@ import JsonLd from '@/components/JsonLd';
 import { BASE_URL } from '@/lib/seo';
 import { Shield } from 'lucide-react';
 import CompanyCard from '@/components/listing/CompanyCard';
-import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats } from '@/db/neonApi';
+import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, filterCompaniesBySubcategoryKeywords } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import { getCompanyDescription } from '@/utils';
@@ -79,8 +79,13 @@ export async function generateMetadata({ params, searchParams }) {
   const subName  = sub?.name || toTitleCase(subcategory);
   const stateName = toTitleCase(state);
   
-  // Fetch matching companies to clamp page number correctly
-  const companies = await fetchCompaniesByCategoryAndState(subcategory, state, '-avg_rating', 500);
+  // Fetch parent-category companies, then narrow in-app by the subcategory's
+  // keywords (no subcategory column exists in the DB yet). Fall back to the
+  // unfiltered list when no keyword matches — never an empty results page.
+  const keywords = sub?.keywords || [];
+  const allCompanies = await fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500);
+  const filteredCompanies = filterCompaniesBySubcategoryKeywords(allCompanies, keywords);
+  const companies = filteredCompanies.length > 0 ? filteredCompanies : allCompanies;
   const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
   const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
   
@@ -91,7 +96,7 @@ export async function generateMetadata({ params, searchParams }) {
     ? `${subName} in ${stateName}${pageSuffix}`
     : `Top ${companies.length} ${subName} Manufacturers in ${stateName}`;
     
-  const stats = await fetchCategoryStats(subcategory, state);
+  const stats = await fetchCategoryStats(category, state);
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
   const canonical = `${_BASE}/${category}/${subcategory}/${state}${pageQuery}`;
 
@@ -139,13 +144,18 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
 
   const stateName = toTitleCase(state);
 
-  // Fetch companies — filtered by the subcategory slug, not the parent category
-  const [companies, stateCounts] = await Promise.all([
-    fetchCompaniesByCategoryAndState(subcategory, state, '-avg_rating', 500, {
+  // Fetch parent-category companies, then narrow in-app by the subcategory's
+  // keywords (no subcategory column exists in the DB yet). Fall back to the
+  // unfiltered list when no keyword matches — never an empty results page.
+  const keywords = sub?.keywords || [];
+  const [allCompanies, stateCounts] = await Promise.all([
+    fetchCompaniesByCategoryAndState(category, state, '-avg_rating', 500, {
       employeeRanges: activeEmployeeRanges,
     }),
-    fetchStateCountsForCategory(subcategory),
+    fetchStateCountsForCategory(category),
   ]);
+  const filteredCompanies = filterCompaniesBySubcategoryKeywords(allCompanies, keywords);
+  const companies = filteredCompanies.length > 0 ? filteredCompanies : allCompanies;
 
   const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
   const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
