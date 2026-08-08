@@ -14,10 +14,6 @@ export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 25;
 
-function topN(count) {
-  return Math.min(count, PAGE_SIZE);
-}
-
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 const VALID_CATEGORIES = new Set(CATEGORY_SLUGS);
@@ -93,7 +89,7 @@ export async function generateMetadata({ params, searchParams }) {
 
   const title = clampedPage > 1
     ? `${subName} in ${stateName}${pageSuffix}`
-    : `Top ${topN(companies.length)} ${subName} Manufacturers in ${stateName}`;
+    : `Top ${companies.length} ${subName} Manufacturers in ${stateName}`;
     
   const stats = await fetchCategoryStats(subcategory, state);
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
@@ -154,7 +150,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
   const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
   const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
   const pageTitle = currentPage === 1
-    ? `Top ${topN(companies.length)} ${sub.name} Manufacturers in ${stateName}`
+    ? `Top ${companies.length} ${sub.name} Manufacturers in ${stateName}`
     : `${sub.name} Manufacturers in ${stateName}`;
   const pageCompanies = companies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
   const rankOffset     = (currentPage - 1) * PAGE_SIZE;

@@ -53,12 +53,6 @@ function toTitleCase(slug) {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-// "Top 10" only when the page actually lists 10. A thinner page gets its real
-// count so the heading never claims more than the list below it delivers.
-export function topN(count) {
-  return Math.min(count, PAGE_SIZE);
-}
-
 function parseFilterParams(searchParams) {
   const statesParam = searchParams?.states;
   const employeesParam = searchParams?.employees;
@@ -142,7 +136,7 @@ export async function generateMetadata({ params, searchParams }) {
 
     const title = clampedPage > 1
       ? `${subName} — US Directory${pageSuffix}`
-      : `Top ${topN(companies.length)} ${subName} Manufacturers in the US`;
+      : `${subName} Manufacturers in the US`;
       
     // Fetch stats using cache
     const stats = await fetchCategoryStats(category);
@@ -178,7 +172,7 @@ export async function generateMetadata({ params, searchParams }) {
 
   const shortCatName = cat?.shortName || categoryName;
   const titleNoun = cat?.titleNoun || `${shortCatName} Companies`;
-  const title = `${titleNoun} in ${stateName}${pageSuffix}`;
+  const title = `Top ${companies.length} ${titleNoun} in ${stateName}${pageSuffix}`;
     
   // Fetch stats using cache
   const stats = await fetchCategoryStats(category, state);
@@ -255,7 +249,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
     const pageCompanies = companies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
     const rankOffset    = (currentPage - 1) * PAGE_SIZE;
-    const pageTitle     = `Top ${topN(companies.length)} ${sub.name} Manufacturers in the US`;
+    const pageTitle     = `${sub.name} Manufacturers in the US`;
 
     const itemListJsonLd = {
       '@context': 'https://schema.org',
@@ -517,7 +511,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
   const pageTitleNoun = cat?.titleNoun || `${cat?.shortName || categoryName} Companies`;
   const pageTitle    = stateName
-    ? `${pageTitleNoun} in ${stateName}`
+    ? `Top ${companies.length} ${pageTitleNoun} in ${stateName}`
     : `${pageTitleNoun} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 

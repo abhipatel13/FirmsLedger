@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
 import { BASE_URL } from '@/lib/seo';
 import { fetchCategoryStats } from '@/db/neonApi';
-import { renderCategoryPage, topN } from './[state]/page';
+import { renderCategoryPage } from './[state]/page';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -11,7 +11,7 @@ export async function generateMetadata({ params }) {
   const cat = CATEGORY_MAP[slug];
   if (!cat) return { title: 'Category' };
   const stats = await fetchCategoryStats(slug);
-  const title = `Top ${topN(stats.totalCount)} ${cat.name} in the US`;
+  const title = `${cat.name} in the US`;
   const description = stats.totalCount > 0
     ? `Browse ${stats.totalCount} ${cat.noun} across all 50 US states. Compare capabilities, location, and company size. No paid placements.`
     : `Browse ${cat.noun} across all 50 US states on FirmsLedger. Compare capabilities, location, and company size. No paid placements.`;
