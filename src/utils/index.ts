@@ -13,6 +13,27 @@ export function getDirectoryUrl(categorySlug?: string, options?: { underStaffing
   return `/${categorySlug.trim()}`;
 }
 
+/**
+ * URL for any category row, parent or subcategory, with an optional state.
+ *
+ * There is no standalone /{subcategorySlug} route — a subcategory only
+ * resolves under its parent: /{parentSlug}/{subcategorySlug} (nationwide) or
+ * /{parentSlug}/{stateSlug}/{subcategorySlug} (state-scoped). `cat` must
+ * carry `is_parent` and, for subcategories, `parentSlug` (the parent
+ * category's slug — resolve it from the full categories list before calling
+ * this, since a company's own linked-category rows don't include it).
+ */
+export function getCategoryHref(
+  cat?: { slug?: string | null; is_parent?: boolean | null; parentSlug?: string | null } | null,
+  stateSlug?: string | null
+) {
+  if (!cat?.slug) return '/browse';
+  const topSlug = cat.is_parent ? cat.slug : cat.parentSlug;
+  if (!topSlug) return '/browse'; // orphaned subcategory — parent not found
+  const parts = [topSlug, stateSlug, cat.is_parent ? null : cat.slug].filter(Boolean);
+  return `/${parts.join('/')}`;
+}
+
 /** Staffing hub — no equivalent in new structure, fall back to browse */
 export function getDirectoryStaffingUrl() {
   return '/browse';

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getCategoryHref, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -113,7 +113,10 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
       const agencyCats = await api.entities.CompanyCategory.filter({ company_id: agencyId });
       const catIds = agencyCats.map(ac => ac.category_id ?? ac.categoryId);
       const allCats = await api.entities.Category.list();
-      return allCats.filter(c => catIds.includes(c.id));
+      const catsById = new Map(allCats.map(c => [c.id, c]));
+      return allCats
+        .filter(c => catIds.includes(c.id))
+        .map(c => ({ ...c, parentSlug: c.is_parent ? c.slug : catsById.get(c.parent_id)?.slug || null }));
     },
     initialData: initialCategories ?? undefined,
     enabled: !!agencyId && !initialCategories,
@@ -214,7 +217,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
             {primaryCategory && (
               <>
                 <span className="text-slate-300">/</span>
-                <Link href={`/${primaryCategory.slug}`} className="hover:text-slate-900 transition-colors">
+                <Link href={getCategoryHref(primaryCategory)} className="hover:text-slate-900 transition-colors">
                   {primaryCategory.name}
                 </Link>
               </>
@@ -222,7 +225,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
             {primaryCategory && stateObj && (
               <>
                 <span className="text-slate-300">/</span>
-                <Link href={`/${primaryCategory.slug}/${stateObj.slug}`} className="hover:text-slate-900 transition-colors">
+                <Link href={getCategoryHref(primaryCategory, stateObj.slug)} className="hover:text-slate-900 transition-colors">
                   {primaryCategory.shortName || primaryCategory.name} in {stateObj.name}
                 </Link>
               </>
@@ -408,7 +411,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
-                    href={getDirectoryUrl(cat.slug)}
+                    href={getCategoryHref(cat)}
                     className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3.5 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 transition-colors"
                   >
                     <CheckCircle className="w-3.5 h-3.5 text-orange-500" />
@@ -462,7 +465,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 Similar {categories[0]?.name || 'Companies'}{agency.hq_country ? ` in ${agency.hq_country}` : ''}
               </h2>
               {primaryCategorySlug && (
-                <Link href={getDirectoryUrl(primaryCategorySlug)} className="text-sm font-semibold text-orange-500 hover:text-orange-600 inline-flex items-center gap-1">
+                <Link href={getCategoryHref(primaryCategory)} className="text-sm font-semibold text-orange-500 hover:text-orange-600 inline-flex items-center gap-1">
                   View all <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}

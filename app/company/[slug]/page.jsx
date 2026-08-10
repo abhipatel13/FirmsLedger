@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { getCompanyDescription } from '@/utils';
+import { getCompanyDescription, getCategoryHref } from '@/utils';
 import { ALL_US_STATES } from '@/lib/usStates';
 import {
   fetchCompanyByIdAny,
@@ -79,8 +79,11 @@ export default async function CompanyProfilePage({ params }) {
 
     if (companyCategories.length > 0) {
       const allCats = await fetchCategories().catch(() => []);
+      const catsById = new Map(allCats.map((c) => [c.id, c]));
       const catIds = companyCategories.map((cc) => cc.category_id);
-      companyCategories = allCats.filter((c) => catIds.includes(c.id));
+      companyCategories = allCats
+        .filter((c) => catIds.includes(c.id))
+        .map((c) => ({ ...c, parentSlug: c.is_parent ? c.slug : catsById.get(c.parent_id)?.slug || null }));
       const primarySlug = companyCategories[0]?.slug;
       if (primarySlug) {
         similarCompanies = await fetchCompaniesByCategoryAndState(primarySlug, null, '-avg_rating', 30)
@@ -126,15 +129,15 @@ export default async function CompanyProfilePage({ params }) {
       '@type': 'ListItem',
       position: currentPos++,
       name: primaryCategory.name,
-      item: `${_BASE}/${primaryCategory.slug}`
+      item: `${_BASE}${getCategoryHref(primaryCategory)}`
     });
-    
+
     if (stateObj) {
       breadcrumbItems.push({
         '@type': 'ListItem',
         position: currentPos++,
         name: `${primaryCategory.name} in ${stateObj.name}`,
-        item: `${_BASE}/${primaryCategory.slug}/${stateObj.slug}`
+        item: `${_BASE}${getCategoryHref(primaryCategory, stateObj.slug)}`
       });
     }
   }
