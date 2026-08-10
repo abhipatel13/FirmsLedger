@@ -1,5 +1,6 @@
 export const revalidate = 3600;
 
+import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
@@ -64,6 +65,7 @@ export default async function CompanyProfilePage({ params }) {
   const slug = typeof resolved?.slug === 'string' ? resolved.slug.trim() : '';
 
   const company = await fetchCompanyByIdAny(slug).catch(() => null);
+  if (!company) notFound();
 
   let reviews = [];
   let companyCategories = [];

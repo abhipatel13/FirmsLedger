@@ -172,6 +172,7 @@ async function resolveCategoryIds(categorySlug) {
  * Used by /top/[category]/[state] page.
  */
 export const fetchCompaniesByCategoryAndState = cache(async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, offset = 0, filters = {}) {
+  const activeFilters = filters || {};
   const categoryIds = await resolveCategoryIds(categorySlug);
   if (!categoryIds.length) return [];
 
@@ -191,15 +192,15 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
     conditions.push(eq(companies.hq_state_id, stateId));
   }
 
-  if (filters.stateSlugs?.length) {
+  if (activeFilters.stateSlugs?.length) {
     const resolvedIds = (
-      await Promise.all(filters.stateSlugs.map((s) => resolveStateId(String(s).toLowerCase())))
+      await Promise.all(activeFilters.stateSlugs.map((s) => resolveStateId(String(s).toLowerCase())))
     ).filter(Boolean);
     if (!resolvedIds.length) return []; // none of the requested states matched
     conditions.push(inArray(companies.hq_state_id, resolvedIds));
   }
 
-  const hasEmployeeFilter = filters.employeeRanges?.length > 0;
+  const hasEmployeeFilter = activeFilters.employeeRanges?.length > 0;
 
   let query = db
     .select()
@@ -214,7 +215,7 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
   let rows = await query;
 
   if (hasEmployeeFilter) {
-    const wanted = new Set(filters.employeeRanges);
+    const wanted = new Set(activeFilters.employeeRanges);
     rows = rows.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
   }
 
@@ -225,6 +226,7 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
  * Cheap SQL count of matching companies for a category + state combination.
  */
 export const countCompaniesByCategoryAndState = cache(async function countCompaniesByCategoryAndState(categorySlug, stateSlug, filters = {}) {
+  const activeFilters = filters || {};
   const categoryIds = await resolveCategoryIds(categorySlug);
   if (!categoryIds.length) return 0;
 
@@ -244,22 +246,22 @@ export const countCompaniesByCategoryAndState = cache(async function countCompan
     conditions.push(eq(companies.hq_state_id, stateId));
   }
 
-  if (filters.stateSlugs?.length) {
+  if (activeFilters.stateSlugs?.length) {
     const resolvedIds = (
-      await Promise.all(filters.stateSlugs.map((s) => resolveStateId(String(s).toLowerCase())))
+      await Promise.all(activeFilters.stateSlugs.map((s) => resolveStateId(String(s).toLowerCase())))
     ).filter(Boolean);
     if (!resolvedIds.length) return 0;
     conditions.push(inArray(companies.hq_state_id, resolvedIds));
   }
 
-  const hasEmployeeFilter = filters.employeeRanges?.length > 0;
+  const hasEmployeeFilter = activeFilters.employeeRanges?.length > 0;
 
   if (hasEmployeeFilter) {
     let rows = await db
       .select({ employee_count: companies.employee_count })
       .from(companies)
       .where(and(...conditions));
-    const wanted = new Set(filters.employeeRanges);
+    const wanted = new Set(activeFilters.employeeRanges);
     rows = rows.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
     return rows.length;
   }
