@@ -335,7 +335,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 
         {/* ── Overview ─────────────────────────────────────────────────────── */}
         <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg overflow-hidden">
-          <div className={`grid divide-y md:divide-y-0 md:divide-x divide-slate-200 ${hasMetrics ? 'md:grid-cols-[1fr_220px_160px]' : 'md:grid-cols-[1fr_220px]'}`}>
+          <div className={`grid divide-y md:divide-y-0 md:divide-x divide-slate-200 ${hasMetrics ? 'md:grid-cols-[1fr_320px_160px]' : 'md:grid-cols-[1fr_320px]'}`}>
             {/* Description + social */}
             <div className="p-6">
               {agency.tagline && (
