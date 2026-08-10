@@ -58,10 +58,16 @@ function SearchContent() {
   useEffect(() => {
     const resolved = resolveQuery(query, category, state);
 
-    // If query resolves to a single canonical category + state, redirect to it
-    // But ONLY if the user typed it (i.e. we have a search query)
-    if (query && resolved.intent.categorySlug && resolved.intent.stateSlug) {
-      router.replace(canonicalPathFor(resolved.intent));
+    // A category + state pair has its own indexable canonical page — redirect
+    // there whether the pair came from typed text ("switchgear in wisconsin")
+    // or from the category/state dropdowns, as long as there's no leftover
+    // free-text query that would otherwise get silently dropped.
+    if (resolved.cat && resolved.st && !resolved.text.trim()) {
+      router.replace(canonicalPathFor({
+        categorySlug: resolved.cat,
+        subcategorySlug: resolved.intent.subcategorySlug || subcategory || null,
+        stateSlug: resolved.st,
+      }));
       return;
     }
 
@@ -108,8 +114,12 @@ function SearchContent() {
     clearTimeout(debounceRef.current);
     const resolved = resolveQuery(queryInput, category, state);
 
-    if (queryInput && resolved.intent.categorySlug && resolved.intent.stateSlug) {
-      router.push(canonicalPathFor(resolved.intent));
+    if (resolved.cat && resolved.st && !resolved.text.trim()) {
+      router.push(canonicalPathFor({
+        categorySlug: resolved.cat,
+        subcategorySlug: resolved.intent.subcategorySlug || subcategory || null,
+        stateSlug: resolved.st,
+      }));
       return;
     }
 
