@@ -18,8 +18,10 @@ export function getDirectoryUrl(categorySlug?: string, options?: { underStaffing
  *
  * There is no standalone /{subcategorySlug} route — a subcategory only
  * resolves under its parent: /{parentSlug}/{subcategorySlug} (nationwide) or
- * /{parentSlug}/{stateSlug}/{subcategorySlug} (state-scoped). `cat` must
- * carry `is_parent` and, for subcategories, `parentSlug` (the parent
+ * /{parentSlug}/{subcategorySlug}/{stateSlug} (state-scoped — subcategory
+ * segment comes BEFORE state; see app/[category]/[state]/[subcategory]/page.jsx,
+ * which swaps the [state] and [subcategory] param names on purpose). `cat`
+ * must carry `is_parent` and, for subcategories, `parentSlug` (the parent
  * category's slug — resolve it from the full categories list before calling
  * this, since a company's own linked-category rows don't include it).
  */
@@ -30,7 +32,7 @@ export function getCategoryHref(
   if (!cat?.slug) return '/browse';
   const topSlug = cat.is_parent ? cat.slug : cat.parentSlug;
   if (!topSlug) return '/browse'; // orphaned subcategory — parent not found
-  const parts = [topSlug, stateSlug, cat.is_parent ? null : cat.slug].filter(Boolean);
+  const parts = [topSlug, cat.is_parent ? null : cat.slug, stateSlug].filter(Boolean);
   return `/${parts.join('/')}`;
 }
 
