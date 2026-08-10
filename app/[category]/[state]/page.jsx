@@ -187,7 +187,7 @@ export async function generateMetadata({ params, searchParams }) {
         categoryName: shortCatName,
         stateSlug: state,
         stateName,
-        totalCount: stats.totalCount || companies.length,
+        totalCount: stats.totalCount || count,
       })
     : stats.totalCount > 0
       ? `Browse ${stats.totalCount} ${cat?.noun || categoryName.toLowerCase()} in the US. Compare capabilities, location, and company size. No paid placements.`
@@ -198,7 +198,7 @@ export async function generateMetadata({ params, searchParams }) {
     title,
     description,
     alternates: { canonical },
-    robots: (clampedPage > 1 || companies.length < 5) ? { index: false, follow: true } : { index: true, follow: true },
+    robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: { title, description, type: 'website', url: canonical },
   };
 }
@@ -391,7 +391,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>Sorted by rating</p>
               </div>
 
-              {companies.length === 0 ? (
+              {totalCount === 0 ? (
                 <div style={{ textAlign: 'center', padding: '64px 24px', color: '#64748b' }}>
                   {(activeStates.length || activeEmployeeRanges.length) ? (
                     <>
@@ -576,7 +576,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           categoryName: cat?.shortName || categoryName,
           stateSlug: state,
           stateName,
-          totalCount: companies.length,
+          totalCount: totalCount,
           verifiedCount: stats.verifiedCount,
           medianRating: stats.medianRating,
           topSpecialties: stats.topSpecialties,
@@ -936,7 +936,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         </div>
 
         {/* ── Category description / FAQ / Related Links (rendered on both nationwide and state pages) ── */}
-        {((!stateName && cat?.longDescription) || (stateName && companies.length > 0)) && (
+        {((!stateName && cat?.longDescription) || (stateName && totalCount > 0)) && (
           <section style={{ backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', paddingTop: 48, paddingBottom: 64 }} className="px-6 lg:px-8">
             <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
               
@@ -975,7 +975,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                           categoryName: cat.shortName,
                           stateSlug: state,
                           stateName,
-                          totalCount: companies.length,
+                          totalCount: totalCount,
                           verifiedCount: stats.verifiedCount,
                           medianRating: stats.medianRating,
                           topSpecialties: stats.topSpecialties,
@@ -1005,7 +1005,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                       categoryName: cat.shortName,
                       stateSlug: state,
                       stateName,
-                      totalCount: companies.length,
+                      totalCount: totalCount,
                       verifiedCount: stats.verifiedCount,
                       medianRating: stats.medianRating,
                       topSpecialties: stats.topSpecialties,

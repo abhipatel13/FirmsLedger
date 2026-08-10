@@ -173,6 +173,8 @@ async function resolveCategoryIds(categorySlug) {
  */
 export const fetchCompaniesByCategoryAndState = cache(async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, offset = 0, filters = {}) {
   const activeFilters = filters || {};
+  const activeOffset = Number(offset) || 0;
+  const activeLimit = Number(limit) || 200;
   const categoryIds = await resolveCategoryIds(categorySlug);
   if (!categoryIds.length) return [];
 
@@ -209,7 +211,7 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
     .orderBy(orderCol(companies, orderKey));
 
   if (!hasEmployeeFilter) {
-    query = query.limit(limit).offset(offset);
+    query = query.limit(activeLimit).offset(activeOffset);
   }
 
   let rows = await query;
