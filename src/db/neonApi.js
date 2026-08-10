@@ -26,6 +26,7 @@ import {
 import { eq, and, inArray, isNull, isNotNull, gt, asc, desc, ilike, sql } from 'drizzle-orm';
 import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -171,7 +172,7 @@ async function resolveCategoryIds(categorySlug) {
  * Fetch companies by category slug, with optional state slug filter.
  * Used by /top/[category]/[state] page.
  */
-export const fetchCompaniesByCategoryAndState = cache(async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, offset = 0, filters = {}) {
+const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, offset = 0, filters = {}) => {
   const activeFilters = filters || {};
   const activeOffset = Number(offset) || 0;
   const activeLimit = Number(limit) || 200;
@@ -222,12 +223,16 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
   }
 
   return rows;
-});
+};
+
+export const fetchCompaniesByCategoryAndState = cache(
+  unstable_cache(fetchCompaniesByCategoryAndStateImpl, ['fetchCompaniesByCategoryAndState'], { revalidate: 3600 })
+);
 
 /**
  * Cheap SQL count of matching companies for a category + state combination.
  */
-export const countCompaniesByCategoryAndState = cache(async function countCompaniesByCategoryAndState(categorySlug, stateSlug, filters = {}) {
+const countCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, filters = {}) => {
   const activeFilters = filters || {};
   const categoryIds = await resolveCategoryIds(categorySlug);
   if (!categoryIds.length) return 0;
@@ -274,7 +279,11 @@ export const countCompaniesByCategoryAndState = cache(async function countCompan
     .where(and(...conditions));
 
   return row?.count || 0;
-});
+};
+
+export const countCompaniesByCategoryAndState = cache(
+  unstable_cache(countCompaniesByCategoryAndStateImpl, ['countCompaniesByCategoryAndState'], { revalidate: 3600 })
+);
 
 /**
  * Interim subcategory filter: narrows a fetched company list down to companies
@@ -296,7 +305,7 @@ export function filterCompaniesBySubcategoryKeywords(companies, keywords) {
  * Returns per-state result counts for a category, for the filter sidebar.
  * Scoped to the category only — not re-scoped by other active filters (v1 simplification).
  */
-export const fetchStateCountsForCategory = cache(async function fetchStateCountsForCategory(categorySlug) {
+const fetchStateCountsForCategoryImpl = async (categorySlug) => {
   const categoryIds = await resolveCategoryIds(categorySlug);
   if (!categoryIds.length) return [];
 
@@ -322,13 +331,17 @@ export const fetchStateCountsForCategory = cache(async function fetchStateCounts
     .filter((row) => row.hq_state_id && idToSlug.has(row.hq_state_id))
     .map((row) => ({ stateSlug: idToSlug.get(row.hq_state_id), stateLabel: row.hq_state_label, count: row.count }))
     .sort((a, b) => b.count - a.count);
-});
+};
+
+export const fetchStateCountsForCategory = cache(
+  unstable_cache(fetchStateCountsForCategoryImpl, ['fetchStateCountsForCategory'], { revalidate: 3600 })
+);
 
 /**
  * Returns live-computed stats for a category (+ optionally state) listing page.
  * No hourly-rate field — deliberately absent (no such data exists).
  */
-export const fetchCategoryStats = cache(async function fetchCategoryStats(categorySlug, stateSlug = null) {
+const fetchCategoryStatsImpl = async (categorySlug, stateSlug = null) => {
   const categoryIds = await resolveCategoryIds(categorySlug);
   if (!categoryIds.length) {
     return { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] };
@@ -388,7 +401,11 @@ export const fetchCategoryStats = cache(async function fetchCategoryStats(catego
     console.error('Error fetching category stats:', err);
     return { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] };
   }
-});
+};
+
+export const fetchCategoryStats = cache(
+  unstable_cache(fetchCategoryStatsImpl, ['fetchCategoryStats'], { revalidate: 3600 })
+);
 
 /** @deprecated Use fetchCompaniesByCategoryAndState instead */
 export async function fetchCompaniesByCategory(categorySlug, orderKey = '-avg_rating', limit = 200) {
