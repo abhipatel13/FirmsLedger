@@ -72,6 +72,42 @@ export function getAgencyLogoUrl(agency: {
   return initialsAvatarDataUri(agency.name || '?');
 }
 
+/** Validate description content, filtering out scraper blocks, JavaScript requirements, or tag lists. */
+export function isProperDescription(desc: string | null | undefined): boolean {
+  if (!desc) return false;
+  const normalized = desc.toLowerCase().trim();
+  if (
+    normalized.includes('incident id') ||
+    normalized.includes('access denied') ||
+    normalized.includes('enable javascript') ||
+    normalized.includes('requires javascript') ||
+    normalized.includes('checking your browser') ||
+    normalized.includes('request unsuccessful') ||
+    normalized.includes('incapsula') ||
+    normalized.includes('cloudflare') ||
+    normalized.includes('please enable js') ||
+    normalized.includes('security check') ||
+    normalized.includes('error 403') ||
+    normalized.includes('forbidden') ||
+    normalized.includes('captcha')
+  ) {
+    return false;
+  }
+  
+  // If it has multiple pipe characters (e.g. >= 2), it's probably just a tag list and not a proper sentence
+  const pipeCount = (desc.match(/\|/g) || []).length;
+  if (pipeCount >= 2) {
+    return false;
+  }
+
+  // If it's too short (e.g. less than 15 characters), it might not be a real description
+  if (desc.trim().length < 15) {
+    return false;
+  }
+
+  return true;
+}
+
 /** Get the company description, falling back to a nice dynamic description if none exists */
 export function getCompanyDescription(company: {
   description?: string | null;
@@ -81,7 +117,9 @@ export function getCompanyDescription(company: {
   hq_state?: string | null;
 } | null | undefined): string {
   if (!company) return '';
-  if (company.description && company.description.trim()) return company.description.trim();
+  if (company.description && company.description.trim() && isProperDescription(company.description)) {
+    return company.description.trim();
+  }
   const name = company.name || 'This company';
   const state = company.hq_state_label || company.hq_state;
   const locationParts = [company.hq_city, state].filter(Boolean);

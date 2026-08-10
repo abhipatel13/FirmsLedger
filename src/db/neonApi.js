@@ -23,7 +23,7 @@ import {
   marketplace_suppliers,
   marketplace_responses,
 } from './schema';
-import { eq, and, inArray, isNull, gt, asc, desc, ilike, sql } from 'drizzle-orm';
+import { eq, and, inArray, isNull, isNotNull, gt, asc, desc, ilike, sql } from 'drizzle-orm';
 import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 import { cache } from 'react';
 
@@ -147,8 +147,8 @@ export async function fetchHomepageStats() {
   }
 }
 
-/** Resolves a category slug (including its subcategories, if it's a parent) to the set of matching, approved company IDs. Returns [] if the category or no linked companies exist. */
-async function resolveCategoryCompanyIds(categorySlug) {
+// Bounded — a category has at most ~10 ids. Safe to keep as an IN list.
+async function resolveCategoryIds(categorySlug) {
   const [cat] = await db
     .select({ id: categories.id, is_parent: categories.is_parent })
     .from(categories)
@@ -156,7 +156,7 @@ async function resolveCategoryCompanyIds(categorySlug) {
     .limit(1);
   if (!cat) return [];
 
-  let categoryIds = [cat.id];
+  const categoryIds = [cat.id];
   if (cat.is_parent) {
     const subs = await db
       .select({ id: categories.id })
@@ -164,26 +164,25 @@ async function resolveCategoryCompanyIds(categorySlug) {
       .where(eq(categories.parent_id, cat.id));
     categoryIds.push(...subs.map((s) => s.id));
   }
-
-  const links = await db
-    .select({ company_id: company_categories.company_id })
-    .from(company_categories)
-    .where(inArray(company_categories.category_id, categoryIds));
-
-  return [...new Set(links.map((l) => l.company_id))];
+  return categoryIds;
 }
 
 /**
  * Fetch companies by category slug, with optional state slug filter.
  * Used by /top/[category]/[state] page.
  */
-export const fetchCompaniesByCategoryAndState = cache(async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, filters = {}) {
-  const companyIds = await resolveCategoryCompanyIds(categorySlug);
-  if (!companyIds.length) return [];
+export const fetchCompaniesByCategoryAndState = cache(async function fetchCompaniesByCategoryAndState(categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, offset = 0, filters = {}) {
+  const categoryIds = await resolveCategoryIds(categorySlug);
+  if (!categoryIds.length) return [];
+
+  const subquery = db
+    .select({ company_id: company_categories.company_id })
+    .from(company_categories)
+    .where(inArray(company_categories.category_id, categoryIds));
 
   const conditions = [
     eq(companies.approved, true),
-    inArray(companies.id, companyIds),
+    inArray(companies.id, subquery),
   ];
 
   if (stateSlug) {
@@ -200,19 +199,77 @@ export const fetchCompaniesByCategoryAndState = cache(async function fetchCompan
     conditions.push(inArray(companies.hq_state_id, resolvedIds));
   }
 
-  let rows = await db
+  const hasEmployeeFilter = filters.employeeRanges?.length > 0;
+
+  let query = db
     .select()
     .from(companies)
     .where(and(...conditions))
-    .orderBy(orderCol(companies, orderKey))
-    .limit(limit);
+    .orderBy(orderCol(companies, orderKey));
 
-  if (filters.employeeRanges?.length) {
+  if (!hasEmployeeFilter) {
+    query = query.limit(limit).offset(offset);
+  }
+
+  let rows = await query;
+
+  if (hasEmployeeFilter) {
     const wanted = new Set(filters.employeeRanges);
     rows = rows.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
   }
 
   return rows;
+});
+
+/**
+ * Cheap SQL count of matching companies for a category + state combination.
+ */
+export const countCompaniesByCategoryAndState = cache(async function countCompaniesByCategoryAndState(categorySlug, stateSlug, filters = {}) {
+  const categoryIds = await resolveCategoryIds(categorySlug);
+  if (!categoryIds.length) return 0;
+
+  const subquery = db
+    .select({ company_id: company_categories.company_id })
+    .from(company_categories)
+    .where(inArray(company_categories.category_id, categoryIds));
+
+  const conditions = [
+    eq(companies.approved, true),
+    inArray(companies.id, subquery),
+  ];
+
+  if (stateSlug) {
+    const stateId = await resolveStateId(String(stateSlug).toLowerCase());
+    if (!stateId) return 0;
+    conditions.push(eq(companies.hq_state_id, stateId));
+  }
+
+  if (filters.stateSlugs?.length) {
+    const resolvedIds = (
+      await Promise.all(filters.stateSlugs.map((s) => resolveStateId(String(s).toLowerCase())))
+    ).filter(Boolean);
+    if (!resolvedIds.length) return 0;
+    conditions.push(inArray(companies.hq_state_id, resolvedIds));
+  }
+
+  const hasEmployeeFilter = filters.employeeRanges?.length > 0;
+
+  if (hasEmployeeFilter) {
+    let rows = await db
+      .select({ employee_count: companies.employee_count })
+      .from(companies)
+      .where(and(...conditions));
+    const wanted = new Set(filters.employeeRanges);
+    rows = rows.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
+    return rows.length;
+  }
+
+  const [row] = await db
+    .select({ count: sql`count(*)`.mapWith(Number) })
+    .from(companies)
+    .where(and(...conditions));
+
+  return row?.count || 0;
 });
 
 /**
@@ -236,8 +293,13 @@ export function filterCompaniesBySubcategoryKeywords(companies, keywords) {
  * Scoped to the category only — not re-scoped by other active filters (v1 simplification).
  */
 export const fetchStateCountsForCategory = cache(async function fetchStateCountsForCategory(categorySlug) {
-  const companyIds = await resolveCategoryCompanyIds(categorySlug);
-  if (!companyIds.length) return [];
+  const categoryIds = await resolveCategoryIds(categorySlug);
+  if (!categoryIds.length) return [];
+
+  const subquery = db
+    .select({ company_id: company_categories.company_id })
+    .from(company_categories)
+    .where(inArray(company_categories.category_id, categoryIds));
 
   const rows = await db
     .select({
@@ -246,7 +308,7 @@ export const fetchStateCountsForCategory = cache(async function fetchStateCounts
       count: sql`count(*)`.mapWith(Number),
     })
     .from(companies)
-    .where(and(eq(companies.approved, true), inArray(companies.id, companyIds)))
+    .where(and(eq(companies.approved, true), inArray(companies.id, subquery)))
     .groupBy(companies.hq_state_id, companies.hq_state_label);
 
   const stateRows = await db.select().from(states);
@@ -263,14 +325,19 @@ export const fetchStateCountsForCategory = cache(async function fetchStateCounts
  * No hourly-rate field — deliberately absent (no such data exists).
  */
 export const fetchCategoryStats = cache(async function fetchCategoryStats(categorySlug, stateSlug = null) {
-  const companyIds = await resolveCategoryCompanyIds(categorySlug);
-  if (!companyIds.length) {
+  const categoryIds = await resolveCategoryIds(categorySlug);
+  if (!categoryIds.length) {
     return { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] };
   }
 
+  const subquery = db
+    .select({ company_id: company_categories.company_id })
+    .from(company_categories)
+    .where(inArray(company_categories.category_id, categoryIds));
+
   const conditions = [
     eq(companies.approved, true),
-    inArray(companies.id, companyIds),
+    inArray(companies.id, subquery),
   ];
 
   if (stateSlug) {
@@ -278,52 +345,45 @@ export const fetchCategoryStats = cache(async function fetchCategoryStats(catego
     if (stateId) conditions.push(eq(companies.hq_state_id, stateId));
   }
 
-  const rows = await db
-    .select({
-      is_verified: companies.is_verified,
-      avg_rating: companies.avg_rating,
-      hq_state_id: companies.hq_state_id,
-      certifications: companies.certifications,
-    })
-    .from(companies)
-    .where(and(...conditions));
+  try {
+    const [statsRow, certRows] = await Promise.all([
+      db
+        .select({
+          totalCount: sql`count(*)`.mapWith(Number),
+          verifiedCount: sql`count(case when ${companies.is_verified} = true then 1 end)`.mapWith(Number),
+          medianRating: sql`percentile_cont(0.5) within group (order by (case when ${companies.avg_rating} > '0.0' then ${companies.avg_rating}::float end))`.mapWith(Number),
+          statesCovered: sql`count(distinct ${companies.hq_state_id})`.mapWith(Number),
+        })
+        .from(companies)
+        .where(and(...conditions)),
 
-  const totalCount = rows.length;
-  const verifiedCount = rows.filter((r) => r.is_verified).length;
+      db
+        .select({
+          cert: sql`unnest(${companies.certifications})`.mapWith(String),
+          count: sql`count(*)`.mapWith(Number),
+        })
+        .from(companies)
+        .where(and(...conditions, isNotNull(companies.certifications)))
+        .groupBy(sql`unnest(${companies.certifications})`)
+        .orderBy(desc(sql`count(*)`))
+        .limit(3)
+        .catch(() => []),
+    ]);
 
-  // Median of avg_rating where avg_rating > 0 — computed in JS
-  const ratings = rows
-    .map((r) => parseFloat(r.avg_rating))
-    .filter((r) => !Number.isNaN(r) && r > 0)
-    .sort((a, b) => a - b);
+    const stats = statsRow[0] || { totalCount: 0, verifiedCount: 0, medianRating: null, statesCovered: 0 };
+    const topSpecialties = certRows ? certRows.map((r) => r.cert) : [];
 
-  let medianRating = null;
-  if (ratings.length > 0) {
-    const mid = Math.floor(ratings.length / 2);
-    medianRating = ratings.length % 2 === 0
-      ? Number(((ratings[mid - 1] + ratings[mid]) / 2).toFixed(2))
-      : ratings[mid];
+    return {
+      totalCount: stats.totalCount || 0,
+      verifiedCount: stats.verifiedCount || 0,
+      medianRating: stats.medianRating,
+      statesCovered: stats.statesCovered || 0,
+      topSpecialties,
+    };
+  } catch (err) {
+    console.error('Error fetching category stats:', err);
+    return { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] };
   }
-
-  // Distinct states (suppressed on state pages by the caller)
-  const uniqueStates = new Set(rows.map((r) => r.hq_state_id).filter(Boolean));
-  const statesCovered = uniqueStates.size;
-
-  // Up to 3 most common certification values
-  const certCounts = new Map();
-  for (const row of rows) {
-    if (row.certifications && Array.isArray(row.certifications)) {
-      for (const cert of row.certifications) {
-        certCounts.set(cert, (certCounts.get(cert) || 0) + 1);
-      }
-    }
-  }
-  const topSpecialties = [...certCounts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 3)
-    .map(([cert]) => cert);
-
-  return { verifiedCount, totalCount, medianRating, statesCovered, topSpecialties };
 });
 
 /** @deprecated Use fetchCompaniesByCategoryAndState instead */

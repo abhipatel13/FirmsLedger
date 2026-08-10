@@ -3,7 +3,7 @@ import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL } from '@/lib/seo';
 import { Shield, Info } from 'lucide-react';
-import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats } from '@/db/neonApi';
+import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import CompanyCard from '@/components/listing/CompanyCard';
@@ -115,6 +115,10 @@ export async function generateMetadata({ params, searchParams }) {
 
   if (!VALID_CATEGORIES.has(category)) return { title: 'Not Found' };
 
+  if (state && !VALID_STATES.has(state) && !ALL_SUBCATEGORY_SLUGS.has(state)) {
+    return { title: 'Not Found' };
+  }
+
   const cat = CATEGORY_MAP[category];
 
   // Subcategory hub
@@ -122,13 +126,13 @@ export async function generateMetadata({ params, searchParams }) {
     const sub = cat?.subcategories.find((s) => s.slug === state);
     const subName = sub?.name || toTitleCase(state);
     
-    // Fetch matching companies to clamp page number correctly
-    const companies = await fetchCompaniesByCategoryAndState(category, null, '-avg_rating', 500, {
+    // Fetch matching company count to clamp page number correctly
+    const count = await countCompaniesByCategoryAndState(category, null, {
       stateSlugs: activeStates,
       employeeRanges: activeEmployeeRanges,
     });
     
-    const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
+    const totalPages    = Math.max(1, Math.ceil(count / PAGE_SIZE));
     const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
     
     const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
@@ -158,13 +162,13 @@ export async function generateMetadata({ params, searchParams }) {
   const categoryName = cat?.name || toTitleCase(category);
   const stateName    = toTitleCase(state);
   
-  // Fetch matching companies to clamp page number correctly
-  const companies = await fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', 500, {
+  // Fetch matching company count to clamp page number correctly
+  const count = await countCompaniesByCategoryAndState(category, state || null, {
     stateSlugs: !state ? activeStates : [],
     employeeRanges: activeEmployeeRanges,
   });
   
-  const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
+  const totalPages    = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
   
   const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
@@ -172,7 +176,7 @@ export async function generateMetadata({ params, searchParams }) {
 
   const shortCatName = cat?.shortName || categoryName;
   const titleNoun = cat?.titleNoun || `${shortCatName} Companies`;
-  const title = `Top ${companies.length} ${titleNoun} in ${stateName}${pageSuffix}`;
+  const title = `Top ${count} ${titleNoun} in ${stateName}${pageSuffix}`;
     
   // Fetch stats using cache
   const stats = await fetchCategoryStats(category, state);
@@ -225,6 +229,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
   if (!VALID_CATEGORIES.has(category)) notFound();
 
+  if (state && !VALID_STATES.has(state) && !ALL_SUBCATEGORY_SLUGS.has(state)) {
+    notFound();
+  }
+
   const cat = CATEGORY_MAP[category];
 
   // ── Branch: subcategory hub — nationwide listing, same flow as category ──
@@ -239,15 +247,24 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     // No subcategory tagging exists in the DB yet, so this shows the parent
     // category's nationwide companies — same data source as the category page.
     const { activeStates, activeEmployeeRanges } = parseFilterParams(searchParams);
-    const [companies, stateCounts, stats] = await Promise.all([
-      fetchCompaniesByCategoryAndState(category, null, '-avg_rating', 500, { stateSlugs: activeStates, employeeRanges: activeEmployeeRanges }),
+
+    const totalCount = await countCompaniesByCategoryAndState(category, null, {
+      stateSlugs: activeStates,
+      employeeRanges: activeEmployeeRanges,
+    });
+
+    const totalPages    = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+    const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+
+    const [pageCompanies, stateCounts, stats] = await Promise.all([
+      fetchCompaniesByCategoryAndState(category, null, '-avg_rating', PAGE_SIZE, (currentPage - 1) * PAGE_SIZE, {
+        stateSlugs: activeStates,
+        employeeRanges: activeEmployeeRanges,
+      }),
       fetchStateCountsForCategory(category),
       fetchCategoryStats(category),
     ]);
 
-    const totalPages    = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
-    const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
-    const pageCompanies = companies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
     const rankOffset    = (currentPage - 1) * PAGE_SIZE;
     const pageTitle     = `${sub.name} Manufacturers in the US`;
 
@@ -256,10 +273,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
       '@type': 'ItemList',
       name: pageTitle,
       url: canonical,
-      numberOfItems: companies.length,
-      itemListElement: companies.map((company, i) => ({
+      numberOfItems: totalCount,
+      itemListElement: pageCompanies.map((company, i) => ({
         '@type': 'ListItem',
-        position: i + 1,
+        position: rankOffset + i + 1,
         name: company.name,
         description: getCompanyDescription(company),
         url: `${_BASE}/company/${company.slug}`,
@@ -495,8 +512,17 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
   const stateName    = state ? toTitleCase(state) : null;
   const { activeStates, activeEmployeeRanges } = parseFilterParams(searchParams);
   const showStateFilter = true; // Always show state filter dropdown
-  const [companies, stateCounts, stats] = await Promise.all([
-    fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', 500, {
+
+  const totalCount = await countCompaniesByCategoryAndState(category, state || null, {
+    stateSlugs: !state ? activeStates : [],
+    employeeRanges: activeEmployeeRanges,
+  });
+
+  const totalPages   = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const currentPage  = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
+
+  const [pageCompanies, stateCounts, stats] = await Promise.all([
+    fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', PAGE_SIZE, (currentPage - 1) * PAGE_SIZE, {
       stateSlugs: !state ? activeStates : [],
       employeeRanges: activeEmployeeRanges,
     }),
@@ -504,20 +530,12 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     fetchCategoryStats(category, state || undefined),
   ]);
 
-  // A category/state combination with no approved companies is a thin page.
-  // 404 it rather than serving an empty 200 that Google files as a soft 404.
-  // Nationwide (`state` absent) is exempt — it is a hub, not a listing.
-  if (state && companies.length === 0) notFound();
-
   const pageTitleNoun = cat?.titleNoun || `${cat?.shortName || categoryName} Companies`;
   const pageTitle    = stateName
-    ? `Top ${companies.length} ${pageTitleNoun} in ${stateName}`
+    ? `Top ${totalCount} ${pageTitleNoun} in ${stateName}`
     : `${pageTitleNoun} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
-  const totalPages   = Math.max(1, Math.ceil(companies.length / PAGE_SIZE));
-  const currentPage  = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
-  const pageCompanies = companies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
   const rankOffset    = (currentPage - 1) * PAGE_SIZE;
 
   const itemListJsonLd = {
@@ -525,10 +543,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     '@type': 'ItemList',
     name: pageTitle,
     url: `${_BASE}${basePath}`,
-    numberOfItems: companies.length,
-    itemListElement: companies.map((company, i) => ({
+    numberOfItems: totalCount,
+    itemListElement: pageCompanies.map((company, i) => ({
       '@type': 'ListItem',
-      position: i + 1,
+      position: rankOffset + i + 1,
       name: company.name,
       description: getCompanyDescription(company),
       url: `${_BASE}/company/${company.slug}`,
@@ -649,7 +667,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                       categoryName: cat?.shortName || categoryName,
                       stateSlug: state,
                       stateName,
-                      totalCount: companies.length
+                      totalCount: totalCount,
                     })}
                   </p>
                 ) : (
@@ -671,7 +689,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 height: 'fit-content'
               }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                  <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{stats.totalCount}</span>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{totalCount}</span>
                   <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, letterSpacing: '0.02em', lineHeight: 1 }}>listings</span>
                 </div>
                 {!stateName && stats?.statesCovered > 0 && (
@@ -708,7 +726,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <div style={{ minWidth: 0, marginTop: 24 }}>
             {stateName && (
               <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.65, margin: '0 0 24px' }}>
-                Comparing {companies.length} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}, ranked by
+                Comparing {totalCount} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}, ranked by
                 verified customer reviews. Every profile below is manually screened before it goes live — request quotes
                 directly from suppliers, or {' '}
                 <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
@@ -724,7 +742,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>Sorted by rating</p>
             </div>
 
-            {companies.length === 0 ? (
+            {totalCount === 0 ? (
               <div style={{ textAlign: 'center', padding: '64px 24px', color: '#64748b' }}>
                 {(activeStates.length || activeEmployeeRanges.length) ? (
                   <>

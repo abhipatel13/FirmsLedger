@@ -1,6 +1,6 @@
 import { db } from '@/db/client';
 import { states, categories, companies, company_categories } from '@/db/schema';
-import { eq, and, isNotNull, ne } from 'drizzle-orm';
+import { eq, and, isNotNull, ne, sql } from 'drizzle-orm';
 import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
 
@@ -30,15 +30,15 @@ async function buildLiveCombos() {
     const rows = await db
       .select({
         categorySlug: categories.slug,
-        categoryParentId: categories.parent_id,
-        categoryId: categories.id,
         stateSlug: states.slug,
+        count: sql`count(*)`.mapWith(Number),
       })
       .from(companies)
       .innerJoin(company_categories, eq(company_categories.company_id, companies.id))
       .innerJoin(categories, eq(categories.id, company_categories.category_id))
       .innerJoin(states, eq(states.id, companies.hq_state_id))
-      .where(eq(companies.approved, true));
+      .where(eq(companies.approved, true))
+      .groupBy(categories.slug, states.slug);
 
     // category slug -> parent slug (for rolling child-category hits up to parent)
     const parentBySlug = new Map();
@@ -49,19 +49,20 @@ async function buildLiveCombos() {
     }
 
     const counts = new Map(); // "categorySlug|stateSlug" -> count
-    const bump = (catSlug, stateSlug) => {
+    const bump = (catSlug, stateSlug, val) => {
       const key = `${catSlug}|${stateSlug}`;
-      counts.set(key, (counts.get(key) || 0) + 1);
+      counts.set(key, (counts.get(key) || 0) + val);
     };
 
     for (const r of rows) {
-      bump(r.categorySlug, r.stateSlug);
+      bump(r.categorySlug, r.stateSlug, r.count);
       const parent = parentBySlug.get(r.categorySlug);
-      if (parent) bump(parent, r.stateSlug);
+      if (parent) bump(parent, r.stateSlug, r.count);
     }
 
     return counts;
-  } catch {
+  } catch (err) {
+    console.error('Error building sitemap combos:', err);
     // DB unavailable at build time — fall back to emitting every combo so the
     // sitemap still lists all real routes rather than going empty.
     return null;
