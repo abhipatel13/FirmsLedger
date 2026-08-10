@@ -25,6 +25,8 @@ export const MANUFACTURING_CATEGORIES = [
       { slug: 'connectors',        name: 'Connectors',        keywords: ['connector', 'connectors', 'connector assembly'] },
       { slug: 'sensors',           name: 'Sensors',           keywords: ['sensor', 'sensors'] },
       { slug: 'relays',            name: 'Relays',            keywords: ['relay', 'relays'] },
+      { slug: 'electrical-wire-cable', name: 'Electrical Wire & Cable', keywords: ['wire and cable', 'wire & cable', 'electrical wire', 'electrical cable'] },
+      { slug: 'solar-panels',      name: 'Solar Panels',      keywords: ['solar panel', 'solar panels', 'photovoltaic', 'pv module'] },
     ],
   },
   {
@@ -111,6 +113,7 @@ export const MANUFACTURING_CATEGORIES = [
       { slug: 'industrial-electronics',  name: 'Industrial Electronics',  keywords: ['industrial electronics', 'industrial electronic'] },
       { slug: 'semiconductor-packaging', name: 'Semiconductor Packaging', keywords: ['semiconductor', 'chip packaging', 'semiconductor packaging'] },
       { slug: 'electronic-components',   name: 'Electronic Components',   keywords: ['electronic component', 'electronic components'] },
+      { slug: 'semiconductor-chips',     name: 'Semiconductor / Chips',   keywords: ['semiconductor', 'semiconductor chip', 'chip', 'integrated circuit', 'ic'] },
     ],
   },
   {
