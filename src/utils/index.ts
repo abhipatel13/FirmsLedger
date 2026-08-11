@@ -138,6 +138,10 @@ export function getCompanyDescription(company: {
   hq_city?: string | null;
   hq_state_label?: string | null;
   hq_state?: string | null;
+  employee_count?: string | null;
+  founded_year?: number | null;
+  certifications?: string[] | null;
+  is_verified?: boolean | null;
 } | null | undefined): string {
   if (!company) return '';
   if (company.description && company.description.trim() && isProperDescription(company.description)) {
@@ -147,5 +151,23 @@ export function getCompanyDescription(company: {
   const state = company.hq_state_label || company.hq_state;
   const locationParts = [company.hq_city, state].filter(Boolean);
   const locationStr = locationParts.length > 0 ? ` based in ${locationParts.join(', ')}` : '';
-  return `${name} is a verified manufacturer${locationStr}. Connect to learn more about their capabilities, services, and operations.`;
+
+  const sentences = [
+    `${name} is a${company.is_verified ? ' verified' : ''} manufacturer${locationStr} listed on FirmsLedger.`,
+  ];
+
+  const facts = [];
+  if (company.founded_year) facts.push(`founded in ${company.founded_year}`);
+  if (company.employee_count) facts.push(`with ${company.employee_count} employees`);
+  if (facts.length > 0) {
+    sentences.push(`The company is ${facts.join(' and ')}.`);
+  }
+
+  if (company.certifications && company.certifications.length > 0) {
+    sentences.push(`They hold the following certifications: ${company.certifications.join(', ')}.`);
+  }
+
+  sentences.push('Connect with them through FirmsLedger to learn more about their capabilities, services, and operations.');
+
+  return sentences.join(' ');
 }

@@ -58,6 +58,7 @@ const ALL_STATES = [
   { name: 'West Virginia',  slug: 'west-virginia',  region: 'South'     },
   { name: 'Wisconsin',      slug: 'wisconsin',      region: 'Midwest'   },
   { name: 'Wyoming',        slug: 'wyoming',        region: 'West'      },
+  { name: 'District of Columbia', slug: 'district-of-columbia', region: 'Northeast' },
 ];
 
 const CATEGORIES = [
