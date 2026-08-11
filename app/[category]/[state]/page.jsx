@@ -18,7 +18,7 @@ import {
   getNeighboringStates
 } from '@/lib/seoDescription';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 // One indexable page has to satisfy "top 9", "top 10", "top 20", "top 25" — a
 // bigger first page means the larger N subsumes the smaller instead of the

@@ -10,7 +10,7 @@ import { ALL_US_STATES } from '@/lib/usStates';
 import { getCompanyDescription } from '@/utils';
 import FilterBar from '@/components/listing/FilterBar';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 25;
 
