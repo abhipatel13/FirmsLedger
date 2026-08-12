@@ -182,8 +182,11 @@ export default async function StateHubPage({ params }) {
             }}>
               Manufacturers in {state.name}
             </h1>
-            <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 560, marginBottom: 0 }}>
-              Browse manufacturers in {state.name} by category. Choose a category to explore.
+            <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 640, marginBottom: 0 }}>
+              Browse manufacturers in {state.name} by category. FirmsLedger lists verified {state.name} manufacturers
+              across {CATEGORIES.length} categories, from {CATEGORIES[0].name.toLowerCase()} to{' '}
+              {CATEGORIES[CATEGORIES.length - 1].name.toLowerCase()}, so you can compare suppliers, review company
+              details, and request a quote directly from a manufacturer's listing.
             </p>
           </div>
         </div>
@@ -192,6 +195,13 @@ export default async function StateHubPage({ params }) {
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 24px 80px' }}>
           <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 28 }}>
             Choose a manufacturing category
+          </p>
+
+          <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, maxWidth: 760, marginBottom: 32 }}>
+            {state.name} is part of the {state.region} region, home to manufacturers spanning {CATEGORIES.map(c => c.name).join(', ')}.
+            Each category page below lists {state.name}-based companies with their location, team size, certifications,
+            and verified reviews where available. Whether you're sourcing {CATEGORIES[0].shortDesc.toLowerCase()} or{' '}
+            {CATEGORIES[3].shortDesc.toLowerCase()}, start by selecting the category that matches your project.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

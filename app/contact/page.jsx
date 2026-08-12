@@ -4,7 +4,7 @@ import { BASE_URL } from '@/lib/seo';
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
-  title: 'Contact Us',
+  title: 'Contact Our Team',
   description: 'Get in touch with FirmsLedger. Send a message or email us for questions, feedback, or partnership inquiries.',
   alternates: { canonical: `${_BASE}/contact` },
   openGraph: {

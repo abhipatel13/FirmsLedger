@@ -9,7 +9,7 @@ import { ALL_US_STATES } from '@/lib/usStates';
 import CompanyCard from '@/components/listing/CompanyCard';
 import FilterBar from '@/components/listing/FilterBar';
 import OtherCategoriesCard from '@/components/listing/OtherCategoriesCard';
-import { getCompanyDescription } from '@/utils';
+import { getCompanyDescription, buildListingTitle } from '@/utils';
 import {
   generateDynamicCategoryStateMetaDescription,
   generateDynamicCategoryStateAboveFoldText,
@@ -176,7 +176,7 @@ export async function generateMetadata({ params, searchParams }) {
 
   const shortCatName = cat?.shortName || categoryName;
   const titleNoun = cat?.titleNoun || `${shortCatName} Companies`;
-  const title = `Top ${count} ${titleNoun} in ${stateName}${pageSuffix}`;
+  const title = buildListingTitle({ count, noun: titleNoun, stateName, pageSuffix });
     
   // Fetch stats using cache
   const stats = await fetchCategoryStats(category, state);

@@ -1,3 +1,44 @@
+/**
+ * Builds a "Top {count} {noun} in {state}" style title, shortening in tiers so the
+ * rendered <title> (this + " | FirmsLedger" suffix from the layout template) stays
+ * under ~65 chars. Tries, in order: full title with optional parent-category suffix
+ * (disambiguates subcategories shared by multiple parents, e.g. wiring-harness under
+ * both automotive-parts and electrical-components) -> drop the count -> drop "Manufacturers"/"Companies" -> truncate the noun.
+ */
+export function buildListingTitle({
+  count,
+  noun,
+  stateName,
+  parentShortName,
+  pageSuffix = '',
+  maxLen = 51, // budget leaves room for " | FirmsLedger" (14 chars) within a 65-char total
+}: {
+  count?: number | null;
+  noun: string;
+  stateName: string;
+  parentShortName?: string | null;
+  pageSuffix?: string;
+  maxLen?: number;
+}): string {
+  const withCount = (n: string) => (count != null ? `Top ${count} ${n} in ${stateName}` : `${n} in ${stateName}`);
+  // Parent suffix must survive every tier below — it's what disambiguates a subcategory
+  // shared by multiple parent categories, so dropping it defeats the point of passing it.
+  const parentSuffix = parentShortName ? ` — ${parentShortName}` : '';
+
+  const full = `${withCount(noun)}${parentSuffix}${pageSuffix}`;
+  if (full.length <= maxLen) return full;
+
+  const shortNoun = noun.replace(/\s*(Manufacturers|Companies)$/i, '').trim() || noun;
+  const withoutCount = `${shortNoun} in ${stateName}${parentSuffix}${pageSuffix}`;
+  if (withoutCount.length <= maxLen) return withoutCount;
+
+  const overflow = withoutCount.length - maxLen;
+  const rawTrim = shortNoun.slice(0, Math.max(10, shortNoun.length - overflow));
+  // Trim to the last full word so we don't cut mid-word ("Wiring Harnes")
+  const trimmedNoun = (rawTrim.length < shortNoun.length ? rawTrim.replace(/\s+\S*$/, '') : rawTrim).trim() || rawTrim.trim();
+  return `${trimmedNoun} in ${stateName}${parentSuffix}${pageSuffix}`;
+}
+
 export function createPageUrl(pageName: string) {
   if (pageName === 'Home') return '/';
   if (pageName === 'Directory') return '/browse';

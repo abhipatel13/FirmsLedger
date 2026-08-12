@@ -7,7 +7,7 @@ import CompanyCard from '@/components/listing/CompanyCard';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState, filterCompaniesBySubcategoryKeywords } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
-import { getCompanyDescription } from '@/utils';
+import { getCompanyDescription, buildListingTitle } from '@/utils';
 import FilterBar from '@/components/listing/FilterBar';
 
 export const dynamic = 'force-dynamic';
@@ -95,10 +95,15 @@ export async function generateMetadata({ params, searchParams }) {
   const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
   const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
 
+  // Some subcategory slugs (e.g. wiring-harness) live under more than one parent category —
+  // disambiguate the title with the parent name so the two URLs don't produce identical <title>s.
+  const parentsWithSub = MANUFACTURING_CATEGORIES.filter((c) => c.subcategories.some((s) => s.slug === subcategory));
+  const parentShortName = parentsWithSub.length > 1 ? (cat.shortName || cat.name) : null;
+
   const title = clampedPage > 1
-    ? `${subName} in ${stateName}${pageSuffix}`
-    : `Top ${count} ${subName} Manufacturers in ${stateName}`;
-    
+    ? buildListingTitle({ noun: subName, stateName, parentShortName, pageSuffix })
+    : buildListingTitle({ count, noun: `${subName} Manufacturers`, stateName, parentShortName });
+
   const stats = await fetchCategoryStats(category, state);
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
   const canonical = `${_BASE}/${category}/${subcategory}/${state}${pageQuery}`;

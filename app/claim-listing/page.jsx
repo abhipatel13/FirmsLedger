@@ -126,15 +126,6 @@ function ClaimListingContent() {
     }
   };
 
-  // Block render until auth resolves; redirect handled in effect above
-  if (sessionLoading || !user) {
-    return (
-      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
-      </div>
-    );
-  }
-
   if (submitted) {
     return (
       <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center px-4 py-16">
@@ -189,9 +180,25 @@ function ClaimListingContent() {
               <p className="text-slate-500 text-sm mt-1">Fill in your details. We'll verify you're authorized to manage this listing.</p>
             </div>
 
-            {loading ? (
+            {sessionLoading || loading ? (
               <div className="flex items-center justify-center py-20">
                 <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+              </div>
+            ) : !user ? (
+              <div className="px-6 sm:px-8 py-16 text-center">
+                <p className="text-slate-600 text-sm mb-4">Sign in to verify your identity and claim this listing.</p>
+                <Button
+                  onClick={() => {
+                    const params = new URLSearchParams();
+                    if (agencySlug) params.set('agency', agencySlug);
+                    if (planParam) params.set('plan', planParam);
+                    const claimUrl = `/claim-listing${params.toString() ? `?${params}` : ''}`;
+                    router.push(`/auth?reason=claim&next=${encodeURIComponent(claimUrl)}`);
+                  }}
+                  className="bg-[#1A2E4A] hover:bg-[#1a2f4a] text-white font-semibold px-6 h-11 rounded-lg"
+                >
+                  Sign In to Continue
+                </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="px-6 sm:px-8 py-7 space-y-6">

@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
 
   const canonical = `${_BASE}/company/${slug}`;
   return {
-    title: location ? `${companyName} - ${location}` : companyName,
+    title: `${companyName} - ${location || 'Manufacturer Profile'}`,
     description,
     robots: isIndexable(company) ? undefined : { index: false, follow: true },
     alternates: { canonical },
