@@ -142,19 +142,27 @@ export function getCompanyDescription(company: {
   founded_year?: number | null;
   certifications?: string[] | null;
   is_verified?: boolean | null;
-} | null | undefined): string {
+} | null | undefined, categoryName?: string | null, allCategoryNames?: string[] | null): string {
   if (!company) return '';
-  if (company.description && company.description.trim() && isProperDescription(company.description)) {
-    return company.description.trim();
-  }
   const name = company.name || 'This company';
   const state = company.hq_state_label || company.hq_state;
   const locationParts = [company.hq_city, state].filter(Boolean);
   const locationStr = locationParts.length > 0 ? ` based in ${locationParts.join(', ')}` : '';
+  const category = categoryName ? categoryName.toLowerCase() : 'manufacturing and business services';
 
-  const sentences = [
-    `${name} is a${company.is_verified ? ' verified' : ''} manufacturer${locationStr} listed on FirmsLedger.`,
-  ];
+  const realDesc = company.description && company.description.trim() && isProperDescription(company.description)
+    ? company.description.trim()
+    : null;
+
+  // A real but thin description (most scraped ones are < 30 words) gets padded with
+  // context sentences instead of being thrown away — keeps the genuine copy, fixes word count.
+  if (realDesc && realDesc.split(/\s+/).filter(Boolean).length >= 40) {
+    return realDesc;
+  }
+
+  const sentences = realDesc
+    ? [realDesc]
+    : [`${name} is a${company.is_verified ? ' verified' : ''} provider of ${category}${locationStr}, listed on FirmsLedger.`];
 
   const facts = [];
   if (company.founded_year) facts.push(`founded in ${company.founded_year}`);
@@ -165,6 +173,14 @@ export function getCompanyDescription(company: {
 
   if (company.certifications && company.certifications.length > 0) {
     sentences.push(`They hold the following certifications: ${company.certifications.join(', ')}.`);
+  }
+
+  if (locationParts.length > 0) {
+    sentences.push(`Businesses researching ${category} providers${locationStr} can review ${name}'s listing for contact details, service focus, and verified reviews before requesting a quote.`);
+  }
+
+  if (allCategoryNames && allCategoryNames.length > 1) {
+    sentences.push(`${name} is listed under ${allCategoryNames.join(', ')} on FirmsLedger${locationStr ? `, serving clients${locationStr}` : ''}.`);
   }
 
   sentences.push('Connect with them through FirmsLedger to learn more about their capabilities, services, and operations.');

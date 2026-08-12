@@ -341,7 +341,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
               {agency.tagline && (
                 <p className="text-orange-500 text-sm font-medium mb-2">{agency.tagline}</p>
               )}
-              <ExpandableText text={getCompanyDescription(agency)} />
+              <ExpandableText text={getCompanyDescription(agency, primaryCategory?.name, categories.map(c => c.name))} />
               {socialLinks.length > 0 && (
                 <div className="flex items-center gap-3 mt-4">
                   {socialLinks.map(({ url, Icon, color }, i) => (
@@ -367,6 +367,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
               )}
               {!agency.address && agency.hq_city && (
                 <p className="text-slate-600 text-sm">{agency.hq_city}{agency.hq_state ? `, ${agency.hq_state}` : ''}</p>
+              )}
+              {stateObj && (
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  Businesses in {stateObj.name} searching for {(primaryCategory?.name || 'business services').toLowerCase()} can find {agency.name}'s verified contact information, service area, and listing details here.
+                </p>
               )}
               {agency.phone && (
                 <a href={`tel:${agency.phone}`} className="flex items-center gap-1.5 text-slate-600 text-sm hover:text-orange-600">
@@ -695,7 +700,12 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
           {reviews.length === 0 ? (
             <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-12 text-center">
               <Star className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-              <p className="text-slate-500 mb-4 text-sm">No reviews yet</p>
+              <p className="text-slate-500 mb-2 text-sm font-semibold">No reviews yet for {agency.name}</p>
+              <p className="text-slate-500 mb-4 text-sm max-w-md mx-auto">
+                Reviews on FirmsLedger cover quality of work, timeliness, and communication, helping other businesses
+                evaluate {(primaryCategory?.name || 'service').toLowerCase()} providers before reaching out. Worked with{' '}
+                {agency.name}? Be the first to share a rating and help build their profile on FirmsLedger.
+              </p>
               <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
                 <Button className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
                   Be the first to review
