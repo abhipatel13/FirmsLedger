@@ -117,6 +117,31 @@ function ClaimListingContent() {
         }),
       });
       if (!res.ok) throw new Error('Failed to submit');
+
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+      if (accessKey) {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: accessKey,
+            name: form.name,
+            email: form.email,
+            subject: `New Claim Request: ${form.company_name || 'Unknown'} (${form.plan || 'pro'})`,
+            message: [
+              `Company: ${form.company_name || 'Unknown'}`,
+              `Name: ${form.name}`,
+              `Email: ${form.email}`,
+              `Phone: ${form.phone || '—'}`,
+              `Role: ${form.role || '—'}`,
+              `Plan: ${form.plan || 'pro'}`,
+              `Agency ID: ${agency?.id || 'N/A'}`,
+              `Agency Slug: ${agencySlug || 'N/A'}`,
+            ].filter(Boolean).join('\n'),
+          }),
+        }).catch((err) => console.error('Web3Forms claim submit failed:', err));
+      }
+
       setSubmitted(true);
       toast.success('Claim request submitted!');
     } catch (err) {

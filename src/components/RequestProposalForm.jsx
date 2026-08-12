@@ -60,6 +60,28 @@ export default function RequestProposalForm() {
         toast.error(data.error || 'Failed to send your request.');
         return;
       }
+
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+      if (accessKey) {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: accessKey,
+            name: form.name.trim(),
+            email: form.email.trim(),
+            subject: `New Proposal Request for ${company.name.slice(0, 60)}`,
+            message: [
+              `Company: ${company.name}`,
+              `Name: ${form.name.trim()}`,
+              `Email: ${form.email.trim()}`,
+              `Phone: ${form.phone.trim() || '—'}`,
+              `Details: ${form.message.trim()}`,
+            ].filter(Boolean).join('\n'),
+          }),
+        }).catch((err) => console.error('Web3Forms proposal submit failed:', err));
+      }
+
       setSubmitted(true);
       toast.success('Request sent!');
     } catch {
