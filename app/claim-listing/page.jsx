@@ -339,11 +339,19 @@ function ClaimListingContent() {
             <div className="rounded-2xl p-6 text-white" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
               <div className="flex items-center gap-2 mb-3">
                 <Shield className="w-5 h-5 text-[#F5A623]" />
-                <span className="font-bold text-sm">Secure & verified</span>
+                <span className="font-bold text-sm">Secure & verified ownership</span>
               </div>
-              <p className="text-slate-300 text-xs leading-relaxed">
-                All claim requests are manually reviewed. We never give access to unauthorized individuals. Your payment is processed securely through Stripe.
-              </p>
+              <div className="space-y-3">
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  All claim requests undergo a manual verification process by our directory team. We verify email domains, phone numbers, and cross-reference public records to ensure we never grant listing access to unauthorized individuals.
+                </p>
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  Once verified, you will gain full administrative control over your company's profile. You can update your capabilities, showcase new certifications, manage customer reviews, and respond directly to inbound leads.
+                </p>
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  All premium plan payments are processed securely through our payment provider. FirmsLedger does not store your credit card information directly.
+                </p>
+              </div>
             </div>
           </div>
         </div>

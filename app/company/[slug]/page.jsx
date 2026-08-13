@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { getCompanyDescription, getCategoryHref } from '@/utils';
+import { getCompanyDescription, getCategoryHref, buildCompanyTitle } from '@/utils';
 import { ALL_US_STATES } from '@/lib/usStates';
 import {
   fetchCompanyByIdAny,
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
 
   const canonical = `${_BASE}/company/${slug}`;
   return {
-    title: `${companyName} - ${location || 'Manufacturer Profile'}`,
+    title: buildCompanyTitle(companyName, company?.hq_city, company?.hq_state_label),
     description,
     robots: isIndexable(company) ? undefined : { index: false, follow: true },
     alternates: { canonical },

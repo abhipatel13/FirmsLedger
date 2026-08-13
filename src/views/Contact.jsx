@@ -79,8 +79,11 @@ export default function Contact() {
         <Card className="border-slate-200 bg-white shadow-sm">
           <CardHeader>
             <CardTitle className="text-xl text-[#0a0a0a]">Send a message</CardTitle>
-            <p className="text-slate-600 text-sm">
-              We typically respond within 1–2 business days.
+            <p className="text-slate-600 text-sm leading-relaxed mt-2">
+              Whether you are looking to update your company's listing, inquire about our premium verification services, or report an issue with the directory, our dedicated support team is here to help. Please provide as much detail as possible in your message so we can route it to the appropriate department.
+            </p>
+            <p className="text-slate-600 text-sm leading-relaxed mt-2">
+              We typically review and respond to all business inquiries within 1–2 business days. For urgent matters regarding your account access or payment processing, please indicate "Urgent" in your subject line.
             </p>
           </CardHeader>
           <CardContent>

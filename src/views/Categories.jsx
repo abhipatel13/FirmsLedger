@@ -330,6 +330,17 @@ export default function Categories({ initialCategories }) {
               )}
             </>
           )}
+
+          {/* SEO Content Section */}
+          <div className="mt-16 bg-slate-50 rounded-2xl p-8 sm:p-10 border border-slate-200">
+            <h2 className="text-xl font-bold text-[#0D1B2A] mb-3">About the FirmsLedger Industrial Directory</h2>
+            <p className="text-slate-600 text-sm leading-relaxed mb-4">
+              FirmsLedger provides a comprehensive, verified database of industrial manufacturers, fabrication shops, and B2B service providers across all 50 US states. Our directory spans over {totalCategories} primary industries and {totalSubcategories} specialized subcategories—from precision CNC machining and custom plastic injection molding, to aerospace components and industrial packaging solutions.
+            </p>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Whether you are a procurement manager sourcing local supply chain partners or an engineering team looking for specialized prototyping capabilities, our platform helps you evaluate verified vendors, read customer reviews, and connect directly. Browse our industrial directory to find ISO-certified facilities, ITAR-registered manufacturers, and specialized production partners that meet your exact specifications and volume requirements.
+            </p>
+          </div>
         </div>
       </div>
     </div>

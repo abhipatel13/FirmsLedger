@@ -184,9 +184,10 @@ export default async function StateHubPage({ params }) {
             </h1>
             <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 640, marginBottom: 0 }}>
               Browse manufacturers in {state.name} by category. FirmsLedger lists verified {state.name} manufacturers
-              across {CATEGORIES.length} categories, from {CATEGORIES[0].name.toLowerCase()} to{' '}
-              {CATEGORIES[CATEGORIES.length - 1].name.toLowerCase()}, so you can compare suppliers, review company
-              details, and request a quote directly from a manufacturer's listing.
+              across {CATEGORIES.length} primary industries, from {CATEGORIES[0].name.toLowerCase()} to{' '}
+              {CATEGORIES[CATEGORIES.length - 1].name.toLowerCase()}. Our industrial directory helps procurement teams and engineers 
+              compare local {state.name} suppliers, review company capabilities, verify certifications, 
+              and request a quote directly from a manufacturer's profile.
             </p>
           </div>
         </div>
@@ -198,10 +199,11 @@ export default async function StateHubPage({ params }) {
           </p>
 
           <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, maxWidth: 760, marginBottom: 32 }}>
-            {state.name} is part of the {state.region} region, home to manufacturers spanning {CATEGORIES.map(c => c.name).join(', ')}.
-            Each category page below lists {state.name}-based companies with their location, team size, certifications,
-            and verified reviews where available. Whether you're sourcing {CATEGORIES[0].shortDesc.toLowerCase()} or{' '}
-            {CATEGORIES[3].shortDesc.toLowerCase()}, start by selecting the category that matches your project.
+            {state.name} is part of the {state.region} region, home to industrial facilities spanning {CATEGORIES.map(c => c.name).slice(0, 5).join(', ')}, and more.
+            Each category page below lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
+            and verified customer reviews where available. Sourcing local production partners in {state.name} helps reduce supply chain 
+            transit times and logistics costs. Whether you are sourcing {CATEGORIES[0].shortDesc.toLowerCase()} or{' '}
+            {CATEGORIES[3].shortDesc.toLowerCase()}, start by selecting the manufacturing category that matches your project requirements.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

@@ -39,6 +39,42 @@ export function buildListingTitle({
   return `${trimmedNoun} in ${stateName}${parentSuffix}${pageSuffix}`;
 }
 
+/**
+ * Builds a company profile title, shortening in tiers so the rendered <title>
+ * (this + " | FirmsLedger" suffix from the layout template) stays under ~65 chars.
+ */
+export function buildCompanyTitle(companyName: string, city?: string | null, state?: string | null, maxLen: number = 51): string {
+  const name = companyName || 'Company Profile';
+  const location = [city, state].filter(Boolean).join(', ');
+
+  // Tier 1: "{Name} - {City}, {State}"
+  const tier1 = location ? `${name} - ${location}` : name;
+  if (tier1.length <= maxLen) return tier1;
+
+  // Tier 2: "{Name} - {State}"
+  const tier2 = state ? `${name} - ${state}` : name;
+  if (tier2.length <= maxLen) return tier2;
+
+  // Tier 3: "{Name} - Manufacturer Profile" or "{Name}"
+  const tier3WithProfile = `${name} - Manufacturer Profile`;
+  if (tier3WithProfile.length <= maxLen) return tier3WithProfile;
+  if (name.length <= maxLen) return name;
+
+  // Tier 4: Word-boundary trim the name
+  const overflow = name.length - maxLen;
+  const minLength = Math.min(20, maxLen);
+  const rawTrim = name.slice(0, Math.max(minLength, name.length - overflow));
+  // Trim to the last full word so we don't cut mid-word
+  let trimmedName = (rawTrim.length < name.length ? rawTrim.replace(/\s+\S*$/, '') : rawTrim).trim();
+  
+  // Prevent trimming down to a tiny fragment if the last word was very long
+  if (!trimmedName || trimmedName.length < minLength) {
+    trimmedName = rawTrim.trim();
+  }
+  
+  return trimmedName;
+}
+
 export function createPageUrl(pageName: string) {
   if (pageName === 'Home') return '/';
   if (pageName === 'Directory') return '/browse';
