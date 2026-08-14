@@ -10,7 +10,12 @@ export default function robots() {
           '/admin',
           '/api/',
         ],
+        crawlDelay: 2, // Ask polite bots to wait 2 seconds between requests
       },
+      {
+        userAgent: ['AhrefsBot', 'SemrushBot', 'MJ12bot', 'RSiteAuditor', 'DotBot', 'Rogerbot', 'MegaIndex.ru', 'PetalBot', 'Lightpanda'],
+        disallow: '/', // Completely disallow these known scraper/SEO bots
+      }
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
   };
