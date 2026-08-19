@@ -74,3 +74,17 @@ pipeline/logo-pipeline/state.jsonl
 pipeline/logo-pipeline/results.csv
 pipeline/logo-pipeline/unprocessable.csv
 pipeline/logo-pipeline/html_cache/
+
+# ── Agent working files — local only, never pushed ────────────────────────────
+# Implementation plans, specs and generated reports are working notes, not
+# shipped code. scripts/ as a whole stays tracked (npm run build depends on
+# scripts/check-title-suffix.mjs) — only dev-only helpers are listed here.
+docs/superpowers/
+docs/reports/
+scripts/count-queries.mjs
+scripts/dev-with-query-log.sh
+.claude/
+.playwright-mcp/
+.neon
+tsconfig.tsbuildinfo
+screenshts(mobile)/
