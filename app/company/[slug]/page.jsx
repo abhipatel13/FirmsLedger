@@ -9,7 +9,6 @@ import { getCompanyDescription, getCategoryHref, buildCompanyTitle } from '@/uti
 import { ALL_US_STATES } from '@/lib/usStates';
 import {
   fetchCompanyByIdAny,
-  fetchReviews,
   fetchCompanyCategories,
   fetchCategories,
   fetchCompaniesByCategoryAndState,
@@ -72,10 +71,11 @@ export default async function CompanyProfilePage({ params }) {
   let similarCompanies = [];
 
   if (company?.id) {
-    [reviews, companyCategories] = await Promise.all([
-      fetchReviews({ company_id: company.id, approved: true }, '-created_at', 50).catch(() => []),
-      fetchCompanyCategories({ company_id: company.id }).catch(() => []),
-    ]);
+    // ponytail: the reviews table is empty (0 rows as of 2026-08-19), so
+    // querying it on all 9,102 company pages bought nothing but Neon compute
+    // time. Restore the fetchReviews call here the moment review collection
+    // ships — cached and tagged 'companies', not uncached, or the drip returns.
+    companyCategories = await fetchCompanyCategories({ company_id: company.id }).catch(() => []);
 
     if (companyCategories.length > 0) {
       const allCats = await fetchCategories().catch(() => []);

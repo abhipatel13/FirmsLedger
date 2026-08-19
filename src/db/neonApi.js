@@ -482,26 +482,30 @@ export async function fetchCompanyById(id) {
   return row ?? null;
 }
 
-export const fetchCompanyByIdAny = cache(async function fetchCompanyByIdAny(idOrSlug) {
+const fetchCompanyByIdAnyImpl = async (idOrSlug) => {
   if (!idOrSlug) return null;
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  if (UUID_REGEX.test(String(idOrSlug))) {
+  try {
+    const match = UUID_REGEX.test(String(idOrSlug))
+      ? eq(companies.id, idOrSlug)
+      : eq(companies.slug, idOrSlug);
+
     const [row] = await db
       .select()
       .from(companies)
-      .where(and(eq(companies.id, idOrSlug), eq(companies.approved, true)))
+      .where(and(match, eq(companies.approved, true)))
       .limit(1);
     return row ?? null;
+  } catch (err) {
+    console.error('Error fetching company by id/slug:', err);
+    return null;
   }
+};
 
-  const [row] = await db
-    .select()
-    .from(companies)
-    .where(and(eq(companies.slug, idOrSlug), eq(companies.approved, true)))
-    .limit(1);
-  return row ?? null;
-});
+export const fetchCompanyByIdAny = cache(
+  unstable_cache(fetchCompanyByIdAnyImpl, ['fetchCompanyByIdAny'], { revalidate: WEEK, tags: CACHE_TAGS })
+);
 
 /**
  * Create a company. Pass hq_state_slug (e.g. 'california') and we resolve it
@@ -541,19 +545,28 @@ export async function deleteCompany(id) {
   await db.delete(companies).where(eq(companies.id, id));
 }
 
-export async function fetchCompanyCategories(where = {}) {
-  const conditions = [];
-  for (const [k, v] of Object.entries(where)) {
-    const col = k.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
-    if (company_categories[col] !== undefined && v != null && v !== '') {
-      conditions.push(eq(company_categories[col], v));
+const fetchCompanyCategoriesImpl = async (where = {}) => {
+  try {
+    const conditions = [];
+    for (const [k, v] of Object.entries(where)) {
+      const col = k.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
+      if (company_categories[col] !== undefined && v != null && v !== '') {
+        conditions.push(eq(company_categories[col], v));
+      }
     }
+    const q = conditions.length
+      ? db.select().from(company_categories).where(and(...conditions))
+      : db.select().from(company_categories);
+    return await q.limit(10000);
+  } catch (err) {
+    console.error('Error fetching company categories:', err);
+    return [];
   }
-  const q = conditions.length
-    ? db.select().from(company_categories).where(and(...conditions))
-    : db.select().from(company_categories);
-  return q.limit(10000);
-}
+};
+
+export const fetchCompanyCategories = cache(
+  unstable_cache(fetchCompanyCategoriesImpl, ['fetchCompanyCategories'], { revalidate: DAY, tags: CACHE_TAGS })
+);
 
 export async function createCompanyCategory(companyId, categoryId) {
   const [row] = await db
