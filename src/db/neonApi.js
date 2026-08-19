@@ -42,16 +42,45 @@ function orderCol(table, key = '-avg_rating') {
   return isDesc ? desc(column) : asc(column);
 }
 
+// ── Cache policy ──────────────────────────────────────────────────────────────
+// Neon bills active compute time, so the goal is not "fast queries" but "long
+// stretches with zero queries" so the compute can scale to zero. Everything
+// read-only shares the 'companies' tag; admin writes call revalidateTag to push
+// changes out immediately, and the TTL is only a backstop for the pipeline/
+// scripts that write to Postgres directly and never hit the admin API.
+// See docs/superpowers/plans/2026-08-19-neon-compute-cost-reduction.md
+const DAY = 86400;
+const WEEK = 604800;
+const CACHE_TAGS = ['companies'];
+
 // ── States ────────────────────────────────────────────────────────────────────
 
-export async function fetchStates(orderKey = 'name') {
-  return db.select().from(states).orderBy(asc(states[orderKey] ?? states.name));
-}
+const fetchStatesImpl = async (orderKey = 'name') => {
+  try {
+    return await db.select().from(states).orderBy(asc(states[orderKey] ?? states.name));
+  } catch (err) {
+    console.error('Error fetching states:', err);
+    return [];
+  }
+};
 
-export async function fetchStateBySlug(slug) {
-  const [row] = await db.select().from(states).where(eq(states.slug, slug)).limit(1);
-  return row ?? null;
-}
+export const fetchStates = cache(
+  unstable_cache(fetchStatesImpl, ['fetchStates'], { revalidate: DAY, tags: CACHE_TAGS })
+);
+
+const fetchStateBySlugImpl = async (slug) => {
+  try {
+    const [row] = await db.select().from(states).where(eq(states.slug, slug)).limit(1);
+    return row ?? null;
+  } catch (err) {
+    console.error('Error fetching state by slug:', err);
+    return null;
+  }
+};
+
+export const fetchStateBySlug = cache(
+  unstable_cache(fetchStateBySlugImpl, ['fetchStateBySlug'], { revalidate: DAY, tags: CACHE_TAGS })
+);
 
 /** Returns state id for a slug, or null if not found. */
 export async function resolveStateId(slug) {
@@ -62,9 +91,18 @@ export async function resolveStateId(slug) {
 
 // ── Categories ────────────────────────────────────────────────────────────────
 
-export async function fetchCategories() {
-  return db.select().from(categories).orderBy(asc(categories.order), asc(categories.name));
-}
+const fetchCategoriesImpl = async () => {
+  try {
+    return await db.select().from(categories).orderBy(asc(categories.order), asc(categories.name));
+  } catch (err) {
+    console.error('Error fetching categories:', err);
+    return [];
+  }
+};
+
+export const fetchCategories = cache(
+  unstable_cache(fetchCategoriesImpl, ['fetchCategories'], { revalidate: DAY, tags: CACHE_TAGS })
+);
 
 // ── Companies ─────────────────────────────────────────────────────────────────
 
@@ -112,7 +150,7 @@ export async function fetchCompanies(where = {}, orderKey = '-avg_rating', limit
   return q;
 }
 
-export async function fetchApprovedCompanyCount() {
+const fetchApprovedCompanyCountImpl = async () => {
   if (!db) return 67;
 
   try {
@@ -125,9 +163,13 @@ export async function fetchApprovedCompanyCount() {
   } catch {
     return 67;
   }
-}
+};
 
-export async function fetchHomepageStats() {
+export const fetchApprovedCompanyCount = cache(
+  unstable_cache(fetchApprovedCompanyCountImpl, ['fetchApprovedCompanyCount'], { revalidate: DAY, tags: CACHE_TAGS })
+);
+
+const fetchHomepageStatsImpl = async () => {
   if (!db) {
     return { companyCount: 67, categoryCount: 10, stateCount: 50 };
   }
@@ -146,7 +188,11 @@ export async function fetchHomepageStats() {
     console.error('Error fetching homepage stats:', err);
     return { companyCount: 67, categoryCount: 10, stateCount: 50 };
   }
-}
+};
+
+export const fetchHomepageStats = cache(
+  unstable_cache(fetchHomepageStatsImpl, ['fetchHomepageStats'], { revalidate: DAY, tags: CACHE_TAGS })
+);
 
 // Bounded — a category has at most ~10 ids. Safe to keep as an IN list.
 async function resolveCategoryIds(categorySlug) {
