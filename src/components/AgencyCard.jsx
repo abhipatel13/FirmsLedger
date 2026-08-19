@@ -21,7 +21,7 @@ export default function AgencyCard({ agency, rank }) {
   const isTopThree = rank && rank <= 3;
 
   return (
-    <div className="group bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 hover:border-slate-300 hover:shadow-md transition-all duration-200">
+    <div className="group bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto_auto] gap-5 lg:gap-6">
 
         {/* LEFT — rank, logo, name, rating, description */}
@@ -61,7 +61,7 @@ export default function AgencyCard({ agency, rank }) {
 
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <Link href={profileUrl} className="font-bold text-base sm:text-lg text-slate-900 hover:text-orange-600 transition-colors break-words">
+                <Link href={profileUrl} className="font-bold text-lg sm:text-xl tracking-tight text-slate-900 hover:text-orange-600 transition-colors break-words">
                   {agency.name}
                 </Link>
                 {agency.featured && (
@@ -99,14 +99,14 @@ export default function AgencyCard({ agency, rank }) {
               href={agency.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl font-semibold text-sm transition-all shadow-sm hover:shadow"
             >
               Visit Website <ArrowUpRight className="w-4 h-4" />
             </a>
           ) : (
             <Link
               href={profileUrl}
-              className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl font-semibold text-sm transition-all shadow-sm hover:shadow"
             >
               View Profile <ArrowUpRight className="w-4 h-4" />
             </Link>

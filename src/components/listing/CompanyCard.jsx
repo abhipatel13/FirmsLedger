@@ -32,7 +32,7 @@ export default function CompanyCard({ company, rank }) {
 
   return (
     <div className="group relative">
-      <Card className="relative transition-colors group-hover:border-slate-400 group-hover:shadow-md">
+      <Card className="relative transition-all duration-300 border-slate-200 hover:border-slate-300 hover:shadow-lg bg-white">
         {/* Stretched link: covers the whole card for click/navigation, but sits
             behind (z-0) the real content so nested interactive elements (like
             VisitWebsiteButton's own <a>) aren't nested inside this anchor —
@@ -104,7 +104,7 @@ export default function CompanyCard({ company, rank }) {
               {/* Desktop-only Title Row */}
               <div className="hidden sm:flex items-start justify-between gap-2 mb-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-lg font-semibold text-slate-900">{company.name}</h3>
+                  <h3 className="text-xl font-semibold text-slate-900 tracking-tight">{company.name}</h3>
                   {company.is_verified ? (
                     <Badge variant="secondary" className="gap-1 text-[10px]">
                       <CheckCircle data-icon="inline-start" className="size-2.5" />

@@ -88,3 +88,7 @@ scripts/dev-with-query-log.sh
 .neon
 tsconfig.tsbuildinfo
 screenshts(mobile)/
+
+# Pipeline working files — a plan doc and a dated sitemap snapshot
+pipeline/DESCRIPTION_BACKFILL_PLAN.md
+pipeline/sitemap-*.xml
