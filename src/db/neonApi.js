@@ -34,12 +34,32 @@ function slugify(text) {
   return String(text).trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 }
 
+/**
+ * Returns ORDER BY terms for `key`, always followed by a tiebreak on the
+ * primary key.
+ *
+ * The tiebreak is not cosmetic. SQL guarantees no ordering among rows that tie
+ * on the sort column, so the result depends on the execution plan — and the
+ * plan changes with data growth, autovacuum, parallel-worker availability, and
+ * every scale-to-zero restart. 445 of the 1,058 metal-fabrication companies
+ * share avg_rating = 5.00, and pages 1 and 2 are fetched as separate queries at
+ * separate times (separate cache entries, filled hours apart). With no total
+ * order, forcing two different plans put 21 of 25 companies on BOTH pages,
+ * meaning ~21 others appeared on neither and were unreachable through
+ * pagination despite being approved and counted in the total.
+ *
+ * Spread it at the call site: .orderBy(...orderCol(companies, key))
+ */
 function orderCol(table, key = '-avg_rating') {
   const isDesc = key.startsWith('-');
   const col = key.replace(/^-/, '').replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
   const column = table[col];
-  if (!column) return isDesc ? desc(table.created_at) : asc(table.created_at);
-  return isDesc ? desc(column) : asc(column);
+  const primary = column
+    ? (isDesc ? desc(column) : asc(column))
+    : (isDesc ? desc(table.created_at) : asc(table.created_at));
+  // table.id is a uuid primary key on every table routed through here, so this
+  // makes the sort a total order.
+  return table.id ? [primary, asc(table.id)] : [primary];
 }
 
 // ── Cache policy ──────────────────────────────────────────────────────────────
@@ -144,7 +164,7 @@ export async function fetchCompanies(where = {}, orderKey = '-avg_rating', limit
     .select()
     .from(companies)
     .where(and(...conditions))
-    .orderBy(orderCol(companies, orderKey));
+    .orderBy(...orderCol(companies, orderKey));
 
   if (typeof limit === 'number') q = q.limit(limit);
   return q;
@@ -256,7 +276,7 @@ const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, ord
       .select()
       .from(companies)
       .where(and(...conditions))
-      .orderBy(orderCol(companies, orderKey));
+      .orderBy(...orderCol(companies, orderKey));
 
     if (!hasEmployeeFilter) {
       query = query.limit(activeLimit).offset(activeOffset);
@@ -592,7 +612,7 @@ export async function fetchReviews(where = {}, orderKey = '-created_at', limit) 
     .select()
     .from(reviews)
     .where(conditions.length ? and(...conditions) : undefined)
-    .orderBy(orderCol(reviews, orderKey));
+    .orderBy(...orderCol(reviews, orderKey));
 
   if (typeof limit === 'number') q = q.limit(limit);
   return q;
@@ -636,7 +656,7 @@ export async function fetchListingRequests(where = {}, orderKey = '-created_at',
     .select()
     .from(listing_requests)
     .where(conditions.length ? and(...conditions) : undefined)
-    .orderBy(orderCol(listing_requests, orderKey));
+    .orderBy(...orderCol(listing_requests, orderKey));
 
   if (typeof limit === 'number') q = q.limit(limit);
   return q;
