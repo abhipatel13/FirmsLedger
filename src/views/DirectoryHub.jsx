@@ -534,44 +534,6 @@ export default function DirectoryHub({
             </button>
           </div>
 
-          {/* ── Popular Searches Section ── */}
-          {popularSearches && popularSearches.length > 0 && (
-            <div className="mt-20 pt-16 border-t border-slate-200/60">
-              <div className="text-center mb-10">
-                <SectionEyebrow>Popular Searches</SectionEyebrow>
-                <h3 className="text-2xl font-bold tracking-tight text-[#211F1C] mt-2">
-                  Browse manufacturers by category and state
-                </h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {popularSearches.map((search) => {
-                  if (!search.states || search.states.length === 0) return null;
-                  return (
-                    <div key={search.categorySlug} className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 shadow-sm">
-                      <h4 className="text-[14px] font-bold text-slate-800 tracking-wide uppercase mb-4 flex items-center justify-between">
-                        <span>{search.categoryName}</span>
-                        <span className="text-[11px] font-medium text-slate-400 bg-slate-100 rounded-full px-2 py-0.5 normal-case">
-                          {search.states.length} states
-                        </span>
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {search.states.map((st) => (
-                          <Link
-                            key={st.stateSlug}
-                            href={`/${search.categorySlug}/${st.stateSlug}`}
-                            className="inline-flex items-center gap-1 text-[13px] font-medium text-[#1A2E4A]/85 hover:text-[#1A2E4A] hover:bg-slate-100 border border-slate-200/60 hover:border-slate-300 rounded-lg px-2.5 py-1 transition-all"
-                          >
-                            <span>{st.stateLabel}</span>
-                            <span className="text-[11px] text-slate-400 font-normal">({st.count})</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
