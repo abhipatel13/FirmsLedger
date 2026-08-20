@@ -3,12 +3,29 @@ import { states, categories, companies, company_categories } from '@/db/schema';
 import { eq, and, isNotNull, ne, sql } from 'drizzle-orm';
 import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
+import { unstable_cache } from 'next/cache';
 
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 // Without this the sitemap is baked at build time, so approving companies does
-// not reach Google until the next deploy. Hourly is well inside crawl cadence.
-export const revalidate = 3600;
+// not reach Google until the next deploy.
+//
+// Hourly used to be the freshness mechanism, which meant three DB queries (one
+// of them a ~6,800-row profile scan) every hour, forever — enough on its own to
+// wake the Neon compute 24x/day and, with a 300s autosuspend, bill ~2h/day of
+// compute for a file Google fetches far less often than that.
+//
+// Daily is still well inside Google's sitemap recrawl cadence, and
+// /api/cron/submit-urls already pushes new URLs directly on a daily schedule.
+//
+// ponytail: the DB work is tagged 'companies' to match src/db/neonApi.js, but
+// nothing in the app calls revalidateTag() yet — the tag is inert and the TTL
+// is doing all the work, so an approval can take up to 24h to appear here.
+// Wiring revalidateTag into the admin approve route (plan Task 6) makes
+// approvals instant and lets this TTL stay long.
+export const revalidate = 86400;
+const DAY = 86400;
+const CACHE_TAGS = ['companies'];
 
 // Below this many approved companies, a /{category}/{state} page is a thin/
 // empty page — a soft-404 risk that wastes crawl budget. Keep it out of the
@@ -25,7 +42,7 @@ const STATE_SLUGS = STATES_BY_COUNTRY['United States'].map(slugifyState);
  * One grouped query for every (category, state) pair with at least one
  * approved company, instead of 500+ per-combo queries.
  */
-async function buildLiveCombos() {
+async function buildLiveCombosImpl() {
   try {
     const rows = await db
       .select({
@@ -60,7 +77,9 @@ async function buildLiveCombos() {
       if (parent) bump(parent, r.stateSlug, r.count);
     }
 
-    return counts;
+    // Entries, not the Map itself — unstable_cache serializes its return value
+    // and a Map does not survive the round-trip.
+    return [...counts];
   } catch (err) {
     console.error('Error building sitemap combos:', err);
     // DB unavailable at build time — fall back to emitting every combo so the
@@ -69,9 +88,39 @@ async function buildLiveCombos() {
   }
 }
 
+const buildLiveCombos = unstable_cache(
+  buildLiveCombosImpl,
+  ['sitemapLiveCombos'],
+  { revalidate: DAY, tags: CACHE_TAGS },
+);
+
+async function fetchIndexableSlugsImpl() {
+  try {
+    const profiles = await db
+      .select({ slug: companies.slug })
+      .from(companies)
+      .where(and(
+        eq(companies.approved, true),
+        isNotNull(companies.description),
+        ne(companies.description, ''),
+      ));
+    return profiles.map((p) => p.slug).filter(Boolean);
+  } catch {
+    // DB unavailable at build time — omit profiles rather than fail the sitemap.
+    return [];
+  }
+}
+
+const fetchIndexableSlugs = unstable_cache(
+  fetchIndexableSlugsImpl,
+  ['sitemapIndexableSlugs'],
+  { revalidate: DAY, tags: CACHE_TAGS },
+);
+
 export default async function sitemap() {
   const now = new Date();
-  const combos = await buildLiveCombos();
+  const comboEntries = await buildLiveCombos();
+  const combos = comboEntries ? new Map(comboEntries) : null;
 
   const urls = [];
 
@@ -124,22 +173,8 @@ export default async function sitemap() {
   // Mirrors isIndexable() in app/company/[slug]/page.jsx — approved and
   // carrying a real (non-empty) description. Keep the two predicates in
   // agreement, otherwise the sitemap advertises noindexed URLs.
-  try {
-    const profiles = await db
-      .select({ slug: companies.slug })
-      .from(companies)
-      .where(and(
-        eq(companies.approved, true),
-        isNotNull(companies.description),
-        ne(companies.description, ''),
-      ));
-
-    for (const p of profiles) {
-      if (!p.slug) continue;
-      urls.push({ url: `${BASE_URL}/company/${p.slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
-    }
-  } catch {
-    // DB unavailable at build time — omit profiles rather than fail the sitemap.
+  for (const slug of await fetchIndexableSlugs()) {
+    urls.push({ url: `${BASE_URL}/company/${slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
   }
 
   return urls;
