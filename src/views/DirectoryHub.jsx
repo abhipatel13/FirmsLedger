@@ -438,42 +438,61 @@ export default function DirectoryHub({
             ref={scrollContainerRef}
             className="flex gap-5 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide -mx-6 px-6 lg:-mx-8 lg:px-8"
           >
-            {CATEGORIES.map((cat) => {
+            {CATEGORIES.map((cat, idx) => {
               const visuals = visualsFor(cat.slug);
               const Icon = visuals?.icon || Package;
               const tw = visuals?.tw || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' };
+              const hex = visuals?.hex || { bg: '#f8fafc', border: '#e2e8f0', color: '#1e3a5f' };
               return (
-                <div
+                <Link
+                  href={`/${cat.slug}`}
                   key={cat.slug}
-                  className="category-card-wrapper snap-start shrink-0 w-full sm:w-[calc(50%-10px)] md:w-[calc(33.33%-14px)] lg:w-[calc(25%-15px)]"
+                  className="category-card-wrapper group snap-start shrink-0 w-[78%] xs:w-[70%] sm:w-[calc(50%-10px)] md:w-[calc(33.33%-14px)] lg:w-[calc(25%-15px)]"
                 >
-                  <Card
-                    className="card-premium bg-white rounded-2xl p-0 flex flex-col h-full overflow-hidden"
+                  <div
+                    className="relative flex flex-col h-full rounded-[22px] bg-white border border-slate-200/70 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-[0_20px_40px_-15px_rgba(26,46,74,0.25)]"
+                    style={{ '--cat-color': hex.color }}
                   >
-                    <div className={cn('h-[3px] w-full', tw.dot)} />
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className={cn('w-10 h-10 rounded-lg border flex items-center justify-center mb-4', tw.bg, tw.border)}>
-                        <Icon className={cn('w-[18px] h-[18px]', tw.text)} />
+                    {/* Colored gradient banner */}
+                    <div
+                      className={cn('relative h-24 w-full flex items-start justify-between p-4 overflow-hidden', tw.bg)}
+                    >
+                      <span
+                        className="pointer-events-none absolute -right-4 -top-6 text-[64px] font-black leading-none opacity-[0.08] select-none"
+                        style={{ color: hex.color }}
+                      >
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <div
+                        className="relative w-12 h-12 rounded-xl bg-white shadow-sm border flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
+                        style={{ borderColor: hex.border }}
+                      >
+                        <Icon className={cn('w-[22px] h-[22px]', tw.text)} />
                       </div>
+                    </div>
 
-                      <h3 className="text-[15px] font-semibold text-[#211F1C] mb-2 leading-snug flex-1">
+                    <div className="flex flex-col flex-1 p-6 pt-5">
+                      <h3 className="text-[15px] font-semibold text-[#211F1C] mb-2 leading-snug">
                         {cat.name}
                       </h3>
 
-                      <p className="text-[13px] leading-relaxed text-slate-500 mb-4 line-clamp-1">
+                      <p className="text-[13px] leading-relaxed text-slate-500 mb-5 line-clamp-2 flex-1">
                         {cat.desc}
                       </p>
 
-                      <Link
-                        href={`/${cat.slug}`}
-                        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1A2E4A] group"
+                      <span
+                        className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-colors"
+                        style={{ color: hex.color }}
                       >
                         View all states
-                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-                      </Link>
+                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                      </span>
                     </div>
-                  </Card>
-                </div>
+
+                    {/* Bottom accent line that grows on hover */}
+                    <div className={cn('absolute bottom-0 left-0 h-[3px] w-0 group-hover:w-full transition-all duration-300', tw.dot)} />
+                  </div>
+                </Link>
               );
             })}
           </div>
@@ -534,44 +553,6 @@ export default function DirectoryHub({
             </button>
           </div>
 
-          {/* ── Popular Searches Section ── */}
-          {popularSearches && popularSearches.length > 0 && (
-            <div className="mt-20 pt-16 border-t border-slate-200/60">
-              <div className="text-center mb-10">
-                <SectionEyebrow>Popular Searches</SectionEyebrow>
-                <h3 className="text-2xl font-bold tracking-tight text-[#211F1C] mt-2">
-                  Browse manufacturers by category and state
-                </h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {popularSearches.map((search) => {
-                  if (!search.states || search.states.length === 0) return null;
-                  return (
-                    <div key={search.categorySlug} className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 shadow-sm">
-                      <h4 className="text-[14px] font-bold text-slate-800 tracking-wide uppercase mb-4 flex items-center justify-between">
-                        <span>{search.categoryName}</span>
-                        <span className="text-[11px] font-medium text-slate-400 bg-slate-100 rounded-full px-2 py-0.5 normal-case">
-                          {search.states.length} states
-                        </span>
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {search.states.map((st) => (
-                          <Link
-                            key={st.stateSlug}
-                            href={`/${search.categorySlug}/${st.stateSlug}`}
-                            className="inline-flex items-center gap-1 text-[13px] font-medium text-[#1A2E4A]/85 hover:text-[#1A2E4A] hover:bg-slate-100 border border-slate-200/60 hover:border-slate-300 rounded-lg px-2.5 py-1 transition-all"
-                          >
-                            <span>{st.stateLabel}</span>
-                            <span className="text-[11px] text-slate-400 font-normal">({st.count})</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
