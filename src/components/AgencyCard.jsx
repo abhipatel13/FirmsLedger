@@ -1,3 +1,4 @@
+import LogoImage from '@/components/LogoImage';
 import React from 'react';
 import Link from 'next/link';
 import { getCompanyProfileUrl } from '@/utils';
@@ -43,11 +44,10 @@ export default function AgencyCard({ agency, rank }) {
             ) : null}
 
             {hasLogo ? (
-              <img
+              <LogoImage
                 src={agency.logo_url}
                 alt=""
-                loading="lazy"
-                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                hideOnError
                 className="w-14 h-14 rounded-lg object-contain border border-slate-100 bg-white flex-shrink-0"
               />
             ) : (

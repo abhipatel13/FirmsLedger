@@ -1,3 +1,4 @@
+import LogoImage from '@/components/LogoImage';
 import Link from 'next/link';
 import { CheckCircle, MapPin, Star, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -57,17 +58,11 @@ export default function CompanyCard({ company, rank }) {
 
               {/* Logo */}
               {company.logo_url ? (
-                <img
+                <LogoImage
                   src={company.logo_url}
                   alt={`${company.name} logo`}
                   width={72}
                   height={72}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/logo-icon.svg';
-                  }}
                   className="size-14 sm:size-[72px] shrink-0 rounded-xl border border-slate-200 bg-white object-contain"
                 />
               ) : (
