@@ -13,7 +13,9 @@ export default function robots() {
         crawlDelay: 2, // Ask polite bots to wait 2 seconds between requests
       },
       {
-        userAgent: ['AhrefsBot', 'SemrushBot', 'MJ12bot', 'RSiteAuditor', 'DotBot', 'Rogerbot', 'MegaIndex.ru', 'PetalBot', 'Lightpanda'],
+        // AhrefsBot/SemrushBot/RSiteAuditor deliberately allowed — we pay for
+        // those tools and blocking them makes our own site audits return nothing.
+        userAgent: ['MJ12bot', 'DotBot', 'Rogerbot', 'MegaIndex.ru', 'PetalBot', 'Lightpanda'],
         disallow: '/', // Completely disallow these known scraper/SEO bots
       }
     ],

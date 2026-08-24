@@ -306,23 +306,23 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
-                <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`} className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-6 h-11 rounded-md transition-colors">
+              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 mt-4 sm:mt-6 w-full sm:w-auto">
+                <Button asChild className="w-full sm:w-auto bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-4 sm:px-6 h-10 sm:h-11 rounded-xl transition-all shadow-sm hover:shadow-md text-sm">
+                  <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`} className="flex items-center justify-center">
                     Request Proposal <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`} className="w-full sm:w-auto">
-                  <Button variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-700 hover:border-slate-300 font-semibold px-6 h-11 rounded-md transition-colors">
-                    <MessageSquare className="w-4 h-4 mr-2" /> Write Review
-                  </Button>
-                </Link>
-                {!agency.is_verified && (
-                  <Link href={`/claim-listing?agency=${agency.slug || agency.id}`} className="w-full sm:w-auto">
-                    <Button variant="outline" className="w-full sm:w-auto border-orange-200 text-orange-600 hover:border-orange-400 hover:bg-orange-50 font-semibold px-6 h-11 rounded-md transition-colors">
-                      <Crown className="w-4 h-4 mr-2" /> Claim This Listing
-                    </Button>
                   </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 font-semibold px-4 sm:px-6 h-10 sm:h-11 rounded-xl transition-all shadow-sm hover:shadow text-sm">
+                  <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`} className="flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 mr-2 text-slate-400" /> Write Review
+                  </Link>
+                </Button>
+                {!agency.is_verified && (
+                  <Button asChild variant="outline" className="w-full sm:w-auto border-orange-200 text-orange-700 hover:border-orange-300 hover:bg-orange-50 font-semibold px-4 sm:px-6 h-10 sm:h-11 rounded-xl transition-all shadow-sm hover:shadow text-sm">
+                    <Link href={`/claim-listing?agency=${agency.slug || agency.id}`} className="flex items-center justify-center">
+                      <Crown className="w-4 h-4 mr-2 text-orange-500" /> Claim This Listing
+                    </Link>
+                  </Button>
                 )}
               </div>
             </div>
@@ -338,8 +338,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
           <div className={`grid divide-y md:divide-y-0 md:divide-x divide-slate-200 ${hasMetrics ? 'md:grid-cols-[1fr_320px_160px]' : 'md:grid-cols-[1fr_320px]'}`}>
             {/* Description + social */}
             <div className="p-6">
+              <h2 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">
+                About {agency.name}
+              </h2>
               {agency.tagline && (
-                <p className="text-orange-500 text-sm font-medium mb-2">{agency.tagline}</p>
+                <p className="text-orange-500 text-sm font-medium mb-3">{agency.tagline}</p>
               )}
               <ExpandableText text={getCompanyDescription(agency, primaryCategory?.name, categories.map(c => c.name))} />
               {socialLinks.length > 0 && (
@@ -685,11 +688,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 <Stars rating={avgOverall} />
                 <span className="text-slate-500 text-sm">{reviews.length} Reviews</span>
               </div>
-              <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
+              <Button asChild className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
                   Write a Review
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           )}
 
@@ -706,11 +709,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 evaluate {(primaryCategory?.name || 'service').toLowerCase()} providers before reaching out. Worked with{' '}
                 {agency.name}? Be the first to share a rating and help build their profile on FirmsLedger.
               </p>
-              <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
+              <Button asChild className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
                   Be the first to review
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -735,11 +738,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
 function ExpandableText({ text }) {
   const [expanded, setExpanded] = useState(false);
   if (!text) return null;
-  const short = text.length > 300;
-  const displayed = short && !expanded ? text.slice(0, 300) + '…' : text;
+  const short = text.length > 800;
+  const displayed = short && !expanded ? text.slice(0, 800) + '…' : text;
   return (
     <div>
-      <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{displayed}</p>
+      <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line md:text-base">{displayed}</p>
       {short && (
         <button onClick={() => setExpanded(!expanded)} className="text-orange-500 text-sm font-medium mt-2 hover:underline">
           {expanded ? 'Show less' : 'Read more'}
