@@ -7,6 +7,10 @@ import { fetchBounded } from './discover.js';
 const IMAGE_CAP_BYTES = 3 * 1024 * 1024; // 3MB response cap
 const IMAGE_TIMEOUT_MS = 10_000;
 const MIN_DIMENSION = 16;
+// Favicons are routinely 16 or 32px. Upscaling those to 256 produces a blurry
+// smear (see the first ace-solar run), so icon sources get a higher floor.
+// SVG/AVIF report no dimensions and skip the check entirely.
+const MIN_ICON_DIMENSION = 64;
 
 function jpegDimensions(buf) {
   let offset = 2;
@@ -116,7 +120,7 @@ export function detectImageFormat(buf) {
  * Returns { ok:true, buffer, format } or { ok:false, error, retryable }.
  * retryable=true only for transient failures (network/timeout/5xx/429).
  */
-export async function downloadImage(url) {
+export async function downloadImage(url, { minDimension = MIN_DIMENSION } = {}) {
   const res = await fetchBounded(url, {
     maxBytes: IMAGE_CAP_BYTES,
     timeoutMs: IMAGE_TIMEOUT_MS,
@@ -135,9 +139,11 @@ export async function downloadImage(url) {
   if (!info) {
     return { ok: false, error: 'body failed magic-byte check (not a recognized image)', retryable: false };
   }
-  if (info.width != null && info.height != null && (info.width < MIN_DIMENSION || info.height < MIN_DIMENSION)) {
+  if (info.width != null && info.height != null && (info.width < minDimension || info.height < minDimension)) {
     return { ok: false, error: `image too small (${info.width}x${info.height})`, retryable: false };
   }
 
   return { ok: true, buffer: res.body, format: info.format };
 }
+
+export { MIN_DIMENSION, MIN_ICON_DIMENSION };

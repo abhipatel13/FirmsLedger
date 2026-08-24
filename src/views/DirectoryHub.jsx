@@ -312,7 +312,7 @@ export default function DirectoryHub({
     <div className="bg-white">
 
       {/* ══ HERO & SEARCH CONTAINER ══════════════════════════════════ */}
-      <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28 border-b border-slate-900" style={{ background: 'linear-gradient(160deg, #0F172A 0%, #070D18 100%)' }}>
+      <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28 border-b border-slate-900" style={{ background: '#0F172A' }}>
         <div className="grid-texture absolute inset-0 opacity-20 pointer-events-none" />
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.12), transparent 70%)' }} />
         <div className="absolute -bottom-40 -right-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(15,23,42,0.15), transparent 70%)' }} />
@@ -591,7 +591,7 @@ export default function DirectoryHub({
       <section
         ref={statementRef}
         className={`grid-texture noise-texture py-24 sm:py-28 lg:py-32 relative overflow-hidden transition-all duration-500 ${statementVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-        style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}
+        style={{ background: '#0F172A' }}
       >
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.12), transparent 70%)' }} />
         <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
@@ -754,38 +754,44 @@ export default function DirectoryHub({
       {/* ══ CTA BAND ══════════════════════════════════════════════════ */}
       <section
         ref={ctaRef}
-        className={`grid-texture py-20 sm:py-24 lg:py-28 relative overflow-hidden transition-all duration-500 ${ctaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-        style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}
+        className={`grid-texture py-12 sm:py-14 lg:py-16 relative overflow-hidden transition-all duration-500 ${ctaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ background: '#0F172A' }}
       >
         <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.10), transparent 70%)' }} />
         <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-10">
-            <div className="max-w-lg">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 mb-3">
-                For manufacturers
-              </p>
-              <h2 className="text-[28px] sm:text-[44px] font-bold tracking-tight text-white leading-tight mb-4">
-                Get your company in front of buyers
-              </h2>
-              <p className="text-base leading-relaxed text-white/60">
-                Join FirmsLedger and appear in state-level category lists that reach procurement managers actively searching for manufacturers.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
+          {/* Centred and compact. The split layout left a wide empty middle and
+              pushed the buttons to the far right, away from the copy that
+              motivates them. */}
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 mb-3">
+              For manufacturers
+            </p>
+            <h2 className="text-[24px] sm:text-[32px] font-bold tracking-tight text-white leading-tight mb-3 text-balance">
+              Get your company in front of buyers
+            </h2>
+            <p className="text-[15px] leading-relaxed text-white/60 mb-7">
+              Appear in the state and category lists procurement managers actually search.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/list-your-company"
-                className="inline-flex items-center gap-2 bg-[#D4A017] hover:bg-[#A87A0F] text-[#1A2E4A] rounded-full px-7 py-3.5 text-sm font-semibold shadow-[0_4px_16px_rgba(212,160,23,0.35)] hover:shadow-[0_6px_20px_rgba(212,160,23,0.5)] transition-all btn-scale"
+                className="inline-flex items-center gap-2 bg-[#D4A017] hover:bg-[#A87A0F] text-[#1A2E4A] rounded-full px-6 py-3 text-sm font-semibold shadow-[0_4px_16px_rgba(212,160,23,0.35)] hover:shadow-[0_6px_20px_rgba(212,160,23,0.5)] transition-all btn-scale"
               >
-                List Your Company
+                List Your Company — Free
                 <ArrowRight className="w-[15px] h-[15px]" />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 bg-transparent text-white/80 hover:text-white border border-white/20 hover:border-white/55 rounded-full px-7 py-3.5 text-sm font-medium transition-all"
+                className="inline-flex items-center gap-2 bg-transparent text-white/80 hover:text-white border border-white/20 hover:border-white/55 rounded-full px-6 py-3 text-sm font-medium transition-all"
               >
                 Contact Us
               </Link>
             </div>
+
+            <p className="mt-5 text-[13px] text-white/35">
+              No paid placements. No pay-to-rank. Listing stays free.
+            </p>
           </div>
         </div>
       </section>

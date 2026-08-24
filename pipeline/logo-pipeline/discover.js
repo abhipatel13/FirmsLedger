@@ -125,6 +125,12 @@ function writeCache(cacheDir, domain, html, finalUrl) {
  * Throws on transient network failure so callers can mark the company failed.
  * Memoized in-memory for the run and cached to html_cache/ across runs.
  */
+export async function discoverLogoCandidates2(domain, cacheDir) {
+  const html = await fetchHomepage(domain, cacheDir);
+  if (!html) return [];
+  return discoverLogoCandidates(html.html, html.finalUrl);
+}
+
 export async function discoverLogo(domain, cacheDir) {
   if (memo.has(domain)) {
     const entry = memo.get(domain);
@@ -168,6 +174,52 @@ export async function discoverLogo(domain, cacheDir) {
   return parsed;
 }
 
+/**
+ * Homepage fetch + on-disk cache, shared by the single- and multi-candidate
+ * entry points. Returns { html, finalUrl } or null on a clean miss; throws on
+ * a transient failure so the caller can mark the company retryable.
+ */
+export async function fetchHomepage(domain, cacheDir) {
+  const memoKey = `html:${domain}`;
+  if (memo.has(memoKey)) {
+    const entry = memo.get(memoKey);
+    if (entry.kind === 'error') throw new Error(entry.error);
+    return entry.value;
+  }
+
+  const cached = readCache(cacheDir, domain);
+  if (cached) return { html: cached.html, finalUrl: cached.finalUrl };
+
+  let res = await fetchBounded(`https://${domain}/`, {
+    maxBytes: HOMEPAGE_CAP_BYTES,
+    timeoutMs: HOMEPAGE_TIMEOUT_MS,
+  });
+  if (!res.ok && res.retryable) {
+    const alt = await fetchBounded(`http://${domain}/`, {
+      maxBytes: HOMEPAGE_CAP_BYTES,
+      timeoutMs: HOMEPAGE_TIMEOUT_MS,
+    });
+    if (alt.ok) res = alt;
+  }
+
+  if (!res.ok) {
+    if (res.retryable) {
+      const msg = `homepage fetch failed (${domain}): ${res.error}`;
+      memo.set(memoKey, { kind: 'error', error: msg });
+      throw new Error(msg);
+    }
+    memo.set(memoKey, { kind: 'ok', value: null });
+    return null;
+  }
+
+  const html = res.body.toString('utf8');
+  const finalUrl = res.url || `https://${domain}/`;
+  writeCache(cacheDir, domain, html, finalUrl);
+  const value = { html, finalUrl };
+  memo.set(memoKey, { kind: 'ok', value });
+  return value;
+}
+
 function resolveUrl(rel, base) {
   try {
     return new URL(rel, base).href;
@@ -206,21 +258,65 @@ function findLogoInJsonLd(node) {
   return null;
 }
 
+// Site-builder default artwork. These download fine and pass every size and
+// format check, but they are the *platform's* placeholder, not the company's
+// mark — a GoDaddy or Squarespace default in a listing looks deliberate and is
+// therefore worse than showing no logo at all.
+const PLACEHOLDER_PATTERNS = [
+  /img1\.wsimg\.com\/.*\/logo-default/i,      // GoDaddy Website Builder
+  /assets\.squarespace\.com\/universal\//i,   // Squarespace default favicon
+  /static\.parastorage\.com\/.*favicon/i,     // Wix default
+  /cdn\.shopify\.com\/.*\/no-image/i,
+  /\/(?:default|placeholder|no[-_]?image|blank)[-_.]/i,
+];
+
+export function isPlaceholderUrl(url) {
+  return PLACEHOLDER_PATTERNS.some((re) => re.test(url));
+}
+
+// Sites commonly ship a light-on-dark variant of the mark for dark headers and
+// footers (…-white.svg, …-reverse.png, …-inverted.png). Those render as a blank
+// square on the directory's white cards — 1-source-solar shipped exactly that.
+// Only a naming heuristic; a white variant with an unhelpful filename still
+// gets through.
+// ponytail: filename heuristic, sample the rendered pixels if misses show up.
+// Deliberately loose — these names run together in CamelCase ("WhiteGreen"),
+// so word-boundary matching misses them. A false positive only *demotes* a
+// candidate within its tier, never rejects it, so over-matching is cheap.
+const REVERSED_VARIANT = /white|reverse|invert|negativ|footer|on-?dark/i;
+
+export function isReversedVariant(url) {
+  return REVERSED_VARIANT.test(url);
+}
+
 /**
- * Parse a homepage HTML document for a logo candidate, in priority order:
- * 1. og:image, 2. JSON-LD .logo, 3. link rel icon/apple-touch-icon,
- * 4. <img> with logo-ish class/alt/id. Returns { source, url } or null.
+ * Parse a homepage HTML document for logo candidates, best-first.
+ *
+ * Order matters and is the whole point of this function. og:image used to be
+ * tried FIRST, which is wrong: on most small-business sites og:image is the
+ * social share card — a hero photo, a marketing banner, even a screenshot of
+ * the homepage — not the company mark. That produced building photos and stock
+ * imagery in the directory listings. og:image is now a last resort and is only
+ * accepted when its URL actually looks like a logo.
+ *
+ * Returns an array of { source, url } (may be empty). Callers try them in
+ * order, so a candidate that downloads but fails validation falls through to
+ * the next one instead of losing the company entirely.
  */
-export function discoverLogoFromHtml(html, baseUrl) {
+export function discoverLogoCandidates(html, baseUrl) {
   const $ = load(html);
+  const out = [];
+  const seen = new Set();
+  const push = (source, raw) => {
+    if (!raw) return;
+    const url = resolveUrl(String(raw).trim(), baseUrl);
+    if (!url || seen.has(url)) return;
+    seen.add(url);
+    if (isPlaceholderUrl(url)) return;
+    out.push({ source, url });
+  };
 
-  const og = $('meta[property="og:image"], meta[name="og:image"]').first().attr('content');
-  if (og) {
-    const url = resolveUrl(og.trim(), baseUrl);
-    if (url) return { source: 'og_logo', url };
-  }
-
-  let jsonLdLogo = null;
+  // 1. JSON-LD Organization.logo — the only source that *means* "logo".
   for (const el of $('script[type="application/ld+json"]').toArray()) {
     const raw = $(el).html() || '';
     if (!raw.trim()) continue;
@@ -236,38 +332,61 @@ export function discoverLogoFromHtml(html, baseUrl) {
     }
     const logo = findLogoInJsonLd(data);
     if (logo) {
-      jsonLdLogo = logo;
+      push('json_ld', logo);
       break;
     }
   }
-  if (jsonLdLogo) {
-    const url = resolveUrl(jsonLdLogo, baseUrl);
-    if (url) return { source: 'json_ld', url };
+
+  // 2. <img> that declares itself a logo. Header/nav first — a site's own
+  //    mark lives in the masthead, while a "logo" further down is usually a
+  //    client/partner/certification badge.
+  const logoish = (el) => {
+    const $el = $(el);
+    const hay = [$el.attr('class'), $el.attr('alt'), $el.attr('id'), $el.attr('src'), $el.attr('data-src')]
+      .filter(Boolean)
+      .join(' ');
+    return /logo|brand/i.test(hay);
+  };
+  const srcOf = (el) => $(el).attr('src') || $(el).attr('data-src') || $(el).attr('data-lazy-src');
+  for (const el of $('header img, nav img, .header img, #header img, .navbar img, .site-header img, .logo img, #logo img').toArray()) {
+    if (logoish(el)) push('html_logo', srcOf(el));
   }
 
-  const icon = $('link[rel~="icon"], link[rel="apple-touch-icon"], link[rel="shortcut icon"]')
-    .first()
-    .attr('href');
-  if (icon) {
-    const url = resolveUrl(icon.trim(), baseUrl);
-    if (url) return { source: 'favicon', url };
+  // 3. apple-touch-icon — typically 180x180 and a real mark, unlike favicon.
+  $('link[rel~="apple-touch-icon"], link[rel~="apple-touch-icon-precomposed"]').each((_, el) => {
+    push('apple_touch_icon', $(el).attr('href'));
+  });
+
+  // 4. og:image, but ONLY when the URL itself looks like a logo. Without this
+  //    guard this branch is what pulled in share cards and hero photos.
+  const og = $('meta[property="og:image"], meta[name="og:image"]').first().attr('content');
+  if (og && /logo|brand|mark(?:\b|_)/i.test(og)) push('og_logo', og);
+
+  // 5. Logo-ish <img> anywhere else on the page, ranked BELOW the icons on
+  //    purpose. A "logo" outside the masthead is usually somebody else's:
+  //    messengerclothing.com serves a client gallery (BSB-logo.png,
+  //    Exline-logo.png) from its own domain with empty alt text, so neither
+  //    host-matching nor alt-checking distinguishes it from the real mark.
+  //    A site's own logo is in the header; these are a last resort.
+  for (const el of $('img').toArray()) {
+    if (logoish(el)) push('html_logo_page', srcOf(el));
   }
 
-  const img = $('img')
-    .filter((_, el) => {
-      const $el = $(el);
-      return (
-        /logo/i.test($el.attr('class') || '') ||
-        /logo/i.test($el.attr('alt') || '') ||
-        /logo/i.test($el.attr('id') || '')
-      );
-    })
-    .first();
-  const src = img.attr('src') || img.attr('data-src');
-  if (src) {
-    const url = resolveUrl(src.trim(), baseUrl);
-    if (url) return { source: 'html_logo', url };
-  }
+  // 6. favicon last. The download step enforces a minimum size so a 16px or
+  //    32px icon is rejected rather than upscaled into a blurry smear.
+  $('link[rel~="icon"], link[rel="shortcut icon"]').each((_, el) => {
+    push('favicon', $(el).attr('href'));
+  });
 
-  return null;
+  // Stable sort keeps the source priority above, but demotes light-on-dark
+  // variants within each tier so the standard mark wins when both are offered.
+  return out
+    .map((c, i) => ({ c, i, penalty: isReversedVariant(c.url) ? 1 : 0 }))
+    .sort((a, b) => a.penalty - b.penalty || a.i - b.i)
+    .map((x) => x.c);
+}
+
+/** Back-compat single-candidate wrapper. */
+export function discoverLogoFromHtml(html, baseUrl) {
+  return discoverLogoCandidates(html, baseUrl)[0] || null;
 }

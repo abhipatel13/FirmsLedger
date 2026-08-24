@@ -180,8 +180,14 @@ async function main() {
 
   state.ensureResultsHeader(RESULTS_FILE);
 
+  // Icon sources get a higher size floor — a 32px favicon blown up to 256 is a
+  // blurry smear, which reads as a broken listing.
+  const ICON_SOURCES = ['favicon', 'apple_touch_icon'];
+
   const attemptLogo = async (url, source, base) => {
-    const dl = await download.downloadImage(url);
+    const dl = await download.downloadImage(url, {
+      minDimension: ICON_SOURCES.includes(source) ? download.MIN_ICON_DIMENSION : download.MIN_DIMENSION,
+    });
     if (!dl.ok) {
       return { ok: false, retryable: dl.retryable || false, error: dl.error };
     }
@@ -224,9 +230,12 @@ async function main() {
 
     let outcome = null;
     try {
-      const discovered = await discover.discoverLogo(base.domain, CACHE_DIR);
-      if (discovered) {
-        outcome = await attemptLogo(discovered.url, discovered.source, base);
+      // Try every candidate best-first. Previously only the single best pick was
+      // attempted, so one dead URL or one oversized banner lost the company
+      // outright even when the page offered a perfectly good second choice.
+      const candidates = await discover.discoverLogoCandidates2(base.domain, CACHE_DIR);
+      for (const cand of candidates) {
+        outcome = await attemptLogo(cand.url, cand.source, base);
         if (outcome.ok) {
           return { ...base, status: outcome.status, source: outcome.source, r2_url: outcome.r2_url };
         }

@@ -126,8 +126,9 @@ export async function generateMetadata({ params, searchParams }) {
     const sub = cat?.subcategories.find((s) => s.slug === state);
     const subName = sub?.name || toTitleCase(state);
     
-    // Fetch matching company count to clamp page number correctly
-    const count = await countCompaniesByCategoryAndState(category, null, {
+    // Count the SUBCATEGORY, not the parent. Passing `category` here described
+    // the parent's listings on a page titled for the subcategory.
+    const count = await countCompaniesByCategoryAndState(state, null, {
       stateSlugs: activeStates,
       employeeRanges: activeEmployeeRanges,
     });
@@ -143,7 +144,7 @@ export async function generateMetadata({ params, searchParams }) {
       : `${subName} Manufacturers in the US`;
       
     // Fetch stats using cache
-    const stats = await fetchCategoryStats(category);
+    const stats = await fetchCategoryStats(state);
     
     const description = stats.totalCount > 0
       ? `Browse ${stats.totalCount} ${subName.toLowerCase()} manufacturers across the US. Compare capabilities, location, and company size. Part of the ${cat?.name} directory on FirmsLedger.`
@@ -244,11 +245,18 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     const canonical = `${_BASE}/${category}/${subcategory}`;
     const basePath = `/${category}/${subcategory}`;
 
-    // No subcategory tagging exists in the DB yet, so this shows the parent
-    // category's nationwide companies — same data source as the category page.
+    // Read the subcategory, not the parent.
+    //
+    // This previously queried `category`, on the assumption that no subcategory
+    // tagging existed. It does: company_categories carries subcategory rows
+    // (solar-panels 536, welding 365, cnc-machining 79). Worse, the two sets are
+    // disjoint — of 728 companies tagged solar-panels, zero also carry the
+    // electrical-components tag — so the page was not showing a superset of its
+    // subject, it was showing an unrelated group of companies under a solar
+    // heading.
     const { activeStates, activeEmployeeRanges } = parseFilterParams(searchParams);
 
-    const totalCount = await countCompaniesByCategoryAndState(category, null, {
+    const totalCount = await countCompaniesByCategoryAndState(subcategory, null, {
       stateSlugs: activeStates,
       employeeRanges: activeEmployeeRanges,
     });
@@ -257,12 +265,14 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
 
     const [pageCompanies, stateCounts, stats] = await Promise.all([
-      fetchCompaniesByCategoryAndState(category, null, '-avg_rating', PAGE_SIZE, (currentPage - 1) * PAGE_SIZE, {
+      fetchCompaniesByCategoryAndState(subcategory, null, '-avg_rating', PAGE_SIZE, (currentPage - 1) * PAGE_SIZE, {
         stateSlugs: activeStates,
         employeeRanges: activeEmployeeRanges,
       }),
-      fetchStateCountsForCategory(category),
-      fetchCategoryStats(category),
+      // State facets and the listings/states counters describe the subcategory
+      // too — otherwise the filter offered states the listing cannot show.
+      fetchStateCountsForCategory(subcategory),
+      fetchCategoryStats(subcategory),
     ]);
 
     const rankOffset    = (currentPage - 1) * PAGE_SIZE;

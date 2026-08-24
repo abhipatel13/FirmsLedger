@@ -381,3 +381,15 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+
+/* ── Footer columns ───────────────────────────────────────────────────────
+   Brand column plus four link columns on desktop. Without these rules the
+   grid kept all five tracks at every width, so the links squeezed to one
+   word per line on phones. */
+@media (max-width: 1024px) {
+  .footer-cols { grid-template-columns: 1fr 1fr 1fr !important; }
+  .footer-cols > :first-child { grid-column: 1 / -1; max-width: 520px !important; }
+}
+@media (max-width: 640px) {
+  .footer-cols { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
+}

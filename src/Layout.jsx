@@ -4,27 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Menu, X, ChevronDown, ArrowRight, Search, Zap,
+  Menu, X, Search,
 } from 'lucide-react';
-
-import { visualsFor } from '@/lib/categoryRegistry';
-
-/* ── Manufacturing categories ──────────────────────────────────────
-   Icon + muted accent palette kept in sync with the category cards on
-   the homepage (src/views/DirectoryHub.jsx) for a consistent icon
-   system across the site — no decorative colored dots. */
-const NAV_CATEGORIES = [
-  { slug: 'electrical-components',     name: 'Electrical Components',          desc: 'Wiring, switchgear & components' },
-  { slug: 'mechanical-components',     name: 'Mechanical Components',          desc: 'CNC machining & precision parts' },
-  { slug: 'plastics-packaging',        name: 'Plastics & Packaging',           desc: 'Injection molding & packaging' },
-  { slug: 'metal-fabrication',         name: 'Metal Fabrication',              desc: 'Sheet metal, welding & stamping' },
-  { slug: 'electronics-semiconductor', name: 'Electronics & Semiconductor',    desc: 'PCBs, chips & assemblies' },
-  { slug: 'automotive-parts',          name: 'Automotive Parts',               desc: 'OEM & aftermarket components' },
-  { slug: 'textile-apparel',           name: 'Textile & Apparel',              desc: 'Fabric & garment manufacturing' },
-  { slug: 'furniture-woodworking',     name: 'Furniture & Woodworking',        desc: 'Custom furniture & cabinetry' },
-  { slug: 'food-beverage-processing',  name: 'Food & Beverage Processing',     desc: 'Processing & packaging lines' },
-  { slug: 'medical-devices',           name: 'Medical Devices',                desc: 'Diagnostic & surgical equipment' },
-];
 
 /* ── Footer data ───────────────────────────────────────────────── */
 const FOOTER_MANUFACTURERS = [
@@ -57,38 +38,27 @@ const FOOTER_RESOURCES = [
 const FOOTER_COMPANY = [
   // Re-enable once the public-facing admin entry point is ready.
   // { href: '/admin',   label: 'Admin Login' },
+  { href: '/about',   label: 'About Us' },
   { href: '/terms',   label: 'Terms of Service' },
   { href: '/privacy', label: 'Privacy Policy' },
 ];
 
 export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen]   = useState(false);
-  const [browseOpen, setBrowseOpen]   = useState(false);
   const [scrolled, setScrolled]       = useState(false);
   const pathname  = usePathname();
-  const browseRef = useRef(null);
-  const browseOpenRef = useRef(false);
   const scrolledRef   = useRef(false);
 
   // Keep refs in sync so the scroll closure always reads current values
-  useEffect(() => { browseOpenRef.current = browseOpen; }, [browseOpen]);
   useEffect(() => { scrolledRef.current   = scrolled;   }, [scrolled]);
 
   useEffect(() => {
-    function onClickOutside(e) {
-      if (browseRef.current && !browseRef.current.contains(e.target)) {
-        setBrowseOpen(false);
-      }
-    }
     function onScroll() {
-      if (browseOpenRef.current) setBrowseOpen(false);
       const next = window.scrollY > 8;
       if (next !== scrolledRef.current) setScrolled(next);
     }
-    document.addEventListener('mousedown', onClickOutside);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      document.removeEventListener('mousedown', onClickOutside);
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
@@ -131,125 +101,43 @@ export default function Layout({ children }) {
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-2">
 
-            {/* Browse mega-menu */}
-            <div
-              ref={browseRef}
-              style={{ position: 'relative' }}
+            {/* Capabilities */}
+            <Link
+              href="/capabilities"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: isActive('/capabilities') ? '#0f172a' : '#475569',
+                textDecoration: 'none',
+                padding: '7px 12px',
+                borderRadius: 8,
+                transition: 'all 0.12s',
+                backgroundColor: isActive('/capabilities') ? '#f1f5f9' : 'transparent',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { if (!isActive('/capabilities')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
             >
+              Capabilities
+            </Link>
 
-              <button
-                onClick={() => setBrowseOpen(v => !v)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: browseOpen ? '#0f172a' : '#475569',
-                  backgroundColor: browseOpen ? '#f1f5f9' : 'transparent',
-                  border: 'none',
-                  padding: '7px 12px',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  transition: 'all 0.12s',
-                  fontFamily: 'inherit',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
-                onMouseLeave={(e) => { if (!browseOpen) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
-              >
-                Browse
-                <ChevronDown size={14} style={{ transform: browseOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
-              </button>
-
-              {/* Mega-menu panel */}
-              <div
-                className="animate-slide-down"
-                style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 8px)',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 16,
-                  boxShadow: '0 16px 48px -8px rgba(15,23,42,0.12), 0 4px 16px -4px rgba(15,23,42,0.06)',
-                  width: 560,
-                  padding: 16,
-                  zIndex: 100,
-                  display: browseOpen ? 'block' : 'none',
-                }}
-              >
-                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#94a3b8', margin: '0 8px 12px', fontFamily: 'inherit' }}>
-                  Manufacturing Categories
-                </p>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                  {NAV_CATEGORIES.map((cat) => {
-                    const visuals = visualsFor(cat.slug);
-                    const Icon = visuals?.icon || Zap;
-                    const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
-                    return (
-                      <Link
-                        key={cat.slug}
-                        href={`/${cat.slug}`}
-                        onClick={() => setBrowseOpen(false)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 10,
-                          padding: '8px 10px',
-                          borderRadius: 8,
-                          textDecoration: 'none',
-                          transition: 'background 0.1s',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                      >
-                        <span style={{
-                          width: 30,
-                          height: 30,
-                          borderRadius: 8,
-                          backgroundColor: hex.bg,
-                          border: `1px solid ${hex.border}`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                        }}>
-                          <Icon size={14} color={hex.color} strokeWidth={2} />
-                        </span>
-                        <div style={{ minWidth: 0 }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', margin: 0, lineHeight: 1.3 }}>{cat.name}</p>
-                          <p style={{ fontSize: 11.5, color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.3 }}>{cat.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-
-                <div style={{ borderTop: '1px solid #f1f5f9', marginTop: 12, paddingTop: 12 }}>
-                  <Link
-                    href="/browse"
-                    onClick={() => setBrowseOpen(false)}
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      color: '#0F172A',
-                      textDecoration: 'none',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 5,
-                      padding: '4px 10px',
-                      borderRadius: 6,
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-                  >
-                    Browse all categories <ArrowRight size={12} />
-                  </Link>
-                </div>
-              </div>
-            </div>
+            {/* About */}
+            <Link
+              href="/about"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: isActive('/about') ? '#0f172a' : '#475569',
+                textDecoration: 'none',
+                padding: '7px 12px',
+                borderRadius: 8,
+                transition: 'all 0.12s',
+                backgroundColor: isActive('/about') ? '#f1f5f9' : 'transparent',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { if (!isActive('/about')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
+            >
+              About
+            </Link>
 
             {/* Contact */}
             <Link
@@ -378,50 +266,43 @@ export default function Layout({ children }) {
             <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 400 }}>Search manufacturers...</span>
           </Link>
 
-          <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', padding: '8px 12px 4px', margin: 0 }}>
-            Categories
-          </p>
-           {NAV_CATEGORIES.map(({ slug, name }) => {
-            const visuals = visualsFor(slug);
-            const Icon = visuals?.icon || Zap;
-            const hex = visuals?.hex || { bg: '#ffffff', border: '#e2e8f0', color: '#0f172a' };
-            return (
-              <Link
-                key={slug}
-                href={`/${slug}`}
-                onClick={() => setMobileOpen(false)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: '#0f172a',
-                  textDecoration: 'none',
-                  padding: '9px 12px',
-                  borderRadius: 8,
-                  transition: 'background 0.1s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <span style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 7,
-                  backgroundColor: hex.bg,
-                  border: `1px solid ${hex.border}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <Icon size={13} color={hex.color} strokeWidth={2} />
-                </span>
-                {name}
-              </Link>
-            );
-          })}
+          <Link
+            href="/capabilities"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'block',
+              fontSize: 14,
+              fontWeight: 500,
+              color: isActive('/capabilities') ? '#0f172a' : '#475569',
+              textDecoration: 'none',
+              padding: '9px 12px',
+              borderRadius: 8,
+              backgroundColor: isActive('/capabilities') ? '#f1f5f9' : 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+            onMouseLeave={(e) => { if (!isActive('/capabilities')) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            Capabilities
+          </Link>
+
+          <Link
+            href="/about"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'block',
+              fontSize: 14,
+              fontWeight: 500,
+              color: isActive('/about') ? '#0f172a' : '#475569',
+              textDecoration: 'none',
+              padding: '9px 12px',
+              borderRadius: 8,
+              backgroundColor: isActive('/about') ? '#f1f5f9' : 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+            onMouseLeave={(e) => { if (!isActive('/about')) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            About
+          </Link>
 
           <div style={{ borderTop: '1px solid #e2e8f0', margin: '8px 0', paddingTop: 8 }}>
             <Link
@@ -466,12 +347,17 @@ export default function Layout({ children }) {
       <main style={{ minWidth: 0 }}>{children}</main>
 
       {/* ══ FOOTER ══════════════════════════════════════════════════ */}
-      <footer style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
+      <footer style={{ background: '#0F172A' }}>
         <div className="px-6 lg:px-8" style={{ maxWidth: 'var(--max-width)', margin: '0 auto', paddingTop: 72, paddingBottom: 48 }}>
 
-          {/* Brand row */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 40, alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 64 }}>
-            <div style={{ maxWidth: 420 }}>
+          {/* Brand + links, one row (brand column, then four link columns) */}
+          <div className="footer-cols" style={{
+            display: 'grid',
+            gridTemplateColumns: '1.7fr repeat(4, 1fr)',
+            gap: 40,
+            marginBottom: 48,
+          }}>
+            <div style={{ maxWidth: 340 }}>
               <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 16 }}>
                 <img src="/logo-white.svg" alt="FirmsLedger" style={{ height: 40, width: 'auto' }} />
               </Link>
@@ -482,15 +368,6 @@ export default function Layout({ children }) {
                 Discover USA manufacturers across all 50 states and 11 categories — no paid placements, ever.
               </p>
             </div>
-          </div>
-
-          {/* 4-column links */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 40,
-            marginBottom: 48,
-          }} className="footer-cols">
 
             <FooterCol heading="Manufacturers" links={FOOTER_MANUFACTURERS} />
             <FooterCol heading="Browse by State" links={FOOTER_STATES} />

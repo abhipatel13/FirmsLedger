@@ -523,6 +523,34 @@ const fetchCompanyByIdAnyImpl = async (idOrSlug) => {
   }
 };
 
+/**
+ * Approved company counts for a set of category slugs, in one grouped query.
+ *
+ * Used by /capabilities to show real inventory on each card. One query rather
+ * than one per capability, and cached on the shared 'companies' tag so the
+ * page adds no recurring Neon traffic.
+ */
+const fetchCategoryCountsImpl = async (slugs) => {
+  if (!Array.isArray(slugs) || slugs.length === 0) return {};
+  try {
+    const rows = await db
+      .select({ slug: categories.slug, n: sql`count(${companies.id})::int` })
+      .from(categories)
+      .innerJoin(company_categories, eq(company_categories.category_id, categories.id))
+      .innerJoin(companies, and(eq(companies.id, company_categories.company_id), eq(companies.approved, true)))
+      .where(inArray(categories.slug, slugs))
+      .groupBy(categories.slug);
+    return Object.fromEntries(rows.map((r) => [r.slug, r.n]));
+  } catch (err) {
+    console.error('Error fetching category counts:', err);
+    return {};
+  }
+};
+
+export const fetchCategoryCounts = cache(
+  unstable_cache(fetchCategoryCountsImpl, ['fetchCategoryCounts'], { revalidate: DAY, tags: CACHE_TAGS })
+);
+
 export const fetchCompanyByIdAny = cache(
   unstable_cache(fetchCompanyByIdAnyImpl, ['fetchCompanyByIdAny'], { revalidate: WEEK, tags: CACHE_TAGS })
 );

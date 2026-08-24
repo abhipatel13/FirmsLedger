@@ -1,9 +1,8 @@
 import LogoImage from '@/components/LogoImage';
 import Link from 'next/link';
-import { CheckCircle, MapPin, Star, Users } from 'lucide-react';
+import { CheckCircle, MapPin, Phone, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { formatEmployeeLabel } from '@/lib/employeeCount';
 import VisitWebsiteButton from './VisitWebsiteButton';
 import { getCompanyDescription } from '@/utils';
 
@@ -22,13 +21,28 @@ function StarRow({ rating }) {
   );
 }
 
-export default function CompanyCard({ company, rank }) {
-  const employeeLabel = formatEmployeeLabel(company.employee_count);
-  const rankBg =
-    rank === 0 ? 'bg-[#1A2E4A] text-white' : rank === 1 ? 'bg-[#243B58] text-white' : rank === 2 ? 'bg-slate-100 text-slate-500' : 'bg-slate-50 text-slate-500';
+/** +16123314622 -> (612) 331-4622. Anything unexpected is shown as stored. */
+function formatPhone(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  const local = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+  if (local.length !== 10) return raw || null;
+  return `(${local.slice(0, 3)}) ${local.slice(3, 6)}-${local.slice(6)}`;
+}
 
-  const certifications = company.certifications && Array.isArray(company.certifications)
-    ? company.certifications.slice(0, 3)
+export default function CompanyCard({ company, rank }) {
+  const rating = parseFloat(company.avg_rating) || 0;
+  const phone = formatPhone(company.phone);
+  const location = [company.hq_city, company.hq_state_label].filter(Boolean).join(', ');
+
+  const certifications = Array.isArray(company.certifications)
+    // The scrape produced duplicates that differ only by whitespace — "ISO9001"
+    // and "ISO\n9001" rendered as two near-identical chips on the same card.
+    ? [...new Map(
+        company.certifications
+          .map((c) => String(c).replace(/\s+/g, ' ').trim())
+          .filter(Boolean)
+          .map((c) => [c.replace(/\s+/g, '').toLowerCase(), c])
+      ).values()].slice(0, 3)
     : [];
 
   return (
@@ -44,145 +58,119 @@ export default function CompanyCard({ company, rank }) {
           className="absolute inset-0 z-10"
         />
 
-        <CardContent className="relative p-4 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-            
-            {/* Rank, Logo, and Mobile Header Info */}
-            <div className="flex items-center sm:items-start gap-3 sm:gap-4 w-full sm:w-auto shrink-0">
-              {/* Rank badge */}
-              {typeof rank === 'number' && (
-                <div className={`flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-[11px] sm:text-xs font-bold tabular-nums ${rankBg}`}>
-                  #{rank + 1}
-                </div>
-              )}
+        <CardContent className="relative p-5 sm:p-7">
+          <div className="grid grid-cols-[104px_1fr] gap-5 sm:grid-cols-[168px_minmax(0,1fr)_208px] sm:gap-7">
 
-              {/* Logo */}
-              {company.logo_url ? (
-                <LogoImage
-                  src={company.logo_url}
-                  alt={`${company.name} logo`}
-                  width={72}
-                  height={72}
-                  className="size-14 sm:size-[72px] shrink-0 rounded-xl border border-slate-200 bg-white object-contain"
-                />
-              ) : (
-                <div className="flex size-14 sm:size-[72px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-100">
-                  <span className="text-xl sm:text-2xl font-bold text-slate-400">{company.name.charAt(0)}</span>
-                </div>
-              )}
-
-              {/* Mobile-only Header Title & Stars */}
-              <div className="flex flex-col min-w-0 sm:hidden">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <h3 className="text-base font-semibold text-slate-900 truncate">{company.name}</h3>
-                  {company.is_verified ? (
-                    <Badge variant="secondary" className="gap-0.5 px-1 py-0.5 text-[9px] shrink-0">
-                      <CheckCircle data-icon="inline-start" className="size-2" />
-                      Verified
-                    </Badge>
-                  ) : null}
-                </div>
-                
-                <div className="flex items-center gap-1.5 mt-0.5 text-xs text-slate-500">
-                  <StarRow rating={parseFloat(company.avg_rating) || 0} />
-                  <span className="font-semibold tabular-nums text-slate-900">
-                    {(parseFloat(company.avg_rating) || 0).toFixed(1)}
-                  </span>
-                  <span className="tabular-nums">({company.review_count || 0})</span>
-                </div>
+            {/* ── Logo column ──────────────────────────────────────────
+                No border, fill or padding: the old 72px framed box spent
+                most of its area on chrome and object-contain letterboxing,
+                leaving ~40px of actual mark. The fixed size stays so logos
+                of different aspect ratios line up down the list. */}
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="grid size-[104px] sm:size-[168px] place-items-center">
+                {company.logo_url ? (
+                  <LogoImage
+                    src={company.logo_url}
+                    alt={`${company.name} logo`}
+                    className="size-full object-contain"
+                  />
+                ) : (
+                  <div className="grid size-full place-items-center rounded-xl border border-slate-200 bg-slate-50">
+                    <span className="text-3xl font-bold text-slate-300">{company.name.charAt(0)}</span>
+                  </div>
+                )}
               </div>
+              {typeof rank === 'number' ? (
+                <span
+                  className={`rounded-full border px-3 py-0.5 font-mono text-[11px] font-semibold tracking-wide ${
+                    rank < 3
+                      ? 'border-[#F5A623] bg-[#F5A623] text-[#3B2708]'
+                      : 'border-slate-300 bg-white text-[#1A2E4A]'
+                  }`}
+                >
+                  RANK {rank + 1}
+                </span>
+              ) : null}
             </div>
 
-            {/* Main Content Area */}
-            <div className="min-w-0 flex-1 w-full">
-              
-              {/* Desktop-only Title Row */}
-              <div className="hidden sm:flex items-start justify-between gap-2 mb-1.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-xl font-semibold text-slate-900 tracking-tight">{company.name}</h3>
-                  {company.is_verified ? (
-                    <Badge variant="secondary" className="gap-1 text-[10px]">
-                      <CheckCircle data-icon="inline-start" className="size-2.5" />
-                      Verified
-                    </Badge>
+            {/* ── Middle column ────────────────────────────────────── */}
+            <div className="flex min-w-0 flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">{company.name}</h3>
+                {company.is_verified ? (
+                  <Badge variant="secondary" className="gap-1 text-[10px]">
+                    <CheckCircle data-icon="inline-start" className="size-2.5" />
+                    Verified
+                  </Badge>
+                ) : null}
+              </div>
+
+              {rating > 0 ? (
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <StarRow rating={rating} />
+                  <span className="font-mono font-semibold tabular-nums text-slate-900">{rating.toFixed(1)}</span>
+                  {/* review_count is FirmsLedger's own reviews, while the score
+                      comes from Google — showing "0 reviews" beside five stars
+                      read as a contradiction, so the count appears only when
+                      someone has actually written one here. */}
+                  {company.review_count > 0 ? (
+                    <span className="tabular-nums">· {company.review_count} reviews</span>
                   ) : null}
                 </div>
+              ) : null}
 
-                {company.website ? (
-                  <span className="relative z-20">
-                    <VisitWebsiteButton href={company.website} />
-                  </span>
-                ) : null}
-              </div>
-
-              {/* Desktop-only metadata row */}
-              <div className="hidden sm:flex flex-wrap items-center gap-3 text-xs text-slate-500 mb-2">
-                <span className="flex items-center gap-1.5">
-                  <StarRow rating={parseFloat(company.avg_rating) || 0} />
-                  <span className="text-sm font-semibold tabular-nums text-slate-900">
-                    {(parseFloat(company.avg_rating) || 0).toFixed(1)}
-                  </span>
-                </span>
-                <span className="tabular-nums">{company.review_count || 0} reviews</span>
-                {employeeLabel ? (
-                  <span className="flex items-center gap-1">
-                    <Users className="size-3" />
-                    {employeeLabel}
-                  </span>
-                ) : null}
-                {company.hq_city || company.hq_state_label ? (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="size-3" />
-                    {[company.hq_city, company.hq_state_label].filter(Boolean).join(', ')}
-                  </span>
-                ) : null}
-              </div>
-
-              {/* Mobile-only location/meta row */}
-              <div className="flex sm:hidden flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mb-2.5">
-                {employeeLabel ? (
-                  <span className="flex items-center gap-1">
-                    <Users className="size-3" />
-                    {employeeLabel}
-                  </span>
-                ) : null}
-                {company.hq_city || company.hq_state_label ? (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="size-3" />
-                    {[company.hq_city, company.hq_state_label].filter(Boolean).join(', ')}
-                  </span>
-                ) : null}
-              </div>
-
-              {/* Company Description */}
               <p className="line-clamp-3 text-sm leading-relaxed text-slate-500">
                 {getCompanyDescription(company)}
               </p>
 
-              {/* Certifications and Action Row */}
-              <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                {certifications.length > 0 ? (
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {certifications.map((cert) => (
-                      <span
-                        key={cert}
-                        className="inline-flex items-center rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600"
-                      >
-                        {cert}
-                      </span>
-                    ))}
-                  </div>
-                ) : <div className="hidden sm:block" />}
+              {certifications.length > 0 ? (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {certifications.map((cert) => (
+                    <span
+                      key={cert}
+                      className="inline-flex items-center rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[11px] font-medium text-slate-600"
+                    >
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
 
-                {/* Mobile-only Visit Website Button */}
-                {company.website ? (
-                  <div className="sm:hidden relative z-20 w-full mt-1">
-                    <VisitWebsiteButton href={company.website} className="w-full py-2.5 text-sm font-semibold" />
-                  </div>
-                ) : null}
-              </div>
-
+              {/* Mobile CTA — the rail below is desktop-only */}
+              {company.website ? (
+                <div className="relative z-20 mt-1 sm:hidden">
+                  <VisitWebsiteButton href={company.website} className="w-full py-2.5 text-sm font-semibold" />
+                </div>
+              ) : null}
             </div>
+
+            {/* ── Right rail ───────────────────────────────────────────
+                Centred, not top-aligned: the rail always holds less than
+                the description column, so anything pinned to the top left
+                an obvious gap beneath the button. */}
+            <div className="hidden sm:flex flex-col justify-center gap-3.5 border-l border-slate-200 pl-6">
+              {location ? (
+                <div className="flex items-center gap-2 text-[13px] text-slate-600">
+                  <MapPin className="size-[15px] shrink-0 opacity-60" />
+                  <span className="truncate">{location}</span>
+                </div>
+              ) : null}
+              {phone ? (
+                <a
+                  href={`tel:${String(company.phone).replace(/[^\d+]/g, '')}`}
+                  className="relative z-20 flex items-center gap-2 text-[13px] text-slate-600 hover:text-[#1A2E4A]"
+                >
+                  <Phone className="size-[15px] shrink-0 opacity-60" />
+                  <span className="tabular-nums">{phone}</span>
+                </a>
+              ) : null}
+              {company.website ? (
+                <div className="relative z-20">
+                  <VisitWebsiteButton href={company.website} className="w-full justify-center" />
+                </div>
+              ) : null}
+            </div>
+
           </div>
         </CardContent>
       </Card>
