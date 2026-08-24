@@ -3,9 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { CAPABILITIES, capabilityHref, capabilityImage } from '@/lib/capabilities';
 
-export default function Capabilities({ counts = {}, groups = [] }) {
+export default function Capabilities({ counts = {}, items = [] }) {
   return (
     <div className="min-h-screen bg-slate-50/50">
       {/* ── HERO HEADER ─────────────────────────────────────────── */}
@@ -42,13 +41,13 @@ export default function Capabilities({ counts = {}, groups = [] }) {
       <main className="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {CAPABILITIES.map((cat) => {
-              const imageUrl = capabilityImage(cat);
+            {items.map((cat) => {
+              const imageUrl = cat.imageUrl;
               return (
                 <Link
                   key={cat.slug}
                   id={`capability-card-${cat.slug}`}
-                  href={capabilityHref(cat)}
+                  href={cat.href}
                   className="group flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300"
                 >
                   {/* Card Image Container. Capabilities with no photo we could
@@ -103,47 +102,6 @@ export default function Capabilities({ counts = {}, groups = [] }) {
               );
             })}
           </div>
-
-          {/* ── FULL INDEX ───────────────────────────────────────────
-              Every capability with at least one company, grouped by industry.
-              Keeps the page a complete entry point rather than a curated
-              sixteen, so nothing is reachable only through /browse. */}
-          {groups.length > 0 ? (
-            <div className="mt-20 pt-14 border-t border-slate-200">
-              <h2 className="text-xl font-bold tracking-tight text-slate-900">Every capability we list</h2>
-              <p className="mt-2 text-sm text-slate-500">
-                Grouped by industry, ordered by how many companies we have for each.
-              </p>
-
-              <div className="mt-8 grid gap-x-10 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-                {groups.map((g) => (
-                  <div key={g.slug}>
-                    <Link
-                      href={`/${g.slug}`}
-                      className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-900 hover:text-orange-500"
-                    >
-                      {g.name}
-                    </Link>
-                    <ul className="mt-3 space-y-1.5">
-                      {g.children.map((s) => (
-                        <li key={s.slug}>
-                          <Link
-                            href={`/${g.slug}/${s.slug}`}
-                            className="group/link flex items-baseline justify-between gap-3 text-sm text-slate-600 hover:text-orange-600"
-                          >
-                            <span className="truncate">{s.name}</span>
-                            <span className="font-mono text-[11px] tabular-nums text-slate-400 group-hover/link:text-orange-500">
-                              {counts[s.slug]}
-                            </span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
 
           {/* ── ALL CATEGORIES LINK CTA ──────────────────────────────── */}
           <div className="text-center mt-16 pt-12 border-t border-slate-200">

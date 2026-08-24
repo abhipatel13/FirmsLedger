@@ -56,4 +56,15 @@ export const CAPABILITIES = [
 
 export const CAPABILITY_SLUGS = CAPABILITIES.map((c) => c.slug);
 export const capabilityHref = (c) => `/${c.parent}/${c.slug}`;
-export const capabilityImage = (c) => (c.image ? `/capabilities/${c.slug}.webp` : null);
+
+// Object key in R2. Images are served from the bucket rather than committed to
+// the repo — they are content, not source, and shipping ~900KB of photos through
+// git and the build output for every deploy is the wrong place for them.
+export const capabilityImageKey = (c) => (c.image ? `capabilities/${c.slug}.webp` : null);
+
+/** Resolve to a full URL. Server-side only — R2_PUBLIC_URL is not public env. */
+export function capabilityImageUrl(c, base = process.env.R2_PUBLIC_URL) {
+  const key = capabilityImageKey(c);
+  if (!key || !base) return null;
+  return `${String(base).replace(/\/$/, '')}/${key}`;
+}

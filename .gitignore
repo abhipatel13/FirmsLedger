@@ -92,3 +92,6 @@ screenshts(mobile)/
 # Pipeline working files — a plan doc and a dated sitemap snapshot
 pipeline/DESCRIPTION_BACKFILL_PLAN.md
 pipeline/sitemap-*.xml
+
+# Capability photos live in R2 (capabilities/ prefix), not in the repo.
+public/capabilities/

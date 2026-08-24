@@ -1,6 +1,5 @@
 import Capabilities from '@/views/Capabilities';
-import { CAPABILITY_SLUGS } from '@/lib/capabilities';
-import { MANUFACTURING_CATEGORIES, ALL_SUBCATEGORY_SLUGS } from '@/lib/manufacturingCategories';
+import { CAPABILITIES, CAPABILITY_SLUGS, capabilityHref, capabilityImageUrl } from '@/lib/capabilities';
 import { fetchCategoryCounts } from '@/db/neonApi';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
 
@@ -19,21 +18,17 @@ export const metadata = {
 };
 
 export default async function CapabilitiesPage() {
-  // One query covers both the featured cards and the full index below them.
-  const counts = await fetchCategoryCounts([...new Set([...CAPABILITY_SLUGS, ...ALL_SUBCATEGORY_SLUGS])]);
+  const counts = await fetchCategoryCounts(CAPABILITY_SLUGS);
 
-  // Everything with at least one approved company, grouped by parent industry,
-  // so /capabilities is a complete index and nothing is reachable only via
-  // /browse.
-  const groups = MANUFACTURING_CATEGORIES
-    .map((cat) => ({
-      slug: cat.slug,
-      name: cat.shortName || cat.name,
-      children: (cat.subcategories || [])
-        .filter((s) => counts[s.slug] > 0)
-        .sort((a, b) => counts[b.slug] - counts[a.slug]),
-    }))
-    .filter((g) => g.children.length > 0);
+  // Image URLs are resolved here because R2_PUBLIC_URL is a server-only env
+  // var; the view is a client component and must not read it.
+  const items = CAPABILITIES.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    desc: c.desc,
+    href: capabilityHref(c),
+    imageUrl: capabilityImageUrl(c),
+  }));
 
-  return <Capabilities counts={counts} groups={groups} />;
+  return <Capabilities counts={counts} items={items} />;
 }
