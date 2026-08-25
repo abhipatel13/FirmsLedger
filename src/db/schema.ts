@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   pgTable,
   uuid,
@@ -7,6 +8,7 @@ import {
   numeric,
   timestamp,
   unique,
+  index,
 } from 'drizzle-orm/pg-core';
 
 // ── States ────────────────────────────────────────────────────────────────────
@@ -77,7 +79,11 @@ export const companies = pgTable('companies', {
   review_count:    integer('review_count').default(0),
   created_at:      timestamp('created_at', { withTimezone: true }).defaultNow(),
   updated_at:      timestamp('updated_at', { withTimezone: true }).defaultNow(),
-});
+}, (t) => [
+  index('idx_companies_hq_state_id').on(t.hq_state_id),
+  index('idx_companies_approved').on(t.approved).where(sql`${t.approved} = true`),
+  index('idx_companies_avg_rating').on(t.avg_rating.desc()),
+]);
 
 // ── Company–Category links ────────────────────────────────────────────────────
 
@@ -89,7 +95,10 @@ export const company_categories = pgTable(
     category_id: uuid('category_id').notNull().references(() => categories.id, { onDelete: 'cascade' }),
     created_at:  timestamp('created_at', { withTimezone: true }).defaultNow(),
   },
-  (t) => [unique().on(t.company_id, t.category_id)],
+  (t) => [
+    unique().on(t.company_id, t.category_id),
+    index('idx_company_categories_category_id').on(t.category_id),
+  ],
 );
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
@@ -115,7 +124,9 @@ export const reviews = pgTable('reviews', {
   company_response_date: timestamp('company_response_date', { withTimezone: true }),
   created_at:            timestamp('created_at', { withTimezone: true }).defaultNow(),
   updated_at:            timestamp('updated_at', { withTimezone: true }).defaultNow(),
-});
+}, (t) => [
+  index('idx_reviews_company_id').on(t.company_id),
+]);
 
 // ── Company Leads (Request Proposal submissions) ──────────────────────────────
 
