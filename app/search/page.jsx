@@ -299,7 +299,6 @@ function SearchContent() {
                   <CompanyCard
                     key={company.slug}
                     company={company}
-                    rank={i}
                   />
                 ))}
               </div>

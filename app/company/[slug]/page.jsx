@@ -105,6 +105,13 @@ export default async function CompanyProfilePage({ params }) {
         description: getCompanyDescription(company),
         ...(company.website && { sameAs: [company.website] }),
         ...(company.employee_count && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.employee_count } }),
+        ...(company.review_count > 0 && Number(company.avg_rating) > 0 && {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: company.avg_rating,
+            reviewCount: company.review_count,
+          },
+        }),
         ...((company.hq_city || company.hq_state_label) && {
           address: {
             '@type': 'PostalAddress',

@@ -21,7 +21,7 @@
 
 export const CAPABILITIES = [
   { slug: 'electrical-wire-cable',   parent: 'electrical-components',     name: 'Electrical Wire & Cable',
-    desc: 'Wire, cable and conductor manufacturing for power and signal.',                     image: false }, // 577
+    desc: 'Wire, cable and conductor manufacturing for power and signal.',                     image: true  }, // 577
   { slug: 'solar-panels',            parent: 'electrical-components',     name: 'Solar Panels',
     desc: 'Photovoltaic module manufacture, assembly and mounting systems.',                   image: true  }, // 536
   { slug: 'injection-molding',       parent: 'plastics-packaging',        name: 'Injection Molding',
@@ -35,7 +35,7 @@ export const CAPABILITIES = [
   { slug: 'switchgear',              parent: 'electrical-components',     name: 'Switchgear',
     desc: 'Distribution and control assemblies for industrial power systems.',                 image: true  }, // 180
   { slug: 'fabric-manufacturing',    parent: 'textile-apparel',           name: 'Fabric Manufacturing',
-    desc: 'Weaving, knitting and finishing of technical and apparel textiles.',                 image: false }, // 169
+    desc: 'Weaving, knitting and finishing of technical and apparel textiles.',                 image: true  }, // 169
   { slug: 'structural-steel',        parent: 'metal-fabrication',         name: 'Structural Steel',
     desc: 'Beams, columns and frames fabricated for construction and heavy industry.',         image: true  }, // 164
   { slug: 'millwork',                parent: 'furniture-woodworking',     name: 'Millwork',
@@ -51,7 +51,7 @@ export const CAPABILITIES = [
   { slug: 'pcb-manufacturing',       parent: 'electronics-semiconductor', name: 'PCB Manufacturing',
     desc: 'Bare board fabrication, from single-layer to complex multilayer stacks.',            image: true  }, // 106
   { slug: 'powder-coating',          parent: 'metal-fabrication',         name: 'Powder Coating',
-    desc: 'Durable electrostatic finishing for metal components.',                               image: false }, // 86
+    desc: 'Durable electrostatic finishing for metal components.',                               image: true  }, // 86
 ];
 
 export const CAPABILITY_SLUGS = CAPABILITIES.map((c) => c.slug);
@@ -67,4 +67,16 @@ export function capabilityImageUrl(c, base = process.env.R2_PUBLIC_URL) {
   const key = capabilityImageKey(c);
   if (!key || !base) return null;
   return `${String(base).replace(/\/$/, '')}/${key}`;
+}
+
+// ── Category card imagery ─────────────────────────────────────────────────────
+// Same R2-not-git rationale as the capability photos above. Homepage cards are a
+// wide 128px banner, so these are stored 16:9 (800x450) rather than the 4:3 used
+// on /capabilities — a 4:3 crop letterboxed badly in the mobile carousel.
+export const categoryImageKey = (slug) => `categories/${slug}.webp`;
+
+/** Server-side only — R2_PUBLIC_URL is not a NEXT_PUBLIC var. */
+export function categoryImageUrl(slug, base = process.env.R2_PUBLIC_URL) {
+  if (!slug || !base) return null;
+  return `${String(base).replace(/\/$/, '')}/${categoryImageKey(slug)}`;
 }

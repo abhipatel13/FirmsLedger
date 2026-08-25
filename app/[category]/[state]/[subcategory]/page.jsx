@@ -100,9 +100,17 @@ export async function generateMetadata({ params, searchParams }) {
   const parentsWithSub = MANUFACTURING_CATEGORIES.filter((c) => c.subcategories.some((s) => s.slug === subcategory));
   const parentShortName = parentsWithSub.length > 1 ? (cat.shortName || cat.name) : null;
 
+  // 10 subcategory names already end in a producer noun ("PCB Manufacturing",
+  // "Assembly Services", "Sheet Metal Fabrication"), so appending one gave
+  // "PCB Manufacturing Manufacturers". It was invisible while the title budget
+  // was tight enough that the overflow tier stripped the suffix back off again.
+  const subNoun = /\b(Manufacturing|Manufacturers|Fabrication|Services|Companies)$/i.test(subName)
+    ? subName
+    : `${subName} Manufacturers`;
+
   const title = clampedPage > 1
-    ? buildListingTitle({ noun: subName, stateName, parentShortName, pageSuffix })
-    : buildListingTitle({ count, noun: `${subName} Manufacturers`, stateName, parentShortName });
+    ? buildListingTitle({ noun: subNoun, stateName, parentShortName, pageSuffix })
+    : buildListingTitle({ count, noun: subNoun, stateName, parentShortName });
 
   const stats = await fetchCategoryStats(category, state);
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
@@ -291,7 +299,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
                     <CompanyCard
                       key={company.slug}
                       company={company}
-                      rank={rankOffset + i}
+                     
                     />
                   ))}
                 </div>

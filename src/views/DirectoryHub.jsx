@@ -250,6 +250,7 @@ export default function DirectoryHub({
   categoryCount = FALLBACK_CATEGORY_COUNT,
   stateCount = FALLBACK_STATE_COUNT,
   popularSearches = [],
+  categoryImages = {},
 }) {
   const [selectedState, setSelectedState] = useState('california');
   const activeState = US_STATES.find((s) => s.slug === selectedState);
@@ -443,6 +444,7 @@ export default function DirectoryHub({
               const Icon = visuals?.icon || Package;
               const tw = visuals?.tw || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' };
               const hex = visuals?.hex || { bg: '#f8fafc', border: '#e2e8f0', color: '#1e3a5f' };
+              const img = categoryImages[cat.slug];
               return (
                 <Link
                   href={`/${cat.slug}`}
@@ -453,18 +455,29 @@ export default function DirectoryHub({
                     className="relative flex flex-col h-full rounded-[22px] bg-white border border-slate-200/70 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-[0_20px_40px_-15px_rgba(26,46,74,0.25)]"
                     style={{ '--cat-color': hex.color }}
                   >
-                    {/* Colored gradient banner */}
-                    <div
-                      className={cn('relative h-24 w-full flex items-start justify-between p-4 overflow-hidden', tw.bg)}
-                    >
-                      <span
-                        className="pointer-events-none absolute -right-4 -top-6 text-[64px] font-black leading-none opacity-[0.08] select-none"
-                        style={{ color: hex.color }}
-                      >
-                        {String(idx + 1).padStart(2, '0')}
-                      </span>
+                    {/* Photo banner. Falls back to the tinted panel when a
+                        category has no image in R2 — an icon on a flat tint
+                        beats a broken or empty box. */}
+                    <div className={cn('relative h-32 w-full overflow-hidden', !img && tw.bg)}>
+                      {img ? (
+                        <img
+                          src={img}
+                          alt=""
+                          // The first cards are on screen at load; lazy there
+                          // costs LCP and pops in. The rest sit off-canvas in
+                          // the horizontal carousel and genuinely should defer.
+                          loading={idx < 3 ? 'eager' : 'lazy'}
+                          fetchPriority={idx === 0 ? 'high' : undefined}
+                          decoding="async"
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : null}
+                      {/* Scrim: keeps the icon chip legible over any photo. */}
+                      {img ? (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10" />
+                      ) : null}
                       <div
-                        className="relative w-12 h-12 rounded-xl bg-white shadow-sm border flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
+                        className="absolute left-4 top-4 w-12 h-12 rounded-xl bg-white shadow-sm border flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
                         style={{ borderColor: hex.border }}
                       >
                         <Icon className={cn('w-[22px] h-[22px]', tw.text)} />

@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import VisitWebsiteButton from './VisitWebsiteButton';
 import { getCompanyDescription } from '@/utils';
+import { cleanFacets } from '@/lib/cleanFacets';
 
 function StarRow({ rating }) {
   return (
@@ -29,10 +30,15 @@ function formatPhone(raw) {
   return `(${local.slice(0, 3)}) ${local.slice(3, 6)}-${local.slice(6)}`;
 }
 
-export default function CompanyCard({ company, rank }) {
+export default function CompanyCard({ company }) {
   const rating = parseFloat(company.avg_rating) || 0;
   const phone = formatPhone(company.phone);
   const location = [company.hq_city, company.hq_state_label].filter(Boolean).join(', ');
+
+  // Scraped `capabilities`/`products` are mostly real capability labels mixed
+  // with nav text and testimonials — cleanFacets drops the junk. 4 rather than
+  // the default 6: a card has less room than a profile.
+  const facets = cleanFacets([...(company.capabilities || []), ...(company.products || [])], 4);
 
   const certifications = Array.isArray(company.certifications)
     // The scrape produced duplicates that differ only by whitespace — "ISO9001"
@@ -59,38 +65,29 @@ export default function CompanyCard({ company, rank }) {
         />
 
         <CardContent className="relative p-5 sm:p-7">
-          <div className="grid grid-cols-[104px_1fr] gap-5 sm:grid-cols-[168px_minmax(0,1fr)_208px] sm:gap-7">
+          <div className="grid grid-cols-[84px_1fr] gap-4 sm:grid-cols-[168px_minmax(0,1fr)_208px] sm:gap-7">
 
             {/* ── Logo column ──────────────────────────────────────────
                 No border, fill or padding: the old 72px framed box spent
                 most of its area on chrome and object-contain letterboxing,
                 leaving ~40px of actual mark. The fixed size stays so logos
                 of different aspect ratios line up down the list. */}
-            <div className="flex flex-col items-center gap-1.5">
-              <div className="grid size-[104px] sm:size-[168px] place-items-center">
-                {company.logo_url ? (
-                  <LogoImage
-                    src={company.logo_url}
-                    alt={`${company.name} logo`}
-                    className="size-full object-contain"
-                  />
-                ) : (
-                  <div className="grid size-full place-items-center rounded-xl border border-slate-200 bg-slate-50">
-                    <span className="text-3xl font-bold text-slate-300">{company.name.charAt(0)}</span>
-                  </div>
-                )}
-              </div>
-              {typeof rank === 'number' ? (
-                <span
-                  className={`rounded-full border px-3 py-0.5 font-mono text-[11px] font-semibold tracking-wide ${
-                    rank < 3
-                      ? 'border-[#F5A623] bg-[#F5A623] text-[#3B2708]'
-                      : 'border-slate-300 bg-white text-[#1A2E4A]'
-                  }`}
-                >
-                  RANK {rank + 1}
-                </span>
-              ) : null}
+            <div className="grid size-[84px] sm:size-[168px] place-items-center">
+              {company.logo_url ? (
+                <LogoImage
+                  src={company.logo_url}
+                  alt={`${company.name} logo`}
+                  className="size-full object-contain"
+                />
+              ) : (
+                /* Sized well below the cell rather than size-full: a 168px
+                   bordered square holding one letter read as a broken image,
+                   and most companies have no logo. The cell keeps its size so
+                   real logos stay aligned down the list. */
+                <div className="grid size-[68px] sm:size-[88px] place-items-center rounded-xl border border-slate-200 bg-slate-50">
+                  <span className="text-2xl font-semibold text-slate-400">{company.name.charAt(0)}</span>
+                </div>
+              )}
             </div>
 
             {/* ── Middle column ────────────────────────────────────── */}
@@ -123,6 +120,19 @@ export default function CompanyCard({ company, rank }) {
                 {getCompanyDescription(company)}
               </p>
 
+              {facets.length > 0 ? (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {facets.map((f) => (
+                    <span
+                      key={f}
+                      className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-600"
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+
               {certifications.length > 0 ? (
                 <div className="flex flex-wrap items-center gap-1.5">
                   {certifications.map((cert) => (
@@ -136,12 +146,33 @@ export default function CompanyCard({ company, rank }) {
                 </div>
               ) : null}
 
-              {/* Mobile CTA — the rail below is desktop-only */}
-              {company.website ? (
-                <div className="relative z-20 mt-1 sm:hidden">
-                  <VisitWebsiteButton href={company.website} className="w-full py-2.5 text-sm font-semibold" />
-                </div>
-              ) : null}
+              {/* Mobile meta + actions. The rail below is desktop-only, so without
+                  this a phone user never sees where the company is — the single
+                  most important fact in a location directory. The website button
+                  is inline here rather than a full-width slab, which outweighed
+                  the company name itself. */}
+              <div className="mt-1 flex flex-col gap-2 sm:hidden">
+                {location ? (
+                  <div className="flex items-center gap-1.5 text-[13px] text-slate-600">
+                    <MapPin className="size-[14px] shrink-0 opacity-60" />
+                    <span className="truncate">{location}</span>
+                  </div>
+                ) : null}
+                {phone || company.website ? (
+                  <div className="relative z-20 flex flex-wrap items-center gap-2">
+                    {phone ? (
+                      <a
+                        href={`tel:${String(company.phone).replace(/[^\d+]/g, '')}`}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-[13px] font-medium text-slate-700 no-underline"
+                      >
+                        <Phone className="size-[13px] shrink-0 opacity-60" />
+                        <span className="tabular-nums">{phone}</span>
+                      </a>
+                    ) : null}
+                    {company.website ? <VisitWebsiteButton href={company.website} className="py-1.5" /> : null}
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             {/* ── Right rail ───────────────────────────────────────────

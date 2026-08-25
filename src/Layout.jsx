@@ -26,7 +26,7 @@ const FOOTER_STATES = [
   { href: '/states/michigan',     label: 'Michigan' },
   { href: '/states/pennsylvania', label: 'Pennsylvania' },
   { href: '/states/illinois',     label: 'Illinois' },
-  { href: '/#states',             label: 'All 50 States' },
+  { href: '/locations',           label: 'All 50 States' },
 ];
 
 const FOOTER_RESOURCES = [
@@ -118,6 +118,25 @@ export default function Layout({ children }) {
               onMouseLeave={(e) => { if (!isActive('/capabilities')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
             >
               Capabilities
+            </Link>
+
+            {/* Locations */}
+            <Link
+              href="/locations"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: isActive('/locations') ? '#0f172a' : '#475569',
+                textDecoration: 'none',
+                padding: '7px 12px',
+                borderRadius: 8,
+                transition: 'all 0.12s',
+                backgroundColor: isActive('/locations') ? '#f1f5f9' : 'transparent',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { if (!isActive('/locations')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
+            >
+              Locations
             </Link>
 
             {/* About */}
@@ -283,6 +302,25 @@ export default function Layout({ children }) {
             onMouseLeave={(e) => { if (!isActive('/capabilities')) e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
             Capabilities
+          </Link>
+
+          <Link
+            href="/locations"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'block',
+              fontSize: 14,
+              fontWeight: 500,
+              color: isActive('/locations') ? '#0f172a' : '#475569',
+              textDecoration: 'none',
+              padding: '9px 12px',
+              borderRadius: 8,
+              backgroundColor: isActive('/locations') ? '#f1f5f9' : 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+            onMouseLeave={(e) => { if (!isActive('/locations')) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            Locations
           </Link>
 
           <Link

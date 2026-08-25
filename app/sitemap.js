@@ -129,6 +129,9 @@ export default async function sitemap() {
   // /search is noindexed (app/search/layout.jsx) — /{category}/{state} pages
   // are the canonical crawlable listings, so it doesn't belong in the sitemap.
   urls.push({ url: `${BASE_URL}/browse`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+  urls.push({ url: `${BASE_URL}/locations`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+  urls.push({ url: `${BASE_URL}/capabilities`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+  urls.push({ url: `${BASE_URL}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.4 });
   urls.push({ url: `${BASE_URL}/list-your-company`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
   urls.push({ url: `${BASE_URL}/claim-listing`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 });
   urls.push({ url: `${BASE_URL}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.4 });

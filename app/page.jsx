@@ -2,6 +2,7 @@ import DirectoryHub from '@/views/DirectoryHub';
 import JsonLd from '@/components/JsonLd';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
 import { fetchHomepageStats, fetchStateCountsForCategory } from '@/db/neonApi';
+import { categoryImageUrl } from '@/lib/capabilities';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -71,6 +72,9 @@ export default async function HomePage() {
         categoryCount={categoryCount}
         stateCount={stateCount}
         popularSearches={categoryStatesList}
+        categoryImages={Object.fromEntries(
+          CORE_CATEGORIES.map((c) => [c.slug, categoryImageUrl(c.slug)]),
+        )}
       />
     </>
   );

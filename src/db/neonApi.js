@@ -422,6 +422,66 @@ export const fetchStateCountsForCategory = cache(
 );
 
 /**
+ * Live stats for a state hub page: total companies, top represented
+ * categories (rolled up to their top-level parent), and top HQ cities.
+ */
+const fetchStateHubStatsImpl = async (stateSlug) => {
+  const empty = { totalCount: 0, topCategories: [], topCities: [] };
+  const stateId = await resolveStateId(stateSlug);
+  if (!stateId) return empty;
+
+  try {
+    const inState = and(eq(companies.approved, true), eq(companies.hq_state_id, stateId));
+
+    const [totalRows, categoryRows, cityRows, allCats] = await Promise.all([
+      db.select({ count: sql`count(*)`.mapWith(Number) }).from(companies).where(inState),
+
+      db
+        .select({ category_id: company_categories.category_id, count: sql`count(*)`.mapWith(Number) })
+        .from(company_categories)
+        .innerJoin(companies, eq(companies.id, company_categories.company_id))
+        .where(inState)
+        .groupBy(company_categories.category_id),
+
+      db
+        .select({ city: companies.hq_city, count: sql`count(*)`.mapWith(Number) })
+        .from(companies)
+        .where(and(inState, isNotNull(companies.hq_city)))
+        .groupBy(companies.hq_city)
+        .orderBy(desc(sql`count(*)`))
+        .limit(5),
+
+      fetchCategories(),
+    ]);
+
+    const catsById = new Map(allCats.map((c) => [c.id, c]));
+    const topLevelOf = (cat) => (cat.parent_id ? catsById.get(cat.parent_id) || cat : cat);
+
+    const rollup = new Map();
+    for (const row of categoryRows) {
+      const cat = catsById.get(row.category_id);
+      if (!cat) continue;
+      const top = topLevelOf(cat);
+      const existing = rollup.get(top.slug);
+      rollup.set(top.slug, { slug: top.slug, name: top.name, count: (existing?.count || 0) + row.count });
+    }
+
+    return {
+      totalCount: totalRows[0]?.count || 0,
+      topCategories: [...rollup.values()].sort((a, b) => b.count - a.count),
+      topCities: cityRows.map((r) => ({ city: r.city, count: r.count })),
+    };
+  } catch (err) {
+    console.error('Error fetching state hub stats:', err);
+    return empty;
+  }
+};
+
+export const fetchStateHubStats = cache(
+  unstable_cache(fetchStateHubStatsImpl, ['fetchStateHubStats'], { revalidate: DAY, tags: CACHE_TAGS })
+);
+
+/**
  * Returns live-computed stats for a category (+ optionally state) listing page.
  * No hourly-rate field — deliberately absent (no such data exists).
  */

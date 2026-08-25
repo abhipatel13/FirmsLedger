@@ -423,7 +423,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {pageCompanies.map((company, i) => (
-                    <CompanyCard key={company.slug} company={company} rank={rankOffset + i} />
+                    <CompanyCard key={company.slug} company={company} />
                   ))}
                 </div>
               )}
@@ -784,7 +784,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {pageCompanies.map((company, i) => (
-                  <CompanyCard key={company.slug} company={company} rank={rankOffset + i} />
+                  <CompanyCard key={company.slug} company={company} />
                 ))}
               </div>
             )}
