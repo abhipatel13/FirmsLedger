@@ -3,7 +3,10 @@ import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import CategoryCard from '@/components/CategoryCard';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { fetchStateHubStats } from '@/db/neonApi';
 import { ArrowRight } from 'lucide-react';
+
+export const revalidate = 3600;
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -85,8 +88,11 @@ export async function generateMetadata({ params }) {
   const state = STATE_MAP[slug];
   if (!state) return { title: 'State' };
 
-  const title       = `Manufacturers in ${state.name}`;
-  const description = `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`;
+  const stats = await fetchStateHubStats(slug);
+  const title = `Manufacturers in ${state.name}`;
+  const description = stats.totalCount > 0
+    ? `Browse ${stats.totalCount} manufacturers in ${state.name}${stats.topCategories[0] ? `, led by ${stats.topCategories[0].name.toLowerCase()}` : ''}. Compare verified suppliers by category, city, and certifications.`
+    : `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`;
   const canonical   = `${_BASE}/states/${slug}`;
 
   return {
@@ -103,13 +109,34 @@ export default async function StateHubPage({ params }) {
   const state = STATE_MAP[slug];
   if (!state) notFound();
 
+  const stats = await fetchStateHubStats(slug);
+  const topCategories = stats.topCategories.slice(0, 5);
+  const topCities = stats.topCities.slice(0, 3);
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: `Manufacturers in ${state.name}`,
-    description: `Browse manufacturers across all categories in ${state.name}.`,
+    description: `Browse ${stats.totalCount} manufacturers across all categories in ${state.name}.`,
     url: `${_BASE}/states/${slug}`,
     provider: { '@type': 'Organization', name: SITE_NAME, url: _BASE },
+    about: {
+      '@type': 'AdministrativeArea',
+      name: state.name,
+      containedInPlace: { '@type': 'Country', name: 'United States' },
+    },
+  };
+
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `Manufacturing categories in ${state.name}`,
+    itemListElement: CATEGORIES.map((cat, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: cat.name,
+      url: `${_BASE}/${cat.slug}/${slug}`,
+    })),
   };
 
   const breadcrumbJsonLd = {
@@ -130,6 +157,7 @@ export default async function StateHubPage({ params }) {
         .state-pill:hover { border-color: #94a3b8 !important; color: #0f172a !important; }
       `}</style>
       <JsonLd data={jsonLd} />
+      <JsonLd data={itemListJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
 
       <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
@@ -183,11 +211,26 @@ export default async function StateHubPage({ params }) {
               Manufacturers in {state.name}
             </h1>
             <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 640, marginBottom: 0 }}>
-              Browse manufacturers in {state.name} by category. FirmsLedger lists verified {state.name} manufacturers
-              across {CATEGORIES.length} primary industries, from {CATEGORIES[0].name.toLowerCase()} to{' '}
-              {CATEGORIES[CATEGORIES.length - 1].name.toLowerCase()}. Our industrial directory helps procurement teams and engineers 
-              compare local {state.name} suppliers, review company capabilities, verify certifications, 
-              and request a quote directly from a manufacturer's profile.
+              {stats.totalCount > 0 ? (
+                <>
+                  FirmsLedger lists <strong>{stats.totalCount} verified manufacturer{stats.totalCount === 1 ? '' : 's'}</strong> headquartered
+                  in {state.name}
+                  {topCategories.length > 0 && (
+                    <> across {topCategories.length} categor{topCategories.length === 1 ? 'y' : 'ies'}, led by {topCategories.map((c) => c.name).join(', ')}</>
+                  )}
+                  {topCities.length > 0 && (
+                    <>. Manufacturing activity is concentrated around {topCities.map((c) => c.city).join(', ')}</>
+                  )}
+                  . Our industrial directory helps procurement teams and engineers compare local {state.name} suppliers,
+                  review company capabilities, verify certifications, and request a quote directly from a manufacturer's profile.
+                </>
+              ) : (
+                <>
+                  Browse manufacturers in {state.name} by category. Our industrial directory helps procurement teams and engineers
+                  compare local {state.name} suppliers, review company capabilities, verify certifications,
+                  and request a quote directly from a manufacturer's profile.
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -199,11 +242,18 @@ export default async function StateHubPage({ params }) {
           </p>
 
           <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, maxWidth: 760, marginBottom: 32 }}>
-            {state.name} is part of the {state.region} region, home to industrial facilities spanning {CATEGORIES.map(c => c.name).slice(0, 5).join(', ')}, and more.
-            Each category page below lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
-            and verified customer reviews where available. Sourcing local production partners in {state.name} helps reduce supply chain 
-            transit times and logistics costs. Whether you are sourcing {CATEGORIES[0].shortDesc.toLowerCase()} or{' '}
-            {CATEGORIES[3].shortDesc.toLowerCase()}, start by selecting the manufacturing category that matches your project requirements.
+            {state.name} is part of the {state.region} region.{' '}
+            {topCategories.length > 0 ? (
+              <>
+                Among {state.name}-based manufacturers listed here, {topCategories[0].name.toLowerCase()} is the largest category
+                ({topCategories[0].count} compan{topCategories[0].count === 1 ? 'y' : 'ies'}){topCategories[1] && <>, followed by {topCategories[1].name.toLowerCase()} ({topCategories[1].count})</>}.
+              </>
+            ) : (
+              <>Home to industrial facilities spanning {CATEGORIES.map(c => c.name).slice(0, 5).join(', ')}, and more.</>
+            )}
+            {' '}Each category page below lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
+            and verified customer reviews where available. Sourcing local production partners in {state.name} helps reduce supply chain
+            transit times and logistics costs.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
