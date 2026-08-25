@@ -30,6 +30,15 @@ const BLOCKED_USER_AGENTS = [
 ];
 
 export function middleware(request) {
+  // Legacy /directory/* URLs are from the pre-pivot services directory (IT,
+  // BPO, clinics) and have no manufacturing equivalent, so there is nothing
+  // honest to 301 them to. 410 says "permanently gone", which Google acts on
+  // faster than a 404. Deliberately NOT robots-disallowed: a blocked URL can't
+  // be crawled, so Google would never see this and would keep them indexed.
+  if (/^\/directory(\/|$)/.test(request.nextUrl.pathname)) {
+    return new NextResponse('Gone', { status: 410 });
+  }
+
   const userAgent = request.headers.get('user-agent') || '';
 
   // 1. Block requests with missing or empty User-Agent

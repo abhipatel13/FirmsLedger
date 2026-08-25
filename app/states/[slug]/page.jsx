@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import CategoryCard from '@/components/CategoryCard';
+import { categoryImageUrl } from '@/lib/capabilities';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
 import { fetchStateHubStats } from '@/db/neonApi';
 import { ArrowRight } from 'lucide-react';
@@ -144,7 +145,7 @@ export default async function StateHubPage({ params }) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE },
-      { '@type': 'ListItem', position: 2, name: 'States', item: `${_BASE}/#states` },
+      { '@type': 'ListItem', position: 2, name: 'Locations', item: `${_BASE}/locations` },
       { '@type': 'ListItem', position: 3, name: state.name, item: `${_BASE}/states/${slug}` },
     ],
   };
@@ -179,7 +180,7 @@ export default async function StateHubPage({ params }) {
             }}>
               <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Home</Link>
               <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
-              <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>States</span>
+              <Link href="/locations" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Locations</Link>
               <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
               <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{state.name}</span>
             </nav>
@@ -241,7 +242,20 @@ export default async function StateHubPage({ params }) {
             Choose a manufacturing category
           </p>
 
-          <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, maxWidth: 760, marginBottom: 32 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {CATEGORIES.map((cat) => (
+              <CategoryCard
+                key={cat.slug}
+                href={`/${cat.slug}/${slug}`}
+                cat={cat}
+                name={cat.name}
+                description={`${cat.shortDesc} in ${state.name}`}
+                imageUrl={categoryImageUrl(cat.slug)}
+              />
+            ))}
+          </div>
+
+          <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, maxWidth: 760, marginTop: 40, marginBottom: 0 }}>
             {state.name} is part of the {state.region} region.{' '}
             {topCategories.length > 0 ? (
               <>
@@ -251,23 +265,10 @@ export default async function StateHubPage({ params }) {
             ) : (
               <>Home to industrial facilities spanning {CATEGORIES.map(c => c.name).slice(0, 5).join(', ')}, and more.</>
             )}
-            {' '}Each category page below lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
+            {' '}Each category page above lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
             and verified customer reviews where available. Sourcing local production partners in {state.name} helps reduce supply chain
             transit times and logistics costs.
           </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {CATEGORIES.map((cat, idx) => (
-              <CategoryCard
-                key={cat.slug}
-                href={`/${cat.slug}/${slug}`}
-                icon={cat.icon}
-                name={cat.name}
-                description={`${cat.shortDesc} in ${state.name}`}
-                colorIndex={idx}
-              />
-            ))}
-          </div>
         </div>
 
         {/* ── Other states ── */}
@@ -300,7 +301,7 @@ export default async function StateHubPage({ params }) {
                 </Link>
               ))}
               <Link
-                href="/#states"
+                href="/locations"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',

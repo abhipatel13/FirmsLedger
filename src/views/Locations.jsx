@@ -98,7 +98,7 @@ export default function Locations({ tier1 = [], tier2 = [], rest = [] }) {
           </div>
 
           {/* ── CTA BANNER ─────────────────────────────────────── */}
-          <div className="mt-20 bg-[#1A2E4A] rounded-2xl px-6 sm:px-12 py-12 text-center">
+          <div className="mt-20 bg-[#0F172A] rounded-2xl px-6 sm:px-12 py-12 text-center">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
               Ready to Find a Manufacturer Near You?
             </h2>

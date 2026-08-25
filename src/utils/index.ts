@@ -11,7 +11,13 @@ export function buildListingTitle({
   stateName,
   parentShortName,
   pageSuffix = '',
-  maxLen = 51, // budget leaves room for " | FirmsLedger" (14 chars) within a 65-char total
+  // 59 is the worst realistic listing title: "Top 99 Electrical Component
+  // Manufacturers in North Carolina". Budgeting below that silently dropped
+  // "Top {count}" — the token the target query actually contains — on the
+  // longest category/state pairs. Totals reach ~73 with the " | FirmsLedger"
+  // suffix, so Google truncates the brand rather than the keywords. That is
+  // the right thing to lose: the count and category name carry the ranking.
+  maxLen = 59,
 }: {
   count?: number | null;
   noun: string;
@@ -20,13 +26,26 @@ export function buildListingTitle({
   pageSuffix?: string;
   maxLen?: number;
 }): string {
-  const withCount = (n: string) => (count != null ? `Top ${count} ${n} in ${stateName}` : `${n} in ${stateName}`);
+  // `!= null` let a zero through as "Top 0 ... in North Carolina". Empty combos
+  // are noindexed, but the title still shows in the tab and in any shared link,
+  // so treat a non-positive count as no count — matching getCategoryTitleWithLocation.
+  const hasCount = Number(count) > 0;
+  const withCount = (n: string) => (hasCount ? `Top ${count} ${n} in ${stateName}` : `${n} in ${stateName}`);
   // Parent suffix must survive every tier below — it's what disambiguates a subcategory
   // shared by multiple parent categories, so dropping it defeats the point of passing it.
   const parentSuffix = parentShortName ? ` — ${parentShortName}` : '';
 
   const full = `${withCount(noun)}${parentSuffix}${pageSuffix}`;
   if (full.length <= maxLen) return full;
+
+  // Drop the count but KEEP the noun first. Without this tier the next one
+  // stripped "Manufacturers"/"Companies" at the same time as the count, so
+  // "Top 5 Electrical Component Manufacturers in Connecticut" (55) collapsed
+  // straight to "Electrical Component in Connecticut" (35) — losing both
+  // "Top" and "Manufacturers" when "Electrical Component Manufacturers in
+  // Connecticut" (49) fit the budget all along.
+  const keepNoun = `${noun} in ${stateName}${parentSuffix}${pageSuffix}`;
+  if (keepNoun.length <= maxLen) return keepNoun;
 
   const shortNoun = noun.replace(/\s*(Manufacturers|Companies)$/i, '').trim() || noun;
   const withoutCount = `${shortNoun} in ${stateName}${parentSuffix}${pageSuffix}`;

@@ -1,4 +1,5 @@
 import Locations from '@/views/Locations';
+import JsonLd from '@/components/JsonLd';
 import { ALL_US_STATES } from '@/lib/usStates';
 import { TIER1_SLUGS, TIER2_SLUGS } from '@/lib/locationTiers';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
@@ -24,5 +25,19 @@ export default function LocationsPage() {
   const usedSlugs = new Set([...TIER1_SLUGS, ...TIER2_SLUGS]);
   const rest = ALL_US_STATES.filter((s) => !usedSlugs.has(s.slug));
 
-  return <Locations tier1={tier1} tier2={tier2} rest={rest} />;
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: _BASE },
+      { '@type': 'ListItem', position: 2, name: 'Locations', item: `${_BASE}/locations` },
+    ],
+  };
+
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd} />
+      <Locations tier1={tier1} tier2={tier2} rest={rest} />
+    </>
+  );
 }

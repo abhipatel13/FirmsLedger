@@ -7,7 +7,7 @@ export const MANUFACTURING_CATEGORIES = [
   {
     slug: 'electrical-components',
     name: 'Electrical Components Manufacturers',
-    shortName: 'Electrical Components',
+    shortName: 'Electrical Equipment & Components',
     titleNoun: 'Electrical Component Manufacturers',
     noun: 'electrical component manufacturers',
     desc: 'Wiring systems, components, switchgear, and electrical equipment producers across the US.',
@@ -98,7 +98,7 @@ export const MANUFACTURING_CATEGORIES = [
     slug: 'electronics-semiconductor',
     name: 'Electronics & Semiconductor Manufacturers',
     shortName: 'Electronics & Semiconductor',
-    titleNoun: 'Component Manufacturing Companies',
+    titleNoun: 'Electronics Manufacturers',
     noun: 'electronics & semiconductor manufacturers',
     desc: 'PCBs, chips, electronic assemblies, and semiconductor component makers across the US.',
     longDescription: "Electronics & Semiconductor Manufacturers produce the circuitry inside electronic products — PCB manufacturing and assembly, SMT and cable assembly, power and industrial electronics, and semiconductor packaging and components. This segment serves consumer electronics, industrial automation, telecom, and defense OEMs that need boards or chips built to a design spec. Buyers evaluate suppliers on assembly capability (SMT/THT), component sourcing, testing/quality processes, and ability to scale from prototype to production runs.",
