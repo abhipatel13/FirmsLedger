@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL } from '@/lib/seo';
+import { BASE_URL, SEO_YEAR } from '@/lib/seo';
 import { Shield } from 'lucide-react';
 import CompanyCard from '@/components/listing/CompanyCard';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState, filterCompaniesBySubcategoryKeywords } from '@/db/neonApi';
@@ -186,7 +186,7 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
   ]);
 
   const pageTitle = currentPage === 1
-    ? `Top ${count} ${sub.name} Manufacturers in ${stateName}`
+    ? `Top ${count} ${sub.name} Manufacturers in ${stateName} ${SEO_YEAR}`
     : `${sub.name} Manufacturers in ${stateName}`;
   const rankOffset     = (currentPage - 1) * PAGE_SIZE;
   const basePath       = `/${category}/${subcategory}/${state}`;

@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Menu, X, Search,
 } from 'lucide-react';
@@ -46,8 +46,22 @@ const FOOTER_COMPANY = [
 export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen]   = useState(false);
   const [scrolled, setScrolled]       = useState(false);
+  const [navSearchOpen, setNavSearchOpen] = useState(false);
+  const [navQuery, setNavQuery]       = useState('');
   const pathname  = usePathname();
+  const router    = useRouter();
   const scrolledRef   = useRef(false);
+  const navSearchInputRef = useRef(null);
+
+  // Same target/param convention as the hero search box (src/components/home/HeroSearch.jsx)
+  // so both search entry points feed the same /search results.
+  function handleNavSearch(e) {
+    e.preventDefault();
+    const q = navQuery.trim();
+    router.push(q ? `/search?q=${encodeURIComponent(q)}` : '/search');
+    setNavSearchOpen(false);
+    setNavQuery('');
+  }
 
   // Keep refs in sync so the scroll closure always reads current values
   useEffect(() => { scrolledRef.current   = scrolled;   }, [scrolled]);
@@ -64,6 +78,10 @@ export default function Layout({ children }) {
   }, []);
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    if (navSearchOpen) navSearchInputRef.current?.focus();
+  }, [navSearchOpen]);
 
   const isActive = (href) => pathname === href;
 
@@ -181,27 +199,87 @@ export default function Layout({ children }) {
           {/* Spacer */}
           <div style={{ flex: 1 }} />
 
-          {/* Search icon */}
-          <Link
-            href="/search"
-            aria-label="Search"
-            className="hidden lg:flex"
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 36,
-              height: 36,
-              borderRadius: 8,
-              color: '#475569',
-              textDecoration: 'none',
-              transition: 'all 0.12s',
-              flexShrink: 0,
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; }}
-          >
-            <Search size={17} />
-          </Link>
+          {/* Search — inline expanding box, submits to the same /search?q= route as the hero search bar */}
+          <div className="hidden lg:flex" style={{ alignItems: 'center', position: 'relative' }}>
+            {navSearchOpen ? (
+              <form
+                onSubmit={handleNavSearch}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setNavSearchOpen(false); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 9999,
+                  padding: '4px 6px 4px 14px',
+                  backgroundColor: '#f8fafc',
+                }}
+              >
+                <Search size={15} style={{ color: '#94a3b8', flexShrink: 0 }} />
+                <input
+                  ref={navSearchInputRef}
+                  type="text"
+                  value={navQuery}
+                  onChange={(e) => setNavQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Escape') setNavSearchOpen(false); }}
+                  placeholder="Search manufacturers..."
+                  aria-label="Search"
+                  style={{
+                    width: 190,
+                    border: 'none',
+                    outline: 'none',
+                    background: 'transparent',
+                    fontSize: 13.5,
+                    color: '#0f172a',
+                    fontFamily: 'inherit',
+                  }}
+                />
+                <button
+                  type="submit"
+                  aria-label="Submit search"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 28,
+                    height: 28,
+                    borderRadius: 9999,
+                    border: 'none',
+                    backgroundColor: '#D4A017',
+                    color: '#0F172A',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Search size={13} />
+                </button>
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setNavSearchOpen(true)}
+                aria-label="Search"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'none',
+                  color: '#475569',
+                  cursor: 'pointer',
+                  transition: 'all 0.12s',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; }}
+              >
+                <Search size={17} />
+              </button>
+            )}
+          </div>
 
           {/* CTA */}
           <Link
@@ -264,17 +342,15 @@ export default function Layout({ children }) {
           overflowY: 'auto',
         }}>
 
-          {/* Mobile search bar */}
-          <Link
-            href="/search"
-            onClick={() => setMobileOpen(false)}
+          {/* Mobile search bar — same /search?q= target as the desktop and hero search boxes */}
+          <form
+            onSubmit={(e) => { handleNavSearch(e); setMobileOpen(false); }}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 10,
               padding: '10px 12px',
               borderRadius: 8,
-              textDecoration: 'none',
               backgroundColor: '#f8fafc',
               border: '1px solid #e2e8f0',
               marginBottom: 8,
@@ -282,8 +358,23 @@ export default function Layout({ children }) {
             }}
           >
             <Search size={16} style={{ color: '#94a3b8', flexShrink: 0 }} />
-            <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 400 }}>Search manufacturers...</span>
-          </Link>
+            <input
+              type="text"
+              value={navQuery}
+              onChange={(e) => setNavQuery(e.target.value)}
+              placeholder="Search manufacturers..."
+              aria-label="Search"
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                background: 'transparent',
+                fontSize: 14,
+                color: '#0f172a',
+                fontFamily: 'inherit',
+              }}
+            />
+          </form>
 
           <Link
             href="/capabilities"

@@ -1,3 +1,5 @@
+import { SEO_YEAR } from '@/lib/seo';
+
 /**
  * Builds a "Top {count} {noun} in {state}" style title, shortening in tiers so the
  * rendered <title> (this + " | FirmsLedger" suffix from the layout template) stays
@@ -36,6 +38,12 @@ export function buildListingTitle({
   const parentSuffix = parentShortName ? ` — ${parentShortName}` : '';
 
   const full = `${withCount(noun)}${parentSuffix}${pageSuffix}`;
+
+  // Year is the least essential token — less so even than the count, which the
+  // comment above already treats as expendable — so it's the first thing
+  // dropped under length pressure, before "Top {count}" itself.
+  const withYear = pageSuffix ? full : `${full} ${SEO_YEAR}`;
+  if (withYear.length <= maxLen) return withYear;
   if (full.length <= maxLen) return full;
 
   // Drop the count but KEEP the noun first. Without this tier the next one

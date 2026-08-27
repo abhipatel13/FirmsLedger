@@ -441,7 +441,6 @@ export default function DirectoryHub({
           >
             {CATEGORIES.map((cat, idx) => {
               const visuals = visualsFor(cat.slug);
-              const Icon = visuals?.icon || Package;
               const tw = visuals?.tw || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' };
               const hex = visuals?.hex || { bg: '#f8fafc', border: '#e2e8f0', color: '#1e3a5f' };
               const img = categoryImages[cat.slug];
@@ -472,16 +471,9 @@ export default function DirectoryHub({
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : null}
-                      {/* Scrim: keeps the icon chip legible over any photo. */}
                       {img ? (
                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10" />
                       ) : null}
-                      <div
-                        className="absolute left-4 top-4 w-12 h-12 rounded-xl bg-white shadow-sm border flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
-                        style={{ borderColor: hex.border }}
-                      >
-                        <Icon className={cn('w-[22px] h-[22px]', tw.text)} />
-                      </div>
                     </div>
 
                     <div className="flex flex-col flex-1 p-6 pt-5">
@@ -772,39 +764,47 @@ export default function DirectoryHub({
       >
         <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,160,23,0.10), transparent 70%)' }} />
         <div className="relative max-w-[1280px] mx-auto px-6 lg:px-8">
-          {/* Centred and compact. The split layout left a wide empty middle and
-              pushed the buttons to the far right, away from the copy that
-              motivates them. */}
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 mb-3">
-              For manufacturers
-            </p>
-            <h2 className="text-[24px] sm:text-[32px] font-bold tracking-tight text-white leading-tight mb-3 text-balance">
-              Get your company in front of buyers
-            </h2>
-            <p className="text-[15px] leading-relaxed text-white/60 mb-7">
-              Appear in the state and category lists procurement managers actually search.
-            </p>
+          {/* Horizontal bar, not a narrow centered island — copy on the left,
+              actions on the right, so the band uses its full width instead
+              of leaving bare gutters on wide screens. Stacks and centers on
+              mobile where there's no width to split. Bordered card so it
+              reads as one contained unit against the section background. */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-8 sm:px-10 sm:py-10">
+            <div className="flex flex-col lg:flex-row items-center lg:items-center justify-between gap-8 text-center lg:text-left">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 mb-3">
+                  For manufacturers
+                </p>
+                <h2 className="text-[24px] sm:text-[32px] font-bold tracking-tight text-white leading-tight mb-3 text-balance">
+                  Get your company in front of buyers
+                </h2>
+                <p className="text-[15px] leading-relaxed text-white/60">
+                  Appear in the state and category lists procurement managers actually search.
+                </p>
+              </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/list-your-company"
-                className="inline-flex items-center gap-2 bg-[#D4A017] hover:bg-[#A87A0F] text-[#1A2E4A] rounded-full px-6 py-3 text-sm font-semibold shadow-[0_4px_16px_rgba(212,160,23,0.35)] hover:shadow-[0_6px_20px_rgba(212,160,23,0.5)] transition-all btn-scale"
-              >
-                List Your Company — Free
-                <ArrowRight className="w-[15px] h-[15px]" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 bg-transparent text-white/80 hover:text-white border border-white/20 hover:border-white/55 rounded-full px-6 py-3 text-sm font-medium transition-all"
-              >
-                Contact Us
-              </Link>
+              <div className="flex flex-col items-center lg:items-end gap-3 shrink-0">
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    href="/list-your-company"
+                    className="inline-flex items-center gap-2 bg-[#D4A017] hover:bg-[#A87A0F] text-[#1A2E4A] rounded-full px-6 py-3 text-sm font-semibold shadow-[0_4px_16px_rgba(212,160,23,0.35)] hover:shadow-[0_6px_20px_rgba(212,160,23,0.5)] transition-all btn-scale whitespace-nowrap"
+                  >
+                    List Your Company — Free
+                    <ArrowRight className="w-[15px] h-[15px]" />
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center gap-2 bg-transparent text-white/80 hover:text-white border border-white/20 hover:border-white/55 rounded-full px-6 py-3 text-sm font-medium transition-all whitespace-nowrap"
+                  >
+                    Contact Us
+                  </Link>
+                </div>
+
+                <p className="text-[13px] text-white/35">
+                  No paid placements. No pay-to-rank. Listing stays free.
+                </p>
+              </div>
             </div>
-
-            <p className="mt-5 text-[13px] text-white/35">
-              No paid placements. No pay-to-rank. Listing stays free.
-            </p>
           </div>
         </div>
       </section>
