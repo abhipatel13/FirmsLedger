@@ -86,10 +86,10 @@ export const MANUFACTURING_CATEGORIES = [
     subcategories: [
       { slug: 'laser-cutting',            name: 'Laser Cutting',            keywords: ['laser cutting', 'laser cut'] },
       { slug: 'waterjet-cutting',         name: 'Waterjet Cutting',         keywords: ['waterjet', 'water jet', 'waterjet cutting'] },
-      { slug: 'welding',                  name: 'Welding',                  keywords: ['welding', 'welder', 'welded'] },
+      { slug: 'welding',                  name: 'Welding',                  titleNoun: 'Welding Companies', keywords: ['welding', 'welder', 'welded'] },
       { slug: 'metal-stamping',           name: 'Metal Stamping',           keywords: ['metal stamping', 'stamping', 'stamped'] },
       { slug: 'structural-steel',         name: 'Structural Steel',         keywords: ['structural steel', 'steel fabrication', 'steel erection'] },
-      { slug: 'sheet-metal-fabrication',  name: 'Sheet Metal Fabrication',  keywords: ['sheet metal', 'sheet-metal', 'sheet metal fabrication'] },
+      { slug: 'sheet-metal-fabrication',  name: 'Sheet Metal Fabrication',  titleNoun: 'Sheet Metal Fabrication Companies', keywords: ['sheet metal', 'sheet-metal', 'sheet metal fabrication'] },
       { slug: 'aluminum-fabrication',     name: 'Aluminum Fabrication',     keywords: ['aluminum fabrication', 'aluminum', 'aluminium'] },
       { slug: 'powder-coating',           name: 'Powder Coating',           keywords: ['powder coating', 'powder coated', 'powder coat'] },
     ],
@@ -105,7 +105,7 @@ export const MANUFACTURING_CATEGORIES = [
     accent: '#2E4E6E',
     accentText: '#ffffff',
     subcategories: [
-      { slug: 'pcb-manufacturing',       name: 'PCB Manufacturing',       keywords: ['pcb', 'printed circuit board', 'circuit board'] },
+      { slug: 'pcb-manufacturing',       name: 'PCB Manufacturing',       titleNoun: 'PCB Assembly Manufacturers', keywords: ['pcb', 'printed circuit board', 'circuit board'] },
       { slug: 'pcb-assembly',            name: 'PCB Assembly',            keywords: ['pcb assembly', 'pcba', 'circuit board assembly'] },
       { slug: 'smt-assembly',            name: 'SMT Assembly',            keywords: ['smt', 'surface mount', 'surface-mount'] },
       { slug: 'cable-assembly',          name: 'Cable Assembly',          keywords: ['cable assembly', 'cable assemblies'] },
@@ -149,7 +149,7 @@ export const MANUFACTURING_CATEGORIES = [
     accentText: '#0a0a0a',
     subcategories: [
       { slug: 'fabric-manufacturing',  name: 'Fabric Manufacturing',  keywords: ['fabric manufacturing', 'fabrics', 'textile'] },
-      { slug: 'garment-manufacturing', name: 'Garment Manufacturing', keywords: ['garment manufacturing', 'garments', 'apparel'] },
+      { slug: 'garment-manufacturing', name: 'Garment Manufacturing', titleNoun: 'Clothing Manufacturers', keywords: ['garment manufacturing', 'garments', 'apparel'] },
       { slug: 'yarn-manufacturing',    name: 'Yarn Manufacturing',    keywords: ['yarn', 'yarn manufacturing', 'spinning'] },
       { slug: 'knitwear',              name: 'Knitwear',              keywords: ['knitwear', 'knit', 'knitting'] },
       { slug: 'woven-fabrics',         name: 'Woven Fabrics',         keywords: ['woven', 'woven fabric', 'weaving'] },
