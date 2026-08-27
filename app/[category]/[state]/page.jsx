@@ -1,7 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL } from '@/lib/seo';
+import { BASE_URL, SEO_YEAR } from '@/lib/seo';
 import { Shield, Info } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS } from '@/lib/manufacturingCategories';
@@ -542,7 +542,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
   const pageTitleNoun = cat?.titleNoun || `${cat?.shortName || categoryName} Companies`;
   const pageTitle    = stateName
-    ? `Top ${totalCount} ${pageTitleNoun} in ${stateName}`
+    ? `Top ${totalCount} ${pageTitleNoun} in ${stateName} ${SEO_YEAR}`
     : `${pageTitleNoun} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
