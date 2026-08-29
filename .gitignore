@@ -95,3 +95,8 @@ pipeline/sitemap-*.xml
 
 # Capability photos live in R2 (capabilities/ prefix), not in the repo.
 public/capabilities/
+
+# logo-pipeline backups/snapshots (local only)
+pipeline/logo-pipeline/*.bak
+pipeline/logo-pipeline/*.bak-*
+pipeline/logo-pipeline/*.tier1-v1
