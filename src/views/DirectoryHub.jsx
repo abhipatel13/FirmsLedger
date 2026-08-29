@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import {
   ArrowRight, CheckCircle, Star, Shield, Package, Wrench, Cpu, Car,
   Shirt, Sofa, UtensilsCrossed, Stethoscope, ChevronLeft, ChevronRight,
@@ -11,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { visualsFor } from '@/lib/categoryRegistry';
+import { CATEGORY_MAP, categoryTitleNoun } from '@/lib/manufacturingCategories';
 import HeroSearch from '@/components/home/HeroSearch';
 
 // ─── Static data ────────────────────────────────────────────────────────────────
@@ -130,6 +132,16 @@ const US_STATES = [
   { name: 'Alaska', slug: 'alaska', region: 'West' },
   { name: 'Hawaii', slug: 'hawaii', region: 'West' },
 ];
+
+// Maps us-atlas geography names → our state slugs so the map can drive the same
+// selectedState the list uses. Loaded client-side only (ssr:false) so the map
+// lib / topojson never bloats the server-rendered homepage or the mobile bundle path.
+const STATE_NAME_TO_SLUG = Object.fromEntries(US_STATES.map((s) => [s.name, s.slug]));
+
+const USStateMap = dynamic(() => import('@/components/home/USStateMap'), {
+  ssr: false,
+  loading: () => <div className="h-[400px] w-full animate-pulse rounded-xl bg-slate-100" />,
+});
 
 const POPULAR_SUBCATEGORIES = [
   { label: 'CNC Machining', href: '/mechanical-components/cnc-machining' },
@@ -662,7 +674,7 @@ export default function DirectoryHub({
             </span>
           </div>
 
-          <Card className="grid grid-cols-1 md:grid-cols-[240px_1fr] rounded-2xl overflow-hidden border-slate-200 shadow-sm p-0">
+          <Card className="grid grid-cols-1 md:grid-cols-[240px_1fr] lg:grid-cols-[minmax(0,440px)_1fr] rounded-2xl overflow-hidden border-slate-200 shadow-sm p-0">
 
             {/* Mobile: state select dropdown */}
             <div className="block md:hidden px-5 pt-5 pb-1 border-b border-slate-200" style={{ backgroundColor: 'var(--bg-cream)' }}>
@@ -690,8 +702,20 @@ export default function DirectoryHub({
               </div>
             </div>
 
-            {/* Desktop: state list scroll area */}
-            <ScrollArea className="hidden md:block md:h-[540px] md:border-r border-slate-200" style={{ backgroundColor: 'var(--bg-cream)' }}>
+            {/* Desktop (lg+): interactive US map */}
+            <div
+              className="hidden lg:flex lg:h-[540px] lg:border-r border-slate-200 items-center justify-center px-6"
+              style={{ backgroundColor: 'var(--bg-cream)' }}
+            >
+              <USStateMap
+                nameToSlug={STATE_NAME_TO_SLUG}
+                selectedSlug={selectedState}
+                onSelect={setSelectedState}
+              />
+            </div>
+
+            {/* Tablet (md–lg): state list scroll area */}
+            <ScrollArea className="hidden md:block lg:hidden md:h-[540px] md:border-r border-slate-200" style={{ backgroundColor: 'var(--bg-cream)' }}>
               <div className="py-1">
                 {US_STATES.map((state) => {
                   const active = selectedState === state.slug;
@@ -735,7 +759,7 @@ export default function DirectoryHub({
                         className="flex items-center gap-2 text-[13.5px] text-slate-700 leading-relaxed py-1.5 transition-colors hover:text-[#1A2E4A]"
                       >
                         <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', cat.dot)} />
-                        {cat.shortName} in {activeState.name}
+                        {categoryTitleNoun(CATEGORY_MAP[cat.slug] ?? cat)} in {activeState.name}
                       </Link>
                     ))}
                   </div>

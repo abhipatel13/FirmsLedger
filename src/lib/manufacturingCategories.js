@@ -229,6 +229,12 @@ export const CATEGORY_MAP = Object.fromEntries(
 
 export const CATEGORY_SLUGS = MANUFACTURING_CATEGORIES.map((c) => c.slug);
 
+// Single source of truth for the listing/H1 noun ("... Companies" vs
+// "... Manufacturers"). Used by the category listing pages and the homepage
+// state panel so their labels can never drift apart.
+export const categoryTitleNoun = (cat) =>
+  cat?.titleNoun || `${cat?.shortName ?? ''} Companies`.trim();
+
 // All subcategory slugs across all categories (for route validation)
 export const ALL_SUBCATEGORY_SLUGS = new Set(
   MANUFACTURING_CATEGORIES.flatMap((c) => c.subcategories.map((s) => s.slug))
