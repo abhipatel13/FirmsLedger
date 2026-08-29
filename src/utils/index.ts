@@ -1,6 +1,19 @@
 import { SEO_YEAR } from '@/lib/seo';
 
 /**
+ * Appends "Manufacturers" to a category/subcategory display name for use as a
+ * title/H1 noun — except when the name already ends in a producer noun
+ * ("PCB Manufacturing", "Assembly Services", "Sheet Metal Fabrication"),
+ * which previously produced "PCB Manufacturing Manufacturers" wherever this
+ * guard was skipped. Single source of truth so title and H1 can't drift.
+ */
+export function producerNoun(name: string): string {
+  return /\b(Manufacturing|Manufacturers|Fabrication|Services|Companies)$/i.test(name)
+    ? name
+    : `${name} Manufacturers`;
+}
+
+/**
  * Builds a "Top {count} {noun} in {state}" style title, shortening in tiers so the
  * rendered <title> (this + " | FirmsLedger" suffix from the layout template) stays
  * under ~65 chars. Tries, in order: full title with optional parent-category suffix

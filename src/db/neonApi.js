@@ -300,7 +300,7 @@ const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, ord
 };
 
 export const fetchCompaniesByCategoryAndState = cache(
-  unstable_cache(fetchCompaniesByCategoryAndStateImpl, ['fetchCompaniesByCategoryAndState'], { revalidate: 3600 })
+  unstable_cache(fetchCompaniesByCategoryAndStateImpl, ['fetchCompaniesByCategoryAndState'], { revalidate: DAY, tags: CACHE_TAGS })
 );
 
 /**
@@ -361,7 +361,7 @@ const countCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, fil
 };
 
 export const countCompaniesByCategoryAndState = cache(
-  unstable_cache(countCompaniesByCategoryAndStateImpl, ['countCompaniesByCategoryAndState'], { revalidate: 3600 })
+  unstable_cache(countCompaniesByCategoryAndStateImpl, ['countCompaniesByCategoryAndState'], { revalidate: DAY, tags: CACHE_TAGS })
 );
 
 /**
@@ -418,7 +418,7 @@ const fetchStateCountsForCategoryImpl = async (categorySlug) => {
 };
 
 export const fetchStateCountsForCategory = cache(
-  unstable_cache(fetchStateCountsForCategoryImpl, ['fetchStateCountsForCategory'], { revalidate: 3600 })
+  unstable_cache(fetchStateCountsForCategoryImpl, ['fetchStateCountsForCategory'], { revalidate: DAY, tags: CACHE_TAGS })
 );
 
 /**
@@ -548,7 +548,7 @@ const fetchCategoryStatsImpl = async (categorySlug, stateSlug = null) => {
 };
 
 export const fetchCategoryStats = cache(
-  unstable_cache(fetchCategoryStatsImpl, ['fetchCategoryStats'], { revalidate: 3600 })
+  unstable_cache(fetchCategoryStatsImpl, ['fetchCategoryStats'], { revalidate: DAY, tags: CACHE_TAGS })
 );
 
 /** @deprecated Use fetchCompaniesByCategoryAndState instead */

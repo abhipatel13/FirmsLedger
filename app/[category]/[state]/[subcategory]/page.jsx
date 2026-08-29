@@ -7,7 +7,7 @@ import CompanyCard from '@/components/listing/CompanyCard';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState, filterCompaniesBySubcategoryKeywords } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
-import { getCompanyDescription, buildListingTitle } from '@/utils';
+import { getCompanyDescription, buildListingTitle, producerNoun } from '@/utils';
 import FilterBar from '@/components/listing/FilterBar';
 
 export const dynamic = 'force-dynamic';
@@ -100,13 +100,7 @@ export async function generateMetadata({ params, searchParams }) {
   const parentsWithSub = MANUFACTURING_CATEGORIES.filter((c) => c.subcategories.some((s) => s.slug === subcategory));
   const parentShortName = parentsWithSub.length > 1 ? (cat.shortName || cat.name) : null;
 
-  // 10 subcategory names already end in a producer noun ("PCB Manufacturing",
-  // "Assembly Services", "Sheet Metal Fabrication"), so appending one gave
-  // "PCB Manufacturing Manufacturers". It was invisible while the title budget
-  // was tight enough that the overflow tier stripped the suffix back off again.
-  const subNoun = /\b(Manufacturing|Manufacturers|Fabrication|Services|Companies)$/i.test(subName)
-    ? subName
-    : `${subName} Manufacturers`;
+  const subNoun = sub?.titleNoun || producerNoun(subName);
 
   const title = clampedPage > 1
     ? buildListingTitle({ noun: subNoun, stateName, parentShortName, pageSuffix })
@@ -185,9 +179,10 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
     fetchCategoryStats(categoryToUse, state),
   ]);
 
+  const subNoun = sub.titleNoun || producerNoun(sub.name);
   const pageTitle = currentPage === 1
-    ? `Top ${count} ${sub.name} Manufacturers in ${stateName} ${SEO_YEAR}`
-    : `${sub.name} Manufacturers in ${stateName}`;
+    ? `Top ${count} ${subNoun} in ${stateName} ${SEO_YEAR}`
+    : `${subNoun} in ${stateName}`;
   const rankOffset     = (currentPage - 1) * PAGE_SIZE;
   const basePath       = `/${category}/${subcategory}/${state}`;
 
