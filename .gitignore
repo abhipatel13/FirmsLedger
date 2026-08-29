@@ -100,3 +100,4 @@ public/capabilities/
 pipeline/logo-pipeline/*.bak
 pipeline/logo-pipeline/*.bak-*
 pipeline/logo-pipeline/*.tier1-v1
+pipeline/backfill_images.cjs
