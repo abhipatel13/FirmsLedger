@@ -41,8 +41,13 @@ export default function USStateMap({ nameToSlug, selectedSlug, onSelect }) {
               const slug = nameToSlug[geo.properties.name];
               const clickable = Boolean(slug);
               const active = clickable && slug === selectedSlug;
-              const pick = () => clickable && onSelect(slug);
-              const go = () => clickable && router.push(`/states/${slug}`);
+              const href = clickable ? `/states/${slug}` : null;
+              const pick = () => {
+                if (!clickable) return;
+                onSelect(slug);
+                router.prefetch(href); // warm the target so the click navigates instantly
+              };
+              const go = () => clickable && router.push(href);
               return (
                 <Geography
                   key={geo.rsmKey}
