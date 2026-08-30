@@ -184,7 +184,7 @@ export async function generateMetadata({ params, searchParams }) {
   const description = state
     ? generateDynamicCategoryStateMetaDescription({
         categorySlug: category,
-        categoryName: shortCatName,
+        categoryName: cat?.shortName || categoryName,
         stateSlug: state,
         stateName,
         totalCount: stats.totalCount || count,
