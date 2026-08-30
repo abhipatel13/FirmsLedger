@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { geoCentroid } from 'd3-geo';
 import geoData from 'us-atlas/states-10m.json';
@@ -25,6 +26,7 @@ const STATE_ABBR = {
 // `selectedState` used by the list, so the right-hand category panel updates
 // identically. Territories without a slug render as inert grey shapes.
 export default function USStateMap({ nameToSlug, selectedSlug, onSelect }) {
+  const router = useRouter();
   return (
     <div className="w-full" aria-hidden={false}>
       <ComposableMap
@@ -40,16 +42,17 @@ export default function USStateMap({ nameToSlug, selectedSlug, onSelect }) {
               const clickable = Boolean(slug);
               const active = clickable && slug === selectedSlug;
               const pick = () => clickable && onSelect(slug);
+              const go = () => clickable && router.push(`/states/${slug}`);
               return (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
                   onMouseEnter={pick}
-                  onClick={pick}
+                  onClick={go}
                   onKeyDown={(e) => {
                     if (clickable && (e.key === 'Enter' || e.key === ' ')) {
                       e.preventDefault();
-                      pick();
+                      go();
                     }
                   }}
                   tabIndex={clickable ? 0 : -1}
