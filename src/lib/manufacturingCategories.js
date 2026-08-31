@@ -92,6 +92,7 @@ export const MANUFACTURING_CATEGORIES = [
       { slug: 'sheet-metal-fabrication',  name: 'Sheet Metal Fabrication',  titleNoun: 'Sheet Metal Fabrication Companies', keywords: ['sheet metal', 'sheet-metal', 'sheet metal fabrication'] },
       { slug: 'aluminum-fabrication',     name: 'Aluminum Fabrication',     keywords: ['aluminum fabrication', 'aluminum', 'aluminium'] },
       { slug: 'powder-coating',           name: 'Powder Coating',           keywords: ['powder coating', 'powder coated', 'powder coat'] },
+      { slug: 'cutlery-knife-manufacturing', name: 'Cutlery & Knife Manufacturing', keywords: ['knife', 'knives', 'cutlery', 'blade', 'blades', 'damascus'] },
     ],
   },
   {
