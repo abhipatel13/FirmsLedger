@@ -5,6 +5,12 @@ import { eq, and, ilike, or, inArray } from 'drizzle-orm';
 import { searchTokens } from '@/lib/searchIntent';
 import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 
+// Only public route that hits Postgres per request. Uncached, a single visitor
+// typing in the search box keeps the Neon compute awake past its 5-minute
+// scale-to-zero window — see HISTORY.md 2026-09-02.
+const CACHE = { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' };
+const json = (body) => NextResponse.json(body, { headers: CACHE });
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const q            = (searchParams.get('q') || '').trim();
@@ -24,7 +30,7 @@ export async function GET(request) {
   const hasQuery  = q.length >= 2;
   const hasFilter = allCategorySlugs.length > 0 || stateSlugs.length > 0 || employeeRanges.length > 0;
   if (!hasQuery && !hasFilter) {
-    return NextResponse.json([]);
+    return json([]);
   }
 
   const conditions = [eq(companies.approved, true)];
@@ -37,7 +43,7 @@ export async function GET(request) {
     // machine / machining all match, and stopwords are dropped so "in" is not
     // required to appear anywhere.
     const tokens = searchTokens(q);
-    if (!tokens.length && !hasFilter) return NextResponse.json([]);
+    if (!tokens.length && !hasFilter) return json([]);
 
     for (const token of tokens) {
       const pattern = `%${token}%`;
@@ -58,7 +64,7 @@ export async function GET(request) {
       .from(categories)
       .where(inArray(categories.slug, allCategorySlugs));
 
-    if (!matchedCats.length) return NextResponse.json([]);
+    if (!matchedCats.length) return json([]);
 
     let categoryIds = matchedCats.map((c) => c.id);
     const parentIds = matchedCats.filter((c) => c.is_parent).map((c) => c.id);
@@ -76,7 +82,7 @@ export async function GET(request) {
       .from(company_categories)
       .where(inArray(company_categories.category_id, categoryIds));
 
-    if (!links.length) return NextResponse.json([]);
+    if (!links.length) return json([]);
     conditions.push(inArray(companies.id, [...new Set(links.map((l) => l.company_id))]));
   }
 
@@ -86,7 +92,7 @@ export async function GET(request) {
       .from(states)
       .where(inArray(states.slug, stateSlugs));
 
-    if (!matchedStates.length) return NextResponse.json([]);
+    if (!matchedStates.length) return json([]);
     conditions.push(inArray(companies.hq_state_id, matchedStates.map((s) => s.id)));
   }
 
@@ -114,5 +120,5 @@ export async function GET(request) {
     results = results.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
   }
 
-  return NextResponse.json(results);
+  return json(results);
 }

@@ -69,7 +69,6 @@ function orderCol(table, key = '-avg_rating') {
 // changes out immediately, and the TTL is only a backstop for the pipeline/
 // scripts that write to Postgres directly and never hit the admin API.
 // See docs/superpowers/plans/2026-08-19-neon-compute-cost-reduction.md
-const DAY = 86400;
 const WEEK = 604800;
 const CACHE_TAGS = ['companies'];
 
@@ -85,7 +84,7 @@ const fetchStatesImpl = async (orderKey = 'name') => {
 };
 
 export const fetchStates = cache(
-  unstable_cache(fetchStatesImpl, ['fetchStates'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchStatesImpl, ['fetchStates'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 const fetchStateBySlugImpl = async (slug) => {
@@ -99,7 +98,7 @@ const fetchStateBySlugImpl = async (slug) => {
 };
 
 export const fetchStateBySlug = cache(
-  unstable_cache(fetchStateBySlugImpl, ['fetchStateBySlug'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchStateBySlugImpl, ['fetchStateBySlug'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 /** Returns state id for a slug, or null if not found. */
@@ -121,7 +120,7 @@ const fetchCategoriesImpl = async () => {
 };
 
 export const fetchCategories = cache(
-  unstable_cache(fetchCategoriesImpl, ['fetchCategories'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchCategoriesImpl, ['fetchCategories'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 // ── Companies ─────────────────────────────────────────────────────────────────
@@ -186,7 +185,7 @@ const fetchApprovedCompanyCountImpl = async () => {
 };
 
 export const fetchApprovedCompanyCount = cache(
-  unstable_cache(fetchApprovedCompanyCountImpl, ['fetchApprovedCompanyCount'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchApprovedCompanyCountImpl, ['fetchApprovedCompanyCount'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 const fetchHomepageStatsImpl = async () => {
@@ -211,7 +210,7 @@ const fetchHomepageStatsImpl = async () => {
 };
 
 export const fetchHomepageStats = cache(
-  unstable_cache(fetchHomepageStatsImpl, ['fetchHomepageStats'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchHomepageStatsImpl, ['fetchHomepageStats'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 // Bounded — a category has at most ~10 ids. Safe to keep as an IN list.
@@ -300,7 +299,7 @@ const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, ord
 };
 
 export const fetchCompaniesByCategoryAndState = cache(
-  unstable_cache(fetchCompaniesByCategoryAndStateImpl, ['fetchCompaniesByCategoryAndState'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchCompaniesByCategoryAndStateImpl, ['fetchCompaniesByCategoryAndState'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 /**
@@ -361,7 +360,7 @@ const countCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, fil
 };
 
 export const countCompaniesByCategoryAndState = cache(
-  unstable_cache(countCompaniesByCategoryAndStateImpl, ['countCompaniesByCategoryAndState'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(countCompaniesByCategoryAndStateImpl, ['countCompaniesByCategoryAndState'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 /**
@@ -418,7 +417,7 @@ const fetchStateCountsForCategoryImpl = async (categorySlug) => {
 };
 
 export const fetchStateCountsForCategory = cache(
-  unstable_cache(fetchStateCountsForCategoryImpl, ['fetchStateCountsForCategory'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchStateCountsForCategoryImpl, ['fetchStateCountsForCategory'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 /**
@@ -478,7 +477,7 @@ const fetchStateHubStatsImpl = async (stateSlug) => {
 };
 
 export const fetchStateHubStats = cache(
-  unstable_cache(fetchStateHubStatsImpl, ['fetchStateHubStats'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchStateHubStatsImpl, ['fetchStateHubStats'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 /**
@@ -548,7 +547,7 @@ const fetchCategoryStatsImpl = async (categorySlug, stateSlug = null) => {
 };
 
 export const fetchCategoryStats = cache(
-  unstable_cache(fetchCategoryStatsImpl, ['fetchCategoryStats'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchCategoryStatsImpl, ['fetchCategoryStats'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 /** @deprecated Use fetchCompaniesByCategoryAndState instead */
@@ -608,7 +607,7 @@ const fetchCategoryCountsImpl = async (slugs) => {
 };
 
 export const fetchCategoryCounts = cache(
-  unstable_cache(fetchCategoryCountsImpl, ['fetchCategoryCounts'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchCategoryCountsImpl, ['fetchCategoryCounts'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 export const fetchCompanyByIdAny = cache(
@@ -673,7 +672,7 @@ const fetchCompanyCategoriesImpl = async (where = {}) => {
 };
 
 export const fetchCompanyCategories = cache(
-  unstable_cache(fetchCompanyCategoriesImpl, ['fetchCompanyCategories'], { revalidate: DAY, tags: CACHE_TAGS })
+  unstable_cache(fetchCompanyCategoriesImpl, ['fetchCompanyCategories'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
 
 export async function createCompanyCategory(companyId, categoryId) {
