@@ -75,7 +75,13 @@ function SearchContent() {
       return;
     }
 
-    runSearch(resolved.text, category, state, subcategory, employees);
+    // resolved.cat/st, not the raw URL params. resolveQuery() pulls a category
+    // or state out of the typed text and strips those words from `text`, so
+    // "mechanical components" leaves text='' and categorySlug='mechanical-
+    // components'. Passing the (empty) URL params here meant no text AND no
+    // filter, and runSearch bailed with zero results. The submit handler below
+    // already used `resolved.cat || category`; this path did not.
+    runSearch(resolved.text, resolved.cat || category, resolved.st || state, subcategory, employees);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, category, state, subcategory, employees]);
 
