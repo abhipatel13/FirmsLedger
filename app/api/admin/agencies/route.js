@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { getAdminFromCookie } from '@/lib/admin-auth';
 import { db } from '@/db/client';
 import { companies } from '@/db/schema';
@@ -76,6 +77,7 @@ export async function POST(request) {
       featured: featured === true || featured === 'true',
     }).returning();
 
+    revalidateTag('companies');
     return NextResponse.json(row, { status: 201 });
   } catch (err) {
     console.error('POST /api/admin/agencies error:', err);
@@ -115,6 +117,7 @@ export async function PUT(request) {
       updated_at: new Date(),
     }).where(eq(companies.id, id)).returning();
 
+    revalidateTag('companies');
     return NextResponse.json(row);
   } catch (err) {
     console.error('PUT /api/admin/agencies error:', err);
@@ -133,6 +136,7 @@ export async function PATCH(request) {
 
     if (action === 'delete') {
       await db.delete(companies).where(eq(companies.id, id));
+      revalidateTag('companies');
       return NextResponse.json({ ok: true });
     }
 
@@ -149,6 +153,7 @@ export async function PATCH(request) {
       .where(eq(companies.id, id))
       .returning({ id: companies.id, name: companies.name, approved: companies.approved, is_verified: companies.is_verified, featured: companies.featured });
 
+    revalidateTag('companies');
     return NextResponse.json(row);
   } catch (err) {
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
