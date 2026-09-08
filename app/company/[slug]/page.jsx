@@ -1,4 +1,16 @@
-export const revalidate = 3600;
+// `false`, not a duration. A prebuilt page with a time-based revalidate still
+// RE-RENDERS AT RUNTIME when it expires, and a runtime render falls through to
+// the DB (getCompany -> fetchCompanyByIdAny). Across 9,125 pages a 7-day window
+// is ~1,300 revalidations/day — a DB touch every ~66s, still inside Neon's 300s
+// scale-to-zero window, so the compute would never sleep and the bill would not
+// move. With `false` these pages are only ever rebuilt by a deploy.
+//
+// CONSEQUENCE: freshness now comes from rebuilds, NOT from revalidateTag —
+// the build path reads the snapshot file and never touches unstable_cache, so
+// the 'companies' tag does not reach these pages. The deploy hook on admin
+// approval is REQUIRED, not optional. See HISTORY.md 2026-09-05.
+export const revalidate = false;
+export const dynamicParams = true;
 
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
@@ -13,6 +25,13 @@ import {
   fetchCategories,
   fetchCompaniesByCategoryAndState,
 } from '@/db/neonApi';
+import {
+  approvedCompanySlugs,
+  buildCompanyByIdAny,
+  buildCompanyCategories,
+  buildCategories,
+  buildTopCompaniesInCategory,
+} from '@/db/staticData';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -34,9 +53,31 @@ function isIndexable(company) {
   return Boolean(company?.approved) && typeof company?.description === 'string' && company.description.trim() !== '';
 }
 
+// During `next build` these resolve from one bulk load instead of two DB
+// round-trips per page (~18,250 queries across 9,125 profiles). Outside a build
+// the loaders return undefined and we fall through to the cached DB path.
+const getCompany = async (slug) =>
+  (await buildCompanyByIdAny(slug)) ?? (await fetchCompanyByIdAny(slug).catch(() => null));
+
+const getCompanyCategories = async (companyId) =>
+  (await buildCompanyCategories(companyId)) ??
+  (await fetchCompanyCategories({ company_id: companyId }).catch(() => []));
+
+const getCategories = async () =>
+  (await buildCategories()) ?? (await fetchCategories().catch(() => []));
+
+const getTopInCategory = async (categorySlug) =>
+  (await buildTopCompaniesInCategory(categorySlug, 30)) ??
+  (await fetchCompaniesByCategoryAndState(categorySlug, null, '-avg_rating', 30).catch(() => []));
+
+export async function generateStaticParams() {
+  const slugs = await approvedCompanySlugs().catch(() => []);
+  return slugs.map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const company = await fetchCompanyByIdAny(slug).catch(() => null);
+  const company = await getCompany(slug);
 
   const companyName = company?.name || 'Company Profile';
   const location = [company?.hq_city, company?.hq_state_label].filter(Boolean).join(', ');
@@ -63,7 +104,7 @@ export default async function CompanyProfilePage({ params }) {
   const resolved = await params;
   const slug = typeof resolved?.slug === 'string' ? resolved.slug.trim() : '';
 
-  const company = await fetchCompanyByIdAny(slug).catch(() => null);
+  const company = await getCompany(slug);
   if (!company) notFound();
 
   let reviews = [];
@@ -75,10 +116,10 @@ export default async function CompanyProfilePage({ params }) {
     // querying it on all 9,102 company pages bought nothing but Neon compute
     // time. Restore the fetchReviews call here the moment review collection
     // ships — cached and tagged 'companies', not uncached, or the drip returns.
-    companyCategories = await fetchCompanyCategories({ company_id: company.id }).catch(() => []);
+    companyCategories = await getCompanyCategories(company.id);
 
     if (companyCategories.length > 0) {
-      const allCats = await fetchCategories().catch(() => []);
+      const allCats = await getCategories();
       const catsById = new Map(allCats.map((c) => [c.id, c]));
       const catIds = companyCategories.map((cc) => cc.category_id);
       companyCategories = allCats
@@ -86,9 +127,9 @@ export default async function CompanyProfilePage({ params }) {
         .map((c) => ({ ...c, parentSlug: c.is_parent ? c.slug : catsById.get(c.parent_id)?.slug || null }));
       const primarySlug = companyCategories[0]?.slug;
       if (primarySlug) {
-        similarCompanies = await fetchCompaniesByCategoryAndState(primarySlug, null, '-avg_rating', 30)
-          .then((list) => list.filter((c) => c.id !== company.id).slice(0, 4))
-          .catch(() => []);
+        similarCompanies = (await getTopInCategory(primarySlug))
+          .filter((c) => c.id !== company.id)
+          .slice(0, 4);
       }
     }
   }

@@ -6,6 +6,9 @@ import { renderCategoryPage } from './[state]/page';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
+export const revalidate = false;
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }) {
   const { category: slug } = await params;
   const cat = CATEGORY_MAP[slug];
@@ -28,9 +31,8 @@ export function generateStaticParams() {
   return MANUFACTURING_CATEGORIES.map((c) => ({ category: c.slug }));
 }
 
-export default async function CategoryLandingPage({ params, searchParams }) {
+export default async function CategoryLandingPage({ params }) {
   const { category: slug } = await params;
-  const sp = await searchParams;
   if (!CATEGORY_MAP[slug]) notFound();
-  return renderCategoryPage({ category: slug, state: undefined, pageParam: sp.page, searchParams: sp });
+  return renderCategoryPage({ category: slug, state: undefined });
 }

@@ -62,7 +62,11 @@ function SearchContent() {
     // there whether the pair came from typed text ("switchgear in wisconsin")
     // or from the category/state dropdowns, as long as there's no leftover
     // free-text query that would otherwise get silently dropped.
-    if (resolved.cat && resolved.st && !resolved.text.trim()) {
+    // `&& !employees`: without it, a category+state pair redirected to /X/Y and
+    // silently dropped the size filter — and /X/Y is now prebuilt, so it cannot
+    // honour it either. Both the URL-driven effect and the submit handler need
+    // this. See HISTORY.md 2026-09-05.
+    if (resolved.cat && resolved.st && !resolved.text.trim() && !employees) {
       router.replace(canonicalPathFor({
         categorySlug: resolved.cat,
         subcategorySlug: resolved.intent.subcategorySlug || subcategory || null,
@@ -114,7 +118,11 @@ function SearchContent() {
     clearTimeout(debounceRef.current);
     const resolved = resolveQuery(queryInput, category, state);
 
-    if (resolved.cat && resolved.st && !resolved.text.trim()) {
+    // `&& !employees`: without it, a category+state pair redirected to /X/Y and
+    // silently dropped the size filter — and /X/Y is now prebuilt, so it cannot
+    // honour it either. Both the URL-driven effect and the submit handler need
+    // this. See HISTORY.md 2026-09-05.
+    if (resolved.cat && resolved.st && !resolved.text.trim() && !employees) {
       router.push(canonicalPathFor({
         categorySlug: resolved.cat,
         subcategorySlug: resolved.intent.subcategorySlug || subcategory || null,

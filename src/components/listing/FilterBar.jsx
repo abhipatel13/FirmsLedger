@@ -220,7 +220,19 @@ export default function FilterBar({
       params.delete('subcategory');
 
       const query = params.toString();
-      window.location.href = query ? `${path}?${query}` : path;
+      // Category/state pages are prebuilt at deploy and ignore query params, so
+      // a leftover filter (employees, etc.) would silently do nothing there.
+      // Send those to /search, which is dynamic and handles them.
+      // See HISTORY.md 2026-09-05.
+      if (query) {
+        const searchParamsOut = new URLSearchParams(query);
+        if (pendingCategory) searchParamsOut.set('category', pendingCategory);
+        if (pendingSubcategory) searchParamsOut.set('subcategory', pendingSubcategory);
+        if (pendingState) searchParamsOut.set('state', pendingState);
+        window.location.href = `/search?${searchParamsOut.toString()}`;
+      } else {
+        window.location.href = path;
+      }
     }
   }
 

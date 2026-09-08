@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SEO_YEAR } from '@/lib/seo';
@@ -10,7 +11,8 @@ import { ALL_US_STATES } from '@/lib/usStates';
 import { getCompanyDescription, buildListingTitle, producerNoun } from '@/utils';
 import FilterBar from '@/components/listing/FilterBar';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = false;
+export const dynamicParams = true;
 
 const PAGE_SIZE = 25;
 
@@ -57,10 +59,11 @@ function paginationRange(current, total) {
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
-export async function generateMetadata({ params, searchParams }) {
+export async function generateMetadata({ params }) {
   const { category, state: subcategory, subcategory: state } = await params;
-  const sParams = (await searchParams) || {};
-  const { page: pageParam } = sParams;
+  // Page 1, unfiltered — reading searchParams would force the route dynamic.
+  const sParams = {};
+  const pageParam = undefined;
 
   if (
     VALID_STATES.has(category) &&
@@ -127,7 +130,7 @@ export function generateStaticParams() {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function SubcategoryStatePage({ params, searchParams }) {
+export default async function SubcategoryStatePage({ params }) {
   const { category, state: subcategory, subcategory: state } = await params;
 
   if (
@@ -135,16 +138,11 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
     VALID_CATEGORIES.has(subcategory) &&
     CATEGORY_MAP[subcategory]?.subcategories.some((s) => s.slug === state)
   ) {
-    const sp = await searchParams;
-    const query = new URLSearchParams(sp).toString();
-    const target = query ? `/${subcategory}/${state}/${category}?${query}` : `/${subcategory}/${state}/${category}`;
-    permanentRedirect(target);
+    permanentRedirect(`/${subcategory}/${state}/${category}`);
   }
 
-  const sParams = await searchParams;
-  const pageParam = sParams?.page;
-  const employeesParam = sParams?.employees;
-  const activeEmployeeRanges = employeesParam ? String(employeesParam).split(',').filter(Boolean) : [];
+  const pageParam = undefined;
+  const activeEmployeeRanges = [];
 
   const cat = CATEGORY_MAP[category];
   if (!cat || !VALID_CATEGORIES.has(category)) notFound();
@@ -264,17 +262,21 @@ export default async function SubcategoryStatePage({ params, searchParams }) {
 
         {/* ── Content ── */}
         <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
-          <FilterBar
-            basePath={basePath}
-            activeStates={[]}
-            activeEmployeeRanges={activeEmployeeRanges}
-            stateCounts={stateCounts}
-            showStateFilter={true}
-            subcategories={cat?.subcategories}
-            category={category}
-            currentSubcategory={subcategory}
-            currentState={state}
-          />
+          {/* Suspense: FilterBar calls useSearchParams(), which Next requires
+              to sit behind a boundary once the page is statically prerendered. */}
+          <Suspense fallback={null}>
+            <FilterBar
+              basePath={basePath}
+              activeStates={[]}
+              activeEmployeeRanges={activeEmployeeRanges}
+              stateCounts={stateCounts}
+              showStateFilter={true}
+              subcategories={cat?.subcategories}
+              category={category}
+              currentSubcategory={subcategory}
+              currentState={state}
+            />
+          </Suspense>
 
           <div style={{ display: 'flex', flexDirection: 'row', gap: 28, marginTop: 24 }} className="listing-layout">
 

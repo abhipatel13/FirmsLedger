@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
@@ -18,7 +19,12 @@ import {
   getNeighboringStates
 } from '@/lib/seoDescription';
 
-export const dynamic = 'force-dynamic';
+// Prebuilt at deploy. `revalidate = false` (not a duration) because a
+// time-based window makes the page re-render AT RUNTIME on expiry, and a runtime
+// render hits Postgres — which is the whole cost problem. Freshness comes from
+// rebuilds. See HISTORY.md 2026-09-05.
+export const revalidate = false;
+export const dynamicParams = true;
 
 // One indexable page has to satisfy "top 9", "top 10", "top 20", "top 25" — a
 // bigger first page means the larger N subsumes the smaller instead of the
@@ -101,11 +107,12 @@ function paginationRange(current, total) {
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
-export async function generateMetadata({ params, searchParams }) {
+export async function generateMetadata({ params }) {
   const { category, state } = await params;
-  const sParams = (await searchParams) || {};
-  const { page: pageParam } = sParams;
-  const { activeStates, activeEmployeeRanges } = parseFilterParams(sParams);
+  // Page 1, unfiltered — the only variant that is ever prerendered or indexed.
+  const pageParam = undefined;
+  const activeStates = [];
+  const activeEmployeeRanges = [];
 
   if (VALID_STATES.has(category) && VALID_CATEGORIES.has(state)) {
     const query = new URLSearchParams(sParams).toString();
@@ -204,20 +211,22 @@ export async function generateMetadata({ params, searchParams }) {
 }
 
 export function generateStaticParams() {
-  return [];
+  // ~10 categories x 50 states. Both constants are static imports, so this
+  // needs no DB call. Subcategory combos fall through to dynamicParams and are
+  // cached after their first render.
+  return CATEGORY_SLUGS.flatMap((category) =>
+    ALL_US_STATES.map((s) => ({ category, state: s.slug }))
+  );
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function CategoryStatePage({ params, searchParams }) {
+export default async function CategoryStatePage({ params }) {
   const { category, state } = await params;
-  const sp = await searchParams;
   if (VALID_STATES.has(category) && VALID_CATEGORIES.has(state)) {
-    const query = new URLSearchParams(sp).toString();
-    const target = query ? `/${state}/${category}?${query}` : `/${state}/${category}`;
-    permanentRedirect(target);
+    permanentRedirect(`/${state}/${category}`);
   }
-  return renderCategoryPage({ category, state, pageParam: sp.page, searchParams: sp });
+  return renderCategoryPage({ category, state });
 }
 
 export async function renderCategoryPage({ category, state, pageParam, searchParams = {} }) {
@@ -379,17 +388,21 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
 
             {/* ── Filter Bar ── */}
-            <FilterBar
-              basePath={basePath}
-              activeStates={activeStates}
-              activeEmployeeRanges={activeEmployeeRanges}
-              stateCounts={stateCounts}
-              showStateFilter={true}
-              subcategories={cat.subcategories}
-              category={category}
-              currentSubcategory={subcategory}
-              currentState={null}
-            />
+            {/* Suspense: FilterBar calls useSearchParams(), which Next requires
+                to sit behind a boundary once the page is statically prerendered. */}
+            <Suspense fallback={null}>
+              <FilterBar
+                basePath={basePath}
+                activeStates={activeStates}
+                activeEmployeeRanges={activeEmployeeRanges}
+                stateCounts={stateCounts}
+                showStateFilter={true}
+                subcategories={cat.subcategories}
+                category={category}
+                currentSubcategory={subcategory}
+                currentState={null}
+              />
+            </Suspense>
 
             {/* ── Ranked list ── */}
             <div style={{ minWidth: 0, marginTop: 24 }}>
@@ -427,59 +440,23 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 </div>
               )}
 
-              {totalPages > 1 && (
-                <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
+              {/* Pagination moved to /search: this page is prebuilt at deploy and
+                  cannot read ?page=. Page 2+ was already noindex, so nothing
+                  indexable is lost. See HISTORY.md 2026-09-05. */}
+              {totalCount > PAGE_SIZE && (
+                <div style={{ textAlign: 'center', marginTop: 28 }}>
                   <Link
-                    href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage - 1)}`}
-                    aria-disabled={currentPage === 1}
+                    href={`/search?category=${encodeURIComponent(category)}`}
                     style={{
-                      pointerEvents: currentPage === 1 ? 'none' : 'auto',
-                      opacity: currentPage === 1 ? 0.4 : 1,
-                      fontSize: 13, fontWeight: 500, color: '#475569',
-                      padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
-                      textDecoration: 'none', backgroundColor: '#ffffff',
+                      display: 'inline-block', fontSize: 14, fontWeight: 500,
+                      color: '#1A2E4A', padding: '10px 18px', borderRadius: 8,
+                      border: '1px solid #e2e8f0', textDecoration: 'none',
+                      backgroundColor: '#ffffff',
                     }}
                   >
-                    ← Prev
+                    View all {totalCount} companies →
                   </Link>
-
-                  {paginationRange(currentPage, totalPages).map((n, i) =>
-                    n === '…' ? (
-                      <span key={`dots-${i}`} style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>…</span>
-                    ) : (
-                      <Link
-                        key={n}
-                        href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
-                        aria-current={n === currentPage ? 'page' : undefined}
-                        style={{
-                          fontSize: 13, fontWeight: 600,
-                          minWidth: 34, textAlign: 'center',
-                          padding: '8px 10px', borderRadius: 8,
-                          textDecoration: 'none',
-                          color: n === currentPage ? '#ffffff' : '#475569',
-                          backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
-                          border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                        }}
-                      >
-                        {n}
-                      </Link>
-                    )
-                  )}
-
-                  <Link
-                    href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage + 1)}`}
-                    aria-disabled={currentPage === totalPages}
-                    style={{
-                      pointerEvents: currentPage === totalPages ? 'none' : 'auto',
-                      opacity: currentPage === totalPages ? 0.4 : 1,
-                      fontSize: 13, fontWeight: 500, color: '#475569',
-                      padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
-                      textDecoration: 'none', backgroundColor: '#ffffff',
-                    }}
-                  >
-                    Next →
-                  </Link>
-                </nav>
+                </div>
               )}
 
               <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 24, lineHeight: 1.6 }}>
@@ -719,17 +696,21 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
 
           {/* ── Filter Bar ── */}
-          <FilterBar
-            basePath={basePath}
-            activeStates={activeStates}
-            activeEmployeeRanges={activeEmployeeRanges}
-            stateCounts={stateCounts}
-            showStateFilter={showStateFilter}
-            subcategories={cat?.subcategories}
-            category={category}
-            currentSubcategory={null}
-            currentState={state || null}
-          />
+          {/* Suspense: FilterBar calls useSearchParams(), which Next requires
+              to sit behind a boundary once the page is statically prerendered. */}
+          <Suspense fallback={null}>
+            <FilterBar
+              basePath={basePath}
+              activeStates={activeStates}
+              activeEmployeeRanges={activeEmployeeRanges}
+              stateCounts={stateCounts}
+              showStateFilter={showStateFilter}
+              subcategories={cat?.subcategories}
+              category={category}
+              currentSubcategory={null}
+              currentState={state || null}
+            />
+          </Suspense>
 
           {/* ── Ranked list ─────────────────────────────────────── */}
           <div style={{ minWidth: 0, marginTop: 24 }}>
@@ -788,59 +769,23 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               </div>
             )}
 
-            {totalPages > 1 && (
-              <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
+            {/* Pagination moved to /search: this page is prebuilt at deploy and
+                cannot read ?page=. Page 2+ was already noindex, so nothing
+                indexable is lost. See HISTORY.md 2026-09-05. */}
+            {totalCount > PAGE_SIZE && (
+              <div style={{ textAlign: 'center', marginTop: 28 }}>
                 <Link
-                  href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage - 1)}`}
-                  aria-disabled={currentPage === 1}
+                  href={`/search?category=${encodeURIComponent(category)}`}
                   style={{
-                    pointerEvents: currentPage === 1 ? 'none' : 'auto',
-                    opacity: currentPage === 1 ? 0.4 : 1,
-                    fontSize: 13, fontWeight: 500, color: '#475569',
-                    padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
-                    textDecoration: 'none', backgroundColor: '#ffffff',
+                    display: 'inline-block', fontSize: 14, fontWeight: 500,
+                    color: '#1A2E4A', padding: '10px 18px', borderRadius: 8,
+                    border: '1px solid #e2e8f0', textDecoration: 'none',
+                    backgroundColor: '#ffffff',
                   }}
                 >
-                  ← Prev
+                  View all {totalCount} companies →
                 </Link>
-
-                {paginationRange(currentPage, totalPages).map((n, i) =>
-                  n === '…' ? (
-                    <span key={`dots-${i}`} style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>…</span>
-                  ) : (
-                    <Link
-                      key={n}
-                      href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, n)}`}
-                      aria-current={n === currentPage ? 'page' : undefined}
-                      style={{
-                        fontSize: 13, fontWeight: 600,
-                        minWidth: 34, textAlign: 'center',
-                        padding: '8px 10px', borderRadius: 8,
-                        textDecoration: 'none',
-                        color: n === currentPage ? '#ffffff' : '#475569',
-                        backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
-                        border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                      }}
-                    >
-                      {n}
-                    </Link>
-                  )
-                )}
-
-                <Link
-                  href={`${basePath}${buildFilterQueryString(activeStates, activeEmployeeRanges, currentPage + 1)}`}
-                  aria-disabled={currentPage === totalPages}
-                  style={{
-                    pointerEvents: currentPage === totalPages ? 'none' : 'auto',
-                    opacity: currentPage === totalPages ? 0.4 : 1,
-                    fontSize: 13, fontWeight: 500, color: '#475569',
-                    padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
-                    textDecoration: 'none', backgroundColor: '#ffffff',
-                  }}
-                >
-                  Next →
-                </Link>
-              </nav>
+              </div>
             )}
 
             <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 24, lineHeight: 1.6 }}>

@@ -113,7 +113,10 @@ export async function GET(request) {
     })
     .from(companies)
     .where(and(...conditions))
-    .limit(50);
+    // 200, not 50: /search is now where users browse past the first 25 results
+    // on a category page. The largest category+state combo is 129 companies, so
+    // 50 silently truncated. See HISTORY.md 2026-09-05.
+    .limit(200);
 
   if (employeeRanges.length) {
     const wanted = new Set(employeeRanges);
