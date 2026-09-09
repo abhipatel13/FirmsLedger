@@ -1029,6 +1029,36 @@ export async function setCompanyCategories(companyId, categoryIds) {
   return rows.map((r) => r.slug);
 }
 
+/**
+ * Every category slug a company is listed under, with its parent slug when the
+ * category is a subcategory.
+ *
+ * Needed because an owner's edit changes how they appear on the CATEGORY
+ * LISTING pages too (CompanyCard renders description, capabilities, products,
+ * certifications, phone and location), not just on their own profile. Those
+ * pages are `revalidate = false`, so they must be revalidated explicitly or the
+ * edit is invisible where buyers actually browse.
+ */
+export async function fetchCategoryPathsForCompany(companyId) {
+  const linked = await db
+    .select({ slug: categories.slug, parent_id: categories.parent_id })
+    .from(company_categories)
+    .innerJoin(categories, eq(company_categories.category_id, categories.id))
+    .where(eq(company_categories.company_id, companyId));
+
+  const parentIds = [...new Set(linked.map((r) => r.parent_id).filter(Boolean))];
+  const parents = parentIds.length
+    ? await db.select({ id: categories.id, slug: categories.slug })
+        .from(categories).where(inArray(categories.id, parentIds))
+    : [];
+  const parentSlug = new Map(parents.map((p) => [p.id, p.slug]));
+
+  return linked.map((r) => ({
+    slug: r.slug,
+    parent_slug: r.parent_id ? parentSlug.get(r.parent_id) ?? null : null,
+  }));
+}
+
 /** State slug for a company, used to revalidate its category+state pages. */
 export async function fetchStateSlugForCompany(companyId) {
   const [row] = await db

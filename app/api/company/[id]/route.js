@@ -5,6 +5,7 @@ import {
   fetchCompanyForOwner,
   setCompanyCategories,
   fetchStateSlugForCompany,
+  fetchCategoryPathsForCompany,
   updateCompany,
 } from '@/db/neonApi';
 
@@ -115,28 +116,45 @@ export async function PATCH(request, { params }) {
       changedCategorySlugs = await setCompanyCategories(company.id, categoryIds);
     }
 
-    // Company pages are `revalidate = false` (see app/company/[slug]/page.jsx),
-    // so freshness normally only comes from a rebuild. On-demand revalidation
-    // is what makes an owner's edit visible without waiting for a deploy —
-    // without this the save appears to do nothing.
-    const revalidated = [`/company/${company.slug}`];
-    revalidatePath(`/company/${company.slug}`);
+    // Company AND category pages are `revalidate = false` (see
+    // app/company/[slug]/page.jsx), so freshness otherwise comes only from a
+    // rebuild. On-demand revalidation is what makes an owner's edit visible
+    // without waiting for a deploy.
+    //
+    // This must cover the CATEGORY LISTING pages on EVERY save, not just when
+    // categories change: CompanyCard renders description, capabilities,
+    // products, certifications, phone and location, and all of those are
+    // editable here. Revalidating only /company/[slug] meant an owner saw their
+    // own page update while the listing a buyer actually browses kept serving
+    // the old text until the next deploy.
+    const paths = new Set([`/company/${company.slug}`]);
+    const stateSlug = await fetchStateSlugForCompany(company.id);
 
-    // Listing pages render the description and the company's category
-    // membership, so they go stale too.
-    if (changedCategorySlugs.length) {
-      const stateSlug = await fetchStateSlugForCompany(company.id);
-      for (const slug of changedCategorySlugs) {
-        revalidatePath(`/${slug}`);
-        revalidated.push(`/${slug}`);
+    const addCategoryPaths = (slug, parentSlug) => {
+      if (!slug) return;
+      paths.add(`/${slug}`);
+      if (stateSlug) paths.add(`/${slug}/${stateSlug}`);
+      // A subcategory is browsed at /[parent]/[state]/[subcategory], so the
+      // parent's pages carry this company too.
+      if (parentSlug) {
+        paths.add(`/${parentSlug}`);
         if (stateSlug) {
-          revalidatePath(`/${slug}/${stateSlug}`);
-          revalidated.push(`/${slug}/${stateSlug}`);
+          paths.add(`/${parentSlug}/${stateSlug}`);
+          paths.add(`/${parentSlug}/${stateSlug}/${slug}`);
         }
       }
-    }
+    };
 
-    return NextResponse.json({ success: true, revalidated });
+    for (const { slug, parent_slug } of await fetchCategoryPathsForCompany(company.id)) {
+      addCategoryPaths(slug, parent_slug);
+    }
+    // Categories the company just LEFT need refreshing too, so it disappears
+    // from pages it no longer belongs on.
+    for (const slug of changedCategorySlugs) addCategoryPaths(slug, null);
+
+    for (const path of paths) revalidatePath(path);
+
+    return NextResponse.json({ success: true, revalidated: [...paths] });
   } catch (err) {
     console.error('[company PATCH] Error:', err);
     return NextResponse.json({ error: 'Could not save your changes.' }, { status: 500 });
