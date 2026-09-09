@@ -94,7 +94,7 @@ export default function Layout({ children }) {
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
 
       {/* ══ NAVBAR ══════════════════════════════════════════════════ */}
-      <header style={{
+      <header className="fl-public-chrome" style={{
         backgroundColor: scrolled ? 'rgba(255,255,255,0.85)' : '#ffffff',
         backdropFilter: scrolled ? 'blur(8px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(8px)' : 'none',
@@ -481,7 +481,7 @@ export default function Layout({ children }) {
       <main style={{ minWidth: 0 }}>{children}</main>
 
       {/* ══ FOOTER ══════════════════════════════════════════════════ */}
-      <footer style={{ background: '#0F172A' }}>
+      <footer className="fl-public-chrome" style={{ background: '#0F172A' }}>
         <div className="px-6 lg:px-8" style={{ maxWidth: 'var(--max-width)', margin: '0 auto', paddingTop: 72, paddingBottom: 48 }}>
 
           {/* Brand + links, one row (brand column, then four link columns) */}

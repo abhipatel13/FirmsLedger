@@ -3,7 +3,7 @@ import { revalidateTag } from 'next/cache';
 import { getAdminFromCookie } from '@/lib/admin-auth';
 import { db } from '@/db/client';
 import { companies } from '@/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, or, ilike, sql } from 'drizzle-orm';
 
 function slugify(text) {
   return String(text).trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
@@ -14,13 +14,52 @@ async function requireAdmin() {
   return admin || null;
 }
 
-// GET /api/admin/agencies — list all companies
-export async function GET() {
+/**
+ * GET /api/admin/agencies?status=all|pending|approved&q=&limit=
+ *
+ * Filtering and searching happen in SQL. This used to return EVERY company —
+ * 12,804 rows x 13 columns on every page load — and the page then filtered them
+ * in the browser, which meant there was no way to list the ~3,678 unapproved
+ * ones without scrolling the entire table.
+ */
+const MAX_LIMIT = 500;
+
+export async function GET(request) {
   try {
     if (!await requireAdmin()) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const data = await db
+
+    const { searchParams } = new URL(request.url);
+    const status = (searchParams.get('status') || 'all').trim();
+    const q = (searchParams.get('q') || '').trim();
+    const limit = Math.min(Number(searchParams.get('limit')) || 200, MAX_LIMIT);
+
+    const conditions = [];
+    if (status === 'pending')  conditions.push(sql`${companies.approved} IS NOT TRUE`);
+    if (status === 'approved') conditions.push(eq(companies.approved, true));
+    if (status === 'verified') conditions.push(eq(companies.is_verified, true));
+    if (status === 'featured') conditions.push(eq(companies.featured, true));
+    if (q) {
+      const pattern = `%${q}%`;
+      conditions.push(or(
+        ilike(companies.name, pattern),
+        ilike(companies.contact_email, pattern),
+        ilike(companies.hq_city, pattern),
+      ));
+    }
+
+    // Counts come from one aggregate query rather than from the length of a
+    // fully-materialised list, so they stay correct under a LIMIT.
+    const [countRow] = await db.select({
+      total:    sql`count(*)::int`,
+      approved: sql`count(*) FILTER (WHERE ${companies.approved})::int`,
+      pending:  sql`count(*) FILTER (WHERE ${companies.approved} IS NOT TRUE)::int`,
+      verified: sql`count(*) FILTER (WHERE ${companies.is_verified})::int`,
+      featured: sql`count(*) FILTER (WHERE ${companies.featured})::int`,
+    }).from(companies);
+
+    const rows = await db
       .select({
         id: companies.id,
         name: companies.name,
@@ -37,8 +76,25 @@ export async function GET() {
         created_at: companies.created_at,
       })
       .from(companies)
-      .orderBy(desc(companies.created_at));
-    return NextResponse.json(data);
+      .where(conditions.length ? and(...conditions) : undefined)
+      // Unapproved listings are the queue, so newest-first is what a reviewer
+      // wants. asc(id) is not needed: created_at is effectively unique here and
+      // this list is not paginated.
+      .orderBy(desc(companies.created_at))
+      .limit(limit);
+
+    return NextResponse.json({
+      data: rows,
+      counts: {
+        total: Number(countRow?.total ?? 0),
+        approved: Number(countRow?.approved ?? 0),
+        pending: Number(countRow?.pending ?? 0),
+        verified: Number(countRow?.verified ?? 0),
+        featured: Number(countRow?.featured ?? 0),
+      },
+      truncated: rows.length >= limit,
+      limit,
+    });
   } catch (err) {
     console.error('GET /api/admin/agencies error:', err);
     return NextResponse.json({ error: err.message || 'Something went wrong' }, { status: 500 });
