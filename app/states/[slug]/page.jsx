@@ -7,7 +7,15 @@ import { BASE_URL, SITE_NAME } from '@/lib/seo';
 import { fetchStateHubStats } from '@/db/neonApi';
 import { ArrowRight } from 'lucide-react';
 
-export const revalidate = 3600;
+// 50 prebuilt state hubs re-rendering hourly was up to 1,200 revalidations/day,
+// each calling fetchStateHubStats(). The homepage US map links straight here, so
+// they get real traffic.
+// `false`, not an hourly window. These pages are prebuilt, but a time-based
+// revalidate makes them re-render AT RUNTIME on expiry, and a runtime render
+// hits Postgres. Every wake costs Neon's full 300s suspend timeout regardless
+// of how little work it does, so runtime re-renders are the cost driver.
+// Freshness comes from rebuilds. See HISTORY.md 2026-09-09.
+export const revalidate = false;
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
