@@ -290,8 +290,14 @@ export const users = pgTable('users', {
   email:         text('email').notNull().unique(),
   password_hash: text('password_hash').notNull(),
   full_name:     text('full_name'),
+  // Admin access is a flag on the account, checked against a real session.
+  // It replaced ADMIN_EMAIL/ADMIN_PASSWORD env vars, where the password also
+  // served as the cookie-signing key and so could be used to forge a session.
+  is_admin:      boolean('is_admin').notNull().default(false),
   created_at:    timestamp('created_at', { withTimezone: true }).defaultNow(),
-});
+}, (t) => [
+  index('idx_users_is_admin').on(t.is_admin).where(sql`${t.is_admin} = true`),
+]);
 
 export const sessions = pgTable('sessions', {
   id:         uuid('id').primaryKey().defaultRandom(),
