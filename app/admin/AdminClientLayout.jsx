@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Search, Globe, Mail, Building2, FolderTree,
-  LogOut, X, ChevronRight, Loader2,
+  LogOut, X, ChevronRight, Loader2, BadgeCheck,
 } from 'lucide-react';
 
 const NAV = [
   { label: 'Overview',        href: '/admin',             icon: LayoutDashboard },
   { label: 'Agencies',        href: '/admin/agencies',    icon: Building2 },
   { label: 'Categories',      href: '/admin/categories',  icon: FolderTree },
+  { label: 'Listing Claims',  href: '/admin/claims',      icon: BadgeCheck },
   { label: 'Blog Automation', href: '/admin/blogs',       icon: FileText },
   { label: 'SEO Audit',       href: '/admin/seo-audit',  icon: Search },
   { label: 'URL Submissions', href: '/admin/submissions', icon: Globe },
