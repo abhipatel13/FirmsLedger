@@ -3,19 +3,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Globe, RefreshCw, CheckCircle2, XCircle, Minus, ExternalLink, Send } from 'lucide-react';
 
+// Categorical colours for a data label, on one consistent recipe. Deliberately
+// NOT brand gold: gold marks primary actions and current selection, so spending
+// it on a platform badge would make it stop meaning anything.
 const PLATFORM_COLORS = {
-  google:        'bg-blue-900/40   text-blue-300   border-blue-700/40',
-  bing:          'bg-green-900/40  text-green-300  border-green-700/40',
-  yandex:        'bg-orange-900/40 text-orange-300 border-orange-700/40',
-  pingomatic:    'bg-purple-900/40 text-purple-300 border-purple-700/40',
-  google_sitemap:'bg-indigo-900/40 text-indigo-300 border-indigo-700/40',
-  pingmyurl:     'bg-pink-900/40   text-pink-300   border-pink-700/40',
+  google:        'bg-sky-500/12     text-sky-300     border-sky-500/30',
+  bing:          'bg-emerald-500/12 text-emerald-300 border-emerald-500/30',
+  yandex:        'bg-rose-500/12    text-rose-300    border-rose-500/30',
+  pingomatic:    'bg-violet-500/12  text-violet-300  border-violet-500/30',
+  google_sitemap:'bg-indigo-500/12  text-indigo-300  border-indigo-500/30',
+  pingmyurl:     'bg-teal-500/12    text-teal-300    border-teal-500/30',
 };
 
 const STATUS_ICON = {
   success: <CheckCircle2 className="w-4 h-4 text-green-400" />,
   failed:  <XCircle      className="w-4 h-4 text-red-400" />,
-  skipped: <Minus        className="w-4 h-4 text-gray-500" />,
+  skipped: <Minus        className="w-4 h-4 text-[#64748B]" />,
 };
 
 const formatDate = (d) => {
@@ -84,20 +87,20 @@ export default function SubmissionsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-white">URL Submissions</h1>
-          <p className="text-gray-400 text-sm mt-0.5">Log of all URL submissions to search engines and ping services</p>
+          <p className="text-[#94A3B8] text-sm mt-0.5">Log of all URL submissions to search engines and ping services</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={load} className="flex items-center gap-2 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-300 hover:bg-gray-700 transition-colors">
+          <button onClick={load} className="flex items-center gap-2 px-3 py-2 bg-[#16233A] border border-white/[0.14] rounded-lg text-sm text-[#CBD5E1] hover:bg-white/[0.1] transition-colors">
             <RefreshCw className="w-3.5 h-3.5" /> Refresh
           </button>
-          <button onClick={triggerSubmit} disabled={triggering} className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition-colors">
+          <button onClick={triggerSubmit} disabled={triggering} className="flex items-center gap-2 px-4 py-2 bg-[#F5A623] rounded-lg text-sm font-medium text-[#0B1220] hover:bg-[#e0961c] disabled:opacity-50 transition-colors">
             {triggering ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
             {triggering ? 'Submitting…' : 'Submit URLs Now'}
           </button>
         </div>
       </div>
       {triggerMsg && (
-        <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-gray-300">
+        <div className="bg-[#111C2E] border border-white/[0.14] rounded-lg px-4 py-2.5 text-sm text-[#CBD5E1]">
           {triggerMsg}
         </div>
       )}
@@ -108,23 +111,23 @@ export default function SubmissionsPage() {
           { label: 'Total',   value: stats.total,   color: 'text-white' },
           { label: 'Success', value: stats.success, color: 'text-green-400' },
           { label: 'Failed',  value: stats.failed,  color: 'text-red-400' },
-          { label: 'Skipped', value: stats.skipped, color: 'text-gray-400' },
+          { label: 'Skipped', value: stats.skipped, color: 'text-[#94A3B8]' },
         ].map(({ label, value, color }) => (
-          <div key={label} className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+          <div key={label} className="bg-[#111C2E] border border-white/[0.08] rounded-xl p-4 text-center">
             <p className={`text-2xl font-bold ${color}`}>{value}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+            <p className="text-xs text-[#64748B] mt-0.5">{label}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
-        <div className="flex gap-1 p-1 bg-gray-900 border border-gray-800 rounded-lg">
+        <div className="flex gap-1 p-1 bg-[#111C2E] border border-white/[0.08] rounded-lg">
           {['all', 'success', 'failed', 'skipped'].map((s) => (
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors capitalize ${filter === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors capitalize ${filter === s ? 'bg-[#F5A623] text-[#0B1220]' : 'text-[#94A3B8] hover:text-white'}`}
             >
               {s}
             </button>
@@ -133,7 +136,7 @@ export default function SubmissionsPage() {
         <select
           value={platformFilter}
           onChange={(e) => setPlatformFilter(e.target.value)}
-          className="bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-blue-500 capitalize"
+          className="bg-[#111C2E] border border-white/[0.08] rounded-lg px-3 py-1.5 text-xs text-[#CBD5E1] focus:outline-none focus:border-[#F5A623] capitalize"
         >
           {platforms.map((p) => (
             <option key={p} value={p}>{p === 'all' ? 'All platforms' : p}</option>
@@ -142,56 +145,56 @@ export default function SubmissionsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-[#111C2E] border border-white/[0.08] rounded-xl overflow-hidden">
         {loading ? (
           <div className="flex justify-center py-12">
-            <RefreshCw className="w-5 h-5 animate-spin text-blue-400" />
+            <RefreshCw className="w-5 h-5 animate-spin text-[#F5A623]" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-12 text-center">
-            <Globe className="w-10 h-10 text-gray-700 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">No submissions found.</p>
-            <p className="text-gray-600 text-xs mt-1">Click "Submit URLs Now" above to manually trigger, or wait for the 9 AM UTC cron.</p>
+            <Globe className="w-10 h-10 text-[#334155] mx-auto mb-3" />
+            <p className="text-[#64748B] text-sm">No submissions found.</p>
+            <p className="text-[#475569] text-xs mt-1">Click "Submit URLs Now" above to manually trigger, or wait for the 9 AM UTC cron.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-800 bg-gray-950/50">
+                <tr className="border-b border-white/[0.08] bg-[#0B1220]/50">
                   {['Status', 'URL', 'Platform', 'Submitted', 'Response'].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-[#64748B] uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((log) => (
-                  <tr key={log.id} className="border-b border-gray-800 hover:bg-gray-800/30">
+                  <tr key={log.id} className="border-b border-white/[0.08] hover:bg-white/[0.06]">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         {STATUS_ICON[log.status] ?? STATUS_ICON.skipped}
                         <span className={`text-xs font-medium capitalize ${
                           log.status === 'success' ? 'text-green-400' :
-                          log.status === 'failed'  ? 'text-red-400' : 'text-gray-500'
+                          log.status === 'failed'  ? 'text-red-400' : 'text-[#64748B]'
                         }`}>{log.status}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 max-w-xs">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-gray-300 text-xs truncate">{new URL(log.url).pathname}</span>
-                        <a href={log.url} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-400 shrink-0">
+                        <span className="text-[#CBD5E1] text-xs truncate">{new URL(log.url).pathname}</span>
+                        <a href={log.url} target="_blank" rel="noopener noreferrer" className="text-[#475569] hover:text-[#F5A623] shrink-0">
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium border capitalize ${PLATFORM_COLORS[log.platform] || 'bg-gray-800 text-gray-400 border-gray-700'}`}>
+                      <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium border capitalize ${PLATFORM_COLORS[log.platform] || 'bg-[#16233A] text-[#94A3B8] border-white/[0.14]'}`}>
                         {log.platform}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{formatDate(log.submitted_at)}</td>
+                    <td className="px-4 py-3 text-[#64748B] text-xs whitespace-nowrap">{formatDate(log.submitted_at)}</td>
                     <td className="px-4 py-3">
                       {log.response && (
-                        <span className="text-gray-500 text-xs font-mono">
+                        <span className="text-[#64748B] text-xs font-mono">
                           {log.response.httpStatus ? `HTTP ${log.response.httpStatus}` :
                            log.response.reason    ? log.response.reason :
                            log.response.error     ? log.response.error.slice(0, 40) : '—'}
@@ -202,7 +205,7 @@ export default function SubmissionsPage() {
                 ))}
               </tbody>
             </table>
-            <div className="px-4 py-3 border-t border-gray-800 text-xs text-gray-500">
+            <div className="px-4 py-3 border-t border-white/[0.08] text-xs text-[#64748B]">
               Showing {filtered.length} of {logs.length} submissions
             </div>
           </div>

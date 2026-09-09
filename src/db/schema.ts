@@ -9,6 +9,7 @@ import {
   timestamp,
   unique,
   index,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 // ── States ────────────────────────────────────────────────────────────────────
@@ -300,6 +301,33 @@ export const sessions = pgTable('sessions', {
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
+// ── Listing Claims ────────────────────────────────────────────────────────────
+// A business owner claiming an existing `companies` row. THIS TABLE IS THE
+// ownership record: a company is owned by whoever holds its `approved` claim.
+// `companies.owner_user_id` is a dead Supabase-era column — nothing reads or
+// writes it, and this feature deliberately does not resurrect it, so the
+// migration stays purely additive.
+
+export const claims = pgTable('claims', {
+  id:            uuid('id').primaryKey().defaultRandom(),
+  company_id:    uuid('company_id').notNull().references(() => companies.id, { onDelete: 'cascade' }),
+  user_id:       uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  status:        text('status').notNull().default('pending'),   // pending | approved | rejected
+  verification:  text('verification'),                          // domain_match | manual
+  role:          text('role'),
+  contact_name:  text('contact_name'),
+  contact_email: text('contact_email'),
+  phone:         text('phone'),
+  review_note:   text('review_note'),
+  reviewed_at:   timestamp('reviewed_at', { withTimezone: true }),
+  created_at:    timestamp('created_at', { withTimezone: true }).defaultNow(),
+}, (t) => [
+  // The DB, not the app, is what makes two owners for one company impossible.
+  uniqueIndex('claims_one_approved_per_company').on(t.company_id).where(sql`${t.status} = 'approved'`),
+  uniqueIndex('claims_user_company_unique').on(t.user_id, t.company_id),
+  index('idx_claims_status').on(t.status),
+]);
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type State                   = typeof states.$inferSelect;
@@ -310,6 +338,7 @@ export type Review                  = typeof reviews.$inferSelect;
 export type CompanyLead             = typeof company_leads.$inferSelect;
 export type ListingRequest          = typeof listing_requests.$inferSelect;
 export type CompanyInvite           = typeof company_invites.$inferSelect;
+export type Claim                   = typeof claims.$inferSelect;
 export type EmailCampaign           = typeof email_campaigns.$inferSelect;
 export type EmailLog                = typeof email_logs.$inferSelect;
 export type SubmissionLog           = typeof submission_logs.$inferSelect;

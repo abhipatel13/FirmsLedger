@@ -5,7 +5,7 @@ import {
   Plus, RefreshCw, Loader2, Trash2, X, Pencil, ChevronDown, ChevronRight, FolderTree,
 } from 'lucide-react';
 
-const INPUT = 'w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500';
+const INPUT = 'w-full bg-[#16233A] border border-white/[0.14] rounded-lg px-3 py-2.5 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#F5A623]';
 
 const EMPTY_FORM = { name: '', slug: '', description: '', icon: '', order: 0, parent_id: '' };
 
@@ -16,11 +16,11 @@ function slugify(text) {
 function FormField({ label, required, hint, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-400 mb-1.5">
+      <label className="block text-xs font-medium text-[#94A3B8] mb-1.5">
         {label}{required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
       {children}
-      {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-[#64748B]">{hint}</p>}
     </div>
   );
 }
@@ -87,10 +87,10 @@ function CategoryModal({ open, onClose, onSaved, initial, parents }) {
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+      <div className="bg-[#111C2E] border border-white/[0.08] rounded-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.08]">
           <h2 className="text-white font-semibold">{isEdit ? 'Edit Category' : 'New Category'}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[#64748B] hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -175,11 +175,11 @@ function CategoryModal({ open, onClose, onSaved, initial, parents }) {
           </div>
         </form>
 
-        <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-800 bg-gray-900/50">
+        <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-white/[0.08] bg-[#111C2E]/50">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors"
+            className="px-4 py-2 text-[#94A3B8] hover:text-white text-sm transition-colors"
           >
             Cancel
           </button>
@@ -187,7 +187,7 @@ function CategoryModal({ open, onClose, onSaved, initial, parents }) {
             type="submit"
             onClick={submit}
             disabled={saving}
-            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-[#F5A623] hover:bg-[#e0961c] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saving ? 'Saving…' : (isEdit ? 'Save changes' : 'Create')}
@@ -278,28 +278,28 @@ export default function CategoriesAdminPage() {
   const totalSubs = Object.values(childrenByParent).reduce((a, b) => a + b.length, 0);
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="px-8 py-6 border-b border-gray-800 flex items-center justify-between">
+    <div className="min-h-screen bg-[#0B1220]">
+      <div className="px-8 py-6 border-b border-white/[0.08] flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-white flex items-center gap-2">
-            <FolderTree className="w-5 h-5 text-orange-400" />
+            <FolderTree className="w-5 h-5 text-[#F5A623]" />
             Categories
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-[#64748B] mt-1">
             {parents.length} parents · {totalSubs} subcategories
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={load}
-            className="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-gray-300 text-sm flex items-center gap-2 transition-colors"
+            className="px-3 py-2 bg-[#16233A] hover:bg-white/[0.1] border border-white/[0.14] rounded-lg text-[#CBD5E1] text-sm flex items-center gap-2 transition-colors"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </button>
           <button
             onClick={() => openNew(null)}
-            className="px-3 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-colors"
+            className="px-3 py-2 bg-[#F5A623] hover:bg-[#e0961c] rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-colors"
           >
             <Plus className="w-4 h-4" />
             New Category
@@ -307,17 +307,17 @@ export default function CategoriesAdminPage() {
         </div>
       </div>
 
-      <div className="px-8 py-4 border-b border-gray-800 flex items-center gap-3">
+      <div className="px-8 py-4 border-b border-white/[0.08] flex items-center gap-3">
         <input
           type="text"
           placeholder="Search categories…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 max-w-md bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          className="flex-1 max-w-md bg-[#111C2E] border border-white/[0.08] rounded-lg px-3 py-2 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#F5A623]"
         />
-        <button onClick={expandAll} className="text-xs text-gray-400 hover:text-white transition-colors">Expand all</button>
-        <span className="text-gray-700">·</span>
-        <button onClick={collapseAll} className="text-xs text-gray-400 hover:text-white transition-colors">Collapse all</button>
+        <button onClick={expandAll} className="text-xs text-[#94A3B8] hover:text-white transition-colors">Expand all</button>
+        <span className="text-[#334155]">·</span>
+        <button onClick={collapseAll} className="text-xs text-[#94A3B8] hover:text-white transition-colors">Collapse all</button>
       </div>
 
       <div className="p-8">
@@ -329,10 +329,10 @@ export default function CategoriesAdminPage() {
 
         {loading && categories.length === 0 ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+            <Loader2 className="w-6 h-6 animate-spin text-[#64748B]" />
           </div>
         ) : filteredParents.length === 0 ? (
-          <div className="text-center py-20 text-gray-500 text-sm">
+          <div className="text-center py-20 text-[#64748B] text-sm">
             {search ? 'No categories match your search.' : 'No categories yet. Create one to start.'}
           </div>
         ) : (
@@ -341,41 +341,41 @@ export default function CategoriesAdminPage() {
               const kids = childrenByParent[parent.id] || [];
               const open = expanded[parent.id];
               return (
-                <div key={parent.id} className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+                <div key={parent.id} className="bg-[#111C2E] border border-white/[0.08] rounded-lg overflow-hidden">
                   <div className="flex items-center px-4 py-3 gap-3">
                     <button
                       onClick={() => toggleExpand(parent.id)}
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-[#94A3B8] hover:text-white transition-colors"
                     >
                       {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                     </button>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-white font-medium truncate">{parent.name}</span>
-                        <span className="text-xs text-gray-500">/{parent.slug}</span>
+                        <span className="text-xs text-[#64748B]">/{parent.slug}</span>
                       </div>
                       {parent.description && (
-                        <p className="text-xs text-gray-500 mt-0.5 truncate">{parent.description}</p>
+                        <p className="text-xs text-[#64748B] mt-0.5 truncate">{parent.description}</p>
                       )}
                     </div>
-                    <span className="text-xs text-gray-500">{kids.length} subs</span>
+                    <span className="text-xs text-[#64748B]">{kids.length} subs</span>
                     <button
                       onClick={() => openNew(parent.id)}
-                      className="p-1.5 text-gray-400 hover:text-orange-400 hover:bg-gray-800 rounded transition-colors"
+                      className="p-1.5 text-[#94A3B8] hover:text-[#F5A623] hover:bg-white/[0.06] rounded transition-colors"
                       title="Add subcategory"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => openEdit(parent)}
-                      className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-gray-800 rounded transition-colors"
+                      className="p-1.5 text-[#94A3B8] hover:text-[#F5A623] hover:bg-white/[0.06] rounded transition-colors"
                       title="Edit"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => remove(parent)}
-                      className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded transition-colors"
+                      className="p-1.5 text-[#94A3B8] hover:text-red-400 hover:bg-white/[0.06] rounded transition-colors"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -383,28 +383,28 @@ export default function CategoriesAdminPage() {
                   </div>
 
                   {open && kids.length > 0 && (
-                    <div className="border-t border-gray-800 divide-y divide-gray-800/50 bg-gray-950/50">
+                    <div className="border-t border-white/[0.08] divide-y divide-white/[0.06] bg-[#0B1220]/50">
                       {kids.map((kid) => (
                         <div key={kid.id} className="flex items-center pl-12 pr-4 py-2.5 gap-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-gray-200 text-sm truncate">{kid.name}</span>
-                              <span className="text-xs text-gray-500">/{kid.slug}</span>
+                              <span className="text-[#E8EDF5] text-sm truncate">{kid.name}</span>
+                              <span className="text-xs text-[#64748B]">/{kid.slug}</span>
                             </div>
                             {kid.description && (
-                              <p className="text-xs text-gray-600 mt-0.5 truncate">{kid.description}</p>
+                              <p className="text-xs text-[#475569] mt-0.5 truncate">{kid.description}</p>
                             )}
                           </div>
                           <button
                             onClick={() => openEdit(kid)}
-                            className="p-1.5 text-gray-500 hover:text-blue-400 hover:bg-gray-800 rounded transition-colors"
+                            className="p-1.5 text-[#64748B] hover:text-[#F5A623] hover:bg-white/[0.06] rounded transition-colors"
                             title="Edit"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => remove(kid)}
-                            className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-gray-800 rounded transition-colors"
+                            className="p-1.5 text-[#64748B] hover:text-red-400 hover:bg-white/[0.06] rounded transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -415,10 +415,10 @@ export default function CategoriesAdminPage() {
                   )}
 
                   {open && kids.length === 0 && (
-                    <div className="border-t border-gray-800 px-4 py-3 bg-gray-950/50">
+                    <div className="border-t border-white/[0.08] px-4 py-3 bg-[#0B1220]/50">
                       <button
                         onClick={() => openNew(parent.id)}
-                        className="text-xs text-gray-500 hover:text-orange-400 transition-colors"
+                        className="text-xs text-[#64748B] hover:text-[#F5A623] transition-colors"
                       >
                         + Add first subcategory
                       </button>
