@@ -115,11 +115,18 @@ function ClaimListingContent() {
             them. We&apos;ll email <strong className="text-slate-700">{form.email}</strong> once
             <strong className="text-slate-700"> {company?.name}</strong> has been reviewed.
           </p>
-          <Link href="/browse">
-            <Button className="bg-[#1A2E4A] hover:bg-[#1a2f4a] text-white font-semibold px-6 h-11 rounded-lg">
-              Browse Directory
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/dashboard">
+              <Button className="bg-[#1A2E4A] hover:bg-[#1a2f4a] text-white font-semibold px-6 h-11 rounded-lg w-full sm:w-auto">
+                Go to your dashboard
+              </Button>
+            </Link>
+            <Link href="/browse">
+              <Button variant="outline" className="font-semibold px-6 h-11 rounded-lg w-full sm:w-auto">
+                Browse Directory
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     );

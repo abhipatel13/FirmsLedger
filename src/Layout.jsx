@@ -29,9 +29,14 @@ const FOOTER_STATES = [
   { href: '/locations',           label: 'All 50 States' },
 ];
 
+// A plain static link, NOT an auth-aware one. Layout wraps every page, so
+// calling useSession() here would fire /api/auth/session — a sessions-table
+// lookup — on every single pageview, waking the Neon compute and undoing the
+// scale-to-zero work. /dashboard redirects signed-out visitors to /auth itself.
 const FOOTER_RESOURCES = [
   { href: '/list-your-company', label: 'List Your Company' },
   { href: '/claim-listing',    label: 'Claim a Listing' },
+  { href: '/dashboard',        label: 'Your Dashboard' },
   { href: '/contact',         label: 'Contact Us' },
 ];
 
