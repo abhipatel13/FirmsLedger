@@ -1,5 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Prerendering ~500 category pages hammers a 0.25 CU Neon compute, because
+  // those routes still query the DB at build time (company/[slug] reads the
+  // build snapshot instead and is unaffected). On 2026-09-10 that produced 69
+  // ETIMEDOUTs and killed the build; the two builds before it passed on the same
+  // code. An intermittently failing build is a deploy that silently does not
+  // ship, so:
+  //   retryCount    — a transient timeout retries instead of failing the build
+  //   maxConcurrency — fewer pages in flight per worker = less DB pressure
+  // This lowers the odds; it does not remove the cause. The real fix is routing
+  // the four category fetchers through src/db/staticData.js the way the profile
+  // pages already are — see HISTORY.md.
+  experimental: {
+    staticGenerationRetryCount: 3,
+    staticGenerationMaxConcurrency: 4,
+  },
   compress: true,
   reactStrictMode: true,
   transpilePackages: [],

@@ -294,6 +294,13 @@ export const users = pgTable('users', {
   // It replaced ADMIN_EMAIL/ADMIN_PASSWORD env vars, where the password also
   // served as the cookie-signing key and so could be used to forge a session.
   is_admin:      boolean('is_admin').notNull().default(false),
+  // Brute-force throttle for the admin login. Nothing rate-limited the endpoint
+  // before, so an attacker who knew the admin email could guess passwords
+  // indefinitely — scrypt made each attempt cost CPU but never stopped it.
+  // Counted on the account rather than the IP because IPs rotate freely and
+  // this is a single-admin site.
+  failed_login_attempts: integer('failed_login_attempts').notNull().default(0),
+  locked_until:  timestamp('locked_until', { withTimezone: true }),
   created_at:    timestamp('created_at', { withTimezone: true }).defaultNow(),
 }, (t) => [
   index('idx_users_is_admin').on(t.is_admin).where(sql`${t.is_admin} = true`),
