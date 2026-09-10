@@ -29,9 +29,14 @@ const FOOTER_STATES = [
   { href: '/locations',           label: 'All 50 States' },
 ];
 
+// A plain static link, NOT an auth-aware one. Layout wraps every page, so
+// calling useSession() here would fire /api/auth/session — a sessions-table
+// lookup — on every single pageview, waking the Neon compute and undoing the
+// scale-to-zero work. /dashboard redirects signed-out visitors to /auth itself.
 const FOOTER_RESOURCES = [
   { href: '/list-your-company', label: 'List Your Company' },
   { href: '/claim-listing',    label: 'Claim a Listing' },
+  { href: '/dashboard',        label: 'Your Dashboard' },
   { href: '/contact',         label: 'Contact Us' },
 ];
 
@@ -89,7 +94,7 @@ export default function Layout({ children }) {
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
 
       {/* ══ NAVBAR ══════════════════════════════════════════════════ */}
-      <header style={{
+      <header className="fl-public-chrome" style={{
         backgroundColor: scrolled ? 'rgba(255,255,255,0.85)' : '#ffffff',
         backdropFilter: scrolled ? 'blur(8px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(8px)' : 'none',
@@ -476,7 +481,7 @@ export default function Layout({ children }) {
       <main style={{ minWidth: 0 }}>{children}</main>
 
       {/* ══ FOOTER ══════════════════════════════════════════════════ */}
-      <footer style={{ background: '#0F172A' }}>
+      <footer className="fl-public-chrome" style={{ background: '#0F172A' }}>
         <div className="px-6 lg:px-8" style={{ maxWidth: 'var(--max-width)', margin: '0 auto', paddingTop: 72, paddingBottom: 48 }}>
 
           {/* Brand + links, one row (brand column, then four link columns) */}

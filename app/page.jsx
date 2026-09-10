@@ -9,7 +9,12 @@ const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 // 3600, not 300. A 5-minute ISR window on the busiest page re-rendered the
 // homepage forever at exactly the Neon scale-to-zero timeout, so the compute
 // never got an idle gap — see HISTORY.md 2026-09-02.
-export const revalidate = 3600;
+// `false`, not an hourly window. These pages are prebuilt, but a time-based
+// revalidate makes them re-render AT RUNTIME on expiry, and a runtime render
+// hits Postgres. Every wake costs Neon's full 300s suspend timeout regardless
+// of how little work it does, so runtime re-renders are the cost driver.
+// Freshness comes from rebuilds. See HISTORY.md 2026-09-09.
+export const revalidate = false;
 
 export const metadata = {
   title: `Top Manufacturers by State — US Manufacturer Directory | ${SITE_NAME}`,

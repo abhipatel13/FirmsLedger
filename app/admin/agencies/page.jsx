@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Plus, RefreshCw, CheckCircle, Star, Globe,
-  Loader2, Trash2, X, Pencil,
-} from 'lucide-react';
+  Loader2, Trash2, X, Pencil, BadgeCheck, ExternalLink,} from 'lucide-react';
 
 const INDUSTRIES = [
   'IT & Software', 'Healthcare', 'Finance', 'Manufacturing', 'Retail',
@@ -29,8 +28,8 @@ const EMPTY_FORM = {
 function Badge({ label, color }) {
   const map = {
     green:  'bg-green-900/40 text-green-300 border-green-700/40',
-    orange: 'bg-orange-900/40 text-orange-300 border-orange-700/40',
-    slate:  'bg-gray-800 text-gray-400 border-gray-700',
+    orange: 'bg-[#F5A623]/12 text-[#F5A623] border-[#F5A623]/30',
+    slate:  'bg-[#16233A] text-[#94A3B8] border-white/[0.14]',
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${map[color] || map.slate}`}>
@@ -47,11 +46,11 @@ function Toggle({ checked, onChange, label }) {
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative w-9 h-5 rounded-full transition-colors ${checked ? 'bg-blue-600' : 'bg-gray-700'}`}
+        className={`relative w-9 h-5 rounded-full transition-colors ${checked ? 'bg-[#F5A623]' : 'bg-[#1D2C46]'}`}
       >
         <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
       </button>
-      <span className="text-sm text-gray-400">{label}</span>
+      <span className="text-sm text-[#94A3B8]">{label}</span>
     </label>
   );
 }
@@ -59,7 +58,7 @@ function Toggle({ checked, onChange, label }) {
 function FormField({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-400 mb-1.5">
+      <label className="block text-xs font-medium text-[#94A3B8] mb-1.5">
         {label}{required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
       {children}
@@ -67,7 +66,7 @@ function FormField({ label, required, children }) {
   );
 }
 
-const INPUT = 'w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500';
+const INPUT = 'w-full bg-[#16233A] border border-white/[0.14] rounded-lg px-3 py-2.5 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#F5A623]';
 
 const SERVICE_CATEGORIES = [
   'Digital Marketing', 'SEO', 'Web Development', 'Mobile App Development',
@@ -101,20 +100,20 @@ function ServiceFocusEditor({ value, onChange }) {
           <div className="flex items-center gap-1 shrink-0">
             <input
               type="number" min="0" max="100"
-              className="w-16 bg-gray-800 border border-gray-700 rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-blue-500"
+              className="w-16 bg-[#16233A] border border-white/[0.14] rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-[#F5A623]"
               value={row.percentage}
               onChange={(e) => update(i, 'percentage', parseInt(e.target.value) || 0)}
             />
-            <span className="text-gray-500 text-sm">%</span>
+            <span className="text-[#64748B] text-sm">%</span>
           </div>
-          <button type="button" onClick={() => remove(i)} className="text-gray-600 hover:text-red-400 transition-colors shrink-0">
+          <button type="button" onClick={() => remove(i)} className="text-[#475569] hover:text-red-400 transition-colors shrink-0">
             <X className="w-4 h-4" />
           </button>
         </div>
       ))}
       <button
         type="button" onClick={add}
-        className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-1"
+        className="flex items-center gap-1.5 text-xs text-[#F5A623] hover:text-[#F5A623] transition-colors mt-1"
       >
         <Plus className="w-3.5 h-3.5" /> Add Service
       </button>
@@ -140,20 +139,20 @@ function IndustryFocusEditor({ value, onChange }) {
           <div className="flex items-center gap-1 shrink-0">
             <input
               type="number" min="0" max="100"
-              className="w-16 bg-gray-800 border border-gray-700 rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-blue-500"
+              className="w-16 bg-[#16233A] border border-white/[0.14] rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-[#F5A623]"
               value={row.percentage}
               onChange={(e) => update(i, 'percentage', parseInt(e.target.value) || 0)}
             />
-            <span className="text-gray-500 text-sm">%</span>
+            <span className="text-[#64748B] text-sm">%</span>
           </div>
-          <button type="button" onClick={() => remove(i)} className="text-gray-600 hover:text-red-400 transition-colors shrink-0">
+          <button type="button" onClick={() => remove(i)} className="text-[#475569] hover:text-red-400 transition-colors shrink-0">
             <X className="w-4 h-4" />
           </button>
         </div>
       ))}
       <button
         type="button" onClick={add}
-        className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-1"
+        className="flex items-center gap-1.5 text-xs text-[#F5A623] hover:text-[#F5A623] transition-colors mt-1"
       >
         <Plus className="w-3.5 h-3.5" /> Add Industry
       </button>
@@ -175,15 +174,15 @@ function ClientFocusEditor({ value, onChange }) {
     <div className="flex gap-4">
       {labels.map(({ key, label }) => (
         <div key={key} className="flex-1">
-          <p className="text-xs text-gray-500 mb-1">{label}</p>
+          <p className="text-xs text-[#64748B] mb-1">{label}</p>
           <div className="flex items-center gap-1">
             <input
               type="number" min="0" max="100"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-blue-500"
+              className="w-full bg-[#16233A] border border-white/[0.14] rounded-lg px-2 py-2.5 text-white text-sm text-center focus:outline-none focus:border-[#F5A623]"
               value={cf[key] ?? 0}
               onChange={(e) => update(key, e.target.value)}
             />
-            <span className="text-gray-500 text-sm shrink-0">%</span>
+            <span className="text-[#64748B] text-sm shrink-0">%</span>
           </div>
         </div>
       ))}
@@ -231,14 +230,14 @@ function RegisterModal({ onClose, onCreated }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 pt-10">
-      <div className="relative w-full max-w-2xl bg-gray-900 rounded-2xl border border-gray-800 mb-10">
+      <div className="relative w-full max-w-2xl bg-[#111C2E] rounded-2xl border border-white/[0.08] mb-10">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-800">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.08]">
           <div>
             <h2 className="text-lg font-bold text-white">Register Agency</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Add a new agency directly to the directory</p>
+            <p className="text-xs text-[#64748B] mt-0.5">Add a new agency directly to the directory</p>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[#64748B] hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -323,8 +322,8 @@ function RegisterModal({ onClose, onCreated }) {
           </div>
 
           {/* Social Media */}
-          <div className="pt-2 border-t border-gray-800">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Social Media</p>
+          <div className="pt-2 border-t border-white/[0.08]">
+            <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wide mb-3">Social Media</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField label="LinkedIn URL">
                 <input className={INPUT} type="url" value={form.linkedin_url} onChange={(e) => set('linkedin_url', e.target.value)} placeholder="https://linkedin.com/company/..." />
@@ -342,8 +341,8 @@ function RegisterModal({ onClose, onCreated }) {
           </div>
 
           {/* Focus fields */}
-          <div className="pt-2 border-t border-gray-800 space-y-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Focus Data</p>
+          <div className="pt-2 border-t border-white/[0.08] space-y-4">
+            <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wide">Focus Data</p>
             <FormField label="Service Focus">
               <ServiceFocusEditor value={form.service_focus} onChange={(v) => set('service_focus', v)} />
             </FormField>
@@ -364,8 +363,8 @@ function RegisterModal({ onClose, onCreated }) {
                   onClick={() => toggleIndustry(ind)}
                   className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                     form.industries_served.includes(ind)
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-500'
+                      ? 'bg-[#F5A623] text-[#0B1220] border-[#F5A623]'
+                      : 'bg-[#16233A] text-[#94A3B8] border-white/[0.14] hover:border-white/30'
                   }`}
                 >
                   {ind}
@@ -381,18 +380,18 @@ function RegisterModal({ onClose, onCreated }) {
             <Toggle checked={form.remote_support} onChange={(v) => set('remote_support', v)} label="Remote Support" />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-gray-800">
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/[0.08]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-700 rounded-lg hover:border-gray-600 transition-colors"
+              className="px-4 py-2 text-sm text-[#94A3B8] hover:text-white border border-white/[0.14] rounded-lg hover:border-white/25 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 px-5 py-2 bg-[#F5A623] hover:bg-[#e0961c] disabled:opacity-50 text-[#0B1220] text-sm font-medium rounded-lg transition-colors"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               {saving ? 'Registering…' : 'Register Agency'}
@@ -474,13 +473,13 @@ function EditModal({ agency, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 pt-10">
-      <div className="relative w-full max-w-2xl bg-gray-900 rounded-2xl border border-gray-800 mb-10">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-800">
+      <div className="relative w-full max-w-2xl bg-[#111C2E] rounded-2xl border border-white/[0.08] mb-10">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.08]">
           <div>
             <h2 className="text-lg font-bold text-white">Edit Agency</h2>
-            <p className="text-xs text-gray-500 mt-0.5">{agency.name}</p>
+            <p className="text-xs text-[#64748B] mt-0.5">{agency.name}</p>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[#64748B] hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -565,8 +564,8 @@ function EditModal({ agency, onClose, onSaved }) {
           </div>
 
           {/* Social Media */}
-          <div className="pt-2 border-t border-gray-800">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Social Media</p>
+          <div className="pt-2 border-t border-white/[0.08]">
+            <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wide mb-3">Social Media</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField label="LinkedIn URL">
                 <input className={INPUT} type="url" value={form.linkedin_url} onChange={(e) => set('linkedin_url', e.target.value)} placeholder="https://linkedin.com/company/..." />
@@ -584,8 +583,8 @@ function EditModal({ agency, onClose, onSaved }) {
           </div>
 
           {/* Focus fields */}
-          <div className="pt-2 border-t border-gray-800 space-y-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Focus Data</p>
+          <div className="pt-2 border-t border-white/[0.08] space-y-4">
+            <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wide">Focus Data</p>
             <FormField label="Service Focus">
               <ServiceFocusEditor value={form.service_focus} onChange={(v) => set('service_focus', v)} />
             </FormField>
@@ -606,8 +605,8 @@ function EditModal({ agency, onClose, onSaved }) {
                   onClick={() => toggleIndustry(ind)}
                   className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                     form.industries_served.includes(ind)
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-500'
+                      ? 'bg-[#F5A623] text-[#0B1220] border-[#F5A623]'
+                      : 'bg-[#16233A] text-[#94A3B8] border-white/[0.14] hover:border-white/30'
                   }`}
                 >
                   {ind}
@@ -623,18 +622,18 @@ function EditModal({ agency, onClose, onSaved }) {
             <Toggle checked={form.remote_support} onChange={(v) => set('remote_support', v)} label="Remote Support" />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-gray-800">
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/[0.08]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-700 rounded-lg hover:border-gray-600 transition-colors"
+              className="px-4 py-2 text-sm text-[#94A3B8] hover:text-white border border-white/[0.14] rounded-lg hover:border-white/25 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 px-5 py-2 bg-[#F5A623] hover:bg-[#e0961c] disabled:opacity-50 text-[#0B1220] text-sm font-medium rounded-lg transition-colors"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               {saving ? 'Saving…' : 'Save Changes'}
@@ -667,7 +666,7 @@ function DeleteModal({ agency, onClose, onDeleted }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-md bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+      <div className="w-full max-w-md bg-[#111C2E] rounded-2xl border border-white/[0.08] overflow-hidden">
         {/* Red top bar */}
         <div className="h-1 bg-red-500 w-full" />
 
@@ -678,7 +677,7 @@ function DeleteModal({ agency, onClose, onDeleted }) {
           </div>
 
           <h2 className="text-lg font-bold text-white mb-1">Delete Agency</h2>
-          <p className="text-gray-400 text-sm mb-1">
+          <p className="text-[#94A3B8] text-sm mb-1">
             You are about to permanently delete:
           </p>
           <p className="text-white font-semibold text-sm mb-4 truncate">
@@ -694,7 +693,7 @@ function DeleteModal({ agency, onClose, onDeleted }) {
             <button
               onClick={onClose}
               disabled={deleting}
-              className="flex-1 px-4 py-2.5 text-sm text-gray-300 border border-gray-700 rounded-lg hover:border-gray-600 hover:text-white transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 text-sm text-[#CBD5E1] border border-white/[0.14] rounded-lg hover:border-white/25 hover:text-white transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -722,22 +721,38 @@ export default function AgenciesPage() {
   const [deletingAgency, setDeletingAgency] = useState(null);
   const [updating, setUpdating] = useState({});
   const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('pending');
+  const [counts, setCounts] = useState({ total: 0, approved: 0, pending: 0, verified: 0, featured: 0 });
+  const [truncated, setTruncated] = useState(false);
 
+  // Filtering and searching are done by the server. The page used to pull all
+  // ~12,800 companies and filter in the browser, which made the unapproved
+  // queue unreachable without scrolling the whole table.
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/agencies', { credentials: 'include' });
+      const params = new URLSearchParams({ status, limit: '200' });
+      if (search.trim()) params.set('q', search.trim());
+      const res = await fetch(`/api/admin/agencies?${params}`, { credentials: 'include' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setAgencies(await res.json());
+      const json = await res.json();
+      setAgencies(json.data ?? []);
+      setCounts(json.counts ?? counts);
+      setTruncated(Boolean(json.truncated));
     } catch (e) {
       setError(e.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, search]);
 
-  useEffect(() => { load(); }, [load]);
+  // Debounced so typing doesn't fire a query per keystroke.
+  useEffect(() => {
+    const t = setTimeout(load, search ? 300 : 0);
+    return () => clearTimeout(t);
+  }, [load, search]);
 
   const patch = async (id, updates) => {
     setUpdating((u) => ({ ...u, [id]: true }));
@@ -761,15 +776,18 @@ export default function AgenciesPage() {
     setAgencies((list) => list.filter((a) => a.id !== id));
   };
 
-  const filtered = agencies.filter((a) =>
-    !search || a.name.toLowerCase().includes(search.toLowerCase()) ||
-    a.contact_email?.toLowerCase().includes(search.toLowerCase()) ||
-    a.hq_city?.toLowerCase().includes(search.toLowerCase())
-  );
+  // The server already filtered; rendering `agencies` directly keeps the counts
+  // and the rows describing the same thing.
+  const filtered = agencies;
+  const { total, approved, pending } = counts;
 
-  const total = agencies.length;
-  const approved = agencies.filter((a) => a.approved).length;
-  const pending = total - approved;
+  const TABS = [
+    { key: 'pending',  label: 'Pending',  n: counts.pending },
+    { key: 'approved', label: 'Approved', n: counts.approved },
+    { key: 'verified', label: 'Verified', n: counts.verified },
+    { key: 'featured', label: 'Featured', n: counts.featured },
+    { key: 'all',      label: 'All',      n: counts.total },
+  ];
 
   return (
     <div className="p-6 w-full">
@@ -777,39 +795,67 @@ export default function AgenciesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-bold text-white">Agencies</h1>
-          <p className="text-gray-400 text-sm mt-0.5">
+          <p className="text-[#94A3B8] text-sm mt-0.5">
             {total} total · {approved} approved · {pending} pending
           </p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={load}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-300 hover:bg-gray-700 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 bg-[#16233A] border border-white/[0.14] rounded-lg text-sm text-[#CBD5E1] hover:bg-white/[0.1] transition-colors"
           >
             <RefreshCw className="w-3.5 h-3.5" /> Refresh
           </button>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#F5A623] hover:bg-[#e0961c] text-[#0B1220] text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" /> Register Agency
           </button>
         </div>
       </div>
 
+      {/* Status tabs — this is how the unapproved queue is reached. */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {TABS.map(({ key, label, n }) => {
+          const active = status === key;
+          return (
+            <button
+              key={key}
+              onClick={() => setStatus(key)}
+              aria-pressed={active}
+              className={`h-8 px-3 rounded-lg text-xs font-semibold border transition-colors duration-150
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5A623]/70 ${
+                active
+                  ? 'bg-[#F5A623] text-[#0B1220] border-[#F5A623]'
+                  : 'border-white/[0.12] text-[#94A3B8] hover:text-[#E8EDF5] hover:bg-white/[0.06]'
+              }`}
+            >
+              {label} <span className={active ? 'opacity-70' : 'opacity-60'}>({n.toLocaleString()})</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Search */}
       <div className="mb-4">
         <input
-          className="w-full max-w-sm bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          className="w-full max-w-sm bg-[#16233A] border border-white/[0.14] rounded-lg px-3 py-2.5 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#F5A623]"
           placeholder="Search by name, email or city…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
+      {truncated && !loading && (
+        <p className="mb-3 text-xs text-[#64748B]">
+          Showing the newest 200 of {status === 'all' ? total.toLocaleString() : `${(counts[status] ?? 0).toLocaleString()}`} — narrow it with the search box.
+        </p>
+      )}
+
       {/* Content */}
       {loading ? (
-        <div className="flex items-center gap-2 text-gray-500 py-12 justify-center">
+        <div className="flex items-center gap-2 text-[#64748B] py-12 justify-center">
           <Loader2 className="w-5 h-5 animate-spin" /> Loading…
         </div>
       ) : error ? (
@@ -818,45 +864,72 @@ export default function AgenciesPage() {
           <button onClick={load} className="underline hover:no-underline">retry</button>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-12 text-center">
-          <p className="text-gray-500 text-sm">
+        <div className="bg-[#111C2E] border border-white/[0.08] rounded-xl p-12 text-center">
+          <p className="text-[#64748B] text-sm">
             {search ? 'No agencies match your search.' : 'No agencies yet.'}
           </p>
           {!search && (
             <button
               onClick={() => setShowForm(true)}
-              className="mt-4 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg mx-auto"
+              className="mt-4 flex items-center gap-2 px-4 py-2 bg-[#F5A623] text-[#0B1220] text-sm font-medium rounded-lg mx-auto"
             >
               <Plus className="w-4 h-4" /> Register First Agency
             </button>
           )}
         </div>
       ) : (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        <div className="bg-[#111C2E] border border-white/[0.08] rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-800 bg-gray-950/50">
-                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Agency</th>
-                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Location</th>
-                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden sm:table-cell">Status</th>
-                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden lg:table-cell">Rating</th>
-                <th className="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Actions</th>
+              <tr className="border-b border-white/[0.08] bg-[#0B1220]/50">
+                <th className="text-left px-5 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide">Agency</th>
+                <th className="text-left px-5 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide hidden md:table-cell">Location</th>
+                <th className="text-left px-5 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide hidden sm:table-cell">Status</th>
+                <th className="text-left px-5 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide hidden lg:table-cell">Rating</th>
+                <th className="px-5 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wide text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800">
+            <tbody className="divide-y divide-white/[0.08]">
               {filtered.map((a) => (
-                <tr key={a.id} className="hover:bg-gray-800/30 transition-colors">
+                <tr key={a.id} className="hover:bg-white/[0.06] transition-colors">
                   <td className="px-5 py-4">
-                    <p className="font-semibold text-gray-100">{a.name}</p>
+                    <div className="flex items-center gap-2">
+                      {/* Reviewing a listing starts by reading it, so the name
+                          itself opens the detail form — the pencil in the
+                          actions column was the only way in before. */}
+                      <button
+                        type="button"
+                        onClick={() => setEditingAgency(a)}
+                        title="Open details"
+                        className="text-left font-semibold text-[#E8EDF5] hover:text-[#F5A623] transition-colors duration-150 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5A623]/70"
+                      >
+                        {a.name}
+                      </button>
+                      {/* Unapproved listings still render at /company/[slug]
+                          (that route only 404s when the row is missing), so
+                          this shows exactly how it would look published. */}
+                      {a.slug && (
+                        <a
+                          href={`/company/${a.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="View public page"
+                          aria-label={`View public page for ${a.name}`}
+                          className="text-[#475569] hover:text-[#F5A623] transition-colors duration-150 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5A623]/70"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </div>
                     {a.contact_email && (
-                      <p className="text-xs text-gray-500 mt-0.5">{a.contact_email}</p>
+                      <p className="text-xs text-[#64748B] mt-0.5">{a.contact_email}</p>
                     )}
                     {a.website && (
                       <a
                         href={a.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-blue-400 hover:underline mt-0.5"
+                        className="inline-flex items-center gap-1 text-xs text-[#F5A623] hover:underline mt-0.5"
                       >
                         <Globe className="w-3 h-3" />
                         {a.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
@@ -864,8 +937,8 @@ export default function AgenciesPage() {
                     )}
                   </td>
 
-                  <td className="px-5 py-4 text-gray-500 text-xs hidden md:table-cell">
-                    {[a.hq_city, a.hq_country].filter(Boolean).join(', ') || '—'}
+                  <td className="px-5 py-4 text-[#64748B] text-xs hidden md:table-cell">
+                    {[a.hq_city, a.hq_state_label].filter(Boolean).join(', ') || '—'}
                   </td>
 
                   <td className="px-5 py-4 hidden sm:table-cell">
@@ -879,53 +952,70 @@ export default function AgenciesPage() {
                   <td className="px-5 py-4 hidden lg:table-cell">
                     {a.avg_rating > 0 ? (
                       <div className="flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
-                        <span className="text-gray-300 font-medium">{Number(a.avg_rating).toFixed(1)}</span>
-                        <span className="text-gray-500 text-xs">({a.review_count})</span>
+                        <Star className="w-3.5 h-3.5 text-[#F5A623] fill-orange-400" />
+                        <span className="text-[#CBD5E1] font-medium">{Number(a.avg_rating).toFixed(1)}</span>
+                        <span className="text-[#64748B] text-xs">({a.review_count})</span>
                       </div>
                     ) : (
-                      <span className="text-gray-600 text-xs">No reviews</span>
+                      <span className="text-[#475569] text-xs">No reviews</span>
                     )}
                   </td>
 
                   <td className="px-5 py-4">
                     <div className="flex items-center justify-end gap-1">
                       {updating[a.id] ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+                        <Loader2 className="w-4 h-4 animate-spin text-[#64748B]" />
                       ) : (
                         <>
                           <button
                             onClick={() => setEditingAgency(a)}
                             title="Edit"
-                            className="p-1.5 rounded-lg text-gray-500 hover:bg-blue-900/30 hover:text-blue-400 transition-colors"
+                            className="p-1.5 rounded-lg text-[#64748B] hover:bg-[#F5A623]/10 hover:text-[#F5A623] transition-colors"
                           >
                             <Pencil className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => patch(a.id, { approved: !a.approved })}
-                            title={a.approved ? 'Revoke approval' : 'Approve'}
-                            className={`p-1.5 rounded-lg transition-colors ${a.approved ? 'text-green-400 hover:bg-green-900/30' : 'text-gray-600 hover:bg-gray-800 hover:text-green-400'}`}
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                          </button>
+                          {/* Approving is the primary job on this screen, so an
+                              unapproved row gets a labelled button rather than
+                              an icon whose meaning lives in a tooltip. */}
+                          {a.approved ? (
+                            <button
+                              onClick={() => patch(a.id, { approved: false })}
+                              title="Revoke approval"
+                              aria-label="Revoke approval"
+                              className="p-1.5 rounded-lg text-green-400 hover:bg-green-900/30 transition-colors duration-150"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => patch(a.id, { approved: true })}
+                              className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5A623]/70"
+                            >
+                              <CheckCircle className="w-3.5 h-3.5" /> Approve
+                            </button>
+                          )}
+                          {/* BadgeCheck, not CheckCircle: this button and the
+                              approve button above it were the same icon, so the
+                              only difference was colour. */}
                           <button
                             onClick={() => patch(a.id, { verified: !a.verified })}
                             title={a.verified ? 'Unverify' : 'Verify'}
-                            className={`p-1.5 rounded-lg transition-colors ${a.verified ? 'text-blue-400 hover:bg-blue-900/30' : 'text-gray-600 hover:bg-gray-800 hover:text-blue-400'}`}
+                            aria-label={a.verified ? 'Unverify' : 'Verify'}
+                            className={`p-1.5 rounded-lg transition-colors duration-150 ${a.verified ? 'text-[#F5A623] hover:bg-[#F5A623]/10' : 'text-[#475569] hover:bg-white/[0.06] hover:text-[#F5A623]'}`}
                           >
-                            <CheckCircle className="w-4 h-4" />
+                            <BadgeCheck className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => patch(a.id, { featured: !a.featured })}
                             title={a.featured ? 'Unfeature' : 'Feature'}
-                            className={`p-1.5 rounded-lg transition-colors ${a.featured ? 'text-orange-400 hover:bg-orange-900/30' : 'text-gray-600 hover:bg-gray-800 hover:text-orange-400'}`}
+                            className={`p-1.5 rounded-lg transition-colors ${a.featured ? 'text-[#F5A623] hover:bg-[#F5A623]/10' : 'text-[#475569] hover:bg-white/[0.06] hover:text-[#F5A623]'}`}
                           >
                             <Star className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setDeletingAgency(a)}
                             title="Delete"
-                            className="p-1.5 rounded-lg text-gray-600 hover:bg-red-900/30 hover:text-red-400 transition-colors"
+                            className="p-1.5 rounded-lg text-[#475569] hover:bg-red-900/30 hover:text-red-400 transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

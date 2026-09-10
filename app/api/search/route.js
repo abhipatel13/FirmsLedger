@@ -11,6 +11,21 @@ import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 const CACHE = { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' };
 const json = (body) => NextResponse.json(body, { headers: CACHE });
 
+const COMPANY_FIELDS = {
+  slug: companies.slug,
+  name: companies.name,
+  description: companies.description,
+  hq_city: companies.hq_city,
+  hq_state_label: companies.hq_state_label,
+  avg_rating: companies.avg_rating,
+  review_count: companies.review_count,
+  logo_url: companies.logo_url,
+  is_verified: companies.is_verified,
+  website: companies.website,
+  employee_count: companies.employee_count,
+  certifications: companies.certifications,
+};
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const q            = (searchParams.get('q') || '').trim();
@@ -18,6 +33,7 @@ export async function GET(request) {
   const subcategorySlug = (searchParams.get('subcategory') || '').trim();
   const stateSlug     = (searchParams.get('state') || '').trim();
   const employeesParam = (searchParams.get('employees') || '').trim();
+  const slug           = (searchParams.get('slug') || '').trim();
 
   const categorySlugs = categorySlug ? categorySlug.split(',').filter(Boolean) : [];
   const subcategorySlugs = subcategorySlug ? subcategorySlug.split(',').filter(Boolean) : [];
@@ -25,6 +41,18 @@ export async function GET(request) {
 
   const stateSlugs    = stateSlug ? stateSlug.split(',').filter(Boolean) : [];
   const employeeRanges = employeesParam ? employeesParam.split(',').filter(Boolean) : [];
+
+  // Single-company lookup by exact slug. Used by /claim-listing to display the
+  // company being claimed; deliberately returns the same shape as a search hit
+  // and, like search, only ever exposes approved listings.
+  if (slug) {
+    const one = await db
+      .select(COMPANY_FIELDS)
+      .from(companies)
+      .where(and(eq(companies.approved, true), eq(companies.slug, slug)))
+      .limit(1);
+    return json(one);
+  }
 
   // Need at least a real text query or one filter — otherwise there's nothing to search on.
   const hasQuery  = q.length >= 2;
@@ -97,23 +125,13 @@ export async function GET(request) {
   }
 
   let results = await db
-    .select({
-      slug: companies.slug,
-      name: companies.name,
-      description: companies.description,
-      hq_city: companies.hq_city,
-      hq_state_label: companies.hq_state_label,
-      avg_rating: companies.avg_rating,
-      review_count: companies.review_count,
-      logo_url: companies.logo_url,
-      is_verified: companies.is_verified,
-      website: companies.website,
-      employee_count: companies.employee_count,
-      certifications: companies.certifications,
-    })
+    .select(COMPANY_FIELDS)
     .from(companies)
     .where(and(...conditions))
-    .limit(50);
+    // 200, not 50: /search is now where users browse past the first 25 results
+    // on a category page. The largest category+state combo is 129 companies, so
+    // 50 silently truncated. See HISTORY.md 2026-09-05.
+    .limit(200);
 
   if (employeeRanges.length) {
     const wanted = new Set(employeeRanges);

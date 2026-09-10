@@ -22,6 +22,8 @@ import {
   marketplace_rfqs,
   marketplace_suppliers,
   marketplace_responses,
+  claims,
+  company_leads,
 } from './schema';
 import { eq, and, inArray, isNull, isNotNull, gt, asc, desc, ilike, sql } from 'drizzle-orm';
 import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
@@ -909,4 +911,161 @@ export async function fetchRfqById(id) {
 export async function fetchSupplierById(id) {
   const [row] = await db.select().from(marketplace_suppliers).where(eq(marketplace_suppliers.id, id)).limit(1);
   return row ?? null;
+}
+
+// ── Owner dashboard ───────────────────────────────────────────────────────────
+// Ownership is "the account holding this company's APPROVED claim" — see
+// drizzle/0002_claims.sql. companies.owner_user_id is a dead Supabase-era
+// column and is not consulted.
+//
+// NOTHING HERE IS CACHED, deliberately. These are per-account authenticated
+// reads; an unstable_cache entry keyed only on the company id would serve one
+// owner's view to another, and a `cache()` wrapper would outlive a permission
+// change within the same render.
+
+/** Every company this account has claimed, approved or not, newest first. */
+export async function fetchClaimsForUser(userId) {
+  if (!userId) return [];
+  try {
+    return await db
+      .select({
+        claim_id: claims.id,
+        claim_status: claims.status,
+        claim_created_at: claims.created_at,
+        reviewed_at: claims.reviewed_at,
+        review_note: claims.review_note,
+        id: companies.id,
+        slug: companies.slug,
+        name: companies.name,
+        logo_url: companies.logo_url,
+        hq_city: companies.hq_city,
+        hq_state_label: companies.hq_state_label,
+        avg_rating: companies.avg_rating,
+        review_count: companies.review_count,
+        description: companies.description,
+        lead_count: sql`(SELECT count(*) FROM ${company_leads}
+                          WHERE ${company_leads.company_id} = ${companies.id})::int`,
+      })
+      .from(claims)
+      .innerJoin(companies, eq(claims.company_id, companies.id))
+      .where(eq(claims.user_id, userId))
+      .orderBy(desc(claims.created_at))
+      .limit(50);
+  } catch (err) {
+    console.error('Error fetching claims for user:', err);
+    return [];
+  }
+}
+
+/**
+ * The company at `companyId` ONLY IF `userId` holds its approved claim.
+ * Returns null otherwise — callers treat null as "not yours" and 404, so a
+ * probe cannot distinguish a missing company from someone else's.
+ *
+ * Every owner write must go through this. Never trust a company id from a
+ * request body.
+ */
+export async function fetchCompanyForOwner(companyId, userId) {
+  if (!companyId || !userId) return null;
+  try {
+    const [row] = await db
+      .select({ company: companies })
+      .from(claims)
+      .innerJoin(companies, eq(claims.company_id, companies.id))
+      .where(and(
+        eq(claims.company_id, companyId),
+        eq(claims.user_id, userId),
+        eq(claims.status, 'approved'),
+      ))
+      .limit(1);
+    return row?.company ?? null;
+  } catch (err) {
+    console.error('Error fetching company for owner:', err);
+    return null;
+  }
+}
+
+/** Category ids currently linked to a company. */
+export async function fetchCategoryIdsForCompany(companyId) {
+  const rows = await db
+    .select({ category_id: company_categories.category_id })
+    .from(company_categories)
+    .where(eq(company_categories.company_id, companyId));
+  return rows.map((r) => r.category_id);
+}
+
+/**
+ * Replace a company's category links with `categoryIds`.
+ *
+ * Returns the slugs whose listing pages are now stale (added AND removed), so
+ * the caller can revalidate them. Only ids that exist in `categories` are
+ * written — an unknown id is dropped rather than trusted.
+ */
+export async function setCompanyCategories(companyId, categoryIds) {
+  const wanted = [...new Set((categoryIds || []).filter(Boolean))];
+
+  const valid = wanted.length
+    ? (await db.select({ id: categories.id, slug: categories.slug })
+        .from(categories).where(inArray(categories.id, wanted)))
+    : [];
+  const validIds = valid.map((c) => c.id);
+
+  const before = await fetchCategoryIdsForCompany(companyId);
+  const added = validIds.filter((id) => !before.includes(id));
+  const removed = before.filter((id) => !validIds.includes(id));
+  if (!added.length && !removed.length) return [];
+
+  // ponytail: delete-all-then-insert. The link table holds a handful of rows
+  // per company, so a diffed update would be more code for no gain.
+  await db.delete(company_categories).where(eq(company_categories.company_id, companyId));
+  for (const categoryId of validIds) {
+    await db.insert(company_categories).values({ company_id: companyId, category_id: categoryId });
+  }
+
+  const touched = [...new Set([...added, ...removed])];
+  const rows = touched.length
+    ? await db.select({ slug: categories.slug }).from(categories).where(inArray(categories.id, touched))
+    : [];
+  return rows.map((r) => r.slug);
+}
+
+/**
+ * Every category slug a company is listed under, with its parent slug when the
+ * category is a subcategory.
+ *
+ * Needed because an owner's edit changes how they appear on the CATEGORY
+ * LISTING pages too (CompanyCard renders description, capabilities, products,
+ * certifications, phone and location), not just on their own profile. Those
+ * pages are `revalidate = false`, so they must be revalidated explicitly or the
+ * edit is invisible where buyers actually browse.
+ */
+export async function fetchCategoryPathsForCompany(companyId) {
+  const linked = await db
+    .select({ slug: categories.slug, parent_id: categories.parent_id })
+    .from(company_categories)
+    .innerJoin(categories, eq(company_categories.category_id, categories.id))
+    .where(eq(company_categories.company_id, companyId));
+
+  const parentIds = [...new Set(linked.map((r) => r.parent_id).filter(Boolean))];
+  const parents = parentIds.length
+    ? await db.select({ id: categories.id, slug: categories.slug })
+        .from(categories).where(inArray(categories.id, parentIds))
+    : [];
+  const parentSlug = new Map(parents.map((p) => [p.id, p.slug]));
+
+  return linked.map((r) => ({
+    slug: r.slug,
+    parent_slug: r.parent_id ? parentSlug.get(r.parent_id) ?? null : null,
+  }));
+}
+
+/** State slug for a company, used to revalidate its category+state pages. */
+export async function fetchStateSlugForCompany(companyId) {
+  const [row] = await db
+    .select({ slug: states.slug })
+    .from(companies)
+    .innerJoin(states, eq(companies.hq_state_id, states.id))
+    .where(eq(companies.id, companyId))
+    .limit(1);
+  return row?.slug ?? null;
 }

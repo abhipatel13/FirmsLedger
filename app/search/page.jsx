@@ -62,7 +62,11 @@ function SearchContent() {
     // there whether the pair came from typed text ("switchgear in wisconsin")
     // or from the category/state dropdowns, as long as there's no leftover
     // free-text query that would otherwise get silently dropped.
-    if (resolved.cat && resolved.st && !resolved.text.trim()) {
+    // `&& !employees`: without it, a category+state pair redirected to /X/Y and
+    // silently dropped the size filter — and /X/Y is now prebuilt, so it cannot
+    // honour it either. Both the URL-driven effect and the submit handler need
+    // this. See HISTORY.md 2026-09-05.
+    if (resolved.cat && resolved.st && !resolved.text.trim() && !employees) {
       router.replace(canonicalPathFor({
         categorySlug: resolved.cat,
         subcategorySlug: resolved.intent.subcategorySlug || subcategory || null,
@@ -71,7 +75,13 @@ function SearchContent() {
       return;
     }
 
-    runSearch(resolved.text, category, state, subcategory, employees);
+    // resolved.cat/st, not the raw URL params. resolveQuery() pulls a category
+    // or state out of the typed text and strips those words from `text`, so
+    // "mechanical components" leaves text='' and categorySlug='mechanical-
+    // components'. Passing the (empty) URL params here meant no text AND no
+    // filter, and runSearch bailed with zero results. The submit handler below
+    // already used `resolved.cat || category`; this path did not.
+    runSearch(resolved.text, resolved.cat || category, resolved.st || state, subcategory, employees);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, category, state, subcategory, employees]);
 
@@ -114,7 +124,11 @@ function SearchContent() {
     clearTimeout(debounceRef.current);
     const resolved = resolveQuery(queryInput, category, state);
 
-    if (resolved.cat && resolved.st && !resolved.text.trim()) {
+    // `&& !employees`: without it, a category+state pair redirected to /X/Y and
+    // silently dropped the size filter — and /X/Y is now prebuilt, so it cannot
+    // honour it either. Both the URL-driven effect and the submit handler need
+    // this. See HISTORY.md 2026-09-05.
+    if (resolved.cat && resolved.st && !resolved.text.trim() && !employees) {
       router.push(canonicalPathFor({
         categorySlug: resolved.cat,
         subcategorySlug: resolved.intent.subcategorySlug || subcategory || null,
