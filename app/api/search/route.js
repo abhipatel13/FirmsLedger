@@ -3,6 +3,7 @@ import { db } from '@/db/client';
 import { companies, categories, company_categories, states } from '@/db/schema';
 import { eq, and, ilike, or, inArray } from 'drizzle-orm';
 import { searchTokens } from '@/lib/searchIntent';
+import { rankSearchResults } from '@/lib/searchRanking';
 import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 
 // Only public route that hits Postgres per request. Uncached, a single visitor
@@ -62,6 +63,7 @@ export async function GET(request) {
   }
 
   const conditions = [eq(companies.approved, true)];
+  const tokens = hasQuery ? searchTokens(q) : [];
 
   if (hasQuery) {
     // Match each significant word separately instead of the whole phrase as one
@@ -70,7 +72,6 @@ export async function GET(request) {
     // single contiguous %pattern% ever could. Words are stemmed so machines /
     // machine / machining all match, and stopwords are dropped so "in" is not
     // required to appear anywhere.
-    const tokens = searchTokens(q);
     if (!tokens.length && !hasFilter) return json([]);
 
     for (const token of tokens) {
@@ -137,6 +138,9 @@ export async function GET(request) {
     const wanted = new Set(employeeRanges);
     results = results.filter((c) => wanted.has(bucketKeyFor(parseEmployeeCount(c.employee_count))));
   }
+
+  // The DB query is inclusion-only and returns primary-key order — rank the hits.
+  rankSearchResults(results, q, tokens);
 
   return json(results);
 }
