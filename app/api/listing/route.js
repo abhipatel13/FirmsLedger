@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { db } from '@/db/client';
 import { listing_requests } from '@/db/schema';
+import { escapeHtml, safeLink } from '@/lib/emailHtml';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -25,7 +26,6 @@ function notifyNewListing({ company_name, contact_email, contact_phone, website,
 
   if (resend) {
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
-    const esc = (s) => (s || '').replace(/</g, '&lt;');
     return resend.emails.send({
       from: fromEmail,
       to: [notifyEmail],
@@ -34,17 +34,17 @@ function notifyNewListing({ company_name, contact_email, contact_phone, website,
         <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;">
           <div style="background:#1A2E4A;padding:20px 28px;border-radius:12px 12px 0 0;">
             <span style="display:inline-block;background:#22c55e;color:#ffffff;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;">New Submission</span>
-            <h1 style="color:#ffffff;font-size:22px;font-weight:800;margin:12px 0 0;">${esc(company_name)}</h1>
+            <h1 style="color:#ffffff;font-size:22px;font-weight:800;margin:12px 0 0;">${escapeHtml(company_name)}</h1>
           </div>
           <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:20px 28px 24px;">
             <table style="border-collapse:collapse;font-size:14px;width:100%;">
-              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;width:110px;">Location</td><td style="padding:7px 0;color:#0f172a;">${esc(location)}</td></tr>
-              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Email</td><td style="padding:7px 0;color:#0f172a;">${esc(contact_email)}</td></tr>
-              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Phone</td><td style="padding:7px 0;color:#0f172a;">${esc(contact_phone) || '—'}</td></tr>
-              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Website</td><td style="padding:7px 0;color:#0f172a;">${website ? `<a href="${esc(website)}" style="color:#1A2E4A;">${esc(website)}</a>` : '—'}</td></tr>
-              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Team Size</td><td style="padding:7px 0;color:#0f172a;">${esc(team_size) || '—'}</td></tr>
+              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;width:110px;">Location</td><td style="padding:7px 0;color:#0f172a;">${escapeHtml(location)}</td></tr>
+              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Email</td><td style="padding:7px 0;color:#0f172a;">${escapeHtml(contact_email)}</td></tr>
+              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Phone</td><td style="padding:7px 0;color:#0f172a;">${escapeHtml(contact_phone) || '—'}</td></tr>
+              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Website</td><td style="padding:7px 0;color:#0f172a;">${safeLink(website)}</td></tr>
+              <tr><td style="padding:7px 0;color:#64748b;font-weight:600;">Team Size</td><td style="padding:7px 0;color:#0f172a;">${escapeHtml(team_size) || '—'}</td></tr>
             </table>
-            ${description ? `<div style="margin-top:16px;padding:14px 16px;background:#f8fafc;border-left:3px solid #1A2E4A;border-radius:6px;color:#334155;font-size:13px;line-height:1.6;">${esc(description).replace(/\n/g, '<br/>')}</div>` : ''}
+            ${description ? `<div style="margin-top:16px;padding:14px 16px;background:#f8fafc;border-left:3px solid #1A2E4A;border-radius:6px;color:#334155;font-size:13px;line-height:1.6;">${escapeHtml(description).replace(/\n/g, '<br/>')}</div>` : ''}
           </div>
         </div>
       `,

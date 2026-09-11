@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db/client';
 import { reviews } from '@/db/schema';
+import { escapeHtml } from '@/lib/emailHtml';
 
 const num = (v) => {
   const n = Number(v);
@@ -50,13 +51,13 @@ export async function POST(request) {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || 'FirmsLedger <noreply@firmsledger.com>',
           to: process.env.NOTIFY_SUBMISSION_EMAIL,
-          subject: `New review pending: ${title}`,
+          subject: `New review pending: ${escapeHtml(title)}`,
           html: `
             <h2>New Review Pending Approval</h2>
-            <p><strong>Company ID:</strong> ${company_id}</p>
-            <p><strong>Rating:</strong> ${rating_overall} / 5</p>
-            <p><strong>Title:</strong> ${title}</p>
-            <p><strong>Body:</strong></p><p>${reviewBody.replace(/\n/g, '<br>')}</p>
+            <p><strong>Company ID:</strong> ${escapeHtml(company_id)}</p>
+            <p><strong>Rating:</strong> ${escapeHtml(rating_overall)} / 5</p>
+            <p><strong>Title:</strong> ${escapeHtml(title)}</p>
+            <p><strong>Body:</strong></p><p>${escapeHtml(reviewBody).replace(/\n/g, "<br>")}</p>
           `,
         });
       } catch (emailErr) {

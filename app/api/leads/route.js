@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { db } from '@/db/client';
 import { company_leads, companies } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { escapeHtml } from '@/lib/emailHtml';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -56,7 +57,6 @@ export async function POST(request) {
     const notifyEmail = company.contact_email || process.env.NOTIFY_SUBMISSION_EMAIL || 'abhipatel8675@gmail.com';
     if (resend && notifyEmail) {
       const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
-      const esc = (s) => (s || '').replace(/</g, '&lt;');
       resend.emails.send({
         from: fromEmail,
         to: [notifyEmail],
@@ -64,11 +64,11 @@ export async function POST(request) {
         html: `
           <h2 style="color:#0a0a0a;">New Proposal Request</h2>
           <table style="border-collapse:collapse;font-size:14px;width:100%;">
-            <tr><td style="padding:8px 12px;font-weight:600;width:140px;">Company</td><td style="padding:8px 12px;">${esc(company.name)}</td></tr>
-            <tr><td style="padding:8px 12px;font-weight:600;">From</td><td style="padding:8px 12px;">${esc(name)}</td></tr>
-            <tr><td style="padding:8px 12px;font-weight:600;">Email</td><td style="padding:8px 12px;">${esc(email)}</td></tr>
-            <tr><td style="padding:8px 12px;font-weight:600;">Phone</td><td style="padding:8px 12px;">${esc(phone) || '—'}</td></tr>
-            <tr><td style="padding:8px 12px;font-weight:600;vertical-align:top;">Message</td><td style="padding:8px 12px;">${esc(message).replace(/\n/g, '<br/>')}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:600;width:140px;">Company</td><td style="padding:8px 12px;">${escapeHtml(company.name)}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:600;">From</td><td style="padding:8px 12px;">${escapeHtml(name)}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:600;">Email</td><td style="padding:8px 12px;">${escapeHtml(email)}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:600;">Phone</td><td style="padding:8px 12px;">${escapeHtml(phone) || '—'}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:600;vertical-align:top;">Message</td><td style="padding:8px 12px;">${escapeHtml(message).replace(/\n/g, '<br/>')}</td></tr>
           </table>
         `,
       }).catch((err) => console.error('Lead notify email failed:', err));

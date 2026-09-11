@@ -4,6 +4,7 @@ import { db } from '@/db/client';
 import { companies, claims } from '@/db/schema';
 import { getUserFromCookie } from '@/lib/user-auth';
 import { verifyClaimEmail } from '@/lib/emailDomain';
+import { escapeHtml } from '@/lib/emailHtml';
 
 const ROLES = new Set(['owner', 'marketing', 'operations', 'other']);
 
@@ -137,15 +138,15 @@ export async function POST(request) {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || 'FirmsLedger <noreply@firmsledger.com>',
           to: process.env.NOTIFY_SUBMISSION_EMAIL,
-          subject: `Claim to review: ${company.name}`,
+          subject: `Claim to review: ${escapeHtml(company.name)}`,
           html: `
             <h2>New listing claim</h2>
-            <p><strong>Company:</strong> ${company.name}</p>
-            <p><strong>Claimed by:</strong> ${name} (${user.email})</p>
-            <p><strong>Work email:</strong> ${workEmail || '—'}</p>
-            <p><strong>Phone:</strong> ${phone || '—'}</p>
-            <p><strong>Role:</strong> ${role}</p>
-            <p><strong>Domain check:</strong> ${verification} — ${reason}</p>
+            <p><strong>Company:</strong> ${escapeHtml(company.name)}</p>
+            <p><strong>Claimed by:</strong> ${escapeHtml(name)} (${escapeHtml(user.email)})</p>
+            <p><strong>Work email:</strong> ${escapeHtml(workEmail) || '—'}</p>
+            <p><strong>Phone:</strong> ${escapeHtml(phone) || '—'}</p>
+            <p><strong>Role:</strong> ${escapeHtml(role)}</p>
+            <p><strong>Domain check:</strong> ${escapeHtml(verification)} — ${escapeHtml(reason)}</p>
             <p>Review it in the admin panel under Listing Claims.</p>
           `,
         });
