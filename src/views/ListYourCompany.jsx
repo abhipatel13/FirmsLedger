@@ -70,30 +70,6 @@ export default function ListYourCompany() {
 
       await api.submitListingRequest(submissionData);
 
-      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-      if (accessKey) {
-        const location = [form.hq_city, form.hq_state].filter(Boolean).join(', ') || '—';
-        await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            access_key: accessKey,
-            name: form.company_name,
-            email: form.email,
-            subject: `New Listing Request: ${form.company_name.slice(0, 60)}`,
-            message: [
-              `Company: ${form.company_name}`,
-              `Email: ${form.email}`,
-              `Phone: ${form.phone || '—'}`,
-              `Website: ${formattedWebsite || '—'}`,
-              `Location: ${location}`,
-              `Team Size: ${form.team_size || '—'}`,
-              form.message ? `Details: ${form.message}` : '',
-            ].filter(Boolean).join('\n'),
-          }),
-        }).catch((err) => console.error('Web3Forms client-side submit failed:', err));
-      }
-
       setSubmitted(true);
       toast.success('Your listing request has been submitted!');
     } catch (err) {

@@ -130,6 +130,7 @@ export async function submitListingRequest(data) {
       hq_city:       data.hq_city || '',
       category_slug: data.category_slug || data.category_ids?.[0] || '',
       description:   data.description || data.message || '',
+      team_size:     data.team_size || '',
     }),
   });
   const json = await res.json().catch(() => ({}));
