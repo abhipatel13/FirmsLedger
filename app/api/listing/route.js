@@ -109,7 +109,10 @@ export async function POST(request) {
       status: 'pending',
     }).returning();
 
-    notifyNewListing({ company_name, contact_email, contact_phone, website, hq_city, hq_state, description, team_size });
+    // MUST be awaited. Vercel freezes the invocation as soon as the response is
+    // returned, so an un-awaited send is killed mid-flight — that is how the
+    // PDI Duct request was lost on 2026-09-11. notifyNewListing never rejects.
+    await notifyNewListing({ company_name, contact_email, contact_phone, website, hq_city, hq_state, description, team_size });
 
     return NextResponse.json({ id: row.id, success: true });
   } catch (err) {

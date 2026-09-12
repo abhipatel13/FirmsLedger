@@ -4,6 +4,7 @@ import { db } from '@/db/client';
 import { company_leads, companies } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { escapeHtml } from '@/lib/emailHtml';
+import { notifyViaWeb3Forms } from '@/lib/web3forms';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -55,6 +56,26 @@ export async function POST(request) {
     }).returning({ id: company_leads.id });
 
     const notifyEmail = company.contact_email || process.env.NOTIFY_SUBMISSION_EMAIL || 'abhipatel8675@gmail.com';
+
+    // Web3Forms is the provider that actually works here — RESEND_API_KEY has
+    // never been set in production, so the block below has never run and these
+    // proposal requests have always notified nobody. Awaited deliberately:
+    // Vercel kills in-flight fetches once the response is returned.
+    if (!resend) {
+      await notifyViaWeb3Forms({
+        subject: `New proposal request for ${company.name}`,
+        from: email,
+        label: 'leads',
+        fields: {
+          Company: company.name,
+          From: name,
+          Email: email,
+          Phone: phone,
+          Message: message,
+        },
+      });
+    }
+
     if (resend && notifyEmail) {
       const fromEmail = process.env.RESEND_FROM_EMAIL || 'FirmsLedger <onboarding@resend.dev>';
       resend.emails.send({

@@ -5,6 +5,7 @@ import { companies, claims } from '@/db/schema';
 import { getUserFromCookie } from '@/lib/user-auth';
 import { verifyClaimEmail } from '@/lib/emailDomain';
 import { escapeHtml } from '@/lib/emailHtml';
+import { notifyViaWeb3Forms } from '@/lib/web3forms';
 
 const ROLES = new Set(['owner', 'marketing', 'operations', 'other']);
 
@@ -130,7 +131,27 @@ export async function POST(request) {
       });
 
     // Best-effort notification. The /admin/claims queue is the source of truth,
-    // so a missing RESEND_API_KEY must never fail the claim.
+    // so a failed send must never fail the claim.
+    //
+    // Web3Forms is the provider that actually works — RESEND_API_KEY has never
+    // been set in production, so the Resend block below has never run and
+    // claims have always notified nobody.
+    if (!process.env.RESEND_API_KEY) {
+      await notifyViaWeb3Forms({
+        subject: `Claim to review: ${company.name}`,
+        from: workEmail || user.email,
+        label: 'claim',
+        fields: {
+          Company: company.name,
+          'Claimed by': `${name} (${user.email})`,
+          'Work email': workEmail,
+          Phone: phone,
+          Role: role,
+          'Domain check': `${verification} — ${reason}`,
+        },
+      });
+    }
+
     if (process.env.RESEND_API_KEY && process.env.NOTIFY_SUBMISSION_EMAIL) {
       try {
         const { Resend } = await import('resend');
@@ -138,7 +159,8 @@ export async function POST(request) {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || 'FirmsLedger <noreply@firmsledger.com>',
           to: process.env.NOTIFY_SUBMISSION_EMAIL,
-          subject: `Claim to review: ${escapeHtml(company.name)}`,
+          // Subject is NOT an HTML context — escaping it would corrupt the text.
+          subject: `Claim to review: ${company.name}`,
           html: `
             <h2>New listing claim</h2>
             <p><strong>Company:</strong> ${escapeHtml(company.name)}</p>
