@@ -1,33 +1,8 @@
 import { NextResponse } from 'next/server';
+// Relative, not the '@/' alias: middleware.js sits at the repo root and is the
+// only file up here, so it has no alias precedent to lean on.
+import { isBlockedUserAgent } from './src/lib/blockedUserAgents.js';
 
-// A list of common user agent substrings used by automated scrapers and bad bots
-const BLOCKED_USER_AGENTS = [
-  'lightpanda',
-  'scrapy',
-  'python-requests',
-  'python-urllib',
-  'curl',
-  'wget',
-  'headlesschrome',
-  'puppeteer',
-  'phantomjs',
-  'ahrefsbot',
-  'semrushbot',
-  'mj12bot',
-  'rsiteauditor',
-  'dotbot',
-  'rogerbot',
-  'megaindex',
-  'petalbot',
-  'grapeshot',
-  'ltx71',
-  'barkrowler',
-  'blexbot',
-  'magpie-crawler',
-  'piplbot',
-  'domaincrawler',
-  'seekport'
-];
 
 export function middleware(request) {
   // Legacy /directory/* URLs are from the pre-pivot services directory (IT,
@@ -47,12 +22,10 @@ export function middleware(request) {
     return new NextResponse('Forbidden: Missing User-Agent', { status: 403 });
   }
 
-  const lowerCaseUserAgent = userAgent.toLowerCase();
-
-  // 2. Check if the User-Agent contains any known bad bot signatures
-  const isBlockedBot = BLOCKED_USER_AGENTS.some((bot) => lowerCaseUserAgent.includes(bot));
-
-  if (isBlockedBot) {
+  // 2. Check if the User-Agent contains any known bad bot signatures.
+  // The list lives in src/lib/blockedUserAgents.js so it can be unit-tested
+  // against app/robots.js — see middlewareRobotsAgree.test.mjs.
+  if (isBlockedUserAgent(userAgent)) {
     return new NextResponse('Forbidden: Automated Access Denied', { status: 403 });
   }
 
