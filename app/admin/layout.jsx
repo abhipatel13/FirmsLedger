@@ -2,7 +2,7 @@
 import AdminClientLayout from './AdminClientLayout';
 
 export const metadata = {
-  title: 'Admin — FirmsLedger',
+  title: 'Admin',
   robots: { index: false, follow: false },
 };
 

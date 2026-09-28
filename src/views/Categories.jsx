@@ -6,65 +6,10 @@ import { api } from '@/api/apiClient';
 import Link from 'next/link';
 import { getDirectoryUrl, getDirectoryStaffingUrl } from '@/utils';
 import { Search, ChevronRight, ArrowRight, Grid3X3, List, X } from 'lucide-react';
+import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
+import { pickCategoryIcon, colorFor } from '@/lib/categoryIcon';
 
-const CAT_ICONS = {
-  'staffing-companies': '👥',
-  'it-staffing': '💻',
-  'healthcare-staffing': '🏥',
-  'digital-marketing': '📣',
-  'seo': '🔍',
-  'web-development': '🌐',
-  'mobile-app-development': '📱',
-  'accounting': '📊',
-  'legal-services': '⚖️',
-  'legal': '⚖️',
-  'public-relations': '📰',
-  'pr-communications': '📰',
-  'graphic-design': '🎨',
-  'it-services': '🖥️',
-  'business-consulting': '💼',
-  'gst-tax-consultants': '🧾',
-  'content-writing-services': '✍️',
-  'food-beverage': '🍽️',
-  'chemicals-petrochemicals': '🧪',
-  'pharmaceuticals-healthcare': '💊',
-  'construction-building-materials': '🏗️',
-  'automotive-transportation': '🚗',
-  'electronics-electrical': '⚡',
-  'textiles-apparel': '👔',
-  'agriculture-farming': '🌾',
-  'packaging-printing': '📦',
-  'metals-mining': '⛏️',
-  'energy-power': '🔋',
-  'plastics-rubber': '♻️',
-  'machinery-equipment': '⚙️',
-  'paper-pulp': '📄',
-  'water-treatment': '💧',
-  'oil-gas': '🛢️',
-  'logistics-supply-chain': '🚛',
-  'real-estate': '🏠',
-  'education-training': '📚',
-  'hospitality-tourism': '🏨',
-  'media-entertainment': '🎬',
-  'financial-services': '💰',
-  'telecommunications': '📡',
-  'environmental-services': '🌿',
-  'aerospace-defense': '✈️',
-  'marine-shipping': '🚢',
-};
-
-const CAT_COLORS = [
-  { bg: 'bg-orange-50', border: 'border-orange-100', accent: 'text-orange-600', hoverBorder: 'hover:border-orange-300' },
-  { bg: 'bg-blue-50', border: 'border-blue-100', accent: 'text-blue-600', hoverBorder: 'hover:border-blue-300' },
-  { bg: 'bg-emerald-50', border: 'border-emerald-100', accent: 'text-emerald-600', hoverBorder: 'hover:border-emerald-300' },
-  { bg: 'bg-violet-50', border: 'border-violet-100', accent: 'text-violet-600', hoverBorder: 'hover:border-violet-300' },
-  { bg: 'bg-rose-50', border: 'border-rose-100', accent: 'text-rose-600', hoverBorder: 'hover:border-rose-300' },
-  { bg: 'bg-amber-50', border: 'border-amber-100', accent: 'text-amber-600', hoverBorder: 'hover:border-amber-300' },
-  { bg: 'bg-cyan-50', border: 'border-cyan-100', accent: 'text-cyan-600', hoverBorder: 'hover:border-cyan-300' },
-  { bg: 'bg-pink-50', border: 'border-pink-100', accent: 'text-pink-600', hoverBorder: 'hover:border-pink-300' },
-];
-
-export default function Categories() {
+export default function Categories({ initialCategories }) {
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [expandedIds, setExpandedIds] = useState(new Set());
@@ -72,6 +17,7 @@ export default function Categories() {
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: () => api.entities.Category.list(),
+    initialData: initialCategories ?? undefined,
   });
 
   const { parentCategories, standaloneCategories } = useMemo(() => {
@@ -107,8 +53,8 @@ export default function Categories() {
     return getDirectoryUrl(cat.slug, { underStaffing: isStaffing });
   };
 
-  const totalCategories = parentCategories.length + standaloneCategories.length;
-  const totalSubcategories = categories.length - parentCategories.length - standaloneCategories.length;
+  const totalCategories = MANUFACTURING_CATEGORIES.length;
+  const totalSubcategories = MANUFACTURING_CATEGORIES.reduce((sum, c) => sum + (c.subcategories?.length ?? 0), 0);
 
   const toggleExpand = (id) => {
     setExpandedIds((prev) => {
@@ -120,7 +66,7 @@ export default function Categories() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]">
+    <div className="min-h-screen bg-white">
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <div className="bg-[#0D1B2A] relative overflow-hidden">
@@ -232,14 +178,14 @@ export default function Categories() {
               {filteredParents.length > 0 && (
                 <div className={
                   viewMode === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12'
+                    ? 'grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12'
                     : 'flex flex-col gap-4 mb-12'
                 }>
-                  {filteredParents.map((parent, idx) => {
+                  {filteredParents.map((parent) => {
                     const children = getChildren(parent.id);
-                    const icon = CAT_ICONS[parent.slug] || '🏢';
+                    const Icon = pickCategoryIcon(parent);
                     const parentHref = getCategoryHref(parent);
-                    const color = CAT_COLORS[idx % CAT_COLORS.length];
+                    const { bg: bgClass, border: borderClass, text: textClass } = colorFor(parent.slug || parent.name);
                     const filteredChildren = search
                       ? children.filter((c) => c.name.toLowerCase().includes(searchLower))
                       : children;
@@ -250,10 +196,10 @@ export default function Categories() {
 
                     if (viewMode === 'list') {
                       return (
-                        <div key={parent.id} className={`bg-white border border-slate-200 rounded-xl p-5 ${color.hoverBorder} hover:shadow-sm transition-all`}>
+                        <div key={parent.id} className={`bg-white border border-slate-200 rounded-xl p-5 hover:border-slate-300 hover:shadow-sm transition-all`}>
                           <div className="flex items-start gap-4">
-                            <div className={`w-12 h-12 rounded-xl ${color.bg} ${color.border} border flex items-center justify-center text-2xl flex-shrink-0`}>
-                              {icon}
+                            <div className={`w-12 h-12 rounded-xl ${bgClass} ${borderClass} border flex items-center justify-center flex-shrink-0`}>
+                              <Icon className={`w-7 h-7 ${textClass}`} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-4 mb-1">
@@ -303,69 +249,35 @@ export default function Categories() {
                     }
 
                     return (
-                      <div key={parent.id} className={`bg-white border border-slate-200 rounded-2xl overflow-hidden ${color.hoverBorder} hover:shadow-md transition-all group`}>
+                      <div key={parent.id} className={`bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-slate-300 hover:shadow-md transition-all group`}>
                         {/* Card header with colored accent */}
-                        <div className={`${color.bg} px-6 py-5 border-b ${color.border}`}>
-                          <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-xl bg-white/80 border border-white flex items-center justify-center text-xl shadow-sm">
-                              {icon}
+                        <div className={`${bgClass} px-8 py-7 border-b ${borderClass}`}>
+                          <div className="flex items-center gap-5">
+                            <div className="w-[72px] h-[72px] rounded-2xl bg-white border border-white flex items-center justify-center shadow-sm flex-shrink-0">
+                              <Icon className={`w-9 h-9 ${textClass}`} />
                             </div>
                             <div className="min-w-0 flex-1">
                               <Link href={parentHref}>
-                                <h2 className="font-bold text-[#0D1B2A] text-base hover:text-orange-600 transition-colors leading-snug">
+                                <h2 className="font-bold text-[#0D1B2A] text-lg hover:text-orange-600 transition-colors leading-snug">
                                   {parent.name}
                                 </h2>
                               </Link>
-                              <p className={`text-xs font-medium ${color.accent} mt-0.5`}>
+                              <p className={`text-xs font-medium ${textClass} mt-0.5`}>
                                 {children.length} subcategories
                               </p>
                             </div>
                           </div>
                         </div>
 
-                        {/* Subcategories list */}
-                        <div className="px-6 py-4">
-                          {displayChildren.length > 0 ? (
-                            <div className="flex flex-col">
-                              {showChildren.map((child) => (
-                                <Link
-                                  key={child.id}
-                                  href={getCategoryHref(child, parent)}
-                                  className="flex items-center justify-between text-sm text-slate-600 hover:text-orange-600 py-2 px-2 -mx-2 rounded-lg hover:bg-orange-50/50 transition-colors group/item"
-                                >
-                                  <span>{child.name}</span>
-                                  <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover/item:text-orange-400 transition-colors" />
-                                </Link>
-                              ))}
-                              {displayChildren.length > visibleCount && !isExpanded && (
-                                <button
-                                  onClick={() => toggleExpand(parent.id)}
-                                  className="text-xs py-2 text-orange-500 hover:text-orange-600 font-semibold text-left"
-                                >
-                                  +{displayChildren.length - visibleCount} more subcategories
-                                </button>
-                              )}
-                              {isExpanded && displayChildren.length > visibleCount && (
-                                <button
-                                  onClick={() => toggleExpand(parent.id)}
-                                  className="text-xs py-2 text-slate-400 hover:text-slate-600 font-semibold text-left"
-                                >
-                                  Show less
-                                </button>
-                              )}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-slate-400 py-2">No subcategories</p>
-                          )}
-                        </div>
-
-                        {/* Card footer */}
-                        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50/50">
+                        <div className="px-8 py-6">
+                          <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
+                            {parent.description || `Browse verified ${parent.name.toLowerCase()} across all 50 states.`}
+                          </p>
                           <Link
                             href={parentHref}
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-500 hover:text-orange-600 transition-colors"
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors mt-4"
                           >
-                            Browse all {parent.name} <ArrowRight className="w-3.5 h-3.5" />
+                            Browse {parent.name} <ArrowRight className="w-4 h-4" />
                           </Link>
                         </div>
                       </div>
@@ -386,30 +298,30 @@ export default function Categories() {
                   )}
                   <div className={
                     viewMode === 'grid'
-                      ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3'
-                      : 'grid grid-cols-1 sm:grid-cols-2 gap-3'
+                      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'
+                      : 'grid grid-cols-1 sm:grid-cols-2 gap-5'
                   }>
-                    {filteredStandalone.map((cat, idx) => {
-                      const icon = CAT_ICONS[cat.slug] || '🏷️';
-                      const color = CAT_COLORS[idx % CAT_COLORS.length];
+                    {filteredStandalone.map((cat) => {
+                      const Icon = pickCategoryIcon(cat);
+                      const { bg: bgClass, border: borderClass, text: textClass } = colorFor(cat.slug || cat.name);
                       return (
                         <Link
                           key={cat.id}
                           href={getDirectoryUrl(cat.slug)}
-                          className={`flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3.5 hover:shadow-sm ${color.hoverBorder} transition-all group`}
+                          className={`flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-5 hover:shadow-sm hover:border-slate-300 transition-all group`}
                         >
-                          <div className={`w-9 h-9 rounded-lg ${color.bg} ${color.border} border flex items-center justify-center text-base flex-shrink-0`}>
-                            {icon}
+                          <div className={`w-16 h-16 rounded-xl ${bgClass} ${borderClass} border flex items-center justify-center flex-shrink-0`}>
+                            <Icon className={`w-8 h-8 ${textClass}`} />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-semibold text-[#0D1B2A] group-hover:text-orange-600 transition-colors truncate">
+                            <p className="text-base font-bold text-[#0D1B2A] group-hover:text-orange-600 transition-colors">
                               {cat.name}
                             </p>
                             {cat.description && (
-                              <p className="text-[11px] text-slate-400 truncate">{cat.description}</p>
+                              <p className="text-sm text-slate-500 mt-0.5">{cat.description}</p>
                             )}
                           </div>
-                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-orange-400 flex-shrink-0 transition-colors" />
+                          <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-orange-400 flex-shrink-0 transition-colors" />
                         </Link>
                       );
                     })}
@@ -418,6 +330,17 @@ export default function Categories() {
               )}
             </>
           )}
+
+          {/* SEO Content Section */}
+          <div className="mt-16 bg-slate-50 rounded-2xl p-8 sm:p-10 border border-slate-200">
+            <h2 className="text-xl font-bold text-[#0D1B2A] mb-3">About the FirmsLedger Industrial Directory</h2>
+            <p className="text-slate-600 text-sm leading-relaxed mb-4">
+              FirmsLedger provides a comprehensive, verified database of industrial manufacturers, fabrication shops, and B2B service providers across all 50 US states. Our directory spans over {totalCategories} primary industries and {totalSubcategories} specialized subcategories—from precision CNC machining and custom plastic injection molding, to aerospace components and industrial packaging solutions.
+            </p>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Whether you are a procurement manager sourcing local supply chain partners or an engineering team looking for specialized prototyping capabilities, our platform helps you evaluate verified vendors, read customer reviews, and connect directly. Browse our industrial directory to find ISO-certified facilities, ITAR-registered manufacturers, and specialized production partners that meet your exact specifications and volume requirements.
+            </p>
+          </div>
         </div>
       </div>
     </div>

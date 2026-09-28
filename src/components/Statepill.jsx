@@ -9,18 +9,18 @@ export default function StatePill({ name, slug }) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        backgroundColor: '#f5f0e0',
-        border: '1px solid #e5e5e5',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: 9999,
-        padding: '7px 14px',
+        padding: '6px 14px',
         fontSize: 13,
         fontWeight: 500,
-        color: '#3a3a3a',
+        color: '#475569',
         textDecoration: 'none',
-        transition: 'all 0.15s',
+        transition: 'all 0.12s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#ebe6d6'; e.currentTarget.style.borderColor = '#0a0a0a'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#f5f0e0'; e.currentTarget.style.borderColor = '#e5e5e5'; }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#94a3b8'; e.currentTarget.style.color = '#0f172a'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#475569'; }}
     >
       {name}
     </Link>

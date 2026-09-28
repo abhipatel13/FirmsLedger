@@ -12,6 +12,7 @@ import {
   Package, Warehouse, Train, Bus, Bike, Rocket, Satellite,
   Landmark, Gavel, Coins, TrendingUp, Tractor, Wheat,
   Droplet, Flame, Sun, Wind, Beaker, Microscope,
+  Settings, Scissors, Armchair,
 } from 'lucide-react';
 
 const RULES = [
@@ -86,7 +87,11 @@ export function pickIconByText(text) {
   return Building2;
 }
 
+import { visualsFor } from './categoryRegistry';
+
 export function pickCategoryIcon(cat) {
+  const visuals = visualsFor(cat?.slug || cat?.name);
+  if (visuals) return visuals.icon;
   return pickIconByText(`${cat?.name || ''} ${cat?.slug || ''}`);
 }
 
@@ -108,8 +113,17 @@ const COLOR_POOL = [
 ];
 
 export function colorFor(key) {
+  const visuals = visualsFor(key);
+  if (visuals && visuals.tw) return visuals.tw;
+
   let hash = 0;
   const s = key || '';
   for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
-  return COLOR_POOL[hash % COLOR_POOL.length];
+  const colorStr = COLOR_POOL[hash % COLOR_POOL.length];
+  const parts = colorStr.split(' ');
+  return {
+    bg: parts[0],
+    border: parts[1],
+    text: parts[2],
+  };
 }

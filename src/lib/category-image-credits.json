@@ -1,0 +1,62 @@
+{
+  "electrical-components": {
+    "license": "pexels",
+    "title": "Long row of control panels in an industrial electrical contr",
+    "creator": "Shameer Vayalakkad Hydrose",
+    "source": "https://www.pexels.com/photo/33706880/"
+  },
+  "mechanical-components": {
+    "license": "pexels",
+    "title": "Detailed close-up of machined metal components in an industr",
+    "creator": "Connor Lucock",
+    "source": "https://www.pexels.com/photo/28752153/"
+  },
+  "plastics-packaging": {
+    "license": "pexels",
+    "title": "Close-up of a factory production line with yellow components",
+    "creator": "Cọ Sơn Thanh Bình",
+    "source": "https://www.pexels.com/photo/17937669/"
+  },
+  "metal-fabrication": {
+    "license": "pexels",
+    "title": "Close-up of a plasma cutting machine working on a metal shee",
+    "creator": "Ana Victoria  Valverde",
+    "source": "https://www.pexels.com/photo/17180807/"
+  },
+  "electronics-semiconductor": {
+    "license": "pexels",
+    "title": "Close-up of intricate circuit boards in a Vietnamese factory",
+    "creator": "Andrey Matveev",
+    "source": "https://www.pexels.com/photo/5554949/"
+  },
+  "automotive-parts": {
+    "license": "pexels",
+    "title": "Mechanic assembling an engine cylinder head with precision c",
+    "creator": "Auto Tech",
+    "source": "https://www.pexels.com/photo/33559354/"
+  },
+  "textile-apparel": {
+    "license": "pexels",
+    "title": "Rows of textile rolls stored in a factory for industrial man",
+    "creator": "Pixabay",
+    "source": "https://www.pexels.com/photo/236748/"
+  },
+  "furniture-woodworking": {
+    "license": "pexels",
+    "title": "View of a complex woodworking machine in a factory setting, ",
+    "creator": "Mandiri Abadi",
+    "source": "https://www.pexels.com/photo/14805031/"
+  },
+  "food-beverage-processing": {
+    "license": "pexels",
+    "title": "Interior view of an automated beverage bottling factory with",
+    "creator": "BI ravencrow",
+    "source": "https://www.pexels.com/photo/38336747/"
+  },
+  "medical-devices": {
+    "license": "pexels",
+    "title": "Scientist in protective gear walking in a high-tech cleanroo",
+    "creator": "Российский центр  гибкой электроники",
+    "source": "https://www.pexels.com/photo/5118462/"
+  }
+}

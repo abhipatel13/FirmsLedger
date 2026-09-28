@@ -1,498 +1,592 @@
 'use client';
 
-/**
- * Layout — Clay.com design system
- * Nav:    canvas #fffaf0 bg · 64px height · mega-menu dropdown
- * Footer: surface-soft #faf5e8 bg · 4-column restructured links
- */
-
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  Menu, X, Search,
+} from 'lucide-react';
 
-// Mega-menu data
-const MEGA_CATEGORIES = [
-  { slug: 'bike-manufacturers',       name: 'Bike Manufacturers',       accent: '#ffb084', desc: 'Road, mountain & BMX' },
-  { slug: 'electrical-manufacturers', name: 'Electrical Manufacturers', accent: '#e8b94a', desc: 'Wiring, switchgear & components' },
-  { slug: 'mechanical-manufacturers', name: 'Mechanical Manufacturers', accent: '#1a3a3a', desc: 'CNC machining & precision parts' },
+/* ── Footer data ───────────────────────────────────────────────── */
+const FOOTER_MANUFACTURERS = [
+  { href: '/electrical-components',     label: 'Electrical Components' },
+  { href: '/mechanical-components',     label: 'Mechanical Components' },
+  { href: '/metal-fabrication',         label: 'Metal Fabrication' },
+  { href: '/electronics-semiconductor', label: 'Electronics & Semiconductor' },
+  { href: '/automotive-parts',          label: 'Automotive Parts' },
+  { href: '/medical-devices',           label: 'Medical Devices' },
+  { href: '/browse',                                label: 'View All Categories' },
 ];
 
-// Top 6 states by listing count
-const MEGA_STATES = [
-  { name: 'California',  slug: 'california'  },
-  { name: 'Texas',       slug: 'texas'        },
-  { name: 'New York',    slug: 'new-york'     },
-  { name: 'Pennsylvania',slug: 'pennsylvania' },
-  { name: 'Ohio',        slug: 'ohio'         },
-  { name: 'Michigan',    slug: 'michigan'     },
+const FOOTER_STATES = [
+  { href: '/states/california',   label: 'California' },
+  { href: '/states/texas',        label: 'Texas' },
+  { href: '/states/new-york',     label: 'New York' },
+  { href: '/states/ohio',         label: 'Ohio' },
+  { href: '/states/michigan',     label: 'Michigan' },
+  { href: '/states/pennsylvania', label: 'Pennsylvania' },
+  { href: '/states/illinois',     label: 'Illinois' },
+  { href: '/locations',           label: 'All 50 States' },
 ];
 
-function MapPinMini() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-      <circle cx="12" cy="10" r="3"/>
-    </svg>
-  );
-}
+// A plain static link, NOT an auth-aware one. Layout wraps every page, so
+// calling useSession() here would fire /api/auth/session — a sessions-table
+// lookup — on every single pageview, waking the Neon compute and undoing the
+// scale-to-zero work. /dashboard redirects signed-out visitors to /auth itself.
+const FOOTER_RESOURCES = [
+  { href: '/list-your-company', label: 'List Your Company' },
+  { href: '/claim-listing',    label: 'Claim a Listing' },
+  { href: '/dashboard',        label: 'Your Dashboard' },
+  { href: '/contact',         label: 'Contact Us' },
+];
+
+const FOOTER_COMPANY = [
+  // Re-enable once the public-facing admin entry point is ready.
+  // { href: '/admin',   label: 'Admin Login' },
+  { href: '/about',   label: 'About Us' },
+  { href: '/terms',   label: 'Terms of Service' },
+  { href: '/privacy', label: 'Privacy Policy' },
+];
 
 export default function Layout({ children }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [browseOpen, setBrowseOpen] = useState(false);
-  const [browseTab, setBrowseTab] = useState('category');
-  const pathname = usePathname();
-  const browseRef = useRef(null);
+  const [mobileOpen, setMobileOpen]   = useState(false);
+  const [scrolled, setScrolled]       = useState(false);
+  const [navSearchOpen, setNavSearchOpen] = useState(false);
+  const [navQuery, setNavQuery]       = useState('');
+  const pathname  = usePathname();
+  const router    = useRouter();
+  const scrolledRef   = useRef(false);
+  const navSearchInputRef = useRef(null);
 
-  // Close mega-menu on outside click
+  // Same target/param convention as the hero search box (src/components/home/HeroSearch.jsx)
+  // so both search entry points feed the same /search results.
+  function handleNavSearch(e) {
+    e.preventDefault();
+    const q = navQuery.trim();
+    router.push(q ? `/search?q=${encodeURIComponent(q)}` : '/search');
+    setNavSearchOpen(false);
+    setNavQuery('');
+  }
+
+  // Keep refs in sync so the scroll closure always reads current values
+  useEffect(() => { scrolledRef.current   = scrolled;   }, [scrolled]);
+
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (browseRef.current && !browseRef.current.contains(e.target)) {
-        setBrowseOpen(false);
-      }
+    function onScroll() {
+      const next = window.scrollY > 8;
+      if (next !== scrolledRef.current) setScrolled(next);
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
-  return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#fffaf0' }}>
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
-      {/* ── Nav ─── canvas bg, 64px, sticky */}
-      <header style={{
-        backgroundColor: '#fffaf0',
-        borderBottom: '1px solid #e5e5e5',
+  useEffect(() => {
+    if (navSearchOpen) navSearchInputRef.current?.focus();
+  }, [navSearchOpen]);
+
+  const isActive = (href) => pathname === href;
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+
+      {/* ══ NAVBAR ══════════════════════════════════════════════════ */}
+      <header className="fl-public-chrome" style={{
+        backgroundColor: scrolled ? 'rgba(255,255,255,0.85)' : '#ffffff',
+        backdropFilter: scrolled ? 'blur(8px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(8px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(15,23,42,0.08)' : '1px solid #e2e8f0',
+        boxShadow: scrolled ? '0 4px 20px -8px rgba(15,23,42,0.10)' : 'none',
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        height: 64,
+        height: 72,
+        transition: 'background-color 200ms ease, box-shadow 200ms ease, border-color 200ms ease',
       }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+        <div className="nav-container" style={{
+          maxWidth: 'var(--max-width)',
+          margin: '0 auto',
+          padding: '0 24px',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+        }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-            <img src="/logo.svg" alt="FirmsLedger" style={{ height: 36, width: 'auto' }} />
+          <Link href="/" className="nav-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginRight: 16 }}>
+            <img src="/logo.svg" alt="FirmsLedger" style={{ height: 48, width: 'auto' }} />
           </Link>
 
           {/* Desktop nav */}
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="hidden-mobile">
+          <nav className="hidden lg:flex items-center gap-2">
 
-            {/* Browse mega-menu trigger */}
-            <div
-              ref={browseRef}
-              style={{ position: 'relative' }}
-              onMouseEnter={() => setBrowseOpen(true)}
-              onMouseLeave={() => setBrowseOpen(false)}
+            {/* Capabilities */}
+            <Link
+              href="/capabilities"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: isActive('/capabilities') ? '#0f172a' : '#475569',
+                textDecoration: 'none',
+                padding: '7px 12px',
+                borderRadius: 8,
+                transition: 'all 0.12s',
+                backgroundColor: isActive('/capabilities') ? '#f1f5f9' : 'transparent',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { if (!isActive('/capabilities')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
             >
-              <button
-                onClick={() => setBrowseOpen((v) => !v)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: browseOpen ? '#0a0a0a' : '#6a6a6a',
-                  backgroundColor: browseOpen ? '#f5f0e0' : 'transparent',
-                  border: 'none',
-                  padding: '6px 12px',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  transition: 'color 0.15s, background 0.15s',
-                }}
-              >
-                Browse
-                <ChevronDown
-                  size={14}
-                  style={{ transform: browseOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.15s' }}
-                />
-              </button>
+              Capabilities
+            </Link>
 
-              {/* Mega-menu panel */}
-              {browseOpen && (
-                <div style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 8px)',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  backgroundColor: '#fffaf0',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: 20,
-                  boxShadow: '0 8px 32px rgba(10,10,10,0.10)',
-                  width: 460,
-                  padding: 20,
-                  zIndex: 100,
-                }}>
-                  {/* Tab bar */}
-                  <div style={{ display: 'flex', gap: 4, marginBottom: 16, backgroundColor: '#f5f0e0', borderRadius: 12, padding: 4 }}>
-                    {[{ id: 'category', label: 'By Category' }, { id: 'state', label: 'By State' }].map(({ id, label }) => (
-                      <button
-                        key={id}
-                        onClick={() => setBrowseTab(id)}
-                        style={{
-                          flex: 1,
-                          padding: '7px 0',
-                          borderRadius: 9,
-                          border: 'none',
-                          fontSize: 13,
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          transition: 'all 0.15s',
-                          backgroundColor: browseTab === id ? '#0a0a0a' : 'transparent',
-                          color: browseTab === id ? '#ffffff' : '#6a6a6a',
-                        }}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
+            {/* Locations */}
+            <Link
+              href="/locations"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: isActive('/locations') ? '#0f172a' : '#475569',
+                textDecoration: 'none',
+                padding: '7px 12px',
+                borderRadius: 8,
+                transition: 'all 0.12s',
+                backgroundColor: isActive('/locations') ? '#f1f5f9' : 'transparent',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { if (!isActive('/locations')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
+            >
+              Locations
+            </Link>
 
-                  {/* By Category */}
-                  {browseTab === 'category' && (
-                    <div>
-                      {MEGA_CATEGORIES.map((cat) => (
-                        <Link
-                          key={cat.slug}
-                          href={`/categories/${cat.slug}`}
-                          onClick={() => setBrowseOpen(false)}
-                          className="mega-item"
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 12,
-                            padding: '10px 12px',
-                            borderRadius: 12,
-                            textDecoration: 'none',
-                            marginBottom: 2,
-                          }}
-                        >
-                          <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: cat.accent, flexShrink: 0, border: cat.accent === '#1a3a3a' ? '2px solid #1a3a3a' : 'none' }} />
-                          <div style={{ minWidth: 0 }}>
-                            <p style={{ fontSize: 14, fontWeight: 600, color: '#0a0a0a', margin: 0, lineHeight: 1.3 }}>{cat.name}</p>
-                            <p style={{ fontSize: 12, color: '#6a6a6a', margin: '2px 0 0' }}>{cat.desc}</p>
-                          </div>
-                        </Link>
-                      ))}
-                      <div style={{ borderTop: '1px solid #e5e5e5', marginTop: 10, paddingTop: 12 }}>
-                        <Link
-                          href="/Categories"
-                          onClick={() => setBrowseOpen(false)}
-                          style={{ fontSize: 13, fontWeight: 600, color: '#6a6a6a', textDecoration: 'none' }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = '#0a0a0a')}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = '#6a6a6a')}
-                        >
-                          Browse all categories →
-                        </Link>
-                      </div>
-                    </div>
-                  )}
+            {/* About */}
+            <Link
+              href="/about"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: isActive('/about') ? '#0f172a' : '#475569',
+                textDecoration: 'none',
+                padding: '7px 12px',
+                borderRadius: 8,
+                transition: 'all 0.12s',
+                backgroundColor: isActive('/about') ? '#f1f5f9' : 'transparent',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { if (!isActive('/about')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
+            >
+              About
+            </Link>
 
-                  {/* By State */}
-                  {browseTab === 'state' && (
-                    <div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                        {MEGA_STATES.map((st) => (
-                          <Link
-                            key={st.slug}
-                            href={`/states/${st.slug}`}
-                            onClick={() => setBrowseOpen(false)}
-                            className="mega-item"
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 8,
-                              padding: '9px 12px',
-                              borderRadius: 10,
-                              textDecoration: 'none',
-                              fontSize: 14,
-                              fontWeight: 500,
-                              color: '#0a0a0a',
-                            }}
-                          >
-                            <MapPinMini />
-                            {st.name}
-                          </Link>
-                        ))}
-                      </div>
-                      <div style={{ borderTop: '1px solid #e5e5e5', marginTop: 10, paddingTop: 12 }}>
-                        <Link
-                          href="/#states"
-                          onClick={() => setBrowseOpen(false)}
-                          style={{ fontSize: 13, fontWeight: 600, color: '#6a6a6a', textDecoration: 'none' }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = '#0a0a0a')}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = '#6a6a6a')}
-                        >
-                          Browse all 50 states →
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
+            {/* Contact */}
             <Link
               href="/contact"
               style={{
                 fontSize: 14,
                 fontWeight: 500,
-                color: pathname === '/contact' ? '#0a0a0a' : '#6a6a6a',
+                color: isActive('/contact') ? '#0f172a' : '#475569',
                 textDecoration: 'none',
-                padding: '6px 12px',
+                padding: '7px 12px',
                 borderRadius: 8,
-                transition: 'color 0.15s, background 0.15s',
-                backgroundColor: pathname === '/contact' ? '#f5f0e0' : 'transparent',
+                transition: 'all 0.12s',
+                backgroundColor: isActive('/contact') ? '#f1f5f9' : 'transparent',
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { if (!isActive('/contact')) { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; } }}
             >
               Contact
             </Link>
           </nav>
 
-          {/* Desktop CTA — primary button */}
-          <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Link
-              href="/ListYourCompany"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                backgroundColor: '#0a0a0a',
-                color: '#ffffff',
-                borderRadius: 12,
-                padding: '10px 18px',
-                fontSize: 14,
-                fontWeight: 600,
-                textDecoration: 'none',
-                lineHeight: 1,
-                transition: 'background 0.15s',
-              }}
-            >
-              List Your Company
-            </Link>
+          {/* Spacer */}
+          <div style={{ flex: 1 }} />
+
+          {/* Search — inline expanding box, submits to the same /search?q= route as the hero search bar */}
+          <div className="hidden lg:flex" style={{ alignItems: 'center', position: 'relative' }}>
+            {navSearchOpen ? (
+              <form
+                onSubmit={handleNavSearch}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setNavSearchOpen(false); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 9999,
+                  padding: '4px 6px 4px 14px',
+                  backgroundColor: '#f8fafc',
+                }}
+              >
+                <Search size={15} style={{ color: '#94a3b8', flexShrink: 0 }} />
+                <input
+                  ref={navSearchInputRef}
+                  type="text"
+                  value={navQuery}
+                  onChange={(e) => setNavQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Escape') setNavSearchOpen(false); }}
+                  placeholder="Search manufacturers..."
+                  aria-label="Search"
+                  style={{
+                    width: 190,
+                    border: 'none',
+                    outline: 'none',
+                    background: 'transparent',
+                    fontSize: 13.5,
+                    color: '#0f172a',
+                    fontFamily: 'inherit',
+                  }}
+                />
+                <button
+                  type="submit"
+                  aria-label="Submit search"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 28,
+                    height: 28,
+                    borderRadius: 9999,
+                    border: 'none',
+                    backgroundColor: '#D4A017',
+                    color: '#0F172A',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Search size={13} />
+                </button>
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setNavSearchOpen(true)}
+                aria-label="Search"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'none',
+                  color: '#475569',
+                  cursor: 'pointer',
+                  transition: 'all 0.12s',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.backgroundColor = 'transparent'; }}
+              >
+                <Search size={17} />
+              </button>
+            )}
           </div>
 
-          {/* Mobile toggle */}
+          {/* CTA */}
+          <Link
+            href="/list-your-company"
+            className="hidden lg:inline-flex"
+            style={{
+              alignItems: 'center',
+              gap: 6,
+              backgroundColor: '#D4A017',
+              color: '#0F172A',
+              borderRadius: 9999,
+              padding: '9px 22px',
+              fontSize: 13.5,
+              fontWeight: 600,
+              textDecoration: 'none',
+              transition: 'background 0.15s, box-shadow 0.15s, transform 0.15s',
+              fontFamily: 'inherit',
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+              boxShadow: '0 1px 6px rgba(212,160,23,0.25)',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#A87A0F'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(212,160,23,0.40)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#D4A017'; e.currentTarget.style.boxShadow = '0 1px 6px rgba(212,160,23,0.25)'; e.currentTarget.style.transform = 'scale(1)'; }}
+          >
+            List Your Company
+          </Link>
+
+          {/* Hamburger */}
           <button
             type="button"
-            onClick={() => setMobileOpen((v) => !v)}
+            onClick={() => setMobileOpen(v => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            className="show-mobile"
+            className="lg:hidden flex nav-hamburger"
             style={{
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               padding: 8,
-              display: 'none',
               alignItems: 'center',
               justifyContent: 'center',
               minWidth: 44,
               minHeight: 44,
+              color: '#0f172a',
+              marginLeft: 8,
             }}
           >
-            {mobileOpen ? <X size={22} color="#0a0a0a" /> : <Menu size={22} color="#0a0a0a" />}
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
         {/* Mobile menu */}
-        {mobileOpen && (
-          <div style={{
-            backgroundColor: '#fffaf0',
-            borderTop: '1px solid #e5e5e5',
-            padding: '12px 24px 20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}>
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9a9a9a', padding: '8px 12px 4px', margin: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
-              By Category
-            </p>
-            {MEGA_CATEGORIES.map(({ slug, name, accent }) => (
-              <Link
-                key={slug}
-                href={`/categories/${slug}`}
-                onClick={() => setMobileOpen(false)}
-                style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 15, fontWeight: 500, color: '#3a3a3a', textDecoration: 'none', padding: '10px 12px', borderRadius: 10 }}
-              >
-                <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: accent, flexShrink: 0 }} />
-                {name}
-              </Link>
-            ))}
+        <div style={{
+          backgroundColor: '#ffffff',
+          borderTop: '1px solid #e2e8f0',
+          padding: '8px 16px 20px',
+          display: mobileOpen ? 'flex' : 'none',
+          flexDirection: 'column',
+          gap: 1,
+          maxHeight: '80vh',
+          overflowY: 'auto',
+        }}>
 
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9a9a9a', padding: '12px 12px 4px', margin: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
-              By State
-            </p>
-            {MEGA_STATES.map(({ slug, name }) => (
-              <Link
-                key={slug}
-                href={`/states/${slug}`}
-                onClick={() => setMobileOpen(false)}
-                style={{ fontSize: 15, fontWeight: 500, color: '#3a3a3a', textDecoration: 'none', padding: '10px 12px', borderRadius: 10, display: 'block' }}
-              >
-                {name}
-              </Link>
-            ))}
+          {/* Mobile search bar — same /search?q= target as the desktop and hero search boxes */}
+          <form
+            onSubmit={(e) => { handleNavSearch(e); setMobileOpen(false); }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '10px 12px',
+              borderRadius: 8,
+              backgroundColor: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+          >
+            <Search size={16} style={{ color: '#94a3b8', flexShrink: 0 }} />
+            <input
+              type="text"
+              value={navQuery}
+              onChange={(e) => setNavQuery(e.target.value)}
+              placeholder="Search manufacturers..."
+              aria-label="Search"
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                background: 'transparent',
+                fontSize: 14,
+                color: '#0f172a',
+                fontFamily: 'inherit',
+              }}
+            />
+          </form>
 
+          <Link
+            href="/capabilities"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'block',
+              fontSize: 14,
+              fontWeight: 500,
+              color: isActive('/capabilities') ? '#0f172a' : '#475569',
+              textDecoration: 'none',
+              padding: '9px 12px',
+              borderRadius: 8,
+              backgroundColor: isActive('/capabilities') ? '#f1f5f9' : 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+            onMouseLeave={(e) => { if (!isActive('/capabilities')) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            Capabilities
+          </Link>
+
+          <Link
+            href="/locations"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'block',
+              fontSize: 14,
+              fontWeight: 500,
+              color: isActive('/locations') ? '#0f172a' : '#475569',
+              textDecoration: 'none',
+              padding: '9px 12px',
+              borderRadius: 8,
+              backgroundColor: isActive('/locations') ? '#f1f5f9' : 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+            onMouseLeave={(e) => { if (!isActive('/locations')) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            Locations
+          </Link>
+
+          <Link
+            href="/about"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'block',
+              fontSize: 14,
+              fontWeight: 500,
+              color: isActive('/about') ? '#0f172a' : '#475569',
+              textDecoration: 'none',
+              padding: '9px 12px',
+              borderRadius: 8,
+              backgroundColor: isActive('/about') ? '#f1f5f9' : 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+            onMouseLeave={(e) => { if (!isActive('/about')) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            About
+          </Link>
+
+          <div style={{ borderTop: '1px solid #e2e8f0', margin: '8px 0', paddingTop: 8 }}>
             <Link
               href="/contact"
               onClick={() => setMobileOpen(false)}
-              style={{ fontSize: 15, fontWeight: 500, color: '#3a3a3a', textDecoration: 'none', padding: '10px 12px', borderRadius: 10, display: 'block', borderTop: '1px solid #e5e5e5', marginTop: 8, paddingTop: 14 }}
+              style={{ display: 'block', fontSize: 14, fontWeight: 500, color: '#475569', textDecoration: 'none', padding: '9px 12px', borderRadius: 8 }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               Contact
             </Link>
-
-            <div style={{ borderTop: '1px solid #e5e5e5', marginTop: 8, paddingTop: 12 }}>
-              <Link
-                href="/ListYourCompany"
-                onClick={() => setMobileOpen(false)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#0a0a0a',
-                  color: '#ffffff',
-                  borderRadius: 12,
-                  padding: '12px 20px',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                }}
-              >
-                List Your Company
-              </Link>
-            </div>
           </div>
-        )}
+
+          <div style={{ marginTop: 4 }}>
+            <Link
+              href="/list-your-company"
+              onClick={() => setMobileOpen(false)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#D4A017',
+                color: '#0F172A',
+                borderRadius: 9999,
+                padding: '12px 20px',
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: 'none',
+                fontFamily: 'inherit',
+              }}
+            >
+              List Your Company
+            </Link>
+          </div>
+        </div>
       </header>
 
-      {/* Main */}
-      <main style={{ minWidth: 0, overflowX: 'hidden' }}>{children}</main>
+      {/* Main content */}
+      {/* No overflow-x here: setting only one axis forces the CSS spec to resolve
+          the other to `auto`, which would give <main> its own scrollbar in
+          addition to the page's. html/body in index.css already clip overflow-x. */}
+      <main style={{ minWidth: 0 }}>{children}</main>
 
-      {/* ── Footer ─── surface-soft #faf5e8, 4-column layout */}
-      <footer style={{ backgroundColor: '#faf5e8', borderTop: '1px solid #e5e5e5' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 24px' }}>
-          <div className="footer-grid" style={{ display: 'grid', gap: 40, marginBottom: 48 }}>
+      {/* ══ FOOTER ══════════════════════════════════════════════════ */}
+      <footer className="fl-public-chrome" style={{ background: '#0F172A' }}>
+        <div className="px-6 lg:px-8" style={{ maxWidth: 'var(--max-width)', margin: '0 auto', paddingTop: 72, paddingBottom: 48 }}>
 
-            {/* Brand */}
-            <div className="footer-brand">
+          {/* Brand + links, one row (brand column, then four link columns) */}
+          <div className="footer-cols" style={{
+            display: 'grid',
+            gridTemplateColumns: '1.7fr repeat(4, 1fr)',
+            gap: 40,
+            marginBottom: 48,
+          }}>
+            <div style={{ maxWidth: 340 }}>
               <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 16 }}>
-                <img src="/logo.svg" alt="FirmsLedger" style={{ height: 32, width: 'auto' }} />
+                <img src="/logo-white.svg" alt="FirmsLedger" style={{ height: 40, width: 'auto' }} />
               </Link>
-              <p style={{ fontSize: 14, lineHeight: 1.55, color: '#6a6a6a', maxWidth: 300 }}>
-                US manufacturer directory. Find the top verified manufacturers by category and state — bike, electrical, mechanical, and more.
+              <p style={{ fontSize: 15, fontWeight: 600, color: '#F9FAFB', marginBottom: 8, lineHeight: 1.5 }}>
+                Connecting you with America's top manufacturers.
+              </p>
+              <p style={{ fontSize: 14, lineHeight: 1.7, color: '#9CA3AF', marginBottom: 20 }}>
+                Discover USA manufacturers across all 50 states and 11 categories — no paid placements, ever.
               </p>
             </div>
 
-            {/* Browse by Category */}
-            <div>
-              <h4 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
-                Browse by Category
-              </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {[
-                  { href: '/categories/bike-manufacturers',       label: 'Bike Manufacturers' },
-                  { href: '/categories/electrical-manufacturers', label: 'Electrical Manufacturers' },
-                  { href: '/categories/mechanical-manufacturers', label: 'Mechanical Manufacturers' },
-                  { href: '/Categories',                          label: 'All Categories' },
-                ].map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    style={{ fontSize: 14, color: '#6a6a6a', textDecoration: 'none', transition: 'color 0.15s' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#0a0a0a')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = '#6a6a6a')}
-                  >
-                    {label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Browse by State */}
-            <div>
-              <h4 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
-                Browse by State
-              </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {[
-                  { href: '/states/california',  label: 'California' },
-                  { href: '/states/texas',        label: 'Texas' },
-                  { href: '/states/new-york',     label: 'New York' },
-                  { href: '/states/ohio',         label: 'Ohio' },
-                  { href: '/states/michigan',     label: 'Michigan' },
-                  { href: '/#states',             label: 'All 50 states →' },
-                ].map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    style={{ fontSize: 14, color: '#6a6a6a', textDecoration: 'none', transition: 'color 0.15s' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#0a0a0a')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = '#6a6a6a')}
-                  >
-                    {label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* For Companies */}
-            <div>
-              <h4 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#0a0a0a', marginBottom: 16, marginTop: 0, fontFamily: '"IBM Plex Mono", monospace' }}>
-                For Companies
-              </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {[
-                  { href: '/ListYourCompany', label: 'List Your Company' },
-                  { href: '/contact',         label: 'Contact Us' },
-                  { href: '/admin',           label: 'Admin Login' },
-                ].map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    style={{ fontSize: 14, color: '#6a6a6a', textDecoration: 'none', transition: 'color 0.15s' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#0a0a0a')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = '#6a6a6a')}
-                  >
-                    {label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
+            <FooterCol heading="Manufacturers" links={FOOTER_MANUFACTURERS} />
+            <FooterCol heading="Browse by State" links={FOOTER_STATES} />
+            <FooterCol heading="Resources" links={FOOTER_RESOURCES} />
+            <FooterCol heading="Company" links={FOOTER_COMPANY} />
           </div>
 
           {/* Bottom bar */}
-          <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: 24, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-            <p style={{ fontSize: 13, color: '#9a9a9a', margin: 0 }}>© 2026 FirmsLedger. All rights reserved.</p>
-            <div style={{ display: 'flex', gap: 24 }}>
-              {[{ href: '/terms', label: 'Terms' }, { href: '/privacy', label: 'Privacy' }].map(({ href, label }) => (
-                <Link key={href} href={href} style={{ fontSize: 13, color: '#6a6a6a', textDecoration: 'none' }}>{label}</Link>
-              ))}
-            </div>
+          <div style={{
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            paddingTop: 24,
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 12,
+          }}>
+            <p style={{ fontSize: 13, color: '#6B7280', margin: 0 }}>
+              {'© 2026 FirmsLedger — All rights reserved\u00a0·\u00a0'}
+              <Link href="/terms" className="link-underline" style={{ color: '#6B7280', textDecoration: 'none' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#D4A017')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#6B7280')}
+              >Terms of Service</Link>
+              {'\u00a0·\u00a0'}
+              <Link href="/privacy" className="link-underline" style={{ color: '#6B7280', textDecoration: 'none' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#D4A017')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#6B7280')}
+              >Privacy Policy</Link>
+            </p>
+            <p style={{ fontSize: 13, color: '#6B7280', margin: 0 }}>
+              Made for USA manufacturers
+            </p>
           </div>
         </div>
       </footer>
 
       <style>{`
         @media (max-width: 768px) {
-          .hidden-mobile { display: none !important; }
-          .show-mobile { display: flex !important; }
-        }
-        @media (min-width: 769px) {
-          .show-mobile { display: none !important; }
-          .hidden-mobile { display: flex !important; }
-        }
-        .mega-item { background: transparent; transition: background 0.12s; }
-        .mega-item:hover { background: #f5f0e0 !important; }
-        .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
-        @media (max-width: 900px) {
-          .footer-grid { grid-template-columns: 1fr 1fr; }
-          .footer-brand { grid-column: 1 / -1; }
+          .footer-cols { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
         }
         @media (max-width: 480px) {
-          .footer-grid { grid-template-columns: 1fr; }
-          .footer-brand { grid-column: auto; }
+          .footer-cols { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 767px) {
+          .nav-container {
+            position: relative;
+            flex-direction: row-reverse !important;
+          }
+          .nav-logo {
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            margin-right: 0 !important;
+          }
+          .nav-hamburger {
+            margin-left: 0 !important;
+            margin-right: auto !important;
+          }
         }
       `}</style>
+    </div>
+  );
+}
+
+function FooterCol({ heading, links }) {
+  return (
+    <div>
+      <h4 style={{ fontSize: 12, fontWeight: 600, color: '#F9FAFB', marginBottom: 16, marginTop: 0, letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+        {heading}
+      </h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {links.map(({ href, label }) => (
+          <Link
+            key={href + label}
+            href={href}
+            className="link-underline"
+            style={{ fontSize: 14, color: '#9CA3AF', textDecoration: 'none', transition: 'color 0.12s', lineHeight: 1.4 }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#D4A017')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#9CA3AF')}
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

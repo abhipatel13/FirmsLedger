@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createPageUrl } from '@/utils';
@@ -13,6 +13,14 @@ import { toast } from 'sonner';
 import { Building2, Link2Off } from 'lucide-react';
 
 export default function JoinPage() {
+  return (
+    <Suspense fallback={null}>
+      <JoinPageContent />
+    </Suspense>
+  );
+}
+
+function JoinPageContent() {
   const searchParams = useSearchParams();
   const token = (searchParams.get('token') || '').trim();
   const [invite, setInvite] = useState(null);

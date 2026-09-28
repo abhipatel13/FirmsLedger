@@ -1,0 +1,116 @@
+{
+  "welding": {
+    "license": "pdm",
+    "title": "20200305-FNS-DCK-0088",
+    "creator": "USDAgov",
+    "source": "https://www.flickr.com/photos/41284017@N08/49624908928"
+  },
+  "cnc-machining": {
+    "license": "by",
+    "title": "Drill Milling Milling Machine 444493 Edited 2020",
+    "creator": "chimpwithcan",
+    "source": "https://www.flickr.com/photos/188454520@N02/49932249262"
+  },
+  "laser-cutting": {
+    "license": "by",
+    "title": "Laser Cut Metal Spark Laser Machine Edited 2020",
+    "creator": "chimpwithcan",
+    "source": "https://www.flickr.com/photos/188454520@N02/49927904707"
+  },
+  "garment-manufacturing": {
+    "license": "pdm",
+    "title": "Xintang, the Blue Jeans City",
+    "creator": "Jameschen2009",
+    "source": "https://www.flickr.com/photos/142364389@N04/27156339590"
+  },
+  "structural-steel": {
+    "license": "by",
+    "title": "Structure",
+    "creator": "Elsie esq.",
+    "source": "https://www.flickr.com/photos/61132483@N00/161182072"
+  },
+  "millwork": {
+    "license": "by",
+    "title": "Wooden planks are stacked in neat piles at a lumber yard",
+    "creator": "nenadstojkovicart",
+    "source": "https://www.flickr.com/photos/202846129@N03/54553060236"
+  },
+  "pcb-manufacturing": {
+    "license": "by",
+    "title": "Machine places components on a circuit board during manufact",
+    "creator": "Shixart1985",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=192577834"
+  },
+  "pcb-assembly": {
+    "license": "by",
+    "title": "Stribe build - Begins (2009-06-29 18.15.34 by c-g.)",
+    "creator": "c-g.",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=40058822"
+  },
+  "aluminum-fabrication": {
+    "license": "by",
+    "title": "Trying to make a crank puller :: Thread cutting",
+    "creator": "nickjohnson",
+    "source": "https://www.flickr.com/photos/81102241@N00/2382008716"
+  },
+  "injection-molding": {
+    "license": "by",
+    "title": "Engel ES500",
+    "creator": "Kitmondo.com",
+    "source": "https://www.flickr.com/photos/129143611@N03/15726203634"
+  },
+  "solar-panels": {
+    "license": "by",
+    "title": "Solar Panels",
+    "creator": "Slimdandy",
+    "source": "https://www.flickr.com/photos/63163769@N00/4330197697"
+  },
+  "switchgear": {
+    "license": "by",
+    "title": "SNR-trailer-to-hold-breakers_March-2015",
+    "creator": "Western Area Power Admin",
+    "source": "https://www.flickr.com/photos/86561000@N05/16591144409"
+  },
+  "sheet-metal-fabrication": {
+    "license": "by",
+    "title": "In the fitting shop",
+    "creator": "Elsie esq.",
+    "source": "https://www.flickr.com/photos/61132483@N00/14495578692"
+  },
+  "aftermarket-parts": {
+    "license": "by",
+    "title": "Car engine part shows details of throttle body and",
+    "creator": "Shixart1985",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=186975290"
+  },
+  "semiconductor-packaging": {
+    "license": "by",
+    "title": "Probe card",
+    "creator": "Ajoones",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=9464294"
+  },
+  "custom-cabinetry": {
+    "license": "by",
+    "title": "The carpenter's workshop",
+    "creator": "Alan Cleaver",
+    "source": "https://www.flickr.com/photos/11121568@N06/2370612355"
+  },
+  "electrical-wire-cable": {
+    "license": "pexels",
+    "title": "View of large cable reels in an industrial manufacturing facility, sho",
+    "creator": "SINOSTEEL STAINLESS STEEL PIPE",
+    "source": "https://www.pexels.com/photo/30367510/"
+  },
+  "fabric-manufacturing": {
+    "license": "pexels",
+    "title": "High-tech textile machinery with yarn spools in an Indian factory, dem",
+    "creator": "RAJESH KUMAR    VERMA",
+    "source": "https://www.pexels.com/photo/8246482/"
+  },
+  "powder-coating": {
+    "license": "pexels",
+    "title": "Worker in protective gear applying powder coating to metal pipes in a ",
+    "creator": "Full Blown Coatings https://www.fullblowncoatings.com/",
+    "source": "https://www.pexels.com/photo/36215204/"
+  }
+}

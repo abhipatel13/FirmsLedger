@@ -69,7 +69,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
   const categoryName = category?.name || 'Companies';
 
   /* ── Aggregates ─────────────────────────────────────── */
-  const { byCountry, bySize, popularRate, lowestRate, highestRate, totalWithRate, totalNoRate } = useMemo(() => {
+  const { byCountry, bySize, popularRate, lowestRate, highestRate, totalWithRate } = useMemo(() => {
     const countryMap = {};
     const sizeMap = {};
     const allRates = [];
@@ -93,7 +93,6 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
     }
 
     const totalWithRate = allRates.length;
-    const totalNoRate = total - totalWithRate;
 
     return {
       byCountry: Object.entries(countryMap)
@@ -107,7 +106,6 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
       lowestRate: allRates.length ? HOURLY_BUCKETS.find((b) => allRates.includes(b)) || '< $25/hr' : '< $25/hr',
       highestRate: allRates.length ? [...HOURLY_BUCKETS].reverse().find((b) => allRates.includes(b)) || '$300+/hr' : '$300+/hr',
       totalWithRate,
-      totalNoRate,
     };
   }, [agencies, total]);
 

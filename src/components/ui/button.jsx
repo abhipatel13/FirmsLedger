@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = {
@@ -17,8 +18,15 @@ const buttonSizes = {
   icon: 'h-10 w-10',
 };
 
-const Button = React.forwardRef(({ className, variant = 'default', size = 'default', ...props }, ref) => (
-  <button
+// asChild renders the child element (e.g. a next/link <Link>) carrying the
+// button styling, instead of wrapping it in a real <button>. Without it,
+// `<Button asChild><Link/></Button>` produced `<button><a></a></button>` —
+// invalid HTML, an ambiguous control for screen readers, and a React
+// unknown-prop error on every render.
+const Button = React.forwardRef(({ className, variant = 'default', size = 'default', asChild = false, ...props }, ref) => {
+  const Comp = asChild ? Slot : 'button';
+  return (
+  <Comp
     ref={ref}
     className={cn(
       'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
@@ -28,7 +36,8 @@ const Button = React.forwardRef(({ className, variant = 'default', size = 'defau
     )}
     {...props}
   />
-));
+  );
+});
 Button.displayName = 'Button';
 
 export { Button };

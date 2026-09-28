@@ -1,13 +1,28 @@
+import { Inter, IBM_Plex_Mono } from 'next/font/google';
 import { Providers } from './providers';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import JsonLd from '@/components/JsonLd';
 import '@/index.css';
 
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-plex-mono',
+  display: 'swap',
+});
+
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
-// Site-wide JSON-LD: Organization + WebSite with SearchAction.
-// Organization helps Google build a knowledge panel; WebSite/SearchAction
-// can earn the sitelinks search box in SERPs.
+// Site-wide JSON-LD: Organization, for Google's knowledge panel.
+// WebSite/SearchAction lives on the homepage only (app/page.jsx) — schema.org
+// and Google both expect a single WebSite entity, not one repeated per page.
 const siteJsonLd = [
   {
     '@context': 'https://schema.org',
@@ -16,28 +31,17 @@ const siteJsonLd = [
     url: BASE_URL,
     logo: `${BASE_URL}/icon.svg`,
     sameAs: ['https://twitter.com/firmsledger'],
-    description: 'Global directory of verified business service providers. Compare staffing, IT, marketing, accounting, legal, and 8,000+ other categories with real client reviews.',
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'FirmsLedger',
-    url: BASE_URL,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${BASE_URL}/directory?search={search_term_string}` },
-      'query-input': 'required name=search_term_string',
-    },
+    description: 'The US manufacturer directory. Find manufacturers across all 50 states — electrical, mechanical, metal fabrication, electronics, automotive, and more. No paid placements.',
   },
 ];
 
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'FirmsLedger – Global Business & Service Provider Directory',
+    default: 'FirmsLedger – US Manufacturer Directory | Find Manufacturers by State',
     template: '%s | FirmsLedger',
   },
-  description: "Find and compare the best companies worldwide. Verified reviews, ratings, and direct contact for staffing, healthcare, travel, IT, education, and more across every industry.",
+  description: 'Find US manufacturers by category and state. Zero paid rankings. Browse electrical, mechanical, automotive, and more manufacturing categories across all 50 states.',
   openGraph: {
     type: 'website',
     locale: 'en',
@@ -82,12 +86,9 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${plexMono.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        {/* Google Fonts — preconnect for faster font loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Preconnect to third-party origins used for images and analytics */}
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />

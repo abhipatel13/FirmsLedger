@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { getDirectoryUrl, getCompanyProfileUrl } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
@@ -29,6 +30,15 @@ export default function Home() {
     queryKey: ['recent-reviews'],
     queryFn: () => api.entities.Review.filter({ approved: true }, '-created_at', 3),
   });
+  const router = useRouter();
+  const [heroQuery, setHeroQuery] = useState('');
+
+  const handleHeroSearch = (e) => {
+    e.preventDefault();
+    const q = heroQuery.trim();
+    if (!q) return;
+    router.push(`/search?q=${encodeURIComponent(q)}`);
+  };
 
   return (
     <div className="bg-white">
@@ -59,10 +69,26 @@ export default function Home() {
               Find verified companies, products, and services across every industry, worldwide. Read real reviews, compare options, and buy or hire with confidence.
             </p>
 
-            {/* Dual search: service + location */}
-            <div className="max-w-[760px] mx-auto mb-8">
-              {/* AI search removed */}
-            </div>
+            {/* Search */}
+            <form onSubmit={handleHeroSearch} className="max-w-[640px] mx-auto mb-8">
+              <div className="flex items-center gap-2 bg-white rounded-xl p-2 shadow-lg">
+                <input
+                  type="text"
+                  name="q"
+                  autoComplete="off"
+                  value={heroQuery}
+                  onChange={(e) => setHeroQuery(e.target.value)}
+                  placeholder="Search e.g. &ldquo;CNC machining in California&rdquo;…"
+                  className="flex-1 h-12 px-4 text-sm text-slate-900 placeholder-slate-400 bg-transparent focus:outline-none"
+                />
+                <Button
+                  type="submit"
+                  className="h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors flex-shrink-0"
+                >
+                  Search
+                </Button>
+              </div>
+            </form>
 
             {/* Trending categories */}
             <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
@@ -121,20 +147,20 @@ export default function Home() {
               {
                 num: '01',
                 icon: Sparkles,
-                title: 'Describe your need',
-                desc: 'Type what you\'re looking for in plain English — location, industry, team size, budget, timeline.',
+                title: 'Search or browse',
+                desc: 'Type what you need — industry, location, keyword — or browse categories directly.',
               },
               {
                 num: '02',
                 icon: Zap,
-                title: 'AI matches instantly',
-                desc: 'Our AI reads your requirement and scores every verified agency against it in real time.',
+                title: 'Compare verified companies',
+                desc: 'See ranked results with real reviews, ratings, and company details — no paid placements.',
               },
               {
                 num: '03',
                 icon: CheckCircle,
-                title: 'Get your shortlist',
-                desc: 'Receive your top 3 matches with scores, AI explanations, and direct links to their profiles.',
+                title: 'Contact directly',
+                desc: 'Reach out via phone, website, or a proposal request right from the company profile.',
               },
             ].map(({ num, icon: Icon, title, desc }) => (
               <div key={num} className="relative z-10 bg-white border border-slate-200 rounded-xl p-7 card-hover group">
@@ -177,13 +203,13 @@ export default function Home() {
                 {parentCategories.map((cat) => {
                   const href = getDirectoryUrl(cat.slug);
                   const IconComp = pickCategoryIcon(cat);
-                  const colorClass = colorFor(cat.slug);
+                  const { bg: bgClass, border: borderClass, text: textClass } = colorFor(cat.slug);
 
                   return (
                     <Link key={cat.id} href={href} className="group">
                       <div className="bg-white border border-slate-100 rounded-2xl p-5 card-hover h-full flex flex-col">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg border flex items-center justify-center flex-shrink-0 ${colorClass}`}>
+                          <div className={`w-10 h-10 rounded-lg border flex items-center justify-center flex-shrink-0 ${bgClass} ${borderClass} ${textClass}`}>
                             <IconComp className="w-5 h-5" />
                           </div>
                           <h3 className="font-bold text-[#1A2E4A] text-[15px] flex-1 group-hover:text-orange-600 transition-colors">
@@ -393,9 +419,9 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
-              <Link href="/ai-match?q=">
+              <Link href="/search">
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-3 h-auto rounded-xl text-sm transition-colors">
-                  Try AI Matchmaker <Sparkles className="w-4 h-4 ml-2" />
+                  Search Companies <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
               <Link href="/auth?mode=signup">

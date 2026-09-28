@@ -35,14 +35,41 @@ export default function ListAgencyDialog({ open, onOpenChange, inviteEmail }) {
     setIsSubmitting(true);
 
     try {
+      let formattedWebsite = formData.website.trim();
+      if (formattedWebsite && !/^https?:\/\//i.test(formattedWebsite)) {
+        formattedWebsite = 'https://' + formattedWebsite;
+      }
+
       await api.submitListingRequest({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company_name: formData.company_name,
-        website: formData.website,
+        website: formattedWebsite,
         message: formData.message,
       });
+
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+      if (accessKey) {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: accessKey,
+            name: formData.company_name,
+            email: formData.email,
+            subject: `New Listing Request (Agency): ${formData.company_name.slice(0, 60)}`,
+            message: [
+              `Submitter Name: ${formData.name}`,
+              `Agency: ${formData.company_name}`,
+              `Email: ${formData.email}`,
+              `Phone: ${formData.phone || '—'}`,
+              `Website: ${formattedWebsite || '—'}`,
+              formData.message ? `Details: ${formData.message}` : '',
+            ].filter(Boolean).join('\n'),
+          }),
+        }).catch((err) => console.error('Web3Forms agency submit failed:', err));
+      }
 
       if (api.hasSupabase()) {
         toast.success('Your listing has been submitted. We’ll review it and get back to you.');
@@ -125,7 +152,7 @@ export default function ListAgencyDialog({ open, onOpenChange, inviteEmail }) {
             <Label htmlFor="website">Website</Label>
             <Input
               id="website"
-              type="url"
+              type="text"
               value={formData.website}
               onChange={(e) => setFormData({ ...formData, website: e.target.value })}
               placeholder="https://yourwebsite.com"

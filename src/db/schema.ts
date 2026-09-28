@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   pgTable,
   uuid,
@@ -7,6 +8,8 @@ import {
   numeric,
   timestamp,
   unique,
+  index,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 // ── States ────────────────────────────────────────────────────────────────────
@@ -43,6 +46,11 @@ export const companies = pgTable('companies', {
   description:     text('description'),
   website:         text('website'),
   logo_url:        text('logo_url'),
+  logo_status:     text('logo_status').default('pending'),
+  logo_source:     text('logo_source'),
+  logo_original_url: text('logo_original_url'),
+  logo_updated_at: timestamp('logo_updated_at', { withTimezone: true }),
+  logo_error:      text('logo_error'),
   founded_year:    integer('founded_year'),
   employee_count:  text('employee_count'),
   // State FK — source of truth
@@ -52,6 +60,18 @@ export const companies = pgTable('companies', {
   hq_city:         text('hq_city'),
   contact_email:   text('contact_email'),
   certifications:  text('certifications').array(),
+  // Extended manufacturing fields
+  phone:           text('phone'),
+  address:         text('address'),
+  country:         text('country').default('United States'),
+  products:        text('products').array(),
+  industries_served: text('industries_served').array(),
+  capabilities:    text('capabilities').array(),
+  images:          text('images').array(),
+  naics_code:      text('naics_code'),
+  linkedin_url:    text('linkedin_url'),
+  data_source:     text('data_source').default('manual'),
+  source_url:      text('source_url'),
   is_verified:     boolean('is_verified').default(false),
   featured:        boolean('featured').default(false),
   approved:        boolean('approved').default(false),
@@ -60,7 +80,11 @@ export const companies = pgTable('companies', {
   review_count:    integer('review_count').default(0),
   created_at:      timestamp('created_at', { withTimezone: true }).defaultNow(),
   updated_at:      timestamp('updated_at', { withTimezone: true }).defaultNow(),
-});
+}, (t) => [
+  index('idx_companies_hq_state_id').on(t.hq_state_id),
+  index('idx_companies_approved').on(t.approved).where(sql`${t.approved} = true`),
+  index('idx_companies_avg_rating').on(t.avg_rating.desc()),
+]);
 
 // ── Company–Category links ────────────────────────────────────────────────────
 
@@ -72,7 +96,10 @@ export const company_categories = pgTable(
     category_id: uuid('category_id').notNull().references(() => categories.id, { onDelete: 'cascade' }),
     created_at:  timestamp('created_at', { withTimezone: true }).defaultNow(),
   },
-  (t) => [unique().on(t.company_id, t.category_id)],
+  (t) => [
+    unique().on(t.company_id, t.category_id),
+    index('idx_company_categories_category_id').on(t.category_id),
+  ],
 );
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
@@ -98,6 +125,21 @@ export const reviews = pgTable('reviews', {
   company_response_date: timestamp('company_response_date', { withTimezone: true }),
   created_at:            timestamp('created_at', { withTimezone: true }).defaultNow(),
   updated_at:            timestamp('updated_at', { withTimezone: true }).defaultNow(),
+}, (t) => [
+  index('idx_reviews_company_id').on(t.company_id),
+]);
+
+// ── Company Leads (Request Proposal submissions) ──────────────────────────────
+
+export const company_leads = pgTable('company_leads', {
+  id:         uuid('id').primaryKey().defaultRandom(),
+  company_id: uuid('company_id').notNull().references(() => companies.id, { onDelete: 'cascade' }),
+  name:       text('name').notNull(),
+  email:      text('email').notNull(),
+  phone:      text('phone'),
+  message:    text('message').notNull(),
+  status:     text('status').default('new'), // new | contacted | closed
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
 // ── Listing Requests ──────────────────────────────────────────────────────────
@@ -241,6 +283,64 @@ export const state_category_rankings = pgTable(
   (t) => [unique().on(t.state_id, t.category_id)],
 );
 
+// ── Users & Sessions (public account auth) ─────────────────────────────────────
+
+export const users = pgTable('users', {
+  id:            uuid('id').primaryKey().defaultRandom(),
+  email:         text('email').notNull().unique(),
+  password_hash: text('password_hash').notNull(),
+  full_name:     text('full_name'),
+  // Admin access is a flag on the account, checked against a real session.
+  // It replaced ADMIN_EMAIL/ADMIN_PASSWORD env vars, where the password also
+  // served as the cookie-signing key and so could be used to forge a session.
+  is_admin:      boolean('is_admin').notNull().default(false),
+  // Brute-force throttle for the admin login. Nothing rate-limited the endpoint
+  // before, so an attacker who knew the admin email could guess passwords
+  // indefinitely — scrypt made each attempt cost CPU but never stopped it.
+  // Counted on the account rather than the IP because IPs rotate freely and
+  // this is a single-admin site.
+  failed_login_attempts: integer('failed_login_attempts').notNull().default(0),
+  locked_until:  timestamp('locked_until', { withTimezone: true }),
+  created_at:    timestamp('created_at', { withTimezone: true }).defaultNow(),
+}, (t) => [
+  index('idx_users_is_admin').on(t.is_admin).where(sql`${t.is_admin} = true`),
+]);
+
+export const sessions = pgTable('sessions', {
+  id:         uuid('id').primaryKey().defaultRandom(),
+  user_id:    uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token_hash: text('token_hash').notNull().unique(),
+  expires_at: timestamp('expires_at', { withTimezone: true }).notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+// ── Listing Claims ────────────────────────────────────────────────────────────
+// A business owner claiming an existing `companies` row. THIS TABLE IS THE
+// ownership record: a company is owned by whoever holds its `approved` claim.
+// `companies.owner_user_id` is a dead Supabase-era column — nothing reads or
+// writes it, and this feature deliberately does not resurrect it, so the
+// migration stays purely additive.
+
+export const claims = pgTable('claims', {
+  id:            uuid('id').primaryKey().defaultRandom(),
+  company_id:    uuid('company_id').notNull().references(() => companies.id, { onDelete: 'cascade' }),
+  user_id:       uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  status:        text('status').notNull().default('pending'),   // pending | approved | rejected
+  verification:  text('verification'),                          // domain_match | manual
+  role:          text('role'),
+  contact_name:  text('contact_name'),
+  contact_email: text('contact_email'),
+  phone:         text('phone'),
+  review_note:   text('review_note'),
+  reviewed_at:   timestamp('reviewed_at', { withTimezone: true }),
+  created_at:    timestamp('created_at', { withTimezone: true }).defaultNow(),
+}, (t) => [
+  // The DB, not the app, is what makes two owners for one company impossible.
+  uniqueIndex('claims_one_approved_per_company').on(t.company_id).where(sql`${t.status} = 'approved'`),
+  uniqueIndex('claims_user_company_unique').on(t.user_id, t.company_id),
+  index('idx_claims_status').on(t.status),
+]);
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type State                   = typeof states.$inferSelect;
@@ -248,8 +348,10 @@ export type Category                = typeof categories.$inferSelect;
 export type Company                 = typeof companies.$inferSelect;
 export type CompanyCategory         = typeof company_categories.$inferSelect;
 export type Review                  = typeof reviews.$inferSelect;
+export type CompanyLead             = typeof company_leads.$inferSelect;
 export type ListingRequest          = typeof listing_requests.$inferSelect;
 export type CompanyInvite           = typeof company_invites.$inferSelect;
+export type Claim                   = typeof claims.$inferSelect;
 export type EmailCampaign           = typeof email_campaigns.$inferSelect;
 export type EmailLog                = typeof email_logs.$inferSelect;
 export type SubmissionLog           = typeof submission_logs.$inferSelect;
@@ -257,3 +359,5 @@ export type MarketplaceRfq          = typeof marketplace_rfqs.$inferSelect;
 export type MarketplaceSupplier     = typeof marketplace_suppliers.$inferSelect;
 export type MarketplaceResponse     = typeof marketplace_responses.$inferSelect;
 export type StateCategoryRanking    = typeof state_category_rankings.$inferSelect;
+export type User                    = typeof users.$inferSelect;
+export type Session                 = typeof sessions.$inferSelect;

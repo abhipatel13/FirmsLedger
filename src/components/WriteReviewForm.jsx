@@ -80,21 +80,11 @@ export default function WriteReviewForm() {
 
   useEffect(() => {
     if (!agencyParam) { setAgencyLoading(false); return; }
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!supabaseUrl || !supabaseKey) { setAgencyLoading(false); return; }
 
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(agencyParam);
-    const filter = isUuid
-      ? `id=eq.${encodeURIComponent(agencyParam)}`
-      : `slug=eq.${encodeURIComponent(agencyParam)}`;
-
-    fetch(`${supabaseUrl}/rest/v1/agencies?${filter}&select=id,name,slug,hq_city,hq_state,logo_url&limit=1`, {
-      headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
-    })
-      .then((r) => r.json())
+    fetch(`/api/companies/${encodeURIComponent(agencyParam)}`)
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data?.[0]) setAgency(data[0]);
+        if (data && !data.error) setAgency(data);
       })
       .catch(() => {})
       .finally(() => setAgencyLoading(false));
@@ -169,13 +159,13 @@ export default function WriteReviewForm() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             {agency?.slug && (
-              <Link href={`/agency/${agency.slug}`}>
+              <Link href={`/company/${agency.slug}`}>
                 <button className="bg-[#1A2E4A] hover:bg-[#142339] text-white font-semibold px-6 h-11 rounded-lg w-full sm:w-auto">
                   Back to {agency.name}
                 </button>
               </Link>
             )}
-            <Link href="/directory">
+            <Link href="/browse">
               <button className="border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold px-6 h-11 rounded-lg w-full sm:w-auto">
                 Browse Directory
               </button>
@@ -190,7 +180,7 @@ export default function WriteReviewForm() {
     <div className="min-h-screen bg-[#F7F8FA] py-10 sm:py-14">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         <Link
-          href={agency?.slug ? `/agency/${agency.slug}` : '/directory'}
+          href={agency?.slug ? `/company/${agency.slug}` : '/browse'}
           className="inline-flex items-center gap-2 text-slate-600 hover:text-orange-600 text-sm font-medium mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -216,7 +206,7 @@ export default function WriteReviewForm() {
               <p className="text-slate-500 text-sm mb-5">
                 Pick an agency from the directory to write a review.
               </p>
-              <Link href="/directory">
+              <Link href="/browse">
                 <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 h-10 rounded-lg">
                   Browse Agencies
                 </button>
@@ -241,7 +231,7 @@ export default function WriteReviewForm() {
                 <div>
                   <p className="font-bold text-[#1A2E4A]">{agency.name}</p>
                   <p className="text-xs text-slate-500">
-                    {[agency.hq_city, agency.hq_state].filter(Boolean).join(', ') || 'Reviewing this agency'}
+                    {[agency.hq_city, agency.hq_state_label].filter(Boolean).join(', ') || 'Reviewing this agency'}
                   </p>
                 </div>
               </div>

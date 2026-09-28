@@ -1,13 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-function getServiceSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
-    { auth: { persistSession: false } }
-  );
-}
+import { db } from '@/db/client';
+import { submission_logs } from '@/db/schema';
+import { desc } from 'drizzle-orm';
 
 export async function GET(request) {
   try {
@@ -17,17 +11,18 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = getServiceSupabase();
-    const { data, error } = await supabase
-      .from('submission_logs')
-      .select('id, url, platform, status, response, submitted_at')
-      .order('submitted_at', { ascending: false })
+    const data = await db
+      .select({
+        id: submission_logs.id,
+        url: submission_logs.url,
+        platform: submission_logs.platform,
+        status: submission_logs.status,
+        response: submission_logs.response,
+        submitted_at: submission_logs.submitted_at,
+      })
+      .from(submission_logs)
+      .orderBy(desc(submission_logs.submitted_at))
       .limit(200);
-
-    if (error) {
-      console.error('[submissions] Supabase error:', error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
 
     return NextResponse.json({ data: data ?? [] });
   } catch (err) {
@@ -44,10 +39,10 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // TODO(Step 5): replace with Drizzle query on submission_logs for unsubmitted URLs
+    const { getUnsubmittedUrls } = await import('@/db/neonApi');
     const { submitUrls } = await import('@/lib/automation/urlSubmitter');
 
-    const urls = []; // stub until Step 5
+    const urls = await getUnsubmittedUrls(20);
     if (urls.length === 0) {
       return NextResponse.json({ success: true, submitted: 0, message: 'No new URLs to submit' });
     }

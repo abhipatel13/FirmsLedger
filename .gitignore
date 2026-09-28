@@ -1,6 +1,10 @@
+HISTORY.md
+scripts/data/
+
 #env
 .env
 .env.*
+!.env.example
 .env.local
 
 # Logs
@@ -38,3 +42,63 @@ supabase/.temp/
 .agents/
 skills-lock.json
 CLAUDE.md
+*.csv
+
+# Data Pipeline temporary/batch files
+pipeline/clean_and_import.cjs
+pipeline/staging_batch_200.db
+pipeline/staged_companies_batch_200.json
+pipeline/staged_companies_batch_200.csv
+pipeline/existing_companies.json
+pipeline/existing_companies_w*.json
+pipeline/completed_queries.txt
+pipeline/completed_queries_w*.txt
+pipeline/export_today_csv.cjs
+gathered_companies_today.csv
+pipeline/staging_w*.db
+pipeline/staged_companies_w*.json
+pipeline/staged_companies_w*.csv
+pipeline/.venv/
+scraped-data/worker*.log
+scraped-data/loop_runner.log
+
+
+__pycache__/
+
+# pending/ CSVs are regenerated from the DB; keep the scripts, not the snapshots
+pending/*.csv
+
+# Logo pipeline generated files
+pipeline/logo-pipeline/input.csv
+pipeline/logo-pipeline/state.jsonl
+pipeline/logo-pipeline/results.csv
+pipeline/logo-pipeline/unprocessable.csv
+pipeline/logo-pipeline/html_cache/
+
+# ── Agent working files — local only, never pushed ────────────────────────────
+# Implementation plans, specs and generated reports are working notes, not
+# shipped code. scripts/ as a whole stays tracked (npm run build depends on
+# scripts/check-title-suffix.mjs) — only dev-only helpers are listed here.
+docs/superpowers/
+docs/reports/
+scripts/count-queries.mjs
+scripts/dev-with-query-log.sh
+.claude/
+.playwright-mcp/
+.neon
+tsconfig.tsbuildinfo
+screenshts(mobile)/
+
+# Pipeline working files — a plan doc and a dated sitemap snapshot
+pipeline/DESCRIPTION_BACKFILL_PLAN.md
+pipeline/sitemap-*.xml
+
+# Capability photos live in R2 (capabilities/ prefix), not in the repo.
+public/capabilities/
+
+# logo-pipeline backups/snapshots (local only)
+pipeline/logo-pipeline/*.bak
+pipeline/logo-pipeline/*.bak-*
+pipeline/logo-pipeline/*.tier1-v1
+pipeline/backfill_images.cjs
+.static-data/

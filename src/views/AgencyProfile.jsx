@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl, getCompanyProfileUrl, getAgencyLogoUrl } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getCategoryHref, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ import {
   MessageSquare, ArrowRight, Phone, ChevronDown, ChevronUp, User,
   DollarSign,
 } from 'lucide-react';
+import { ALL_US_STATES } from '@/lib/usStates';
 
 // ─── Brand palette ────────────────────────────────────────────────────────────
 // Orange shades + navy accents — matches FirmsLedger brand
@@ -72,7 +74,7 @@ function DonutLabel({ viewBox, total }) {
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function AgencyProfile({ companySlug }) {
+export default function AgencyProfile({ companySlug, initialCompany, initialReviews, initialCategories, initialSimilar }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -87,12 +89,13 @@ export default function AgencyProfile({ companySlug }) {
     queryFn: async () => {
       if (companySlug) {
         const bySlug = await api.entities.Company.filter({ slug: companySlug });
-        return bySlug[0];
+        return bySlug[0] ?? null;
       }
       const byId = await api.entities.Company.filter({ id: queryId });
-      return byId[0];
+      return byId[0] ?? null;
     },
-    enabled: !!identifier,
+    initialData: initialCompany ?? undefined,
+    enabled: !!identifier && !initialCompany,
   });
 
   const agencyId = agency?.id ?? null;
@@ -100,7 +103,8 @@ export default function AgencyProfile({ companySlug }) {
   const { data: reviews = [] } = useQuery({
     queryKey: ['agency-reviews', agencyId],
     queryFn: () => api.entities.Review.filter({ company_id: agencyId, approved: true }, '-created_at', 50),
-    enabled: !!agencyId,
+    initialData: initialReviews ?? undefined,
+    enabled: !!agencyId && !initialReviews,
   });
 
   const { data: categories = [] } = useQuery({
@@ -109,37 +113,41 @@ export default function AgencyProfile({ companySlug }) {
       const agencyCats = await api.entities.CompanyCategory.filter({ company_id: agencyId });
       const catIds = agencyCats.map(ac => ac.category_id ?? ac.categoryId);
       const allCats = await api.entities.Category.list();
-      return allCats.filter(c => catIds.includes(c.id));
+      const catsById = new Map(allCats.map(c => [c.id, c]));
+      return allCats
+        .filter(c => catIds.includes(c.id))
+        .map(c => ({ ...c, parentSlug: c.is_parent ? c.slug : catsById.get(c.parent_id)?.slug || null }));
     },
-    enabled: !!agencyId,
+    initialData: initialCategories ?? undefined,
+    enabled: !!agencyId && !initialCategories,
   });
 
-  // Similar companies — same primary category, same country, exclude self.
-  const primaryCategorySlug = categories[0]?.slug;
   const { data: similarCompanies = [] } = useQuery({
-    queryKey: ['similar-agencies', primaryCategorySlug, agency?.hq_country, agencyId],
+    queryKey: ['similar-agencies', agencyId],
     queryFn: async () => {
-      const list = await api.entities.Company.filterByCategory(primaryCategorySlug, '-avg_rating', 30);
-      return list
-        .filter(a => a.id !== agencyId)
-        .filter(a => !agency?.hq_country || a.hq_country === agency.hq_country)
-        .slice(0, 4);
+      const primarySlug = categories[0]?.slug;
+      if (!primarySlug) return [];
+      const list = await api.entities.Company.filterByCategory(primarySlug, '-avg_rating', 30);
+      return list.filter(a => a.id !== agencyId).slice(0, 4);
     },
-    enabled: !!primaryCategorySlug && !!agencyId,
+    initialData: initialSimilar ?? undefined,
+    enabled: !!agencyId && !initialSimilar,
   });
+
+  const primaryCategorySlug = categories[0]?.slug;
 
   // Canonical redirect
   React.useEffect(() => {
     if (!agency?.slug || !pathname?.startsWith('/AgencyProfile')) return;
     const search = searchParams?.toString() ? `?${searchParams.toString()}` : '';
     if (search === `?id=${agency.id}` || (searchParams?.get('id') === agency.id && !searchParams.get('slug'))) {
-      router.replace(`/companies/${encodeURIComponent(agency.slug)}`);
+      router.replace(`/company/${encodeURIComponent(agency.slug)}`);
     }
   }, [agency?.id, agency?.slug, pathname, router, searchParams]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center">
+      <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-slate-300 border-t-orange-500 mb-3" />
           <p className="text-slate-500 text-sm">Loading profile...</p>
@@ -150,11 +158,11 @@ export default function AgencyProfile({ companySlug }) {
 
   if (!agency) {
     return (
-      <div className="min-h-screen bg-[#fffaf0] flex items-center justify-center">
+      <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-500 mb-4">Agency not found</p>
           <Link href={getDirectoryUrl()}>
-            <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-6 h-10 rounded-md">
+            <Button className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-6 h-10 rounded-md">
               Back to Directory
             </Button>
           </Link>
@@ -164,6 +172,9 @@ export default function AgencyProfile({ companySlug }) {
   }
 
   // ── Derived data ────────────────────────────────────────────────────────────
+  const primaryCategory = categories?.[0];
+  const stateObj = agency?.hq_state_label ? ALL_US_STATES.find(s => s.name === agency.hq_state_label) : null;
+
   const serviceFocus   = Array.isArray(agency.service_focus)  ? agency.service_focus  : [];
   const industryFocus  = Array.isArray(agency.industry_focus) ? agency.industry_focus : [];
   const clientFocus    = agency.client_focus && typeof agency.client_focus === 'object' ? agency.client_focus : {};
@@ -190,25 +201,68 @@ export default function AgencyProfile({ companySlug }) {
     { url: agency.instagram_url,Icon: InstagramIcon, color: 'text-[#E1306C]' },
   ].filter(s => s.url);
 
+  const hasMetrics = !!(agency.hourly_rate || agency.team_size || agency.founded_year);
+
   return (
-    <div className="min-h-screen bg-[#fffaf0]">
+    <div className="min-h-screen bg-[#ffffff]">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="bg-[#faf5e8] border-b border-[#e5e5e5]">
+      <div className="bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          {/* Visual Breadcrumbs */}
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-slate-500 mb-6 font-medium">
+            <Link href="/" className="hover:text-slate-900 transition-colors">
+              Home
+            </Link>
+            {primaryCategory && (
+              <>
+                <span className="text-slate-300">/</span>
+                <Link href={getCategoryHref(primaryCategory)} className="hover:text-slate-900 transition-colors">
+                  {primaryCategory.name}
+                </Link>
+              </>
+            )}
+            {primaryCategory && stateObj && (
+              <>
+                <span className="text-slate-300">/</span>
+                <Link href={getCategoryHref(primaryCategory, stateObj.slug)} className="hover:text-slate-900 transition-colors">
+                  {primaryCategory.shortName || primaryCategory.name} in {stateObj.name}
+                </Link>
+              </>
+            )}
+            {stateObj && (
+              <>
+                <span className="text-slate-300">/</span>
+                <Link href={`/states/${stateObj.slug}`} className="hover:text-slate-900 transition-colors">
+                  {stateObj.name} Hub
+                </Link>
+              </>
+            )}
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-semibold truncate max-w-[200px] sm:max-w-xs">{agency.name}</span>
+          </nav>
+
           <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
             {agency.logo_url ? (
-              <img src={agency.logo_url} alt={agency.name}
+              // Plain <img> is intentional — next/image would proxy every logo
+              // request through the server, defeating the browser → Cloudflare
+              // edge → R2 immutable-cache path.
+              <img src={agency.logo_url} alt={`${agency.name} logo`} width={96} height={96}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/logo-icon.svg';
+                  e.currentTarget.alt = '';
+                }}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-contain border border-slate-200 bg-white flex-shrink-0" />
             ) : (
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-3 flex-shrink-0">
-                <img src="/logo-icon.svg" alt="" className="w-full h-full" />
+                <Image src="/logo-icon.svg" alt="" width={64} height={64} className="w-full h-full" />
               </div>
             )}
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <h1 className="break-words uppercase text-[#0a0a0a]" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 0.95, letterSpacing: '-0.5px' }}>{agency.name}</h1>
+                <h1 className="break-words uppercase text-[#0f172a]" style={{ fontWeight: 700, fontSize: 'clamp(24px, 4vw, 40px)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>{agency.name}</h1>
                 {agency.is_verified && (
                   <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2 py-1 rounded border border-green-200 mt-0.5">
                     <CheckCircle className="w-3 h-3" /> Verified
@@ -252,23 +306,23 @@ export default function AgencyProfile({ companySlug }) {
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
-                <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`} className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-6 h-11 rounded-md transition-colors">
+              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 mt-4 sm:mt-6 w-full sm:w-auto">
+                <Button asChild className="w-full sm:w-auto bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-4 sm:px-6 h-10 sm:h-11 rounded-xl transition-all shadow-sm hover:shadow-md text-sm">
+                  <Link href={createPageUrl('RequestProposal') + `?agency=${agency.id}`} className="flex items-center justify-center">
                     Request Proposal <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`} className="w-full sm:w-auto">
-                  <Button variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-700 hover:border-slate-300 font-semibold px-6 h-11 rounded-md transition-colors">
-                    <MessageSquare className="w-4 h-4 mr-2" /> Write Review
-                  </Button>
-                </Link>
-                {!agency.is_verified && (
-                  <Link href={`/claim-listing?agency=${agency.slug || agency.id}`} className="w-full sm:w-auto">
-                    <Button variant="outline" className="w-full sm:w-auto border-orange-200 text-orange-600 hover:border-orange-400 hover:bg-orange-50 font-semibold px-6 h-11 rounded-md transition-colors">
-                      <Crown className="w-4 h-4 mr-2" /> Claim This Listing
-                    </Button>
                   </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 font-semibold px-4 sm:px-6 h-10 sm:h-11 rounded-xl transition-all shadow-sm hover:shadow text-sm">
+                  <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`} className="flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 mr-2 text-slate-400" /> Write Review
+                  </Link>
+                </Button>
+                {!agency.is_verified && (
+                  <Button asChild variant="outline" className="w-full sm:w-auto border-orange-200 text-orange-700 hover:border-orange-300 hover:bg-orange-50 font-semibold px-4 sm:px-6 h-10 sm:h-11 rounded-xl transition-all shadow-sm hover:shadow text-sm">
+                    <Link href={`/claim-listing?agency=${agency.slug || agency.id}`} className="flex items-center justify-center">
+                      <Crown className="w-4 h-4 mr-2 text-orange-500" /> Claim This Listing
+                    </Link>
+                  </Button>
                 )}
               </div>
             </div>
@@ -280,14 +334,17 @@ export default function AgencyProfile({ companySlug }) {
       <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
         {/* ── Overview ─────────────────────────────────────────────────────── */}
-        <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg overflow-hidden">
-          <div className="grid md:grid-cols-[1fr_220px_160px] divide-y md:divide-y-0 md:divide-x divide-slate-200">
+        <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg overflow-hidden">
+          <div className={`grid divide-y md:divide-y-0 md:divide-x divide-slate-200 ${hasMetrics ? 'md:grid-cols-[1fr_320px_160px]' : 'md:grid-cols-[1fr_320px]'}`}>
             {/* Description + social */}
             <div className="p-6">
+              <h2 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">
+                About {agency.name}
+              </h2>
               {agency.tagline && (
-                <p className="text-orange-500 text-sm font-medium mb-2">{agency.tagline}</p>
+                <p className="text-orange-500 text-sm font-medium mb-3">{agency.tagline}</p>
               )}
-              <ExpandableText text={agency.description} />
+              <ExpandableText text={getCompanyDescription(agency, primaryCategory?.name, categories.map(c => c.name))} />
               {socialLinks.length > 0 && (
                 <div className="flex items-center gap-3 mt-4">
                   {socialLinks.map(({ url, Icon, color }, i) => (
@@ -314,6 +371,11 @@ export default function AgencyProfile({ companySlug }) {
               {!agency.address && agency.hq_city && (
                 <p className="text-slate-600 text-sm">{agency.hq_city}{agency.hq_state ? `, ${agency.hq_state}` : ''}</p>
               )}
+              {stateObj && (
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  Businesses in {stateObj.name} searching for {(primaryCategory?.name || 'business services').toLowerCase()} can find {agency.name}'s verified contact information, service area, and listing details here.
+                </p>
+              )}
               {agency.phone && (
                 <a href={`tel:${agency.phone}`} className="flex items-center gap-1.5 text-slate-600 text-sm hover:text-orange-600">
                   <Phone className="w-3.5 h-3.5 text-slate-400" /> {agency.phone}
@@ -322,51 +384,55 @@ export default function AgencyProfile({ companySlug }) {
             </div>
 
             {/* Key metrics */}
-            <div className="p-6 space-y-4">
-              {agency.hourly_rate && (
-                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <DollarSign className="w-4 h-4 text-orange-500" />
-                  {agency.hourly_rate}
-                </div>
-              )}
-              {agency.team_size && (
-                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <Users className="w-4 h-4 text-orange-500" />
-                  {agency.team_size}
-                </div>
-              )}
-              {agency.founded_year && (
-                <div className="flex items-center gap-2 border border-[#e5e5e5] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
-                  <Calendar className="w-4 h-4 text-orange-500" />
-                  {agency.founded_year}
-                </div>
-              )}
-            </div>
+            {hasMetrics && (
+              <div className="p-6 space-y-4">
+                {agency.hourly_rate && (
+                  <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                    <DollarSign className="w-4 h-4 text-orange-500" />
+                    {agency.hourly_rate}
+                  </div>
+                )}
+                {agency.team_size && (
+                  <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                    <Users className="w-4 h-4 text-orange-500" />
+                    {agency.team_size}
+                  </div>
+                )}
+                {agency.founded_year && (
+                  <div className="flex items-center gap-2 border border-[#e2e8f0] rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700">
+                    <Calendar className="w-4 h-4 text-orange-500" />
+                    {agency.founded_year}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
 
         {/* ── Services Offered (from linked categories) ────────────────────── */}
         {categories.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
-            <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Services Offered</h2>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={getDirectoryUrl(cat.slug)}
-                  className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3.5 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 transition-colors"
-                >
-                  <CheckCircle className="w-3.5 h-3.5 text-orange-500" />
-                  {cat.name}
-                </Link>
-              ))}
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-lg font-bold text-[#1A2E4A] shrink-0">Services Offered</h2>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={getCategoryHref(cat)}
+                    className="inline-flex items-center gap-1.5 border border-slate-200 rounded-full px-3.5 py-1.5 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5 text-orange-500" />
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
         {/* ── At a Glance ──────────────────────────────────────────────────── */}
-        <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+        <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
           <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">About {agency.name}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
@@ -379,7 +445,7 @@ export default function AgencyProfile({ companySlug }) {
               { Icon: Star,      label: 'Rating',       value: (agency.avg_rating || 0) > 0 ? `${(+agency.avg_rating).toFixed(1)} / 5` : null },
               { Icon: MessageSquare, label: 'Reviews',  value: (agency.review_count || 0) > 0 ? String(agency.review_count) : null },
             ].filter(item => item.value).map(({ Icon, label, value, href }) => (
-              <div key={label} className="border border-[#e5e5e5] rounded-xl p-4">
+              <div key={label} className="border border-[#e2e8f0] rounded-xl p-4">
                 <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wide mb-1.5">
                   <Icon className="w-3.5 h-3.5 text-orange-500" />
                   {label}
@@ -389,7 +455,7 @@ export default function AgencyProfile({ companySlug }) {
                     {value}
                   </a>
                 ) : (
-                  <p className="font-semibold text-[#1A2E4A] break-words" style={{ fontSize: 13, fontFamily: (label === 'Rating' || label === 'Reviews') ? '"IBM Plex Mono", monospace' : 'inherit' }}>{value}</p>
+                  <p className="font-semibold text-[#1A2E4A] break-words" style={{ fontSize: 13, fontFamily: (label === 'Rating' || label === 'Reviews') ? 'inherit' : 'inherit' }}>{value}</p>
                 )}
               </div>
             ))}
@@ -401,13 +467,13 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Similar Companies ───────────────────────────────────────────── */}
         {similarCompanies.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-[#1A2E4A]">
                 Similar {categories[0]?.name || 'Companies'}{agency.hq_country ? ` in ${agency.hq_country}` : ''}
               </h2>
               {primaryCategorySlug && (
-                <Link href={getDirectoryUrl(primaryCategorySlug)} className="text-sm font-semibold text-orange-500 hover:text-orange-600 inline-flex items-center gap-1">
+                <Link href={getCategoryHref(primaryCategory)} className="text-sm font-semibold text-orange-500 hover:text-orange-600 inline-flex items-center gap-1">
                   View all <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}
@@ -422,9 +488,11 @@ export default function AgencyProfile({ companySlug }) {
                   <img
                     src={getAgencyLogoUrl(c)}
                     alt={c.name}
-                    loading="lazy"
+                    width={48}
+                    height={48}
                     onError={(e) => {
-                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getAgencyLogoUrl({ name: c.name });
                     }}
                     className="w-12 h-12 rounded-md object-contain border border-slate-100 bg-white flex-shrink-0"
                   />
@@ -434,7 +502,7 @@ export default function AgencyProfile({ companySlug }) {
                       {(c.avg_rating || 0) > 0 && (
                         <span className="inline-flex items-center gap-0.5">
                           <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 11 }}>{(+c.avg_rating).toFixed(1)}</span>
+                          <span style={{ fontFamily: 'inherit', fontSize: 11 }}>{(+c.avg_rating).toFixed(1)}</span>
                         </span>
                       )}
                       {c.hq_city && <span className="truncate">{c.hq_city}</span>}
@@ -449,7 +517,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Service Focus ─────────────────────────────────────────────────── */}
         {serviceFocus.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Service Focus</h2>
             <div className="grid md:grid-cols-[220px_1fr_1fr] gap-8 items-center">
               {/* Category tabs */}
@@ -526,7 +594,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Industry Focus ────────────────────────────────────────────────── */}
         {industryFocus.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-4">Industry Focus</h2>
             <div className="flex flex-wrap gap-2">
               {industryFocus.map((item, i) => (
@@ -542,7 +610,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Client Focus ──────────────────────────────────────────────────── */}
         {(clientFocus.small_business || clientFocus.medium_business || clientFocus.large_business) && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-6">Client Focus</h2>
             <div className="grid sm:grid-cols-3 gap-8">
               {[
@@ -569,7 +637,7 @@ export default function AgencyProfile({ companySlug }) {
 
         {/* ── Review Analytics ──────────────────────────────────────────────── */}
         {reviews.length > 0 && (
-          <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+          <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">
               Review Analytics of {agency.name}
             </h2>
@@ -581,9 +649,9 @@ export default function AgencyProfile({ companySlug }) {
                 { label: 'Overall Rating',  value: `${avgOverall.toFixed(1)}/5` },
                 { label: 'Recent Reviews',  value: Math.min(reviews.length, 80) },
               ].map(({ label, value }) => (
-                <div key={label} className="bg-[#ebe6d6] border border-[#e5e5e5] rounded-xl p-5">
-                  <p className="text-2xl font-medium text-[#0a0a0a]" style={{ letterSpacing: '-1px' }}>{value}</p>
-                  <p className="text-xs font-semibold text-[#6a6a6a] uppercase tracking-wider mt-1">{label}</p>
+                <div key={label} className="bg-[#e2e8f0] border border-[#e2e8f0] rounded-xl p-5">
+                  <p className="text-2xl font-medium text-[#0f172a]" style={{ letterSpacing: '-1px' }}>{value}</p>
+                  <p className="text-xs font-semibold text-[#64748b] uppercase tracking-wider mt-1">{label}</p>
                 </div>
               ))}
             </div>
@@ -620,11 +688,11 @@ export default function AgencyProfile({ companySlug }) {
                 <Stars rating={avgOverall} />
                 <span className="text-slate-500 text-sm">{reviews.length} Reviews</span>
               </div>
-              <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-5 h-9 rounded-md text-sm">
+              <Button asChild className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
                   Write a Review
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           )}
 
@@ -633,14 +701,19 @@ export default function AgencyProfile({ companySlug }) {
           </h2>
 
           {reviews.length === 0 ? (
-            <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-12 text-center">
+            <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-12 text-center">
               <Star className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-              <p className="text-slate-500 mb-4 text-sm">No reviews yet</p>
-              <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
-                <Button className="bg-[#0a0a0a] hover:bg-[#3a3a3a] text-white font-semibold px-5 h-9 rounded-md text-sm">
+              <p className="text-slate-500 mb-2 text-sm font-semibold">No reviews yet for {agency.name}</p>
+              <p className="text-slate-500 mb-4 text-sm max-w-md mx-auto">
+                Reviews on FirmsLedger cover quality of work, timeliness, and communication, helping other businesses
+                evaluate {(primaryCategory?.name || 'service').toLowerCase()} providers before reaching out. Worked with{' '}
+                {agency.name}? Be the first to share a rating and help build their profile on FirmsLedger.
+              </p>
+              <Button asChild className="bg-[#0f172a] hover:bg-[#334155] text-white font-semibold px-5 h-9 rounded-md text-sm">
+                <Link href={createPageUrl('WriteReview') + `?agency=${agency.id}`}>
                   Be the first to review
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -665,11 +738,11 @@ export default function AgencyProfile({ companySlug }) {
 function ExpandableText({ text }) {
   const [expanded, setExpanded] = useState(false);
   if (!text) return null;
-  const short = text.length > 300;
-  const displayed = short && !expanded ? text.slice(0, 300) + '…' : text;
+  const short = text.length > 800;
+  const displayed = short && !expanded ? text.slice(0, 800) + '…' : text;
   return (
     <div>
-      <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{displayed}</p>
+      <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line md:text-base">{displayed}</p>
       {short && (
         <button onClick={() => setExpanded(!expanded)} className="text-orange-500 text-sm font-medium mt-2 hover:underline">
           {expanded ? 'Show less' : 'Read more'}
@@ -690,7 +763,7 @@ function DetailedReviewCard({ review, expanded, onToggle }) {
   ];
 
   return (
-    <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg overflow-hidden">
+    <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg overflow-hidden">
       {/* Top: reviewer */}
       <div className="flex items-start justify-between p-5 pb-3">
         <div className="flex items-center gap-3">
@@ -786,7 +859,7 @@ function FAQSection({ agency, categoryName }) {
   ];
 
   return (
-    <div className="bg-[#fffaf0] border border-[#e5e5e5] rounded-lg p-6">
+    <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
       <h2 className="text-lg font-bold text-[#1A2E4A] mb-5">Frequently Asked Questions</h2>
       <div className="divide-y divide-slate-100">
         {faqs.map((faq, i) => {

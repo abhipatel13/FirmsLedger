@@ -31,7 +31,8 @@ function CompanyListItem({ company, rank }) {
               alt={company.name}
               loading="lazy"
               onError={(e) => {
-                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name || '?')}&background=1A2E4A&color=fff&size=128&bold=true`;
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = getAgencyLogoUrl({ name: company.name });
               }}
               className="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-contain border border-slate-100 bg-white"
             />
@@ -143,18 +144,18 @@ export default function SearchPageLayout({
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
       {/* Dark header — matches Directory */}
-      <div className="bg-[#1A2E4A] text-white">
+      <div className="text-white" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
         <div className="w-full px-4 sm:px-6 lg:px-10 pt-8 pb-7">
           {/* Breadcrumb */}
           {breadcrumbs.length > 0 && (
-            <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-400 mb-4">
+            <nav className="flex flex-nowrap items-center gap-1.5 text-sm text-slate-400 mb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
               {breadcrumbs.map((crumb, i) => (
-                <span key={i} className="flex items-center gap-1.5">
-                  {i > 0 && <span className="text-slate-600">/</span>}
+                <span key={i} className="flex items-center gap-1.5 flex-shrink-0">
+                  {i > 0 && <span className="text-slate-600 flex-shrink-0">/</span>}
                   {crumb.href ? (
-                    <Link href={crumb.href} className="hover:text-white transition-colors">{crumb.label}</Link>
+                    <Link href={crumb.href} className="hover:text-white transition-colors flex-shrink-0">{crumb.label}</Link>
                   ) : (
-                    <span className="text-white font-medium">{crumb.label}</span>
+                    <span className="text-white font-medium flex-shrink-0">{crumb.label}</span>
                   )}
                 </span>
               ))}
@@ -243,7 +244,7 @@ export default function SearchPageLayout({
         {children}
 
         {/* CTA banner */}
-        <div className="mt-10 bg-[#1A2E4A] text-white rounded-xl p-8 text-center">
+        <div className="mt-10 text-white rounded-xl p-8 text-center" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
           <h2 className="text-2xl font-bold mb-2">{ctaTitle}</h2>
           <p className="text-slate-300 mb-5">{ctaDescription}</p>
           <Link

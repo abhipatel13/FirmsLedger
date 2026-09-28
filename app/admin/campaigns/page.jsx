@@ -55,7 +55,7 @@ If you have any questions, feel free to reply to this email.
 Best regards,
 The FirmsLedger Team`;
   const DEFAULT_BTN_LABEL = 'List Your Company Free →';
-  const DEFAULT_BTN_URL   = 'https://firmsledger.com/ListYourCompany';
+  const DEFAULT_BTN_URL   = 'https://firmsledger.com/list-your-company';
 
   // Compose form
   const [formOpen, setFormOpen] = useState(false);
@@ -289,7 +289,7 @@ The FirmsLedger Team`;
                           className={INPUT}
                           value={btnUrl}
                           onChange={(e) => setBtnUrl(e.target.value)}
-                          placeholder="https://firmsledger.com/ListYourCompany"
+                          placeholder="https://firmsledger.com/list-your-company"
                         />
                       </div>
                     </div>

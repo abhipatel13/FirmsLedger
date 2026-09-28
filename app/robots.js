@@ -8,14 +8,16 @@ export default function robots() {
         allow: '/',
         disallow: [
           '/admin',
-          '/AdminDashboard',
-          '/AgencyDashboard',
-          '/AgencyProfile',
-          '/InviteAgency',
           '/api/',
-          '/join',
         ],
+        crawlDelay: 2, // Ask polite bots to wait 2 seconds between requests
       },
+      {
+        // AhrefsBot/SemrushBot/RSiteAuditor deliberately allowed — we pay for
+        // those tools and blocking them makes our own site audits return nothing.
+        userAgent: ['MJ12bot', 'DotBot', 'Rogerbot', 'MegaIndex.ru', 'PetalBot', 'Lightpanda'],
+        disallow: '/', // Completely disallow these known scraper/SEO bots
+      }
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
   };
