@@ -102,3 +102,6 @@ pipeline/logo-pipeline/*.bak-*
 pipeline/logo-pipeline/*.tier1-v1
 pipeline/backfill_images.cjs
 .static-data/
+
+# Local, Neon-free test database (docker compose + seed). Dev-only, never committed.
+dev/
