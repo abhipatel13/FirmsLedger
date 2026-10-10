@@ -8,5 +8,11 @@
       "path": "/api/cron/submit-urls",
       "schedule": "0 9 * * *"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "fix/honest-ratings": false,
+      "feat/mfg-style-ui": false
+    }
+  }
 }
