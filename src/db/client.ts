@@ -1,18 +1,15 @@
 import { neon, neonConfig } from '@neondatabase/serverless';
 
-// Local, Neon-free testing only (dev/local-db). Never active in production:
-// both the opt-in flag and a non-production NODE_ENV are required.
-if (process.env.NEON_LOCAL_PROXY === '1' && process.env.NODE_ENV !== 'production') {
-  // The driver sends the whole connection string (password included) in a
-  // header, so refuse anything but the local test host rather than ever
-  // sending a real Neon URL over plain http. The proxy routes on the
-  // db.localtest.me name; the request itself goes to its fixed host port
-  // (54444, see dev/local-db/compose.yaml).
+// Local, Neon-free testing only (dev/local-db). Opt-in via NEON_LOCAL_PROXY=1,
+// which no deployed environment sets. The driver sends the whole connection
+// string in a header, so anything but the local test host is refused rather
+// than ever sending a real Neon URL over plain http.
+if (process.env.NEON_LOCAL_PROXY === '1') {
   neonConfig.fetchEndpoint = (host: string) => {
     if (host !== 'db.localtest.me') {
       throw new Error(`NEON_LOCAL_PROXY=1 but DATABASE_URL host is ${host}; refusing to proxy a non-local database.`);
     }
-    return 'http://127.0.0.1:54444/sql';
+    return `http://127.0.0.1:${process.env.NEON_LOCAL_PROXY_PORT || '54444'}/sql`;
   };
 }
 import { drizzle } from 'drizzle-orm/neon-http';
