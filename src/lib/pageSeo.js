@@ -1,10 +1,11 @@
 import SUBCATEGORY_COMBOS from '@/lib/generated/subcategoryCombos.json';
 import { fetchStateListing, fetchStateHubStats } from '@/db/neonApi';
-import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
+import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
+import { getBorderingStates } from '@/lib/stateNeighbors';
 import { buildListingFacts } from '@/lib/listingFacts';
 import { SEO_OVERRIDES, resolveOverride, listingVars, stateHubVars } from '@/lib/seoOverrides';
 
-const subCountsFor = (cat, stateSlug) =>
+export const subCountsFor = (cat, stateSlug) =>
   Object.fromEntries((cat?.subcategories || []).map((s) => [
     s.slug,
     SUBCATEGORY_COMBOS.find((c) => c.category === cat.slug && c.sub === s.slug && c.state === stateSlug)?.n || 0,
@@ -41,4 +42,23 @@ export async function stateHubSeo({ stateSlug, stateName }) {
       }))
     : null;
   return { stats, sections, seo };
+}
+
+export async function listingSidebar({ cat, stateSlug, stateName, facts, currentSub = null }) {
+  const subCounts = subCountsFor(cat, stateSlug);
+  const { topCategories } = await fetchStateHubStats(stateSlug);
+  return {
+    stateName,
+    stateSlug,
+    categoryLabel: cat.shortName,
+    parent: currentSub ? { href: `/${cat.slug}/${stateSlug}`, label: `All ${cat.shortName} in ${stateName}` } : null,
+    specialties: cat.subcategories
+      .filter((s) => subCounts[s.slug] >= 5 || s.slug === currentSub)
+      .map((s) => ({ href: `/${cat.slug}/${s.slug}/${stateSlug}`, label: s.name, count: subCounts[s.slug], current: s.slug === currentSub })),
+    cities: facts.cities.slice(0, 8),
+    nearby: getBorderingStates(stateSlug).map((n) => ({ href: `/${cat.slug}/${n.slug}`, label: n.name })),
+    industries: topCategories
+      .filter((t) => t.slug !== cat.slug && t.count >= 5 && CATEGORY_MAP[t.slug])
+      .map((t) => ({ href: `/${t.slug}/${stateSlug}`, label: CATEGORY_MAP[t.slug].shortName })),
+  };
 }

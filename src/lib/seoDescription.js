@@ -116,7 +116,7 @@ export function generateDynamicCategoryStateAboveFoldText({ categorySlug, catego
   } else if (templateIdx === 1) {
     return `Browse ${totalCount} ${cleanCat.toLowerCase()} companies in ${stateName} specialized in ${domain.products.split(', ').slice(0, 2).join(' and ')}.`;
   } else {
-    return `Connect with ${totalCount} local ${cleanCat.toLowerCase()} suppliers across ${stateName}. Compare capabilities, certifications, and response times.`;
+    return `Connect with ${totalCount} local ${cleanCat.toLowerCase()} suppliers across ${stateName}. Compare their capabilities, cities and contact details.`;
   }
 }
 

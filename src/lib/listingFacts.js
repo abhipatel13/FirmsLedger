@@ -1,7 +1,7 @@
 import { cleanFacets } from './cleanFacets.js';
 
 const titleCase = (s) => s.toLowerCase().replace(/(^|[\s-])\w/g, (m) => m.toUpperCase());
-const GENERIC = /^(personali[sz]ed|customer|quality|excellent|fast|reliable|friendly|professional|competitive|affordable|great)\b/i;
+const GENERIC = /^(personali[sz]ed|customer|quality|excellent|exceptional|fast|reliable|friendly|professional|competitive|affordable|great|superior|dependable|commercial|residential|business|emergency|consumer|specialty|industrial|popular|featured|related|recently viewed|explore|compare|select|share|example|search|contact|become|skip|out of stock|recommended|see more|list of|view all|shop all|value[- ]added)\b|^(product|products|services?)( [a-z]+)?$|^services offered$|^capabilities( statement)?$|^parts & accessories$|^service (department|& support|& maintenance)$/i;
 
 function tally(pairs) {
   const counts = new Map();
@@ -18,8 +18,24 @@ export function companyCity(c) {
   return city ? titleCase(city) : null;
 }
 
+const nameWord = (c) => String(c?.name || '').toLowerCase().split(/[^a-z0-9]+/).find((w) => w.length > 3) || null;
+
 export function companySpecialties(c, limit = 3) {
-  return cleanFacets([...(c?.capabilities || []), ...(c?.products || [])], limit + 3).filter((s) => !GENERIC.test(s)).slice(0, limit);
+  const own = nameWord(c);
+  return cleanFacets([...(c?.capabilities || []), ...(c?.products || [])], 50)
+    .map((s) => s.replace(/[\s,;:.]+$/, ''))
+    .filter((s) => s && !GENERIC.test(s) && s.split(/\s+/).length <= 5 && !(own && s.toLowerCase().includes(own)))
+    .reduce((kept, s) => (kept.some((k) => s.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(s.toLowerCase())) ? kept : [...kept, s]), [])
+    .slice(0, limit);
+}
+
+export function websiteDomain(website) {
+  if (!website) return null;
+  try {
+    return new URL(/^https?:\/\//i.test(website) ? website : `https://${website}`).hostname.replace(/^www\./, '');
+  } catch {
+    return null;
+  }
 }
 
 export function companyCertifications(c) {
@@ -38,4 +54,15 @@ export function buildListingFacts(companies) {
     withWebsite: list.filter((c) => c.website).length,
     lastUpdated: stamps.length ? new Date(Math.max(...stamps)) : null,
   };
+}
+
+export const formatUpdated = (date) =>
+  date ? new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(date) : null;
+
+export function formatPhone(raw) {
+  if (!raw || /x{2,}|partial|n\/a/i.test(raw)) return null;
+  const digits = String(raw || '').replace(/\D/g, '');
+  const local = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+  if (local.length !== 10) return raw || null;
+  return `(${local.slice(0, 3)}) ${local.slice(3, 6)}-${local.slice(6)}`;
 }

@@ -54,12 +54,3 @@ export function SeoFaqs({ faqs }) {
     </>
   );
 }
-
-export function LastUpdated({ date }) {
-  if (!date) return null;
-  return (
-    <p className="mt-2 text-xs text-slate-500">
-      Last updated <time dateTime={date.toISOString().slice(0, 10)}>{new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(date)}</time>
-    </p>
-  );
-}

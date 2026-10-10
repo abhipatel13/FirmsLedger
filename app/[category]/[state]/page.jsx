@@ -19,9 +19,9 @@ import {
 } from '@/lib/seoDescription';
 import { getBorderingStates } from '@/lib/stateNeighbors';
 import { TARGET_PAGES } from '@/lib/seoOverrides';
-import { stateListingSeo } from '@/lib/pageSeo';
-import ComparisonTable from '@/components/listing/ComparisonTable';
-import { SeoIntro, SeoFaqs, LastUpdated } from '@/components/seo/SeoBlocks';
+import { stateListingSeo, listingSidebar } from '@/lib/pageSeo';
+import { formatUpdated } from '@/lib/listingFacts';
+import StateListingPage from '@/components/listing/StateListingPage';
 
 // Prebuilt at deploy. `revalidate = false` (not a duration) because a
 // time-based window makes the page re-render AT RUNTIME on expiry, and a runtime
@@ -563,35 +563,35 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     itemListElement: breadcrumbItems,
   };
 
-  const faqJsonLd = state && !seo
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: generateCategoryStateFAQs({
-          categorySlug: category,
-          categoryName: cat?.shortName || categoryName,
-          stateSlug: state,
-          stateName,
-          totalCount: totalCount,
-          verifiedCount: stats.verifiedCount,
-          medianRating: stats.medianRating,
-          topSpecialties: stats.topSpecialties,
-        }).map((faq) => ({
-          '@type': 'Question',
-          name: faq.q,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: faq.a,
-          },
-        })),
-      }
-    : null;
+  if (state) {
+    const faqInput = { categorySlug: category, categoryName: cat?.shortName || categoryName, stateSlug: state, stateName, totalCount, topSpecialties: stats.topSpecialties, subcategories: cat?.subcategories };
+    const { facts } = listing;
+    return (
+      <>
+        <JsonLd data={itemListJsonLd} />
+        <JsonLd data={breadcrumbJsonLd} />
+        <StateListingPage
+          breadcrumbs={[{ href: '/', label: 'Home' }, { href: `/${category}`, label: categoryName }, { href: `/states/${state}`, label: `${stateName} manufacturers` }]}
+          h1={seo?.h1 || pageTitle}
+          stats={[`${pageCompanies.length} companies`, facts.cities.length > 1 && `${facts.cities.length} cities`, facts.lastUpdated && `Updated ${formatUpdated(facts.lastUpdated)}`]}
+          lead={seo ? seo.intro[0] : generateDynamicCategoryStateAboveFoldText(faqInput)}
+          listTitle={`${pageCompanies.length} ${cat?.shortName || categoryName} companies in ${stateName}`}
+          companies={pageCompanies}
+          sidebar={await listingSidebar({ cat, stateSlug: state, stateName, facts })}
+          cta={{ title: `Looking for ${cat?.noun || categoryName.toLowerCase()} in ${stateName}?`, text: 'Tell us what you need. The FirmsLedger team will point you to matching manufacturers, free of charge.' }}
+          aboutTitle={`About ${cat?.shortName || categoryName} in ${stateName}`}
+          about={seo ? seo.intro.slice(1) : [generateDynamicCategoryStateOnPageText(faqInput)]}
+          faqs={seo ? seo.faqs : generateCategoryStateFAQs(faqInput)}
+        />
+      </>
+    );
+  }
+
 
   return (
     <>
       <JsonLd data={itemListJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      {faqJsonLd && <JsonLd data={faqJsonLd} />}
 
       <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
@@ -667,7 +667,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     })}
                   </p>
                 )}
-                {listing && <LastUpdated date={listing.facts.lastUpdated} />}
                 {!state && (
                   <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
                     Grouped by category and location. Updated monthly.
@@ -726,23 +725,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
           {/* ── Ranked list ─────────────────────────────────────── */}
           <div style={{ minWidth: 0, marginTop: 24 }}>
-            {seo?.intro.length > 0 && <SeoIntro paragraphs={seo.intro} />}
-            {stateName && !seo && (
-              <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.65, margin: '0 0 24px' }}>
-                Comparing {totalCount} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}. Request quotes
-                directly from suppliers, or {' '}
-                <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
-                  list your own company
-                </Link>{' '}
-                to reach buyers searching {stateName}.
-              </p>
-            )}
-            {stateName && (
-              <ComparisonTable
-                companies={pageCompanies}
-                caption={`Compare ${pageCompanies.length} ${cat?.noun || categoryName.toLowerCase()} in ${stateName}`}
-              />
-            )}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <h2 style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
                 All {cat?.shortName || categoryName}{stateName ? ` in ${stateName}` : ' in the US'}
@@ -911,8 +893,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <section style={{ backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', paddingTop: 48, paddingBottom: 64 }} className="px-6 lg:px-8">
             <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
               
-              {seo && <SeoFaqs faqs={seo.faqs} />}
-
               {/* Main description card */}
               {!seo && <div style={{
                 backgroundColor: '#ffffff',

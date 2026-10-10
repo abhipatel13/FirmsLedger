@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import VisitWebsiteButton from './VisitWebsiteButton';
 import { getCompanyDescription } from '@/utils';
+import { formatPhone } from '@/lib/listingFacts';
 import { cleanFacets } from '@/lib/cleanFacets';
 
 function StarRow({ rating }) {
@@ -23,12 +24,6 @@ function StarRow({ rating }) {
 }
 
 /** +16123314622 -> (612) 331-4622. Anything unexpected is shown as stored. */
-function formatPhone(raw) {
-  const digits = String(raw || '').replace(/\D/g, '');
-  const local = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
-  if (local.length !== 10) return raw || null;
-  return `(${local.slice(0, 3)}) ${local.slice(3, 6)}-${local.slice(6)}`;
-}
 
 export default function CompanyCard({ company }) {
   const rating = parseFloat(company.avg_rating) || 0;

@@ -26,7 +26,7 @@ export const SEO_OVERRIDES = {
       'Texas is the largest plastics-producing state in the US: its plastics manufacturers shipped $61.5 billion of goods in 2024 across 840 facilities, according to the American Chemistry Council ([BIC Magazine](https://www.bicmagazine.com/industry/refining-petrochem/texas-plastics-industry-sets-pace-with-61-5-billion)).',
       ['FirmsLedger lists {N} plastic and packaging manufacturers headquartered in Texas.', 'The biggest clusters are in {cities}.'],
       ['By process, the Texas list includes {subcategoryLinks}.', 'Specialties that come up most in these listings are {specialties}.'],
-      'The table below compares every company by city, specialty and certifications, with a link to each website. No company pays to appear or to rank higher.',
+      'The list above shows every company with its city, specialties, certifications and website. No company pays to appear or to rank higher.',
     ],
     faqs: [
       { q: 'What kinds of plastic manufacturing happen in Texas?', a: ['The Texas companies listed here cover {subcategoryNames}.', 'The most common specialties in their listings are {specialties}.'] },
@@ -44,7 +44,7 @@ export const SEO_OVERRIDES = {
       ['FirmsLedger lists {N} injection molding companies headquartered in Texas.', 'Most are in {cities}.'],
       ['Specialties that come up most often in these listings are {specialties}.', 'Certifications they list include {certs}.'],
       ['Listings that mention medical work include {kw_medical}.', 'Listings that mention automotive work include {kw_automotive}.'],
-      'This list is part of [all plastic manufacturers in Texas](/plastics-packaging/texas). Compare the molders in the table below and contact them directly; FirmsLedger does not charge for quotes or take a cut.',
+      'This list is part of [all plastic manufacturers in Texas](/plastics-packaging/texas). Compare the molders above and contact them directly; FirmsLedger does not charge for quotes or take a cut.',
     ],
     faqs: [
       { q: 'How many injection molding companies are in Texas?', a: ['FirmsLedger lists {N} injection molding companies headquartered in Texas.', 'Most are in {cities}.'] },
@@ -61,7 +61,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} food and beverage companies headquartered in Texas.', 'They are concentrated in {cities}.'],
       ['Listings that mention meat products include {kw_meat}.', 'Listings that mention beverages include {kw_beverage}.', 'The list also includes processing-equipment and supply companies such as {kw_equipment}.'],
-      'Co-packers and private-label makers in this list include {kw_copack}. Compare them in the table below and contact each company directly.',
+      'Co-packers and private-label makers in this list include {kw_copack}. Compare them above and contact each company directly.',
     ],
     faqs: [
       { q: 'Which Texas food manufacturers offer co-packing or private label?', a: 'Listings that mention co-packing or private label include {kw_copack}.' },
@@ -78,7 +78,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} automotive parts manufacturers and suppliers headquartered in Texas.', 'Most are in {cities}.'],
       ['Part types and services in these listings include {specialties}.', 'Listings that mention trailers include {kw_trailer}.', 'Listings that mention aftermarket or performance parts include {kw_aftermarket}.', 'Listings that mention OEM or Tier 1 work include {kw_oem}.'],
-      'Compare every company in the table below by city, specialty and certifications, then contact them directly.',
+      'Compare every company above by city, specialty and certifications, then contact them directly.',
     ],
     faqs: [
       { q: 'What auto parts are made in Texas?', a: ['The Texas companies listed here make or supply {specialties}.', 'Listings that mention trailers include {kw_trailer}.'] },
@@ -95,7 +95,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} furniture makers and woodworking shops headquartered in Texas.', 'Most are in {cities}.'],
       ['Listings that mention commercial, contract or hospitality work include {kw_commercial}.', 'Listings that mention custom or handcrafted pieces include {kw_custom}.', 'Listings that mention cabinetry or millwork include {kw_cabinet}.'],
-      'Compare them in the table below and contact each shop directly.',
+      'Compare them above and contact each shop directly.',
     ],
     faqs: [
       { q: 'Which Texas furniture makers do commercial or contract work?', a: 'Listings that mention commercial, contract or hospitality work include {kw_commercial}.' },
@@ -112,7 +112,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} food and beverage companies headquartered in Louisiana.', 'Most are in {cities}.'],
       ['Listings that mention seafood include {kw_seafood}.', 'Listings that mention sauces, seasonings or spices include {kw_sauce}.', 'Listings that mention rice include {kw_rice}.', 'Listings that mention beverages include {kw_beverage}.'],
-      ['The list also includes processing-equipment and supply companies such as {kw_equipment}.', 'Compare every company in the table below and contact them directly.'],
+      ['The list also includes processing-equipment and supply companies such as {kw_equipment}.', 'Compare every company above and contact them directly.'],
     ],
     faqs: [
       { q: 'What foods are manufactured in Louisiana?', a: ['Listings that mention seafood: {kw_seafood}.', 'Sauces and seasonings: {kw_sauce}.', 'Rice: {kw_rice}.', 'Beverages: {kw_beverage}.'] },
@@ -129,7 +129,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} medical device manufacturers headquartered in Minnesota, the core of the Twin Cities medtech cluster.', 'Most are in {cities}.'],
       ['Listings that mention contract or outsourced manufacturing include {kw_contract}.', 'Listings that mention ISO 13485 include {kw_iso13485}.'],
-      'Compare every company in the table below by city, specialty and certifications, then contact them directly.',
+      'Compare every company above by city, specialty and certifications, then contact them directly.',
     ],
     faqs: [
       { q: 'Which Minnesota companies offer contract medical device manufacturing?', a: 'Listings that mention contract or outsourced manufacturing include {kw_contract}.' },
@@ -151,12 +151,12 @@ export const SEO_OVERRIDES = {
       'California is the #1 state for electronics manufacturing in the US, according to [IPC](https://www.electronics.org/blog/icymi-electronics-manufacturing-huge-california).',
       ['FirmsLedger lists {N} electronics and semiconductor manufacturers headquartered there: {region_bay} in the Bay Area and {region_socal} in Southern California.', 'The biggest single clusters are {cities}.'],
       ['Listings that mention PCB or surface-mount assembly include {kw_pcb}.', 'Listings that mention semiconductors include {kw_semi}.'],
-      'Compare all of them in the table below by city, specialty and certifications, then contact them directly.',
+      'Compare all of them above by city, specialty and certifications, then contact them directly.',
     ],
     faqs: [
       { q: 'Which California companies do PCB assembly?', a: 'Listings that mention PCB or surface-mount assembly include {kw_pcb}.' },
       { q: 'Bay Area or Southern California: where are most electronics makers?', a: ['Of the {N} California electronics manufacturers listed here, {region_bay} are in the Bay Area and {region_socal} are in Southern California.', 'The largest cities are {cities}.'] },
-      { q: 'How do I pick a contract electronics manufacturer?', a: 'Check that they build to IPC-A-610 at the class you need, ask for SMT line capacity and typical lot sizes, confirm how they source and trace components, and ask what testing they run (AOI, X-ray, functional). Then compare quotes from two or three shops in the table above.' },
+      { q: 'How do I pick a contract electronics manufacturer?', a: 'Check that they build to IPC-A-610 at the class you need, ask for SMT line capacity and typical lot sizes, confirm how they source and trace components, and ask what testing they run (AOI, X-ray, functional). Then compare quotes from two or three shops listed above.' },
     ],
   },
   '/metal-fabrication/california': {
@@ -168,7 +168,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} metal fabrication and machining companies headquartered in California.', 'Most are in {cities}.'],
       ['Listings that mention sheet metal include {kw_sheet}.', 'Listings that mention structural steel include {kw_structural}.', 'Listings that mention CNC machining include {kw_cnc}.', 'Listings that mention welding include {kw_welding}.'],
-      'Compare every shop in the table below by city, specialty and certifications, then contact them directly.',
+      'Compare every shop above by city, specialty and certifications, then contact them directly.',
     ],
     faqs: [
       { q: 'Which California fabricators do sheet metal vs structural steel?', a: ['Sheet metal: {kw_sheet}.', 'Structural steel: {kw_structural}.'] },
