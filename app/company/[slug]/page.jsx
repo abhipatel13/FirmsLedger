@@ -13,10 +13,9 @@ export const revalidate = false;
 export const dynamicParams = true;
 
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL, SITE_NAME, OG_IMAGE } from '@/lib/seo';
 import { getCompanyDescription, getCategoryHref, buildCompanyTitle } from '@/utils';
 import { ALL_US_STATES } from '@/lib/usStates';
 import {
@@ -91,7 +90,7 @@ export async function generateMetadata({ params }) {
     description,
     robots: isIndexable(company) ? undefined : { index: false, follow: true },
     alternates: { canonical },
-    openGraph: {
+    openGraph: { images: [OG_IMAGE],
       title: `${companyName} | ${SITE_NAME}`,
       description,
       type: 'profile',
@@ -202,15 +201,16 @@ export default async function CompanyProfilePage({ params }) {
     <>
       {localBusinessJsonLd && <JsonLd data={localBusinessJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
-      <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>}>
-        <AgencyProfile
-          companySlug={slug || undefined}
-          initialCompany={stripInternalFields(company)}
-          initialReviews={reviews}
-          initialCategories={companyCategories}
-          initialSimilar={similarCompanies.map(stripInternalFields)}
-        />
-      </Suspense>
+      {/* No <Suspense> here: it existed for AgencyProfile's useSearchParams(),
+          which is gone. With the boundary, the static HTML shipped a
+          "Loading..." fallback and the profile in a hidden streamed block. */}
+      <AgencyProfile
+        companySlug={slug || undefined}
+        initialCompany={stripInternalFields(company)}
+        initialReviews={reviews}
+        initialCategories={companyCategories}
+        initialSimilar={similarCompanies.map(stripInternalFields)}
+      />
     </>
   );
 }

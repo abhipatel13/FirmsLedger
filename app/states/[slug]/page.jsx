@@ -3,7 +3,7 @@ import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import CategoryCard from '@/components/CategoryCard';
 import { categoryImageUrl } from '@/lib/capabilities';
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL, SITE_NAME, OG_IMAGE } from '@/lib/seo';
 import { fetchStateHubStats } from '@/db/neonApi';
 import { ArrowRight } from 'lucide-react';
 
@@ -108,8 +108,8 @@ export async function generateMetadata({ params }) {
     title,
     description,
     alternates: { canonical },
-    openGraph: { title: `${title} | ${SITE_NAME}`, description, type: 'website', url: canonical },
-    twitter: { card: 'summary_large_image' },
+    openGraph: { images: [OG_IMAGE], title: `${title} | ${SITE_NAME}`, description, type: 'website', url: canonical },
+    twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },
   };
 }
 

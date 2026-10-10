@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP } from '@/lib/manufacturingCategories';
-import { BASE_URL } from '@/lib/seo';
+import { BASE_URL, OG_IMAGE } from '@/lib/seo';
 import { fetchCategoryStats } from '@/db/neonApi';
 import { renderCategoryPage } from './[state]/page';
 import { fitTitle } from '@/utils';
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
     title: fitTitle(title),
     description,
     alternates: { canonical },
-    openGraph: { title, description, type: 'website', url: canonical },
+    openGraph: { images: [OG_IMAGE], title, description, type: 'website', url: canonical },
   };
 }
 

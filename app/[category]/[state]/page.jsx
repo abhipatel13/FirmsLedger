@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SEO_YEAR } from '@/lib/seo';
+import { BASE_URL, SEO_YEAR, OG_IMAGE } from '@/lib/seo';
 import { Shield, Info } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS, categoryTitleNoun } from '@/lib/manufacturingCategories';
@@ -164,7 +164,7 @@ export async function generateMetadata({ params }) {
       description,
       alternates: { canonical },
       robots: { index: false, follow: true },
-      openGraph: { title, description, type: 'website', url: canonical },
+      openGraph: { images: [OG_IMAGE], title, description, type: 'website', url: canonical },
     };
   }
 
@@ -209,7 +209,7 @@ export async function generateMetadata({ params }) {
     description,
     alternates: { canonical },
     robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },
-    openGraph: { title, description, type: 'website', url: canonical },
+    openGraph: { images: [OG_IMAGE], title, description, type: 'website', url: canonical },
   };
 }
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { notFound, permanentRedirect, redirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SEO_YEAR } from '@/lib/seo';
+import { BASE_URL, SEO_YEAR, OG_IMAGE } from '@/lib/seo';
 import { Shield } from 'lucide-react';
 import CompanyCard from '@/components/listing/CompanyCard';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState, filterCompaniesBySubcategoryKeywords } from '@/db/neonApi';
@@ -158,7 +158,7 @@ export async function generateMetadata({ params }) {
     description,
     alternates: { canonical },
     robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },
-    openGraph: { title, description, type: 'website', url: canonical },
+    openGraph: { images: [OG_IMAGE], title, description, type: 'website', url: canonical },
   };
 }
 
