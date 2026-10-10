@@ -26,7 +26,7 @@ export const SEO_OVERRIDES = {
       'Texas is the largest plastics-producing state in the US: its plastics manufacturers shipped $61.5 billion of goods in 2024 across 840 facilities, according to the American Chemistry Council ([BIC Magazine](https://www.bicmagazine.com/industry/refining-petrochem/texas-plastics-industry-sets-pace-with-61-5-billion)).',
       ['FirmsLedger lists {N} plastic and packaging manufacturers headquartered in Texas.', 'The biggest clusters are in {cities}.'],
       ['By process, the Texas list includes {subcategoryLinks}.', 'Specialties that come up most in these listings are {specialties}.'],
-      'The list above shows every company with its city, specialties, certifications and website. No company pays to appear or to rank higher.',
+      'The list above shows every company with its city, specialty, phone number and website. No company pays to appear or to rank higher.',
     ],
     faqs: [
       { q: 'What kinds of plastic manufacturing happen in Texas?', a: ['The Texas companies listed here cover {subcategoryNames}.', 'The most common specialties in their listings are {specialties}.'] },
@@ -78,7 +78,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} automotive parts manufacturers and suppliers headquartered in Texas.', 'Most are in {cities}.'],
       ['Part types and services in these listings include {specialties}.', 'Listings that mention trailers include {kw_trailer}.', 'Listings that mention aftermarket or performance parts include {kw_aftermarket}.', 'Listings that mention OEM or Tier 1 work include {kw_oem}.'],
-      'Compare every company above by city, specialty and certifications, then contact them directly.',
+      'Compare every company above by city and specialty, then contact them directly.',
     ],
     faqs: [
       { q: 'What auto parts are made in Texas?', a: ['The Texas companies listed here make or supply {specialties}.', 'Listings that mention trailers include {kw_trailer}.'] },
@@ -129,7 +129,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} medical device manufacturers headquartered in Minnesota, the core of the Twin Cities medtech cluster.', 'Most are in {cities}.'],
       ['Listings that mention contract or outsourced manufacturing include {kw_contract}.', 'Listings that mention ISO 13485 include {kw_iso13485}.'],
-      'Compare every company above by city, specialty and certifications, then contact them directly.',
+      'Compare every company above by city and specialty, then contact them directly.',
     ],
     faqs: [
       { q: 'Which Minnesota companies offer contract medical device manufacturing?', a: 'Listings that mention contract or outsourced manufacturing include {kw_contract}.' },
@@ -151,7 +151,7 @@ export const SEO_OVERRIDES = {
       'California is the #1 state for electronics manufacturing in the US, according to [IPC](https://www.electronics.org/blog/icymi-electronics-manufacturing-huge-california).',
       ['FirmsLedger lists {N} electronics and semiconductor manufacturers headquartered there: {region_bay} in the Bay Area and {region_socal} in Southern California.', 'The biggest single clusters are {cities}.'],
       ['Listings that mention PCB or surface-mount assembly include {kw_pcb}.', 'Listings that mention semiconductors include {kw_semi}.'],
-      'Compare all of them above by city, specialty and certifications, then contact them directly.',
+      'Compare all of them above by city and specialty, then contact them directly.',
     ],
     faqs: [
       { q: 'Which California companies do PCB assembly?', a: 'Listings that mention PCB or surface-mount assembly include {kw_pcb}.' },
@@ -168,7 +168,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       ['FirmsLedger lists {N} metal fabrication and machining companies headquartered in California.', 'Most are in {cities}.'],
       ['Listings that mention sheet metal include {kw_sheet}.', 'Listings that mention structural steel include {kw_structural}.', 'Listings that mention CNC machining include {kw_cnc}.', 'Listings that mention welding include {kw_welding}.'],
-      'Compare every shop above by city, specialty and certifications, then contact them directly.',
+      'Compare every shop above by city and specialty, then contact them directly.',
     ],
     faqs: [
       { q: 'Which California fabricators do sheet metal vs structural steel?', a: ['Sheet metal: {kw_sheet}.', 'Structural steel: {kw_structural}.'] },
