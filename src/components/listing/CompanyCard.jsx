@@ -102,17 +102,11 @@ export default function CompanyCard({ company }) {
                 ) : null}
               </div>
 
-              {rating > 0 ? (
+              {rating > 0 && company.review_count > 0 ? (
                 <div className="flex items-center gap-2 text-sm text-slate-500">
                   <StarRow rating={rating} />
                   <span className="font-mono font-semibold tabular-nums text-slate-900">{rating.toFixed(1)}</span>
-                  {/* review_count is FirmsLedger's own reviews, while the score
-                      comes from Google — showing "0 reviews" beside five stars
-                      read as a contradiction, so the count appears only when
-                      someone has actually written one here. */}
-                  {company.review_count > 0 ? (
-                    <span className="tabular-nums">· {company.review_count} reviews</span>
-                  ) : null}
+                  <span className="tabular-nums">· {company.review_count} reviews</span>
                 </div>
               ) : null}
 

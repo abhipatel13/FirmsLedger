@@ -111,11 +111,11 @@ export function generateDynamicCategoryStateMetaDescription({ categorySlug, cate
 
   let desc = '';
   if (templateIdx === 0) {
-    desc = `Compare ${totalCount} verified ${cleanCat.toLowerCase()} manufacturers in ${stateName}. Explore capabilities, certifications, and local facilities.`;
+    desc = `Compare ${totalCount} ${cleanCat.toLowerCase()} manufacturers in ${stateName}. Explore capabilities, certifications, and local facilities.`;
   } else if (templateIdx === 1) {
     desc = `Find top ${cleanCat.toLowerCase()} shops in ${stateName}. Review ${totalCount} suppliers for ${domain.products.split(', ').slice(0, 2).join(' and ')}.`;
   } else {
-    desc = `Source from ${totalCount} ${cleanCat.toLowerCase()} firms in ${stateName}. Compare verified reviews, specialized products, and local capacities.`;
+    desc = `Source from ${totalCount} ${cleanCat.toLowerCase()} firms in ${stateName}. Compare specialized products, certifications, and local capacities.`;
   }
 
   // Ensure it fits the 120-160 character limit. If over, truncate gracefully.
@@ -137,25 +137,23 @@ export function generateDynamicCategoryStateAboveFoldText({ categorySlug, catego
   const templateIdx = getDeterministicIndex(hashSeed, 3);
 
   if (templateIdx === 0) {
-    return `Directory of ${totalCount} audited ${cleanCat.toLowerCase()} facilities in ${stateName} providing ${domain.products.split(', ').slice(0, 3).join(', ')}.`;
+    return `Directory of ${totalCount} ${cleanCat.toLowerCase()} facilities in ${stateName} providing ${domain.products.split(', ').slice(0, 3).join(', ')}.`;
   } else if (templateIdx === 1) {
-    return `Browse ${totalCount} top-rated ${cleanCat.toLowerCase()} companies in ${stateName} specialized in ${domain.products.split(', ').slice(0, 2).join(' and ')}.`;
+    return `Browse ${totalCount} ${cleanCat.toLowerCase()} companies in ${stateName} specialized in ${domain.products.split(', ').slice(0, 2).join(' and ')}.`;
   } else {
-    return `Connect with ${totalCount} verified local ${cleanCat.toLowerCase()} suppliers across ${stateName}. Compare capabilities, certifications, and response times.`;
+    return `Connect with ${totalCount} local ${cleanCat.toLowerCase()} suppliers across ${stateName}. Compare capabilities, certifications, and response times.`;
   }
 }
 
 /** Generates dynamic bottom-page description: target ~40-60 words (250-350 characters) */
-export function generateDynamicCategoryStateOnPageText({ categorySlug, categoryName, stateSlug, stateName, totalCount, verifiedCount, medianRating, topSpecialties = [], subcategories = [] }) {
+export function generateDynamicCategoryStateOnPageText({ categorySlug, categoryName, stateSlug, stateName, totalCount, topSpecialties = [], subcategories = [] }) {
   const domain = CATEGORY_DOMAINS[categorySlug] || { products: 'manufacturing services', focus: 'high-quality standards', certifications: 'key compliance standards', procurement: 'specifications' };
   const cleanCat = categoryName.replace(' Manufacturers', '').replace(' & Machining', '');
   
   const hashSeed = `${categorySlug}-${stateSlug}-page`;
   const idx = getDeterministicIndex(hashSeed, 4);
 
-  const statsPart = verifiedCount > 0 && medianRating 
-    ? `Currently, ${verifiedCount} of these firms have completed our verification audit, boasting a median rating of ${medianRating} out of 5 stars.`
-    : `Every local listing is manually audited to confirm operating status, location, and key capabilities.`;
+  const statsPart = `Listings are compiled from public company information, and manufacturers can claim their profile to confirm and update it.`;
 
   const specPart = topSpecialties.length > 0
     ? ` Local shops frequently hold ${topSpecialties.join(' or ')} certifications to meet strict engineering requirements.`
@@ -168,35 +166,28 @@ export function generateDynamicCategoryStateOnPageText({ categorySlug, categoryN
   const paragraphs = [
     `Sourcing ${domain.products} in ${stateName} requires vetting local partners on their ability to meet ${domain.focus}. ${statsPart}${specPart} Contact listed shops directly for custom ${subList} projects.`,
     `${stateName} supports a strong base of ${totalCount} ${cleanCat.toLowerCase()} suppliers equipped for both custom runs and high-volume delivery. ${statsPart} Sourcing teams prioritize these companies for their focus on ${domain.procurement}.${specPart}`,
-    `For engineering teams procuring ${domain.products} within ${stateName}, finding a supplier certified to ${domain.certifications} is critical. This directory lists ${totalCount} local options. ${statsPart} Select partners based on verified ${subList} capacity.`,
-    `This directory profiles ${totalCount} certified ${cleanCat.toLowerCase()} shops in ${stateName} to support local supply chain resilience. Suppliers here excel in ${domain.products}. ${statsPart}${specPart} Compare profiles to find the right partner.`
+    `For engineering teams procuring ${domain.products} within ${stateName}, finding a supplier certified to ${domain.certifications} is critical. This directory lists ${totalCount} local options. ${statsPart} Select partners based on their ${subList} capacity.`,
+    `This directory profiles ${totalCount} ${cleanCat.toLowerCase()} shops in ${stateName} to support local supply chain resilience. Suppliers here excel in ${domain.products}. ${statsPart}${specPart} Compare profiles to find the right partner.`
   ];
 
   return paragraphs[idx];
 }
 
 /** Generates FAQ Q&A content */
-export function generateCategoryStateFAQs({ categorySlug, categoryName, stateSlug, stateName, totalCount, verifiedCount, medianRating, topSpecialties }) {
+export function generateCategoryStateFAQs({ categorySlug, categoryName, stateSlug, stateName, totalCount, topSpecialties }) {
   const domain = CATEGORY_DOMAINS[categorySlug] || { products: 'manufacturing services', focus: 'industry standards', certifications: 'industry standards' };
   const cleanCat = categoryName.replace(' Manufacturers', '').replace(' & Machining', '');
 
   const list = [
     {
-      q: `How do I find verified ${cleanCat.toLowerCase()} manufacturers in ${stateName}?`,
-      a: `FirmsLedger lists ${totalCount} local ${cleanCat.toLowerCase()} suppliers in ${stateName}. You can identify top-rated options by looking for the "Verified" badge, which indicates the company has passed our manual credentials and operations verification.`
+      q: `How do I find ${cleanCat.toLowerCase()} manufacturers in ${stateName}?`,
+      a: `FirmsLedger lists ${totalCount} local ${cleanCat.toLowerCase()} suppliers in ${stateName}. Open a profile to see its capabilities, certifications and contact details, then request a quote directly from the manufacturer.`
     },
     {
       q: `What certifications should I look for in ${stateName} ${cleanCat.toLowerCase()} shops?`,
       a: `Depending on your industry, look for facilities holding ${topSpecialties.length > 0 ? topSpecialties.join(' or ') : domain.certifications}. These standards ensure the supplier meets strict quality management and process controls for producing ${domain.products}.`
     }
   ];
-
-  if (verifiedCount > 0 && medianRating) {
-    list.push({
-      q: `What is the average rating of ${cleanCat.toLowerCase()} companies in ${stateName}?`,
-      a: `Verified suppliers in the state maintain a strong median rating of ${medianRating} out of 5 stars. Ratings are aggregated from verified client reviews across verified project scopes.`
-    });
-  }
 
   return list;
 }

@@ -100,7 +100,7 @@ export async function generateMetadata({ params }) {
   const stats = await fetchStateHubStats(slug);
   const title = `Manufacturers in ${state.name}`;
   const description = stats.totalCount > 0
-    ? `Browse ${stats.totalCount} manufacturers in ${state.name}${stats.topCategories[0] ? `, led by ${stats.topCategories[0].name.toLowerCase()}` : ''}. Compare verified suppliers by category, city, and certifications.`
+    ? `Browse ${stats.totalCount} manufacturers in ${state.name}${stats.topCategories[0] ? `, led by ${stats.topCategories[0].name.toLowerCase()}` : ''}. Compare suppliers by category, city, and certifications.`
     : `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`;
   const canonical   = `${_BASE}/states/${slug}`;
 
@@ -222,7 +222,7 @@ export default async function StateHubPage({ params }) {
             <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 640, marginBottom: 0 }}>
               {stats.totalCount > 0 ? (
                 <>
-                  FirmsLedger lists <strong>{stats.totalCount} verified manufacturer{stats.totalCount === 1 ? '' : 's'}</strong> headquartered
+                  FirmsLedger lists <strong>{stats.totalCount} manufacturer{stats.totalCount === 1 ? '' : 's'}</strong> headquartered
                   in {state.name}
                   {topCategories.length > 0 && (
                     <> across {topCategories.length} categor{topCategories.length === 1 ? 'y' : 'ies'}, led by {topCategories.map((c) => c.name).join(', ')}</>
@@ -273,8 +273,7 @@ export default async function StateHubPage({ params }) {
             ) : (
               <>Home to industrial facilities spanning {CATEGORIES.map(c => c.name).slice(0, 5).join(', ')}, and more.</>
             )}
-            {' '}Each category page above lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
-            and verified customer reviews where available. Sourcing local production partners in {state.name} helps reduce supply chain
+            {' '}Each category page above lists {state.name}-based companies with their headquarters location, team size, and ISO certifications where available. Sourcing local production partners in {state.name} helps reduce supply chain
             transit times and logistics costs.
           </p>
         </div>

@@ -410,7 +410,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 <h2 style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
                   All {sub.name} in the US
                 </h2>
-                <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>Sorted by rating</p>
               </div>
 
               {totalCount === 0 ? (
@@ -716,8 +715,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <div style={{ minWidth: 0, marginTop: 24 }}>
             {stateName && (
               <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.65, margin: '0 0 24px' }}>
-                Comparing {totalCount} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}, ranked by
-                verified customer reviews. Every profile below is manually screened before it goes live — request quotes
+                Comparing {totalCount} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}. Request quotes
                 directly from suppliers, or {' '}
                 <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
                   list your own company
@@ -729,7 +727,6 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               <h2 style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
                 All {cat?.shortName || categoryName}{stateName ? ` in ${stateName}` : ' in the US'}
               </h2>
-              <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>Sorted by rating</p>
             </div>
 
             {totalCount === 0 ? (

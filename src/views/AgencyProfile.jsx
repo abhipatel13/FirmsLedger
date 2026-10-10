@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { createPageUrl, getDirectoryUrl, getCategoryHref, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription } from '@/utils';
+import { createPageUrl, getDirectoryUrl, getCategoryHref, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription, isProperDescription } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -275,7 +275,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                 )}
               </div>
 
-              {agency.avg_rating > 0 && (
+              {agency.avg_rating > 0 && agency.review_count > 0 && (
                 <RatingDisplay rating={agency.avg_rating} size="lg" count={agency.review_count} />
               )}
 
@@ -373,7 +373,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
               )}
               {stateObj && (
                 <p className="text-slate-500 text-xs leading-relaxed">
-                  Businesses in {stateObj.name} searching for {(primaryCategory?.name || 'business services').toLowerCase()} can find {agency.name}'s verified contact information, service area, and listing details here.
+                  Businesses in {stateObj.name} searching for {(primaryCategory?.name || 'business services').toLowerCase()} can find {agency.name}'s contact information, service area, and listing details here.
                 </p>
               )}
               {agency.phone && (
@@ -442,7 +442,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
               { Icon: DollarSign,label: 'Hourly Rate',  value: agency.hourly_rate },
               { Icon: Phone,     label: 'Phone',        value: agency.phone },
               { Icon: Globe,     label: 'Website',      value: agency.website ? agency.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : null, href: agency.website },
-              { Icon: Star,      label: 'Rating',       value: (agency.avg_rating || 0) > 0 ? `${(+agency.avg_rating).toFixed(1)} / 5` : null },
+              { Icon: Star,      label: 'Rating',       value: (agency.avg_rating || 0) > 0 && agency.review_count > 0 ? `${(+agency.avg_rating).toFixed(1)} / 5` : null },
               { Icon: MessageSquare, label: 'Reviews',  value: (agency.review_count || 0) > 0 ? String(agency.review_count) : null },
             ].filter(item => item.value).map(({ Icon, label, value, href }) => (
               <div key={label} className="border border-[#e2e8f0] rounded-xl p-4">
@@ -499,7 +499,7 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-[#1A2E4A] text-sm truncate">{c.name}</p>
                     <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                      {(c.avg_rating || 0) > 0 && (
+                      {(c.avg_rating || 0) > 0 && c.review_count > 0 && (
                         <span className="inline-flex items-center gap-0.5">
                           <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
                           <span style={{ fontFamily: 'inherit', fontSize: 11 }}>{(+c.avg_rating).toFixed(1)}</span>
@@ -834,7 +834,7 @@ function FAQSection({ agency, categoryName }) {
   const faqs = [
     {
       q: `What does ${agency.name} do?`,
-      a: agency.description || `${agency.name} provides ${cat.toLowerCase()} to clients across ${where}. Reach out via the contact options above to learn more about their services.`,
+      a: (isProperDescription(agency.description) && agency.description) || `${agency.name} provides ${cat.toLowerCase()} to clients across ${where}. Reach out via the contact options above to learn more about their services.`,
     },
     {
       q: `Where is ${agency.name} located?`,

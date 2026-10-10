@@ -37,7 +37,7 @@ export default function Locations({ tier1 = [], tier2 = [], rest = [] }) {
               Find Manufacturers by Location
             </h1>
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Browse verified manufacturers across all 50 US states. Start with the top manufacturing hubs or find shops in your state.
+              Browse manufacturers across all 50 US states. Start with the top manufacturing hubs or find shops in your state.
             </p>
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function Locations({ tier1 = [], tier2 = [], rest = [] }) {
               Ready to Find a Manufacturer Near You?
             </h2>
             <p className="text-slate-300 mb-8 max-w-xl mx-auto">
-              Search our directory of verified manufacturers or list your own company today.
+              Search our directory of manufacturers or list your own company today.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link

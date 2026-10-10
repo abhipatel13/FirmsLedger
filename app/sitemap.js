@@ -4,6 +4,7 @@ import { eq, and, isNotNull, ne, sql } from 'drizzle-orm';
 import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
 import { unstable_cache } from 'next/cache';
+import { isProperDescription } from '@/utils';
 
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -97,14 +98,14 @@ const buildLiveCombos = unstable_cache(
 async function fetchIndexableSlugsImpl() {
   try {
     const profiles = await db
-      .select({ slug: companies.slug })
+      .select({ slug: companies.slug, description: companies.description })
       .from(companies)
       .where(and(
         eq(companies.approved, true),
         isNotNull(companies.description),
         ne(companies.description, ''),
       ));
-    return profiles.map((p) => p.slug).filter(Boolean);
+    return profiles.filter((p) => p.slug && isProperDescription(p.description)).map((p) => p.slug);
   } catch {
     // DB unavailable at build time — omit profiles rather than fail the sitemap.
     return [];
@@ -174,7 +175,7 @@ export default async function sitemap() {
 
   // ── Company profiles: /company/{slug} ───────────────────────────────────
   // Mirrors isIndexable() in app/company/[slug]/page.jsx — approved and
-  // carrying a real (non-empty) description. Keep the two predicates in
+  // carrying a real description (isProperDescription). Keep the two in
   // agreement, otherwise the sitemap advertises noindexed URLs.
   for (const slug of await fetchIndexableSlugs()) {
     urls.push({ url: `${BASE_URL}/company/${slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });

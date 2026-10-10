@@ -17,7 +17,7 @@ import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { getCompanyDescription, getCategoryHref, buildCompanyTitle } from '@/utils';
+import { getCompanyDescription, getCategoryHref, buildCompanyTitle, isProperDescription } from '@/utils';
 import { ALL_US_STATES } from '@/lib/usStates';
 import {
   fetchCompanyByIdAny,
@@ -48,9 +48,9 @@ function stripInternalFields(row) {
 
 // Only profiles with real content are indexable. A name-and-address stub adds
 // no value in search results and dilutes site-wide quality signals.
-// Mirrored as a SQL predicate in app/sitemap.js — keep the two in agreement.
+// Mirrored in app/sitemap.js — keep the two in agreement.
 function isIndexable(company) {
-  return Boolean(company?.approved) && typeof company?.description === 'string' && company.description.trim() !== '';
+  return Boolean(company?.approved) && isProperDescription(company?.description);
 }
 
 // During `next build` these resolve from one bulk load instead of two DB
@@ -82,7 +82,7 @@ export async function generateMetadata({ params }) {
   const companyName = company?.name || 'Company Profile';
   const location = [company?.hq_city, company?.hq_state_label].filter(Boolean).join(', ');
   const description = company
-    ? `${companyName} is a verified US manufacturer${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their profile, ratings, and reviews.`
+    ? `${companyName} is a${company.is_verified ? ' verified' : ''} US manufacturer${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their capabilities, location and contact details.`
     : `View this company profile on FirmsLedger – the US manufacturer directory.`;
 
   const canonical = `${_BASE}/company/${slug}`;

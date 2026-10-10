@@ -8,11 +8,11 @@ const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
 export const metadata = {
   title: 'Manufacturer Locations',
-  description: 'Browse verified US manufacturers by state — find shops in top manufacturing hubs like Ohio, Michigan, Texas and California, or search any of the 50 states.',
+  description: 'Browse US manufacturers by state — find shops in top manufacturing hubs like Ohio, Michigan, Texas and California, or search any of the 50 states.',
   alternates: { canonical: `${_BASE}/locations` },
   openGraph: {
     title: `Manufacturer Locations | ${SITE_NAME}`,
-    description: 'Browse verified US manufacturers by state — find shops in top manufacturing hubs or search any of the 50 states.',
+    description: 'Browse US manufacturers by state — find shops in top manufacturing hubs or search any of the 50 states.',
     type: 'website',
     url: `${_BASE}/locations`,
   },

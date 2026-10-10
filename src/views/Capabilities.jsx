@@ -31,7 +31,7 @@ export default function Capabilities({ counts = {}, items = [] }) {
               Manufacturing Capabilities
             </h1>
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Browse verified US manufacturers by what they actually do — ordered by how many companies we list for each process.
+              Browse US manufacturers by what they actually do — ordered by how many companies we list for each process.
             </p>
           </div>
         </div>
