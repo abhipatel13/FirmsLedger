@@ -356,6 +356,7 @@ export default function FilterBar({
                   placeholder="Search categories..."
                   style={{
                     flex: 1,
+                    minWidth: 0,
                     height: 32,
                     padding: '0 8px',
                     fontSize: 12,
@@ -410,6 +411,7 @@ export default function FilterBar({
                   placeholder="Search states..."
                   style={{
                     flex: 1,
+                    minWidth: 0,
                     height: 32,
                     padding: '0 8px',
                     fontSize: 12,
@@ -499,6 +501,7 @@ export default function FilterBar({
                   placeholder="Search subcategories..."
                   style={{
                     flex: 1,
+                    minWidth: 0,
                     height: 32,
                     padding: '0 8px',
                     fontSize: 12,
