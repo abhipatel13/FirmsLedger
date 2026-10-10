@@ -26,7 +26,7 @@ function useClickOutside(refs, handler) {
   }, [refs, handler]);
 }
 
-export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, children }) {
+export function FilterDropdown({ label, title, inline, activeCount, isOpen, onToggle, onClose, children }) {
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
   const [coords, setCoords] = useState(null);
@@ -51,6 +51,15 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
       window.removeEventListener('resize', updateCoords);
     };
   }, [isOpen]);
+
+  if (inline) {
+    return (
+      <section className="border-b border-slate-200 pb-4 last:border-0 last:pb-0">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-900">{title}</h3>
+        {children}
+      </section>
+    );
+  }
 
   return (
     <div ref={triggerRef} className="filter-dropdown-wrapper" style={{ position: 'relative', flexShrink: 0 }}>
@@ -155,6 +164,7 @@ export default function FilterBar({
   category,
   currentSubcategory,
   currentState,
+  sidebar = false,
 }) {
   const searchParams = useSearchParams();
 
@@ -186,13 +196,19 @@ export default function FilterBar({
   const showClear = !!pendingCategory || !!pendingSubcategory || !!pendingState || pendingEmployeeRanges.length > 0 ||
                     !!category || !!currentSubcategory || !!currentState || activeEmployeeRanges.length > 0;
 
-  function handleShowResults() {
+  function handleShowResults(next = {}) {
+    const {
+      category: cat = pendingCategory,
+      subcategory: sub = pendingSubcategory,
+      state: st = pendingState,
+      employees: emps = pendingEmployeeRanges,
+    } = next;
     setOpenDropdown(null);
     const params = new URLSearchParams(searchParams.toString());
     params.delete('page');
 
-    if (pendingEmployeeRanges.length) {
-      params.set('employees', pendingEmployeeRanges.join(','));
+    if (emps.length) {
+      params.set('employees', emps.join(','));
     } else {
       params.delete('employees');
     }
@@ -200,22 +216,22 @@ export default function FilterBar({
     const isSearchPage = window.location.pathname === '/search';
 
     if (isSearchPage) {
-      if (pendingCategory) params.set('category', pendingCategory);
+      if (cat) params.set('category', cat);
       else params.delete('category');
 
-      if (pendingState) params.set('state', pendingState);
+      if (st) params.set('state', st);
       else params.delete('state');
 
-      if (pendingSubcategory) params.set('subcategory', pendingSubcategory);
+      if (sub) params.set('subcategory', sub);
       else params.delete('subcategory');
 
       const query = params.toString();
       window.location.href = query ? `/search?${query}` : '/search';
     } else {
       // Canonical pathing redirect
-      let path = pendingCategory ? `/${pendingCategory}` : pendingState ? '/states' : '/search';
-      if (pendingCategory && pendingSubcategory) path += `/${pendingSubcategory}`;
-      if (pendingState)       path += `/${pendingState}`;
+      let path = cat ? `/${cat}` : st ? '/states' : '/search';
+      if (cat && sub) path += `/${sub}`;
+      if (st)       path += `/${st}`;
 
       params.delete('category');
       params.delete('state');
@@ -228,9 +244,9 @@ export default function FilterBar({
       // See HISTORY.md 2026-09-05.
       if (query) {
         const searchParamsOut = new URLSearchParams(query);
-        if (pendingCategory) searchParamsOut.set('category', pendingCategory);
-        if (pendingSubcategory) searchParamsOut.set('subcategory', pendingSubcategory);
-        if (pendingState) searchParamsOut.set('state', pendingState);
+        if (cat) searchParamsOut.set('category', cat);
+        if (sub) searchParamsOut.set('subcategory', sub);
+        if (st) searchParamsOut.set('state', st);
         window.location.href = `/search?${searchParamsOut.toString()}`;
       } else {
         window.location.href = path;
@@ -270,6 +286,25 @@ export default function FilterBar({
     setPendingCategory(slug);
     setPendingSubcategory(''); // Reset subcategory when category changes
     setOpenDropdown(null);
+    if (sidebar) handleShowResults({ category: slug, subcategory: '' });
+  }
+
+  function pickState(slug) {
+    setPendingState(slug);
+    setOpenDropdown(null);
+    if (sidebar) handleShowResults({ state: slug });
+  }
+
+  function pickSubcategory(slug) {
+    setPendingSubcategory(slug);
+    setOpenDropdown(null);
+    if (sidebar) handleShowResults({ subcategory: slug });
+  }
+
+  function toggleEmployees(key) {
+    const next = toggle(pendingEmployeeRanges, key);
+    setPendingEmployeeRanges(next);
+    if (sidebar) handleShowResults({ employees: next });
   }
 
   // Gather subcategories for the selected category
@@ -301,14 +336,13 @@ export default function FilterBar({
     s.name.toLowerCase().includes(subSearch.toLowerCase())
   );
 
-  return (
-    <div style={{ margin: '16px 0 28px 0' }}>
-      <div className="filter-bar-row">
-        <div className="filter-triggers-group">
+  const sections = (
+    <>
           {/* Category */}
-          <div>
             <FilterDropdown
               label={CATEGORY_MAP[pendingCategory]?.shortName ?? 'Select Category'}
+              inline={sidebar}
+              title="Industry"
               activeCount={0}
               isOpen={openDropdown === 'category'}
               onToggle={() => setOpenDropdown(openDropdown === 'category' ? null : 'category')}
@@ -356,12 +390,13 @@ export default function FilterBar({
                 )}
               </div>
             </FilterDropdown>
-          </div>
 
           {/* State Filter */}
           {showStateFilter ? (
             <FilterDropdown
               label={mergedStates.find((s) => s.stateSlug === pendingState)?.stateLabel ?? 'State'}
+              inline={sidebar}
+              title="Location"
               activeCount={pendingState ? 1 : 0}
               isOpen={openDropdown === 'state'}
               onToggle={() => setOpenDropdown(openDropdown === 'state' ? null : 'state')}
@@ -387,10 +422,7 @@ export default function FilterBar({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 1, maxHeight: 200, overflowY: 'auto' }}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setPendingState('');
-                    setOpenDropdown(null);
-                  }}
+                  onClick={() => pickState('')}
                   className={`filter-option-btn${!pendingState ? ' selected' : ''}`}
                 >
                   All States
@@ -401,10 +433,7 @@ export default function FilterBar({
                     <button
                       key={s.stateSlug}
                       type="button"
-                      onClick={() => {
-                        setPendingState(s.stateSlug);
-                        setOpenDropdown(null);
-                      }}
+                      onClick={() => pickState(s.stateSlug)}
                       className={`filter-option-btn${isSelected ? ' selected' : ''}`}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
@@ -428,6 +457,8 @@ export default function FilterBar({
           {/* Employees */}
           <FilterDropdown
             label="Employees"
+              inline={sidebar}
+              title="Employees"
             activeCount={pendingEmployeeRanges.length}
             isOpen={openDropdown === 'employees'}
             onToggle={() => setOpenDropdown(openDropdown === 'employees' ? null : 'employees')}
@@ -437,11 +468,11 @@ export default function FilterBar({
               {EMPLOYEE_BUCKETS.map((b) => (
                 <Field key={b.key} orientation="horizontal" className="gap-2" style={{ padding: '4px 6px', margin: 0 }}>
                   <Checkbox
-                    id={`fb-emp-${b.key}`}
+                    id={`fb-emp-${sidebar ? 's-' : ''}${b.key}`}
                     checked={pendingEmployeeRanges.includes(b.key)}
-                    onCheckedChange={() => setPendingEmployeeRanges((prev) => toggle(prev, b.key))}
+                    onCheckedChange={() => toggleEmployees(b.key)}
                   />
-                  <FieldLabel htmlFor={`fb-emp-${b.key}`} className="text-sm font-normal" style={{ cursor: 'pointer' }}>
+                  <FieldLabel htmlFor={`fb-emp-${sidebar ? 's-' : ''}${b.key}`} className="text-sm font-normal" style={{ cursor: 'pointer' }}>
                     {b.label}
                   </FieldLabel>
                 </Field>
@@ -453,6 +484,8 @@ export default function FilterBar({
           {subList?.length > 0 ? (
             <FilterDropdown
               label={subList.find((s) => s.slug === pendingSubcategory)?.name ?? 'All subcategories'}
+              inline={sidebar}
+              title="Capabilities"
               activeCount={pendingSubcategory ? 1 : 0}
               isOpen={openDropdown === 'subcategory'}
               onToggle={() => setOpenDropdown(openDropdown === 'subcategory' ? null : 'subcategory')}
@@ -478,10 +511,7 @@ export default function FilterBar({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 1, maxHeight: 200, overflowY: 'auto' }}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setPendingSubcategory('');
-                    setOpenDropdown(null);
-                  }}
+                  onClick={() => pickSubcategory('')}
                   className={`filter-option-btn${!pendingSubcategory ? ' selected' : ''}`}
                 >
                   All subcategories
@@ -492,10 +522,7 @@ export default function FilterBar({
                     <button
                       key={s.slug}
                       type="button"
-                      onClick={() => {
-                        setPendingSubcategory(s.slug);
-                        setOpenDropdown(null);
-                      }}
+                      onClick={() => pickSubcategory(s.slug)}
                       className={`filter-option-btn${isSelected ? ' selected' : ''}`}
                     >
                       {s.name}
@@ -510,33 +537,11 @@ export default function FilterBar({
               </div>
             </FilterDropdown>
           ) : null}
-        </div>
+        
+    </>
+  );
 
-        {/* Spacer */}
-        <div className="filter-bar-spacer" style={{ flex: 1, minWidth: 8, flexShrink: 0 }} />
-
-        {/* Actions */}
-        <div className="filter-actions-group">
-          {/* Show results button */}
-          <Button
-            type="button"
-            onClick={handleShowResults}
-            className="filter-submit-btn bg-[#1A2E4A] text-white hover:bg-[#243B58] disabled:opacity-50"
-            style={{
-              height: 36,
-              padding: '8px 16px',
-              borderRadius: 8,
-              fontSize: 13,
-              fontWeight: 600,
-              flexShrink: 0,
-              fontFamily: 'inherit',
-            }}
-          >
-            Show results
-          </Button>
-
-          {/* Clear filters */}
-          {showClear ? (
+  const clear = showClear ? (
             <button
               type="button"
               onClick={handleClearFilters}
@@ -562,11 +567,10 @@ export default function FilterBar({
               <X size={14} />
               Clear filters
             </button>
-          ) : null}
-        </div>
-      </div>
+          ) : null;
 
-      <style>{`
+  const css = (
+    <style>{`
         /* Desktop layouts */
         .filter-bar-row {
           display: flex;
@@ -647,6 +651,44 @@ export default function FilterBar({
           }
         }
       `}</style>
+  );
+
+  if (sidebar) {
+    return (
+      <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+        {sections}
+        {clear}
+        {css}
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ margin: '16px 0 28px 0' }}>
+      <div className="filter-bar-row">
+        <div className="filter-triggers-group">{sections}</div>
+        <div className="filter-bar-spacer" style={{ flex: 1, minWidth: 8, flexShrink: 0 }} />
+        <div className="filter-actions-group">
+          <Button
+            type="button"
+            onClick={() => handleShowResults()}
+            className="filter-submit-btn bg-[#1A2E4A] text-white hover:bg-[#243B58] disabled:opacity-50"
+            style={{
+              height: 36,
+              padding: '8px 16px',
+              borderRadius: 8,
+              fontSize: 13,
+              fontWeight: 600,
+              flexShrink: 0,
+              fontFamily: 'inherit',
+            }}
+          >
+            Show results
+          </Button>
+          {clear}
+        </div>
+      </div>
+      {css}
     </div>
   );
 }

@@ -210,6 +210,8 @@ export default async function SubcategoryStatePage({ params }) {
     })),
   };
 
+  const filters = { basePath, activeStates: [], activeEmployeeRanges, stateCounts, showStateFilter: true, subcategories: cat?.subcategories, category, currentSubcategory: subcategory, currentState: state };
+
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />
@@ -276,21 +278,9 @@ export default async function SubcategoryStatePage({ params }) {
 
         {/* ── Content ── */}
         <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
-          {/* Suspense: FilterBar calls useSearchParams(), which Next requires
-              to sit behind a boundary once the page is statically prerendered. */}
-          <Suspense fallback={null}>
-            <FilterBar
-              basePath={basePath}
-              activeStates={[]}
-              activeEmployeeRanges={activeEmployeeRanges}
-              stateCounts={stateCounts}
-              showStateFilter={true}
-              subcategories={cat?.subcategories}
-              category={category}
-              currentSubcategory={subcategory}
-              currentState={state}
-            />
-          </Suspense>
+          <div className="lg:hidden">
+            <Suspense fallback={null}><FilterBar {...filters} /></Suspense>
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', gap: 28, marginTop: 24 }} className="listing-layout">
 
@@ -320,7 +310,10 @@ export default async function SubcategoryStatePage({ params }) {
             </div>
 
             {/* ── Sidebar ── */}
-            <aside style={{ width: 264, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }} className="listing-sidebar">
+            <aside style={{ width: 264, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }} className="listing-sidebar lg:order-first">
+              <div className="hidden lg:block">
+                <Suspense fallback={null}><FilterBar {...filters} sidebar /></Suspense>
+              </div>
 
               {/* Other subcategories */}
               <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>

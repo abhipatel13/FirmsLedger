@@ -317,6 +317,8 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
       ],
     };
 
+    const subFilters = { basePath, activeStates, activeEmployeeRanges, stateCounts, showStateFilter: true, subcategories: cat.subcategories, category, currentSubcategory: subcategory, currentState: null };
+
     return (
       <>
         <JsonLd data={itemListJsonLd} />
@@ -391,24 +393,15 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           </div>
 
           {/* ── Content ── */}
-          <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
+          <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16 lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start lg:gap-x-8">
 
             {/* ── Filter Bar ── */}
-            {/* Suspense: FilterBar calls useSearchParams(), which Next requires
-                to sit behind a boundary once the page is statically prerendered. */}
-            <Suspense fallback={null}>
-              <FilterBar
-                basePath={basePath}
-                activeStates={activeStates}
-                activeEmployeeRanges={activeEmployeeRanges}
-                stateCounts={stateCounts}
-                showStateFilter={true}
-                subcategories={cat.subcategories}
-                category={category}
-                currentSubcategory={subcategory}
-                currentState={null}
-              />
-            </Suspense>
+            <div className="lg:hidden">
+              <Suspense fallback={null}><FilterBar {...subFilters} /></Suspense>
+            </div>
+            <aside className="hidden lg:block lg:mt-6">
+              <Suspense fallback={null}><FilterBar {...subFilters} sidebar /></Suspense>
+            </aside>
 
             {/* ── Ranked list ── */}
             <div style={{ minWidth: 0, marginTop: 24 }}>
@@ -587,6 +580,8 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
       }
     : null;
 
+  const filters = { basePath, activeStates, activeEmployeeRanges, stateCounts, showStateFilter, subcategories: cat?.subcategories, category, currentSubcategory: null, currentState: state || null };
+
   return (
     <>
       <JsonLd data={itemListJsonLd} />
@@ -705,24 +700,15 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
         </div>
 
         {/* ── Content ─────────────────────────────────────────────── */}
-        <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
+        <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16 lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start lg:gap-x-8">
 
           {/* ── Filter Bar ── */}
-          {/* Suspense: FilterBar calls useSearchParams(), which Next requires
-              to sit behind a boundary once the page is statically prerendered. */}
-          <Suspense fallback={null}>
-            <FilterBar
-              basePath={basePath}
-              activeStates={activeStates}
-              activeEmployeeRanges={activeEmployeeRanges}
-              stateCounts={stateCounts}
-              showStateFilter={showStateFilter}
-              subcategories={cat?.subcategories}
-              category={category}
-              currentSubcategory={null}
-              currentState={state || null}
-            />
-          </Suspense>
+          <div className="lg:hidden">
+            <Suspense fallback={null}><FilterBar {...filters} /></Suspense>
+          </div>
+          <aside className="hidden lg:block lg:mt-6">
+            <Suspense fallback={null}><FilterBar {...filters} sidebar /></Suspense>
+          </aside>
 
           {/* ── Ranked list ─────────────────────────────────────── */}
           <div style={{ minWidth: 0, marginTop: 24 }}>
