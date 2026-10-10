@@ -30,6 +30,12 @@ import { parseEmployeeCount, bucketKeyFor } from '@/lib/employeeCount';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 
+const softFail = (label, err, fallback) => {
+  if (process.env.NEXT_PHASE === 'phase-production-build') throw err;
+  console.error(label, err);
+  return fallback;
+};
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function slugify(text) {
@@ -80,8 +86,7 @@ const fetchStatesImpl = async (orderKey = 'name') => {
   try {
     return await db.select().from(states).orderBy(asc(states[orderKey] ?? states.name));
   } catch (err) {
-    console.error('Error fetching states:', err);
-    return [];
+    return softFail('Error fetching states:', err, []);
   }
 };
 
@@ -94,8 +99,7 @@ const fetchStateBySlugImpl = async (slug) => {
     const [row] = await db.select().from(states).where(eq(states.slug, slug)).limit(1);
     return row ?? null;
   } catch (err) {
-    console.error('Error fetching state by slug:', err);
-    return null;
+    return softFail('Error fetching state by slug:', err, null);
   }
 };
 
@@ -116,8 +120,7 @@ const fetchCategoriesImpl = async () => {
   try {
     return await db.select().from(categories).orderBy(asc(categories.order), asc(categories.name));
   } catch (err) {
-    console.error('Error fetching categories:', err);
-    return [];
+    return softFail('Error fetching categories:', err, []);
   }
 };
 
@@ -206,8 +209,7 @@ const fetchHomepageStatsImpl = async () => {
       stateCount: Number(stateRow?.count ?? 50),
     };
   } catch (err) {
-    console.error('Error fetching homepage stats:', err);
-    return { companyCount: 67, categoryCount: 10, stateCount: 50 };
+    return softFail('Error fetching homepage stats:', err, { companyCount: 67, categoryCount: 10, stateCount: 50 });
   }
 };
 
@@ -298,11 +300,7 @@ const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, ord
 
     return rows;
   } catch (err) {
-    // ponytail: swallow transient Neon errors (e.g. dropped fetch during a
-    // background unstable_cache revalidation) so they degrade to an empty
-    // result instead of throwing a 500 into the triggering request.
-    console.error('Error fetching companies by category/state:', err);
-    return [];
+    return softFail('Error fetching companies by category/state:', err, []);
   }
 };
 
@@ -367,8 +365,7 @@ const countCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, fil
 
     return row?.count || 0;
   } catch (err) {
-    console.error('Error counting companies by category/state:', err);
-    return 0;
+    return softFail('Error counting companies by category/state:', err, 0);
   }
 };
 
@@ -424,8 +421,7 @@ const fetchStateCountsForCategoryImpl = async (categorySlug) => {
       .map((row) => ({ stateSlug: idToSlug.get(row.hq_state_id), stateLabel: row.hq_state_label, count: row.count }))
       .sort((a, b) => b.count - a.count);
   } catch (err) {
-    console.error('Error fetching state counts for category:', err);
-    return [];
+    return softFail('Error fetching state counts for category:', err, []);
   }
 };
 
@@ -484,8 +480,7 @@ const fetchStateHubStatsImpl = async (stateSlug) => {
       topCities: cityRows.map((r) => ({ city: r.city, count: r.count })),
     };
   } catch (err) {
-    console.error('Error fetching state hub stats:', err);
-    return empty;
+    return softFail('Error fetching state hub stats:', err, empty);
   }
 };
 
@@ -554,8 +549,7 @@ const fetchCategoryStatsImpl = async (categorySlug, stateSlug = null) => {
       topSpecialties,
     };
   } catch (err) {
-    console.error('Error fetching category stats:', err);
-    return { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] };
+    return softFail('Error fetching category stats:', err, { verifiedCount: 0, totalCount: 0, medianRating: null, statesCovered: 0, topSpecialties: [] });
   }
 };
 
@@ -590,8 +584,7 @@ const fetchCompanyByIdAnyImpl = async (idOrSlug) => {
       .limit(1);
     return row ?? null;
   } catch (err) {
-    console.error('Error fetching company by id/slug:', err);
-    return null;
+    return softFail('Error fetching company by id/slug:', err, null);
   }
 };
 
@@ -614,8 +607,7 @@ const fetchCategoryCountsImpl = async (slugs) => {
       .groupBy(categories.slug);
     return Object.fromEntries(rows.map((r) => [r.slug, r.n]));
   } catch (err) {
-    console.error('Error fetching category counts:', err);
-    return {};
+    return softFail('Error fetching category counts:', err, {});
   }
 };
 
@@ -679,8 +671,7 @@ const fetchCompanyCategoriesImpl = async (where = {}) => {
       : db.select().from(company_categories);
     return await q.limit(10000);
   } catch (err) {
-    console.error('Error fetching company categories:', err);
-    return [];
+    return softFail('Error fetching company categories:', err, []);
   }
 };
 
@@ -963,8 +954,7 @@ export async function fetchClaimsForUser(userId) {
       .orderBy(desc(claims.created_at))
       .limit(50);
   } catch (err) {
-    console.error('Error fetching claims for user:', err);
-    return [];
+    return softFail('Error fetching claims for user:', err, []);
   }
 }
 
@@ -991,8 +981,7 @@ export async function fetchCompanyForOwner(companyId, userId) {
       .limit(1);
     return row?.company ?? null;
   } catch (err) {
-    console.error('Error fetching company for owner:', err);
-    return null;
+    return softFail('Error fetching company for owner:', err, null);
   }
 }
 
