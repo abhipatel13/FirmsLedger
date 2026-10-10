@@ -29,7 +29,7 @@ export default function OtherCategoriesCard({ categories, activeCategory, state,
   }
 
   return (
-    <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18, marginTop: 32 }}>
+    <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16 }}>
       <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
         {stateName ? `Other Industries in ${stateName}` : 'Other Categories'}
       </h3>

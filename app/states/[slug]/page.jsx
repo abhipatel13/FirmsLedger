@@ -200,7 +200,7 @@ export default async function StateHubPage({ params }) {
           {sections.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {sections.map(({ cat, companies }) => (
-                <section key={cat.slug} className="flex flex-col rounded-lg border border-slate-200 bg-white p-5">
+                <section key={cat.slug} className="flex min-w-0 flex-col rounded-lg border border-slate-200 bg-white p-5">
                   <div className="flex items-baseline justify-between gap-3">
                     <h3 className="text-base font-semibold text-[#1A2E4A]">
                       <Link href={`/${cat.slug}/${slug}`} className="hover:underline">{cat.titleNoun} in {state.name}</Link>
@@ -242,7 +242,7 @@ export default async function StateHubPage({ params }) {
 
           <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
             <h2 className="mb-3 text-lg font-bold text-slate-900">About manufacturing in {state.name}</h2>
-            <div className="max-w-3xl space-y-3 text-[15px] leading-relaxed text-slate-600">
+            <div className="space-y-3 text-[15px] leading-relaxed text-slate-600">
               {about.map((p) => <p key={p}><InlineMarkdown text={p} /></p>)}
             </div>
           </section>

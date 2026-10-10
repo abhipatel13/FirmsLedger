@@ -1,11 +1,13 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
+import FilterBar from './FilterBar';
 import { Button } from '@/components/ui/button';
 import { InlineMarkdown, SeoFaqs } from '@/components/seo/SeoBlocks';
-import CompanyRow from './CompanyRow';
+import CompanyCard from './CompanyCard';
 import ListingSidebar from './ListingSidebar';
 import CtaBand from './CtaBand';
 
-export default function StateListingPage({ breadcrumbs, h1, stats, lead, listTitle, companies, sidebar, cta, aboutTitle, about = [], faqs = [] }) {
+export default function StateListingPage({ breadcrumbs, h1, stats, lead, listTitle, companies, filters, sidebar, cta, aboutTitle, about = [], faqs = [] }) {
   return (
     <div className="bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
@@ -37,10 +39,13 @@ export default function StateListingPage({ breadcrumbs, h1, stats, lead, listTit
           <ListingSidebar {...sidebar} />
         </div>
         <main className="order-1 min-w-0 lg:order-2">
-          <h2 className="mb-4 text-lg font-semibold text-[#1A2E4A]">{listTitle}</h2>
+          <Suspense fallback={null}>
+            <FilterBar basePath={filters.basePath} activeStates={[]} activeEmployeeRanges={[]} stateCounts={filters.stateCounts} showStateFilter subcategories={filters.subcategories} category={filters.category} currentSubcategory={filters.currentSubcategory} currentState={filters.currentState} />
+          </Suspense>
+          <h2 className="mb-4 mt-6 text-lg font-semibold text-[#1A2E4A]">{listTitle}</h2>
           {companies.length > 0 ? (
             <div className="space-y-3">
-              {companies.map((c) => <CompanyRow key={c.slug} company={c} />)}
+              {companies.map((c) => <CompanyCard key={c.slug} company={c} />)}
             </div>
           ) : (
             <p className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-600">
@@ -53,7 +58,7 @@ export default function StateListingPage({ breadcrumbs, h1, stats, lead, listTit
           {about.length > 0 && (
             <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
               <h2 className="mb-3 text-lg font-bold text-slate-900">{aboutTitle}</h2>
-              <div className="max-w-3xl space-y-3 text-[15px] leading-relaxed text-slate-600">
+              <div className="space-y-3 text-[15px] leading-relaxed text-slate-600">
                 {about.map((p) => <p key={p}><InlineMarkdown text={p} /></p>)}
               </div>
             </section>

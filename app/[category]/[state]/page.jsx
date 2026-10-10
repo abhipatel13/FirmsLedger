@@ -578,7 +578,8 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           lead={seo ? seo.intro[0] : noLinks(generateDynamicCategoryStateAboveFoldText(faqInput))}
           listTitle={`${pageCompanies.length} ${cat?.shortName || categoryName} companies in ${stateName}`}
           companies={pageCompanies}
-          sidebar={await listingSidebar({ cat, stateSlug: state, stateName, facts })}
+          filters={{ basePath, stateCounts, subcategories: cat?.subcategories, category, currentSubcategory: null, currentState: state }}
+          sidebar={listingSidebar({ cat, stateSlug: state, stateName })}
           cta={{ title: `Looking for ${cat?.noun || categoryName.toLowerCase()} in ${stateName}?`, text: 'Tell us what you need. The FirmsLedger team will point you to matching manufacturers, free of charge.' }}
           aboutTitle={`About ${cat?.shortName || categoryName} in ${stateName}`}
           about={seo ? seo.intro.slice(1) : [noLinks(generateDynamicCategoryStateOnPageText(faqInput))]}
@@ -798,12 +799,14 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             {/* ── Relocated sidebar content ── */}
 
             {/* Other categories */}
-            <OtherCategoriesCard
-              categories={SIDEBAR_CATEGORIES_FULL}
-              activeCategory={category}
-              state={state}
-              stateName={stateName}
-            />
+            <div className="mt-8">
+              <OtherCategoriesCard
+                categories={SIDEBAR_CATEGORIES_FULL}
+                activeCategory={category}
+                state={state}
+                stateName={stateName}
+              />
+            </div>
 
             {/* Browse by Specialty in State */}
             {stateName && cat?.subcategories && cat.subcategories.length > 0 && (

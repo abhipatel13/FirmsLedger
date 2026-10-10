@@ -1,7 +1,7 @@
 import { notFound, permanentRedirect, redirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SEO_YEAR } from '@/lib/seo';
-import { countCompaniesByCategoryAndState } from '@/db/neonApi';
+import { countCompaniesByCategoryAndState, fetchStateCountsForCategory } from '@/db/neonApi';
 import { stateListingSeo, listingSidebar } from '@/lib/pageSeo';
 import { formatUpdated } from '@/lib/listingFacts';
 import { joinList, noLinks } from '@/lib/seoOverrides';
@@ -162,7 +162,10 @@ export default async function SubcategoryStatePage({ params }) {
 
   const stateName = toTitleCase(state);
 
-  const listing = await stateListingSeo({ path: `/${category}/${subcategory}/${state}`, listSlug: subcategory, stateSlug: state, stateName, cat });
+  const [listing, stateCounts] = await Promise.all([
+    stateListingSeo({ path: `/${category}/${subcategory}/${state}`, listSlug: subcategory, stateSlug: state, stateName, cat }),
+    fetchStateCountsForCategory(subcategory),
+  ]);
   const { companies: pageCompanies, seo } = listing;
   const count = pageCompanies.length;
 
@@ -208,7 +211,8 @@ export default async function SubcategoryStatePage({ params }) {
         lead={seo ? seo.intro[0] : `FirmsLedger lists ${pageCompanies.length} ${subNoun.toLowerCase()} headquartered in ${stateName}${topCities ? `, mainly in ${topCities}` : ''}.`}
         listTitle={`${pageCompanies.length} ${subNoun} in ${stateName}`}
         companies={pageCompanies}
-        sidebar={await listingSidebar({ cat, stateSlug: state, stateName, facts, currentSub: subcategory })}
+        filters={{ basePath, stateCounts, subcategories: cat.subcategories, category, currentSubcategory: subcategory, currentState: state }}
+        sidebar={listingSidebar({ cat, stateSlug: state, stateName, currentSub: subcategory })}
         cta={{ title: `Looking for ${sub.name.toLowerCase()} in ${stateName}?`, text: 'Tell us what you need. The FirmsLedger team will point you to matching manufacturers, free of charge.' }}
         aboutTitle={`About ${sub.name} in ${stateName}`}
         about={seo ? seo.intro.slice(1) : []}

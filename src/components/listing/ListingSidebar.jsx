@@ -1,18 +1,23 @@
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
+import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
+import OtherCategoriesCard from './OtherCategoriesCard';
+
+const OTHER_CATEGORIES = MANUFACTURING_CATEGORIES.map((c) => ({ slug: c.slug, name: c.shortName, subcategories: c.subcategories }));
 
 function Box({ title, children }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4">
+    <Card className="p-4 shadow-none">
       <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</h2>
       {children}
-    </section>
+    </Card>
   );
 }
 
 const linkRow = 'flex items-center justify-between gap-2 rounded px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-900';
 const count = (n) => <span className="text-xs tabular-nums text-slate-400">{n}</span>;
 
-export default function ListingSidebar({ specialties = [], cities = [], nearby = [], industries = [], stateName, stateSlug, parent, categoryLabel }) {
+export default function ListingSidebar({ specialties = [], nearby = [], stateName, stateSlug, categorySlug, parent, categoryLabel }) {
   return (
     <aside className="space-y-4 lg:sticky lg:top-24">
       {parent && (
@@ -21,7 +26,7 @@ export default function ListingSidebar({ specialties = [], cities = [], nearby =
         </Link>
       )}
       {specialties.length > 0 && (
-        <Box title="Specialty">
+        <Box title={`${categoryLabel} by specialty`}>
           <ul>
             {specialties.map((s) => (
               <li key={s.href}>
@@ -35,15 +40,6 @@ export default function ListingSidebar({ specialties = [], cities = [], nearby =
           </ul>
         </Box>
       )}
-      {cities.length > 0 && (
-        <Box title={`Cities in ${stateName}`}>
-          <ul>
-            {cities.map((c) => (
-              <li key={c.name} className="flex items-center justify-between px-2 py-1 text-sm text-slate-700">{c.name} {count(c.count)}</li>
-            ))}
-          </ul>
-        </Box>
-      )}
       {nearby.length > 0 && (
         <Box title={`${categoryLabel} in nearby states`}>
           <ul>
@@ -53,16 +49,7 @@ export default function ListingSidebar({ specialties = [], cities = [], nearby =
           </ul>
         </Box>
       )}
-      {industries.length > 0 && (
-        <Box title={`Other industries in ${stateName}`}>
-          <ul>
-            {industries.map((i) => (
-              <li key={i.href}><Link href={i.href} className={linkRow}>{i.label}</Link></li>
-            ))}
-            <li><Link href={`/states/${stateSlug}`} className={`${linkRow} font-medium text-[#1A2E4A]`}>All {stateName} manufacturers</Link></li>
-          </ul>
-        </Box>
-      )}
+      <OtherCategoriesCard categories={OTHER_CATEGORIES} activeCategory={categorySlug} state={stateSlug} stateName={stateName} />
       <section className="rounded-lg border border-[#F5A623]/40 bg-[#F5A623]/10 p-4">
         <h2 className="text-sm font-semibold text-[#1A2E4A]">Run a manufacturing company?</h2>
         <p className="mt-1 text-sm text-slate-600">Listing is free. Claim or add your company so buyers can reach you.</p>
