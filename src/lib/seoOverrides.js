@@ -9,7 +9,7 @@ export const SEO_OVERRIDES = {
     intro_md: [
       'FirmsLedger lists {N} manufacturers headquartered in Texas, grouped by what they make: {categoryLinks}.',
       'Most are based in {cities}. Every company profile shows its city, website and phone number for free, with no sign-up and no paid placements, so you contact the manufacturer directly.',
-      'Each industry section below shows the first five companies and links to the full Texas list for that industry.',
+      'Each industry card above shows its first three companies and links to the full Texas list for that industry.',
     ],
     faqs: [
       { q: 'Which industries have the most manufacturers in Texas?', a: 'On FirmsLedger, the largest Texas industries are {topCategories}.' },
