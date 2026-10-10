@@ -1,6 +1,6 @@
 // Run: node src/lib/seoOverrides.test.mjs
 import assert from 'node:assert/strict';
-import { SEO_OVERRIDES, TARGET_PAGES, joinList, stripLinks, safeHref, fillPlaceholders, fillAll, resolveOverride, listingVars, stateHubVars } from './seoOverrides.js';
+import { SEO_OVERRIDES, TARGET_PAGES, joinList, stripLinks, safeHref, noLinks, fillPlaceholders, fillAll, resolveOverride, listingVars, stateHubVars } from './seoOverrides.js';
 
 assert.equal(joinList([]), '');
 assert.equal(joinList(['a']), 'a');
@@ -41,6 +41,9 @@ assert.equal(h.topCategories, 'plastics & packaging manufacturers (66)');
 
 assert.equal(safeHref('/plastics-packaging/texas'), '/plastics-packaging/texas');
 assert.equal(safeHref('https://www.electronics.org/x'), 'https://www.electronics.org/x');
+assert.equal(safeHref('https://phishing.example/login'), null);
+assert.equal(noLinks('[x](https://phishing.example)'), 'x(https://phishing.example)');
+for (const [path, o] of Object.entries(SEO_OVERRIDES)) for (const m of JSON.stringify(o).matchAll(/\]\(([^)]+)\)/g)) assert.ok(safeHref(m[1]), `${path} link not allowed: ${m[1]}`);
 for (const bad of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', '//evil.com', 'http://evil.com', 'data:text/html,x', ' javascript:x']) assert.equal(safeHref(bad), null, bad);
 const evil = listingVars({ facts: { count: 1, cities: [{ name: '[x](javascript:alert(1))', count: 2 }, { name: 'B', count: 2 }], specialties: [], certifications: [], withWebsite: 0 }, companies: [{ name: '[click](javascript:alert(1))', description: 'medical', hq_city: 'x' }], stateName: 'Texas', stateSlug: 'texas', override: { keywords: { m: /medical/ } } });
 assert.ok(!/\[|\]\(/.test(evil.kw_m) && !/\[|\]\(/.test(evil.cities), 'data values must not form markdown links');

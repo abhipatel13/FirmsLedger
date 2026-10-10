@@ -21,6 +21,7 @@ import { getBorderingStates } from '@/lib/stateNeighbors';
 import { TARGET_PAGES } from '@/lib/seoOverrides';
 import { stateListingSeo, listingSidebar } from '@/lib/pageSeo';
 import { formatUpdated } from '@/lib/listingFacts';
+import { noLinks } from '@/lib/seoOverrides';
 import StateListingPage from '@/components/listing/StateListingPage';
 
 // Prebuilt at deploy. `revalidate = false` (not a duration) because a
@@ -574,14 +575,14 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           breadcrumbs={[{ href: '/', label: 'Home' }, { href: `/${category}`, label: categoryName }, { href: `/states/${state}`, label: `${stateName} manufacturers` }]}
           h1={seo?.h1 || pageTitle}
           stats={[`${pageCompanies.length} companies`, facts.cities.length > 1 && `${facts.cities.length} cities`, facts.lastUpdated && `Updated ${formatUpdated(facts.lastUpdated)}`]}
-          lead={seo ? seo.intro[0] : generateDynamicCategoryStateAboveFoldText(faqInput)}
+          lead={seo ? seo.intro[0] : noLinks(generateDynamicCategoryStateAboveFoldText(faqInput))}
           listTitle={`${pageCompanies.length} ${cat?.shortName || categoryName} companies in ${stateName}`}
           companies={pageCompanies}
           sidebar={await listingSidebar({ cat, stateSlug: state, stateName, facts })}
           cta={{ title: `Looking for ${cat?.noun || categoryName.toLowerCase()} in ${stateName}?`, text: 'Tell us what you need. The FirmsLedger team will point you to matching manufacturers, free of charge.' }}
           aboutTitle={`About ${cat?.shortName || categoryName} in ${stateName}`}
-          about={seo ? seo.intro.slice(1) : [generateDynamicCategoryStateOnPageText(faqInput)]}
-          faqs={seo ? seo.faqs : generateCategoryStateFAQs(faqInput)}
+          about={seo ? seo.intro.slice(1) : [noLinks(generateDynamicCategoryStateOnPageText(faqInput))]}
+          faqs={seo ? seo.faqs : generateCategoryStateFAQs(faqInput).map((f) => ({ q: noLinks(f.q), a: noLinks(f.a) }))}
         />
       </>
     );

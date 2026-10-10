@@ -4,7 +4,7 @@ import { BASE_URL, SEO_YEAR } from '@/lib/seo';
 import { countCompaniesByCategoryAndState } from '@/db/neonApi';
 import { stateListingSeo, listingSidebar } from '@/lib/pageSeo';
 import { formatUpdated } from '@/lib/listingFacts';
-import { joinList } from '@/lib/seoOverrides';
+import { joinList, noLinks } from '@/lib/seoOverrides';
 import StateListingPage from '@/components/listing/StateListingPage';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
@@ -196,7 +196,7 @@ export default async function SubcategoryStatePage({ params }) {
   };
 
   const { facts } = listing;
-  const topCities = joinList(facts.cities.slice(0, 3).map((c) => c.name));
+  const topCities = joinList(facts.cities.slice(0, 3).map((c) => noLinks(c.name)));
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />

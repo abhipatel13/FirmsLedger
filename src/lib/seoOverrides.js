@@ -185,9 +185,20 @@ export const joinList = (items) =>
 
 export const stripLinks = (text) => text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
 
-export const safeHref = (href) => (/^\/(?!\/)/.test(href) || /^https:\/\//i.test(href) ? href : null);
+const LINK_HOSTS = new Set(['www.bicmagazine.com', 'www.electronics.org']);
 
-const plain = (s) => String(s ?? '').replace(/[[\]]/g, '');
+export const safeHref = (href) => {
+  if (/^\/(?!\/)/.test(href)) return href;
+  try {
+    const url = new URL(href);
+    return url.protocol === 'https:' && LINK_HOSTS.has(url.hostname) ? href : null;
+  } catch {
+    return null;
+  }
+};
+
+export const noLinks = (s) => String(s ?? '').replace(/[[\]]/g, '');
+const plain = noLinks;
 
 export function fillPlaceholders(text, vars) {
   let missing = false;
