@@ -145,9 +145,11 @@ export function FilterDropdown({ label, activeCount, isOpen, onToggle, onClose, 
   );
 }
 
+const NONE = [];
+
 export default function FilterBar({
-  activeEmployeeRanges,
-  stateCounts,
+  activeEmployeeRanges = NONE,
+  stateCounts = [],
   showStateFilter,
   subcategories,
   category,
@@ -211,8 +213,8 @@ export default function FilterBar({
       window.location.href = query ? `/search?${query}` : '/search';
     } else {
       // Canonical pathing redirect
-      let path = `/${pendingCategory}`;
-      if (pendingSubcategory) path += `/${pendingSubcategory}`;
+      let path = pendingCategory ? `/${pendingCategory}` : pendingState ? '/states' : '/search';
+      if (pendingCategory && pendingSubcategory) path += `/${pendingSubcategory}`;
       if (pendingState)       path += `/${pendingState}`;
 
       params.delete('category');
@@ -258,8 +260,8 @@ export default function FilterBar({
       window.location.href = query ? `/search?${query}` : '/search';
     } else {
       const pathnameParts = window.location.pathname.split('/').filter(Boolean);
-      const rootCategory = pathnameParts[0] || category || '';
-      const path = rootCategory ? `/${rootCategory}` : '/search';
+      const rootCategory = CATEGORY_MAP[pathnameParts[0]] ? pathnameParts[0] : category || '';
+      const path = rootCategory ? `/${rootCategory}` : window.location.pathname;
       window.location.href = q ? `${path}?q=${encodeURIComponent(q)}` : path;
     }
   }
@@ -359,7 +361,7 @@ export default function FilterBar({
           {/* State Filter */}
           {showStateFilter ? (
             <FilterDropdown
-              label={stateCounts.find((s) => s.stateSlug === pendingState)?.stateLabel ?? 'State'}
+              label={mergedStates.find((s) => s.stateSlug === pendingState)?.stateLabel ?? 'State'}
               activeCount={pendingState ? 1 : 0}
               isOpen={openDropdown === 'state'}
               onToggle={() => setOpenDropdown(openDropdown === 'state' ? null : 'state')}

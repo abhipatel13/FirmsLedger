@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
+import FilterBar from '@/components/listing/FilterBar';
 import { ArrowRight } from 'lucide-react';
 import StatePill from '@/components/Statepill';
 
@@ -45,6 +47,11 @@ export default function Locations({ tier1 = [], tier2 = [], rest = [] }) {
 
       <main className="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-7xl mx-auto">
+          <div className="mb-10">
+            <Suspense fallback={null}>
+            <FilterBar showStateFilter />
+          </Suspense>
+          </div>
 
           {/* ── TIER 1 ─────────────────────────────────────────── */}
           <span className="text-orange-500 text-xs font-semibold tracking-wider uppercase">

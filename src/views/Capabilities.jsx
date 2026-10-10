@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
+import FilterBar from '@/components/listing/FilterBar';
 import { ArrowRight } from 'lucide-react';
 
 export default function Capabilities({ counts = {}, items = [] }) {
@@ -40,6 +42,11 @@ export default function Capabilities({ counts = {}, items = [] }) {
       {/* ── GRID OF CAPABILITIES ─────────────────────────────────── */}
       <main className="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-7xl mx-auto">
+          <div className="mb-10">
+            <Suspense fallback={null}>
+            <FilterBar showStateFilter />
+          </Suspense>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {items.map((cat) => {
               const imageUrl = cat.imageUrl;

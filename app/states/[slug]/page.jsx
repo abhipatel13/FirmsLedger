@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import Link from 'next/link';
+import FilterBar from '@/components/listing/FilterBar';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
 import { stateHubSeo } from '@/lib/pageSeo';
@@ -196,6 +198,11 @@ export default async function StateHubPage({ params }) {
         </header>
 
         <div className="mx-auto max-w-[var(--max-width)] px-4 py-8 sm:px-6">
+          <div className="mb-8">
+          <Suspense fallback={null}>
+            <FilterBar showStateFilter currentState={slug} />
+          </Suspense>
+          </div>
           <h2 className="mb-4 text-lg font-semibold text-[#1A2E4A]">Browse {state.name} manufacturers by industry</h2>
           {sections.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
