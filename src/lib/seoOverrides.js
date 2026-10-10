@@ -185,6 +185,10 @@ export const joinList = (items) =>
 
 export const stripLinks = (text) => text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
 
+export const safeHref = (href) => (/^\/(?!\/)/.test(href) || /^https:\/\//i.test(href) ? href : null);
+
+const plain = (s) => String(s ?? '').replace(/[[\]]/g, '');
+
 export function fillPlaceholders(text, vars) {
   let missing = false;
   const out = text.replace(/\{(\w+)\}/g, (_, key) => {
@@ -223,15 +227,15 @@ export function listingVars({ facts, companies = [], stateName, stateSlug, overr
   const vars = {
     N: facts.count,
     state: stateName,
-    cities: joinList(topCities(facts.cities).map((c) => `${c.name} (${c.count})`)),
-    topCity: facts.cities[0]?.name,
-    specialties: joinList(facts.specialties.slice(0, 4).map((s) => s.name.toLowerCase())),
-    certs: joinList(facts.certifications.slice(0, 3).map((c) => c.name)),
+    cities: joinList(topCities(facts.cities).map((c) => `${plain(c.name)} (${c.count})`)),
+    topCity: plain(facts.cities[0]?.name),
+    specialties: joinList(facts.specialties.slice(0, 4).map((s) => plain(s.name).toLowerCase())),
+    certs: joinList(facts.certifications.slice(0, 3).map((c) => plain(c.name))),
     withWebsite: facts.withWebsite,
   };
   for (const [key, rule] of Object.entries(override.keywords || {})) {
     const { match, exclude } = rule instanceof RegExp ? { match: rule } : rule;
-    vars[`kw_${key}`] = joinList(companies.filter((c) => match.test(haystack(c)) && !exclude?.test(haystack(c))).slice(0, 5).map((c) => c.name));
+    vars[`kw_${key}`] = joinList(companies.filter((c) => match.test(haystack(c)) && !exclude?.test(haystack(c))).slice(0, 5).map((c) => plain(c.name)));
   }
   for (const [key, cities] of Object.entries(override.regions || {})) {
     const set = new Set(cities);
@@ -250,7 +254,7 @@ export function stateHubVars({ stateName, stateSlug, totalCount, topCities = [],
   return {
     N: totalCount,
     state: stateName,
-    cities: joinList(topCities.slice(0, 5).map((c) => `${c.city} (${c.count})`)),
+    cities: joinList(topCities.slice(0, 5).map((c) => `${plain(c.city)} (${c.count})`)),
     topCategories: joinList(listed.slice(0, 3).map((t) => `${bySlug.get(t.slug).titleNoun.toLowerCase()} (${t.count})`)),
     categoryLinks: joinList(listed.map((t) => `[${bySlug.get(t.slug).titleNoun.toLowerCase()} in ${stateName}](/${t.slug}/${stateSlug}) (${t.count})`)),
   };

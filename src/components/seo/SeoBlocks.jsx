@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
-import { stripLinks } from '@/lib/seoOverrides';
+import { stripLinks, safeHref } from '@/lib/seoOverrides';
 
 const LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
 const linkClass = 'text-[#1A2E4A] underline underline-offset-2';
@@ -10,10 +10,13 @@ export function InlineMarkdown({ text }) {
   let last = 0;
   for (const m of text.matchAll(LINK)) {
     out.push(text.slice(last, m.index));
-    const [, label, href] = m;
-    out.push(href.startsWith('/')
-      ? <Link key={m.index} href={href} className={linkClass}>{label}</Link>
-      : <a key={m.index} href={href} target="_blank" rel="noopener noreferrer" className={linkClass}>{label}</a>);
+    const [, label, raw] = m;
+    const href = safeHref(raw);
+    out.push(!href
+      ? label
+      : href.startsWith('/')
+        ? <Link key={m.index} href={href} className={linkClass}>{label}</Link>
+        : <a key={m.index} href={href} target="_blank" rel="noopener noreferrer" className={linkClass}>{label}</a>);
     last = m.index + m[0].length;
   }
   out.push(text.slice(last));
