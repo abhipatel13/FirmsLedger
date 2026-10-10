@@ -39,6 +39,11 @@ function slugifyState(name) {
 
 const STATE_SLUGS = STATES_BY_COUNTRY['United States'].map(slugifyState);
 
+const lastmodOf = (entry, fallback) => {
+  const d = entry?.lastmod ? new Date(entry.lastmod) : null;
+  return d && !Number.isNaN(d.getTime()) ? d : fallback;
+};
+
 /**
  * One grouped query for every (category, state) pair with at least one
  * approved company, instead of 500+ per-combo queries.
@@ -50,6 +55,7 @@ async function buildLiveCombosImpl() {
         categorySlug: categories.slug,
         stateSlug: states.slug,
         count: sql`count(*)`.mapWith(Number),
+        lastmod: sql`max(${companies.updated_at})`.mapWith(String),
       })
       .from(companies)
       .innerJoin(company_categories, eq(company_categories.company_id, companies.id))
@@ -66,16 +72,18 @@ async function buildLiveCombosImpl() {
       if (c.parent_id) parentBySlug.set(c.slug, slugById.get(c.parent_id));
     }
 
-    const counts = new Map(); // "categorySlug|stateSlug" -> count
-    const bump = (catSlug, stateSlug, val) => {
+    const counts = new Map(); // "categorySlug|stateSlug" -> { count, lastmod }
+    const bump = (catSlug, stateSlug, val, lastmod) => {
       const key = `${catSlug}|${stateSlug}`;
-      counts.set(key, (counts.get(key) || 0) + val);
+      const prev = counts.get(key) || { count: 0, lastmod: null };
+      const newer = lastmod && (!prev.lastmod || new Date(lastmod) > new Date(prev.lastmod));
+      counts.set(key, { count: prev.count + val, lastmod: newer ? lastmod : prev.lastmod });
     };
 
     for (const r of rows) {
-      bump(r.categorySlug, r.stateSlug, r.count);
+      bump(r.categorySlug, r.stateSlug, r.count, r.lastmod);
       const parent = parentBySlug.get(r.categorySlug);
-      if (parent) bump(parent, r.stateSlug, r.count);
+      if (parent) bump(parent, r.stateSlug, r.count, r.lastmod);
     }
 
     // Entries, not the Map itself — unstable_cache serializes its return value
@@ -91,21 +99,21 @@ async function buildLiveCombosImpl() {
 
 const buildLiveCombos = unstable_cache(
   buildLiveCombosImpl,
-  ['sitemapLiveCombos'],
+  ['sitemapLiveCombos', 'v2'],
   { revalidate: DAY, tags: CACHE_TAGS },
 );
 
 async function fetchIndexableSlugsImpl() {
   try {
     const profiles = await db
-      .select({ slug: companies.slug, description: companies.description })
+      .select({ slug: companies.slug, description: companies.description, updated_at: companies.updated_at })
       .from(companies)
       .where(and(
         eq(companies.approved, true),
         isNotNull(companies.description),
         ne(companies.description, ''),
       ));
-    return profiles.filter((p) => p.slug && isProperDescription(p.description)).map((p) => p.slug);
+    return profiles.filter((p) => p.slug && isProperDescription(p.description)).map((p) => ({ slug: p.slug, lastmod: p.updated_at }));
   } catch {
     // DB unavailable at build time — omit profiles rather than fail the sitemap.
     return [];
@@ -114,7 +122,7 @@ async function fetchIndexableSlugsImpl() {
 
 const fetchIndexableSlugs = unstable_cache(
   fetchIndexableSlugsImpl,
-  ['sitemapIndexableSlugs'],
+  ['sitemapIndexableSlugs', 'v2'],
   { revalidate: DAY, tags: CACHE_TAGS },
 );
 
@@ -152,11 +160,9 @@ export default async function sitemap() {
   // ── Category + state pages: /{category}/{state} ────────────────────────
   for (const slug of CATEGORY_SLUGS) {
     for (const stateSlug of STATE_SLUGS) {
-      if (combos) {
-        const count = combos.get(`${slug}|${stateSlug}`) || 0;
-        if (count < MIN_LIVE_COMPANIES) continue;
-      }
-      urls.push({ url: `${BASE_URL}/${slug}/${stateSlug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+      const combo = combos?.get(`${slug}|${stateSlug}`);
+      if (combos && (combo?.count || 0) < MIN_LIVE_COMPANIES) continue;
+      urls.push({ url: `${BASE_URL}/${slug}/${stateSlug}`, lastModified: lastmodOf(combo, now), changeFrequency: 'weekly', priority: 0.8 });
     }
   }
 
@@ -164,11 +170,9 @@ export default async function sitemap() {
   for (const cat of MANUFACTURING_CATEGORIES) {
     for (const sub of cat.subcategories) {
       for (const stateSlug of STATE_SLUGS) {
-        if (combos) {
-          const count = combos.get(`${sub.slug}|${stateSlug}`) || 0;
-          if (count < MIN_LIVE_COMPANIES) continue;
-        }
-        urls.push({ url: `${BASE_URL}/${cat.slug}/${sub.slug}/${stateSlug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 });
+        const combo = combos?.get(`${sub.slug}|${stateSlug}`);
+        if (combos && (combo?.count || 0) < MIN_LIVE_COMPANIES) continue;
+        urls.push({ url: `${BASE_URL}/${cat.slug}/${sub.slug}/${stateSlug}`, lastModified: lastmodOf(combo, now), changeFrequency: 'weekly', priority: 0.7 });
       }
     }
   }
@@ -177,8 +181,8 @@ export default async function sitemap() {
   // Mirrors isIndexable() in app/company/[slug]/page.jsx — approved and
   // carrying a real description (isProperDescription). Keep the two in
   // agreement, otherwise the sitemap advertises noindexed URLs.
-  for (const slug of await fetchIndexableSlugs()) {
-    urls.push({ url: `${BASE_URL}/company/${slug}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
+  for (const { slug, lastmod } of await fetchIndexableSlugs()) {
+    urls.push({ url: `${BASE_URL}/company/${slug}`, lastModified: lastmodOf({ lastmod }, now), changeFrequency: 'monthly', priority: 0.6 });
   }
 
   return urls;

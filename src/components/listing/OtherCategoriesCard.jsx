@@ -31,8 +31,13 @@ export default function OtherCategoriesCard({ categories, activeCategory, state,
   return (
     <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18, marginTop: 32 }}>
       <h3 style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 12, marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-        {stateName ? `Other Categories in ${stateName}` : 'Other Categories'}
+        {stateName ? `Other Industries in ${stateName}` : 'Other Categories'}
       </h3>
+      {state && (
+        <Link href={`/states/${state}`} style={{ display: 'block', fontSize: 13, color: '#1A2E4A', fontWeight: 600, padding: '0 10px 8px' }}>
+          All {stateName} manufacturers
+        </Link>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {categories.map((c) => {
           const isActive = c.slug === activeCategory;
@@ -57,7 +62,7 @@ export default function OtherCategoriesCard({ categories, activeCategory, state,
                 }}
                 className={`sidebar-cat-link${isActive ? ' active' : ''}`}
               >
-                <span>{c.name}</span>
+                <span>{stateName ? `${c.name} in ${stateName}` : c.name}</span>
                 {isActive && <span style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8' }}>Current</span>}
               </Link>
 

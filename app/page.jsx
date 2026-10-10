@@ -1,4 +1,5 @@
 import DirectoryHub from '@/views/DirectoryHub';
+import PopularSearches from '@/components/seo/PopularSearches';
 import JsonLd from '@/components/JsonLd';
 import { SITE_NAME, BASE_URL } from '@/lib/seo';
 import { fetchHomepageStats, fetchStateCountsForCategory } from '@/db/neonApi';
@@ -84,6 +85,7 @@ export default async function HomePage() {
           CORE_CATEGORIES.map((c) => [c.slug, categoryImageUrl(c.slug)]),
         )}
       />
+      <PopularSearches />
     </>
   );
 }

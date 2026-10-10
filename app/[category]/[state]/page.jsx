@@ -16,8 +16,12 @@ import {
   generateDynamicCategoryStateAboveFoldText,
   generateDynamicCategoryStateOnPageText,
   generateCategoryStateFAQs,
-  getNeighboringStates
 } from '@/lib/seoDescription';
+import { getBorderingStates } from '@/lib/stateNeighbors';
+import { TARGET_PAGES } from '@/lib/seoOverrides';
+import { stateListingSeo } from '@/lib/pageSeo';
+import ComparisonTable from '@/components/listing/ComparisonTable';
+import { SeoIntro, SeoFaqs, LastUpdated } from '@/components/seo/SeoBlocks';
 
 // Prebuilt at deploy. `revalidate = false` (not a duration) because a
 // time-based window makes the page re-render AT RUNTIME on expiry, and a runtime
@@ -42,16 +46,15 @@ const SIDEBAR_CATEGORIES_FULL = MANUFACTURING_CATEGORIES.map((c) => ({
   subcategories: c.subcategories,
 }));
 
-const TOP_STATES = [
-  { name: 'California',    slug: 'california'   },
-  { name: 'Texas',         slug: 'texas'        },
-  { name: 'New York',      slug: 'new-york'     },
-  { name: 'Florida',       slug: 'florida'      },
-  { name: 'Illinois',      slug: 'illinois'     },
-  { name: 'Pennsylvania',  slug: 'pennsylvania' },
-  { name: 'Ohio',          slug: 'ohio'         },
-  { name: 'Michigan',      slug: 'michigan'     },
-];
+const STATE_NAMES = Object.fromEntries(ALL_US_STATES.map((s) => [s.slug, s.name]));
+
+function topStatesFor(category, stateCounts) {
+  const pinned = TARGET_PAGES.map((t) => t.path.split('/')).filter((p) => p.length === 3 && p[1] === category).map((p) => p[2]);
+  return [...new Set([...pinned, ...stateCounts.map((s) => s.stateSlug)])]
+    .filter((slug) => STATE_NAMES[slug])
+    .slice(0, 8)
+    .map((slug) => ({ slug, name: STATE_NAMES[slug] }));
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -200,13 +203,16 @@ export async function generateMetadata({ params }) {
       ? `Browse ${stats.totalCount} ${cat?.noun || categoryName.toLowerCase()} in the US. Compare capabilities, location, and company size. No paid placements.`
       : `Find ${cat?.noun || categoryName.toLowerCase()} in the US. Compare companies by location, size, and specialization. No paid placements.`;
   const canonical    = `${_BASE}/${category}/${state}${pageQuery}`;
+  const seo = state ? (await stateListingSeo({ path: `/${category}/${state}`, listSlug: category, stateSlug: state, stateName, cat })).seo : null;
+  const metaTitle = seo?.title || title;
+  const metaDescription = seo?.description || description;
 
   return {
-    title,
-    description,
+    title: metaTitle,
+    description: metaDescription,
     alternates: { canonical },
     robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },
-    openGraph: { title, description, type: 'website', url: canonical },
+    openGraph: { title: metaTitle, description: metaDescription, type: 'website', url: canonical },
   };
 }
 
@@ -506,11 +512,16 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
   const totalPages   = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const currentPage  = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
 
+  const listing = state ? await stateListingSeo({ path: `/${category}/${state}`, listSlug: category, stateSlug: state, stateName, cat }) : null;
+  const seo = listing?.seo;
+
   const [pageCompanies, stateCounts, stats] = await Promise.all([
-    fetchCompaniesByCategoryAndState(category, state || null, '-avg_rating', PAGE_SIZE, (currentPage - 1) * PAGE_SIZE, {
-      stateSlugs: !state ? activeStates : [],
-      employeeRanges: activeEmployeeRanges,
-    }),
+    listing
+      ? listing.companies
+      : fetchCompaniesByCategoryAndState(category, null, '-avg_rating', PAGE_SIZE, (currentPage - 1) * PAGE_SIZE, {
+          stateSlugs: activeStates,
+          employeeRanges: activeEmployeeRanges,
+        }),
     fetchStateCountsForCategory(category),
     fetchCategoryStats(category, state || undefined),
   ]);
@@ -528,7 +539,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     '@type': 'ItemList',
     name: pageTitle,
     url: `${_BASE}${basePath}`,
-    numberOfItems: totalCount,
+    numberOfItems: pageCompanies.length,
     itemListElement: pageCompanies.map((company, i) => ({
       '@type': 'ListItem',
       position: rankOffset + i + 1,
@@ -552,7 +563,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     itemListElement: breadcrumbItems,
   };
 
-  const faqJsonLd = state
+  const faqJsonLd = state && !seo
     ? {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
@@ -643,9 +654,9 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   marginBottom: 10,
                   marginTop: 0,
                 }}>
-                  {pageTitle}
+                  {seo?.h1 || pageTitle}
                 </h1>
-                {state ? (
+                {state && !seo && (
                   <p style={{ fontSize: 14, color: '#475569', margin: 0, lineHeight: 1.6, maxWidth: 640 }}>
                     {generateDynamicCategoryStateAboveFoldText({
                       categorySlug: category,
@@ -655,7 +666,9 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                       totalCount: totalCount,
                     })}
                   </p>
-                ) : (
+                )}
+                {listing && <LastUpdated date={listing.facts.lastUpdated} />}
+                {!state && (
                   <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
                     Grouped by category and location. Updated monthly.
                   </p>
@@ -713,7 +726,8 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
           {/* ── Ranked list ─────────────────────────────────────── */}
           <div style={{ minWidth: 0, marginTop: 24 }}>
-            {stateName && (
+            {seo?.intro.length > 0 && <SeoIntro paragraphs={seo.intro} />}
+            {stateName && !seo && (
               <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.65, margin: '0 0 24px' }}>
                 Comparing {totalCount} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}. Request quotes
                 directly from suppliers, or {' '}
@@ -722,6 +736,12 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 </Link>{' '}
                 to reach buyers searching {stateName}.
               </p>
+            )}
+            {stateName && (
+              <ComparisonTable
+                companies={pageCompanies}
+                caption={`Compare ${pageCompanies.length} ${cat?.noun || categoryName.toLowerCase()} in ${stateName}`}
+              />
             )}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <h2 style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
@@ -769,7 +789,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             {/* Pagination moved to /search: this page is prebuilt at deploy and
                 cannot read ?page=. Page 2+ was already noindex, so nothing
                 indexable is lost. See HISTORY.md 2026-09-05. */}
-            {totalCount > PAGE_SIZE && (
+            {totalCount > pageCompanies.length && (
               <div style={{ textAlign: 'center', marginTop: 28 }}>
                 <Link
                   href={`/search?category=${encodeURIComponent(category)}`}
@@ -833,7 +853,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                 Top States
               </h3>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {TOP_STATES.map((s) => (
+                {topStatesFor(category, stateCounts).map((s) => (
                   <Link
                     key={s.slug}
                     href={`/${category}/${s.slug}`}
@@ -851,7 +871,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                     }}
                     className={`sidebar-state-pill${s.slug === state ? ' active' : ''}`}
                   >
-                    {s.name}
+                    {cat?.shortName || categoryName} in {s.name}
                   </Link>
                 ))}
               </div>
@@ -891,8 +911,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <section style={{ backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', paddingTop: 48, paddingBottom: 64 }} className="px-6 lg:px-8">
             <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
               
+              {seo && <SeoFaqs faqs={seo.faqs} />}
+
               {/* Main description card */}
-              <div style={{
+              {!seo && <div style={{
                 backgroundColor: '#ffffff',
                 border: '1px solid #e2e8f0',
                 borderRadius: 12,
@@ -935,10 +957,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                       : cat.longDescription}
                   </p>
                 </div>
-              </div>
+              </div>}
 
               {/* FAQ Block (State pages only) */}
-              {stateName && (
+              {stateName && !seo && (
                 <div style={{
                   backgroundColor: '#ffffff',
                   border: '1px solid #e2e8f0',
@@ -975,7 +997,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               )}
 
               {/* Related/Neighboring States Horizontal Links */}
-              {stateName && (
+              {stateName && getBorderingStates(state).length > 0 && (
                 <div style={{
                   backgroundColor: '#ffffff',
                   border: '1px solid #e2e8f0',
@@ -984,10 +1006,10 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   padding: '24px 32px',
                 }}>
                   <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748b', letterSpacing: '0.05em', textTransform: 'uppercase', margin: '0 0 16px' }}>
-                    Related Markets in the Region
+                    {cat.shortName} in Nearby States
                   </h3>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {getNeighboringStates(state).map((ns) => (
+                    {getBorderingStates(state).map((ns) => (
                       <Link
                         key={ns.slug}
                         href={`/${category}/${ns.slug}`}
@@ -1006,7 +1028,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                         }}
                         className="sidebar-state-pill"
                       >
-                        {ns.name}
+                        {cat.shortName} in {ns.name}
                       </Link>
                     ))}
                   </div>

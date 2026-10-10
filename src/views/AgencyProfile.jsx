@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getCategoryHref, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription, isProperDescription } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
@@ -75,25 +74,14 @@ function DonutLabel({ viewBox, total }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function AgencyProfile({ companySlug, initialCompany, initialReviews, initialCategories, initialSimilar }) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-  const queryId = searchParams?.get('id') ?? null;
-  const identifier = companySlug || queryId;
+  const identifier = companySlug;
 
   const [expandedReview, setExpandedReview] = useState(null);
   const [activeService, setActiveService] = useState(0);
 
   const { data: agency, isLoading } = useQuery({
     queryKey: ['agency', identifier],
-    queryFn: async () => {
-      if (companySlug) {
-        const bySlug = await api.entities.Company.filter({ slug: companySlug });
-        return bySlug[0] ?? null;
-      }
-      const byId = await api.entities.Company.filter({ id: queryId });
-      return byId[0] ?? null;
-    },
+    queryFn: async () => (await api.entities.Company.filter({ slug: companySlug }))[0] ?? null,
     initialData: initialCompany ?? undefined,
     enabled: !!identifier && !initialCompany,
   });
@@ -135,15 +123,6 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
   });
 
   const primaryCategorySlug = categories[0]?.slug;
-
-  // Canonical redirect
-  React.useEffect(() => {
-    if (!agency?.slug || !pathname?.startsWith('/AgencyProfile')) return;
-    const search = searchParams?.toString() ? `?${searchParams.toString()}` : '';
-    if (search === `?id=${agency.id}` || (searchParams?.get('id') === agency.id && !searchParams.get('slug'))) {
-      router.replace(`/company/${encodeURIComponent(agency.slug)}`);
-    }
-  }, [agency?.id, agency?.slug, pathname, router, searchParams]);
 
   if (isLoading) {
     return (
@@ -470,11 +449,11 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
           <div className="bg-[#ffffff] border border-[#e2e8f0] rounded-lg p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-[#1A2E4A]">
-                Similar {categories[0]?.name || 'Companies'}{agency.hq_country ? ` in ${agency.hq_country}` : ''}
+                {stateObj ? `More ${primaryCategory?.name || 'Companies'} in ${stateObj.name}` : `Similar ${primaryCategory?.name || 'Companies'}`}
               </h2>
               {primaryCategorySlug && (
-                <Link href={getCategoryHref(primaryCategory)} className="text-sm font-semibold text-orange-500 hover:text-orange-600 inline-flex items-center gap-1">
-                  View all <ArrowRight className="w-3.5 h-3.5" />
+                <Link href={getCategoryHref(primaryCategory, stateObj?.slug)} className="text-sm font-semibold text-orange-500 hover:text-orange-600 inline-flex items-center gap-1">
+                  {stateObj ? `All ${primaryCategory.name} in ${stateObj.name}` : 'View all'} <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}
             </div>

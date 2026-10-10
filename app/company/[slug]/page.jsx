@@ -13,7 +13,6 @@ export const revalidate = false;
 export const dynamicParams = true;
 
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 import AgencyProfile from '@/views/AgencyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
@@ -66,9 +65,9 @@ const getCompanyCategories = async (companyId) =>
 const getCategories = async () =>
   (await buildCategories()) ?? (await fetchCategories().catch(() => []));
 
-const getTopInCategory = async (categorySlug) =>
-  (await buildTopCompaniesInCategory(categorySlug, 30)) ??
-  (await fetchCompaniesByCategoryAndState(categorySlug, null, '-avg_rating', 30).catch(() => []));
+const getTopInCategory = async (categorySlug, stateId, stateSlug) =>
+  (await buildTopCompaniesInCategory(categorySlug, 30, stateId)) ??
+  (await fetchCompaniesByCategoryAndState(categorySlug, stateSlug, '-avg_rating', 30).catch(() => []));
 
 export async function generateStaticParams() {
   const slugs = await approvedCompanySlugs().catch(() => []);
@@ -127,7 +126,8 @@ export default async function CompanyProfilePage({ params }) {
         .map((c) => ({ ...c, parentSlug: c.is_parent ? c.slug : catsById.get(c.parent_id)?.slug || null }));
       const primarySlug = companyCategories[0]?.slug;
       if (primarySlug) {
-        similarCompanies = (await getTopInCategory(primarySlug))
+        const stateSlug = ALL_US_STATES.find((s) => s.name === company.hq_state_label)?.slug ?? null;
+        similarCompanies = (await getTopInCategory(primarySlug, stateSlug && company.hq_state_id, stateSlug))
           .filter((c) => c.id !== company.id)
           .slice(0, 4);
       }
@@ -146,13 +146,6 @@ export default async function CompanyProfilePage({ params }) {
         description: getCompanyDescription(company),
         ...(company.website && { sameAs: [company.website] }),
         ...(company.employee_count && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.employee_count } }),
-        ...(company.review_count > 0 && Number(company.avg_rating) > 0 && {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: company.avg_rating,
-            reviewCount: company.review_count,
-          },
-        }),
         ...((company.hq_city || company.hq_state_label) && {
           address: {
             '@type': 'PostalAddress',
@@ -209,15 +202,13 @@ export default async function CompanyProfilePage({ params }) {
     <>
       {localBusinessJsonLd && <JsonLd data={localBusinessJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
-      <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>}>
-        <AgencyProfile
-          companySlug={slug || undefined}
-          initialCompany={stripInternalFields(company)}
-          initialReviews={reviews}
-          initialCategories={companyCategories}
-          initialSimilar={similarCompanies.map(stripInternalFields)}
-        />
-      </Suspense>
+      <AgencyProfile
+        companySlug={slug || undefined}
+        initialCompany={stripInternalFields(company)}
+        initialReviews={reviews}
+        initialCategories={companyCategories}
+        initialSimilar={similarCompanies.map(stripInternalFields)}
+      />
     </>
   );
 }

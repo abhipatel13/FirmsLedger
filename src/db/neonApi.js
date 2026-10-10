@@ -239,6 +239,12 @@ async function resolveCategoryIds(categorySlug) {
  * Fetch companies by category slug, with optional state slug filter.
  * Used by /top/[category]/[state] page.
  */
+const LISTING_COLUMNS = Object.fromEntries(
+  ['id', 'slug', 'name', 'description', 'website', 'logo_url', 'phone', 'hq_city', 'hq_state_label', 'hq_state_id',
+    'certifications', 'capabilities', 'products', 'is_verified', 'featured', 'avg_rating', 'review_count',
+    'employee_count', 'founded_year', 'updated_at', 'approved'].map((k) => [k, companies[k]])
+);
+
 const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, orderKey = '-avg_rating', limit = 200, offset = 0, filters = {}) => {
   try {
     const activeFilters = filters || {};
@@ -274,7 +280,7 @@ const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, ord
     const hasEmployeeFilter = activeFilters.employeeRanges?.length > 0;
 
     let query = db
-      .select()
+      .select(LISTING_COLUMNS)
       .from(companies)
       .where(and(...conditions))
       .orderBy(...orderCol(companies, orderKey));
@@ -303,6 +309,11 @@ const fetchCompaniesByCategoryAndStateImpl = async (categorySlug, stateSlug, ord
 export const fetchCompaniesByCategoryAndState = cache(
   unstable_cache(fetchCompaniesByCategoryAndStateImpl, ['fetchCompaniesByCategoryAndState'], { revalidate: WEEK, tags: CACHE_TAGS })
 );
+
+export const STATE_LIST_LIMIT = 200;
+
+export const fetchStateListing = (categorySlug, stateSlug) =>
+  fetchCompaniesByCategoryAndState(categorySlug, stateSlug, '-avg_rating', STATE_LIST_LIMIT, 0, {});
 
 /**
  * Cheap SQL count of matching companies for a category + state combination.

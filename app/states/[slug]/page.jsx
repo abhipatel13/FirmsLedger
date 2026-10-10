@@ -4,7 +4,9 @@ import JsonLd from '@/components/JsonLd';
 import CategoryCard from '@/components/CategoryCard';
 import { categoryImageUrl } from '@/lib/capabilities';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
-import { fetchStateHubStats } from '@/db/neonApi';
+import { stateHubSeo } from '@/lib/pageSeo';
+import { companyCity } from '@/lib/listingFacts';
+import { SeoIntro, SeoFaqs } from '@/components/seo/SeoBlocks';
 import { ArrowRight } from 'lucide-react';
 
 // 50 prebuilt state hubs re-rendering hourly was up to 1,200 revalidations/day,
@@ -97,11 +99,11 @@ export async function generateMetadata({ params }) {
   const state = STATE_MAP[slug];
   if (!state) return { title: 'State' };
 
-  const stats = await fetchStateHubStats(slug);
-  const title = `Manufacturers in ${state.name}`;
-  const description = stats.totalCount > 0
+  const { stats, seo } = await stateHubSeo({ stateSlug: slug, stateName: state.name });
+  const title = seo?.title || `Manufacturers in ${state.name}`;
+  const description = seo?.description || (stats.totalCount > 0
     ? `Browse ${stats.totalCount} manufacturers in ${state.name}${stats.topCategories[0] ? `, led by ${stats.topCategories[0].name.toLowerCase()}` : ''}. Compare suppliers by category, city, and certifications.`
-    : `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`;
+    : `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`);
   const canonical   = `${_BASE}/states/${slug}`;
 
   return {
@@ -118,7 +120,7 @@ export default async function StateHubPage({ params }) {
   const state = STATE_MAP[slug];
   if (!state) notFound();
 
-  const stats = await fetchStateHubStats(slug);
+  const { stats, sections, seo } = await stateHubSeo({ stateSlug: slug, stateName: state.name });
   const topCategories = stats.topCategories.slice(0, 5);
   const topCities = stats.topCities.slice(0, 3);
 
@@ -217,8 +219,9 @@ export default async function StateHubPage({ params }) {
               marginBottom: 12,
               marginTop: 0,
             }}>
-              Manufacturers in {state.name}
+              {seo?.h1 || `Manufacturers in ${state.name}`}
             </h1>
+            {seo?.intro.length > 0 ? <SeoIntro paragraphs={seo.intro} /> : (
             <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 640, marginBottom: 0 }}>
               {stats.totalCount > 0 ? (
                 <>
@@ -241,6 +244,7 @@ export default async function StateHubPage({ params }) {
                 </>
               )}
             </p>
+            )}
           </div>
         </div>
 
@@ -276,6 +280,34 @@ export default async function StateHubPage({ params }) {
             {' '}Each category page above lists {state.name}-based companies with their headquarters location, team size, and ISO certifications where available. Sourcing local production partners in {state.name} helps reduce supply chain
             transit times and logistics costs.
           </p>
+
+          {sections.length > 0 && (
+            <div className="mt-14 grid gap-6 md:grid-cols-2">
+              {sections.map(({ cat, companies }) => (
+                <section key={cat.slug} className="rounded-xl border border-slate-200 bg-white p-6">
+                  <h2 className="text-lg font-bold text-slate-900">
+                    <Link href={`/${cat.slug}/${slug}`} className="hover:underline">{cat.titleNoun} in {state.name}</Link>
+                  </h2>
+                  <p className="mt-1 mb-3 text-xs text-slate-500">{companies.length} listed</p>
+                  <ul className="space-y-1.5 text-sm">
+                    {companies.slice(0, 5).map((c) => (
+                      <li key={c.slug}>
+                        <Link href={`/company/${c.slug}`} className="font-medium text-[#1A2E4A] hover:underline">{c.name}</Link>
+                        {companyCity(c) && <span className="text-slate-500"> · {companyCity(c)}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                  {companies.length > 5 && (
+                    <Link href={`/${cat.slug}/${slug}`} className="mt-3 inline-block text-sm font-semibold text-orange-600 hover:underline">
+                      All {companies.length} {cat.noun} in {state.name}
+                    </Link>
+                  )}
+                </section>
+              ))}
+            </div>
+          )}
+
+          {seo && <div className="mt-14"><SeoFaqs faqs={seo.faqs} /></div>}
         </div>
 
         {/* ── Other states ── */}

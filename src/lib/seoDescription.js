@@ -67,31 +67,6 @@ export const CATEGORY_DOMAINS = {
   }
 };
 
-const CENSUS_REGIONS = {
-  northeast: ['new-york', 'pennsylvania', 'new-jersey', 'massachusetts', 'connecticut', 'maryland', 'maine', 'new-hampshire', 'vermont', 'rhode-island', 'delaware'],
-  midwest: ['illinois', 'ohio', 'michigan', 'wisconsin', 'indiana', 'minnesota', 'missouri', 'iowa', 'kansas', 'nebraska', 'south-dakota', 'north-dakota'],
-  south: ['texas', 'florida', 'georgia', 'north-carolina', 'virginia', 'tennessee', 'alabama', 'kentucky', 'south-carolina', 'louisiana', 'oklahoma', 'mississippi', 'arkansas', 'west-virginia'],
-  west: ['california', 'washington', 'colorado', 'arizona', 'oregon', 'utah', 'nevada', 'new-mexico', 'idaho', 'hawaii', 'montana', 'alaska', 'wyoming']
-};
-
-const STATE_NAME_MAP = {
-  'alabama': 'Alabama', 'alaska': 'Alaska', 'arizona': 'Arizona', 'arkansas': 'Arkansas',
-  'california': 'California', 'colorado': 'Colorado', 'connecticut': 'Connecticut',
-  'delaware': 'Delaware', 'florida': 'Florida', 'georgia': 'Georgia', 'hawaii': 'Hawaii',
-  'idaho': 'Idaho', 'illinois': 'Illinois', 'indiana': 'Indiana', 'iowa': 'Iowa',
-  'kansas': 'Kansas', 'kentucky': 'Kentucky', 'louisiana': 'Louisiana', 'maine': 'Maine',
-  'maryland': 'Maryland', 'massachusetts': 'Massachusetts', 'michigan': 'Michigan',
-  'minnesota': 'Minnesota', 'mississippi': 'Mississippi', 'missouri': 'Missouri',
-  'montana': 'Montana', 'nebraska': 'Nebraska', 'nevada': 'Nevada', 'new-hampshire': 'New Hampshire',
-  'new-jersey': 'New Jersey', 'new-mexico': 'New Mexico', 'new-york': 'New York',
-  'north-carolina': 'North Carolina', 'north-dakota': 'North Dakota', 'ohio': 'Ohio',
-  'oklahoma': 'Oklahoma', 'oregon': 'Oregon', 'pennsylvania': 'Pennsylvania',
-  'rhode-island': 'Rhode Island', 'south-carolina': 'South Carolina', 'south-dakota': 'South Dakota',
-  'tennessee': 'Tennessee', 'texas': 'Texas', 'utah': 'Utah', 'vermont': 'Vermont',
-  'virginia': 'Virginia', 'washington': 'Washington', 'west-virginia': 'West Virginia',
-  'wisconsin': 'Wisconsin', 'wyoming': 'Wyoming'
-};
-
 /** Deterministic hash for templates */
 function getDeterministicIndex(seed, max) {
   let hash = 0;
@@ -190,28 +165,4 @@ export function generateCategoryStateFAQs({ categorySlug, categoryName, stateSlu
   ];
 
   return list;
-}
-
-/** US Census-based regional neighboring states mapping */
-export function getNeighboringStates(stateSlug) {
-  let regionKey = null;
-  for (const [key, states] of Object.entries(CENSUS_REGIONS)) {
-    if (states.includes(stateSlug)) {
-      regionKey = key;
-      break;
-    }
-  }
-
-  if (!regionKey) return [];
-
-  // Filter out current state, take next 4 deterministic neighbors
-  const listInRegion = CENSUS_REGIONS[regionKey].filter(s => s !== stateSlug);
-  const hashSeed = stateSlug;
-  const startIdx = getDeterministicIndex(hashSeed, Math.max(1, listInRegion.length - 4));
-  const neighbors = listInRegion.slice(startIdx, startIdx + 4);
-
-  return neighbors.map(slug => ({
-    slug,
-    name: STATE_NAME_MAP[slug] || slug.replace('-', ' ')
-  }));
 }
