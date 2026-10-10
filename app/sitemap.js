@@ -1,9 +1,11 @@
 import { db } from '@/db/client';
 import { states, categories, companies, company_categories } from '@/db/schema';
 import { eq, and, isNotNull, ne, sql } from 'drizzle-orm';
-import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
+import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS, SUBCATEGORY_HUB_MIN } from '@/lib/manufacturingCategories';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
 import { unstable_cache } from 'next/cache';
+import { isProperDescription } from '@/utils';
+
 
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -30,13 +32,18 @@ const CACHE_TAGS = ['companies'];
 // Below this many approved companies, a /{category}/{state} page is a thin/
 // empty page — a soft-404 risk that wastes crawl budget. Keep it out of the
 // sitemap; it's still reachable via the category hub, just not pushed to Google.
-const MIN_LIVE_COMPANIES = 5;
+const MIN_LIVE_COMPANIES = 10;
 
 function slugifyState(name) {
   return String(name).trim().toLowerCase().replace(/\s+/g, '-');
 }
 
 const STATE_SLUGS = STATES_BY_COUNTRY['United States'].map(slugifyState);
+
+const lastmodOf = (entry, fallback) => {
+  const d = entry?.lastmod ? new Date(entry.lastmod) : null;
+  return d && !Number.isNaN(d.getTime()) ? d : fallback;
+};
 
 /**
  * One grouped query for every (category, state) pair with at least one
@@ -49,8 +56,7 @@ async function buildLiveCombosImpl() {
         categorySlug: categories.slug,
         stateSlug: states.slug,
         count: sql`count(*)`.mapWith(Number),
-        // Epoch ms, not a Date: unstable_cache serializes its return value.
-        lastMs: sql`extract(epoch from max(${companies.updated_at})) * 1000`.mapWith(Number),
+        lastmod: sql`max(${companies.updated_at})`.mapWith(String),
       })
       .from(companies)
       .innerJoin(company_categories, eq(company_categories.company_id, companies.id))
@@ -67,19 +73,18 @@ async function buildLiveCombosImpl() {
       if (c.parent_id) parentBySlug.set(c.slug, slugById.get(c.parent_id));
     }
 
-    // "categorySlug|stateSlug" -> { count, lastMs } where lastMs is the newest
-    // updated_at among that listing's companies (its real lastmod).
-    const counts = new Map();
-    const bump = (catSlug, stateSlug, val, lastMs) => {
+    const counts = new Map(); // "categorySlug|stateSlug" -> { count, lastmod }
+    const bump = (catSlug, stateSlug, val, lastmod) => {
       const key = `${catSlug}|${stateSlug}`;
-      const prev = counts.get(key) || { count: 0, lastMs: 0 };
-      counts.set(key, { count: prev.count + val, lastMs: Math.max(prev.lastMs, lastMs || 0) });
+      const prev = counts.get(key) || { count: 0, lastmod: null };
+      const newer = lastmod && (!prev.lastmod || new Date(lastmod) > new Date(prev.lastmod));
+      counts.set(key, { count: prev.count + val, lastmod: newer ? lastmod : prev.lastmod });
     };
 
     for (const r of rows) {
-      bump(r.categorySlug, r.stateSlug, r.count, r.lastMs);
+      bump(r.categorySlug, r.stateSlug, r.count, r.lastmod);
       const parent = parentBySlug.get(r.categorySlug);
-      if (parent) bump(parent, r.stateSlug, r.count, r.lastMs);
+      if (parent) bump(parent, r.stateSlug, r.count, r.lastmod);
     }
 
     // Entries, not the Map itself — unstable_cache serializes its return value
@@ -95,27 +100,21 @@ async function buildLiveCombosImpl() {
 
 const buildLiveCombos = unstable_cache(
   buildLiveCombosImpl,
-  // v2: entries changed from count to { count, lastMs }. A new key keeps a
-  // cached v1 value (Vercel's data cache outlives deploys) from being read
-  // with the new shape, which would drop every listing from the sitemap.
-  ['sitemapLiveCombos-v2'],
+  ['sitemapLiveCombos', 'v2'],
   { revalidate: DAY, tags: CACHE_TAGS },
 );
 
 async function fetchIndexableSlugsImpl() {
   try {
     const profiles = await db
-      .select({
-        slug: companies.slug,
-        lastMs: sql`extract(epoch from ${companies.updated_at}) * 1000`.mapWith(Number),
-      })
+      .select({ slug: companies.slug, description: companies.description, updated_at: companies.updated_at })
       .from(companies)
       .where(and(
         eq(companies.approved, true),
         isNotNull(companies.description),
         ne(companies.description, ''),
       ));
-    return profiles.filter((p) => p.slug).map((p) => ({ slug: p.slug, lastMs: p.lastMs || 0 }));
+    return profiles.filter((p) => p.slug && isProperDescription(p.description)).map((p) => ({ slug: p.slug, lastmod: p.updated_at }));
   } catch {
     // DB unavailable at build time — omit profiles rather than fail the sitemap.
     return [];
@@ -124,61 +123,57 @@ async function fetchIndexableSlugsImpl() {
 
 const fetchIndexableSlugs = unstable_cache(
   fetchIndexableSlugsImpl,
-  ['sitemapIndexableSlugs-v2'],
+  ['sitemapIndexableSlugs', 'v2'],
   { revalidate: DAY, tags: CACHE_TAGS },
 );
 
-// lastmod used to be `new Date()` on all ~9,350 entries, so every URL claimed
-// to change on every sitemap build and Google learned to ignore the field.
-// Listings now carry the newest updated_at of their companies, profiles their
-// own updated_at, hubs the newest of their listings. Static pages carry none:
-// no lastmod is better than a wrong one.
-const toDate = (ms) => (ms > 0 ? new Date(ms) : undefined);
-
 export default async function sitemap() {
+  const now = new Date();
   const comboEntries = await buildLiveCombos();
   const combos = comboEntries ? new Map(comboEntries) : null;
-  const profiles = await fetchIndexableSlugs();
-
-  const comboLast = (catSlug, stateSlug) => combos?.get(`${catSlug}|${stateSlug}`)?.lastMs || 0;
-  const categoryLast = (catSlug) => Math.max(0, ...STATE_SLUGS.map((st) => comboLast(catSlug, st)));
-  const stateLast = (stateSlug) => Math.max(0, ...CATEGORY_SLUGS.map((c) => comboLast(c, stateSlug)));
-  const siteLast = Math.max(0, ...profiles.map((p) => p.lastMs));
 
   const urls = [];
 
   // ── Core pages ────────────────────────────────────────────────────────────
-  urls.push({ url: `${BASE_URL}/`, lastModified: toDate(siteLast), changeFrequency: 'daily', priority: 1.0 });
+  urls.push({ url: `${BASE_URL}/`, lastModified: now, changeFrequency: 'daily', priority: 1.0 });
   // /search is noindexed (app/search/layout.jsx) — /{category}/{state} pages
   // are the canonical crawlable listings, so it doesn't belong in the sitemap.
-  urls.push({ url: `${BASE_URL}/browse`, lastModified: toDate(siteLast), changeFrequency: 'weekly', priority: 0.8 });
-  urls.push({ url: `${BASE_URL}/locations`, lastModified: toDate(siteLast), changeFrequency: 'weekly', priority: 0.8 });
-  urls.push({ url: `${BASE_URL}/capabilities`, lastModified: toDate(siteLast), changeFrequency: 'weekly', priority: 0.8 });
-  urls.push({ url: `${BASE_URL}/about`, changeFrequency: 'monthly', priority: 0.4 });
-  urls.push({ url: `${BASE_URL}/list-your-company`, changeFrequency: 'monthly', priority: 0.6 });
-  urls.push({ url: `${BASE_URL}/claim-listing`, changeFrequency: 'monthly', priority: 0.5 });
-  urls.push({ url: `${BASE_URL}/contact`, changeFrequency: 'monthly', priority: 0.4 });
-  urls.push({ url: `${BASE_URL}/terms`, changeFrequency: 'yearly', priority: 0.2 });
-  urls.push({ url: `${BASE_URL}/privacy`, changeFrequency: 'yearly', priority: 0.2 });
+  urls.push({ url: `${BASE_URL}/browse`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+  urls.push({ url: `${BASE_URL}/locations`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+  urls.push({ url: `${BASE_URL}/capabilities`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 });
+  urls.push({ url: `${BASE_URL}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.4 });
+  urls.push({ url: `${BASE_URL}/list-your-company`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 });
+  urls.push({ url: `${BASE_URL}/claim-listing`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 });
+  urls.push({ url: `${BASE_URL}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.4 });
+  urls.push({ url: `${BASE_URL}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.2 });
+  urls.push({ url: `${BASE_URL}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.2 });
 
   // ── Category hub pages: /{category} ─────────────────────────────────────
   for (const slug of CATEGORY_SLUGS) {
-    urls.push({ url: `${BASE_URL}/${slug}`, lastModified: toDate(categoryLast(slug)), changeFrequency: 'weekly', priority: 0.9 });
+    urls.push({ url: `${BASE_URL}/${slug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 });
   }
 
   // ── State hub pages: /states/{state} ────────────────────────────────────
   for (const stateSlug of STATE_SLUGS) {
-    urls.push({ url: `${BASE_URL}/states/${stateSlug}`, lastModified: toDate(stateLast(stateSlug)), changeFrequency: 'weekly', priority: 0.7 });
+    urls.push({ url: `${BASE_URL}/states/${stateSlug}`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 });
   }
 
   // ── Category + state pages: /{category}/{state} ────────────────────────
   for (const slug of CATEGORY_SLUGS) {
     for (const stateSlug of STATE_SLUGS) {
-      if (combos) {
-        const count = combos.get(`${slug}|${stateSlug}`)?.count || 0;
-        if (count < MIN_LIVE_COMPANIES) continue;
-      }
-      urls.push({ url: `${BASE_URL}/${slug}/${stateSlug}`, lastModified: toDate(comboLast(slug, stateSlug)), changeFrequency: 'weekly', priority: 0.8 });
+      const combo = combos?.get(`${slug}|${stateSlug}`);
+      if (combos && (combo?.count || 0) < MIN_LIVE_COMPANIES) continue;
+      urls.push({ url: `${BASE_URL}/${slug}/${stateSlug}`, lastModified: lastmodOf(combo, now), changeFrequency: 'weekly', priority: 0.8 });
+    }
+  }
+
+  // ── Subcategory hubs: /{category}/{subcategory} ─────────────────────────
+  for (const cat of MANUFACTURING_CATEGORIES) {
+    for (const sub of cat.subcategories) {
+      const inStates = STATE_SLUGS.map((st) => combos?.get(`${sub.slug}|${st}`)).filter(Boolean);
+      if (!combos || inStates.reduce((n, c) => n + (c.count || 0), 0) < SUBCATEGORY_HUB_MIN) continue;
+      const newest = inStates.reduce((a, c) => (c.lastmod && (!a || c.lastmod > a.lastmod) ? c : a), null);
+      urls.push({ url: `${BASE_URL}/${cat.slug}/${sub.slug}`, lastModified: lastmodOf(newest, now), changeFrequency: 'weekly', priority: 0.8 });
     }
   }
 
@@ -186,21 +181,19 @@ export default async function sitemap() {
   for (const cat of MANUFACTURING_CATEGORIES) {
     for (const sub of cat.subcategories) {
       for (const stateSlug of STATE_SLUGS) {
-        if (combos) {
-          const count = combos.get(`${sub.slug}|${stateSlug}`)?.count || 0;
-          if (count < MIN_LIVE_COMPANIES) continue;
-        }
-        urls.push({ url: `${BASE_URL}/${cat.slug}/${sub.slug}/${stateSlug}`, lastModified: toDate(comboLast(sub.slug, stateSlug)), changeFrequency: 'weekly', priority: 0.7 });
+        const combo = combos?.get(`${sub.slug}|${stateSlug}`);
+        if (combos && (combo?.count || 0) < MIN_LIVE_COMPANIES) continue;
+        urls.push({ url: `${BASE_URL}/${cat.slug}/${sub.slug}/${stateSlug}`, lastModified: lastmodOf(combo, now), changeFrequency: 'weekly', priority: 0.7 });
       }
     }
   }
 
   // ── Company profiles: /company/{slug} ───────────────────────────────────
   // Mirrors isIndexable() in app/company/[slug]/page.jsx — approved and
-  // carrying a real (non-empty) description. Keep the two predicates in
+  // carrying a real description (isProperDescription). Keep the two in
   // agreement, otherwise the sitemap advertises noindexed URLs.
-  for (const { slug, lastMs } of profiles) {
-    urls.push({ url: `${BASE_URL}/company/${slug}`, lastModified: toDate(lastMs), changeFrequency: 'monthly', priority: 0.6 });
+  for (const { slug, lastmod } of await fetchIndexableSlugs()) {
+    urls.push({ url: `${BASE_URL}/company/${slug}`, lastModified: lastmodOf({ lastmod }, now), changeFrequency: 'monthly', priority: 0.6 });
   }
 
   return urls;

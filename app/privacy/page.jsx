@@ -1,4 +1,4 @@
-import { BASE_URL, SITE_NAME, OG_IMAGE } from '@/lib/seo';
+import { BASE_URL, SITE_NAME, OG_IMAGES } from '@/lib/seo';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -7,7 +7,8 @@ export const metadata = {
   description: 'Privacy Policy for FirmsLedger — how we collect, use, and protect your information.',
   alternates: { canonical: `${_BASE}/privacy` },
   robots: { index: true, follow: true },
-  openGraph: { images: [OG_IMAGE],
+  openGraph: {
+    images: OG_IMAGES,
     title: `Privacy Policy | ${SITE_NAME}`,
     description: 'Privacy Policy for FirmsLedger — how we collect, use, and protect your information.',
     type: 'website',

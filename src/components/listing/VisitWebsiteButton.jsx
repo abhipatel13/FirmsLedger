@@ -1,11 +1,13 @@
 'use client';
 
 import { ExternalLink } from 'lucide-react';
+import { websiteDomain } from '@/lib/listingFacts';
 
 export default function VisitWebsiteButton({ href, className = '' }) {
+  if (!websiteDomain(href)) return null;
   return (
     <a
-      href={href}
+      href={/^https?:\/\//i.test(href) ? href : `https://${href}`}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}

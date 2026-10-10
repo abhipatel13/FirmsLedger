@@ -166,10 +166,10 @@ function getHomepageStats(companyCount, categoryCount = FALLBACK_CATEGORY_COUNT,
       { value: totalCategories, label: 'Categories & Specialties' },
       { value: totalStates, label: 'States covered' },
       { value: listedCompanies, label: 'Companies listed' },
-      { value: '100%', label: 'Verified Listings' },
+      { value: '0', label: 'Paid placements' },
     ],
     trustStats: [
-      { value: '100%', label: 'Listings reviewed', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
+      { value: 'Free', label: 'To list or claim', icon: Shield, iconBg: 'bg-amber-50', iconBorder: 'border-amber-200', iconText: 'text-amber-700' },
       { value: '0', label: 'Paid rankings — ever', icon: CheckCircle, iconBg: 'bg-green-50', iconBorder: 'border-green-200', iconText: 'text-green-700' },
       { value: totalStates, label: 'States covered', icon: Star, iconBg: 'bg-blue-50', iconBorder: 'border-blue-200', iconText: 'text-blue-700' },
       { value: totalCategories, label: 'Categories', icon: Wrench, iconBg: 'bg-rose-50', iconBorder: 'border-rose-200', iconText: 'text-rose-700' },
@@ -345,14 +345,13 @@ export default function DirectoryHub({
             </h1>
 
             <p className="text-lg text-[17px] leading-relaxed text-slate-300 mb-8 max-w-2xl mx-auto">
-              Browse independent, verified manufacturers across every USA state by category — electrical, mechanical, automotive, and more. Zero paid placements.
+              Browse independent manufacturers across every USA state by category — electrical, mechanical, automotive, and more. Zero paid placements.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
               {[
                 { icon: CheckCircle, text: 'All 50 states covered' },
                 { icon: Shield, text: 'Zero paid rankings' },
-                { icon: Star, text: 'Independent reviews' },
                 { icon: Package, text: 'Free to list' },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-1.5 bg-slate-800/40 border border-slate-700/50 rounded-full px-3.5 py-1">
@@ -586,7 +585,7 @@ export default function DirectoryHub({
               What makes this directory different
             </h2>
             <p className="text-slate-500 leading-relaxed max-w-md mx-auto">
-              Every listing and every review goes through manual verification before it ever reaches the public directory.
+              Rankings are never for sale, and every company can claim its profile to keep it accurate.
             </p>
           </div>
 

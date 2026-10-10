@@ -36,15 +36,6 @@ const nextConfig = {
           },
         ],
       },
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
     ];
   },
   async redirects() {
@@ -98,6 +89,11 @@ const nextConfig = {
       { source: '/categories/textile-apparel',                     destination: '/textile-apparel',         permanent: true },
       { source: '/categories/furniture-woodworking',               destination: '/furniture-woodworking',   permanent: true },
       { source: '/categories/medical-devices',                     destination: '/medical-devices',         permanent: true },
+    ];
+  },
+  async rewrites() {
+    return [
+      { source: '/blog-automation',  destination: '/BlogAutomation' },
     ];
   },
 };

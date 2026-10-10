@@ -1,4 +1,7 @@
 import { SEO_YEAR } from '@/lib/seo';
+import { isProperDescription } from '@/lib/descriptionQuality';
+
+export { isProperDescription };
 
 /**
  * Appends "Manufacturers" to a category/subcategory display name for use as a
@@ -223,42 +226,6 @@ export function getAgencyLogoUrl(agency: {
   if (!agency) return '';
   if (agency.logo_url) return agency.logo_url;
   return initialsAvatarDataUri(agency.name || '?');
-}
-
-/** Validate description content, filtering out scraper blocks, JavaScript requirements, or tag lists. */
-export function isProperDescription(desc: string | null | undefined): boolean {
-  if (!desc) return false;
-  const normalized = desc.toLowerCase().trim();
-  if (
-    normalized.includes('incident id') ||
-    normalized.includes('access denied') ||
-    normalized.includes('enable javascript') ||
-    normalized.includes('requires javascript') ||
-    normalized.includes('checking your browser') ||
-    normalized.includes('request unsuccessful') ||
-    normalized.includes('incapsula') ||
-    normalized.includes('cloudflare') ||
-    normalized.includes('please enable js') ||
-    normalized.includes('security check') ||
-    normalized.includes('error 403') ||
-    normalized.includes('forbidden') ||
-    normalized.includes('captcha')
-  ) {
-    return false;
-  }
-  
-  // If it has multiple pipe characters (e.g. >= 2), it's probably just a tag list and not a proper sentence
-  const pipeCount = (desc.match(/\|/g) || []).length;
-  if (pipeCount >= 2) {
-    return false;
-  }
-
-  // If it's too short (e.g. less than 15 characters), it might not be a real description
-  if (desc.trim().length < 15) {
-    return false;
-  }
-
-  return true;
 }
 
 /** Get the company description, falling back to a nice dynamic description if none exists */

@@ -67,31 +67,6 @@ export const CATEGORY_DOMAINS = {
   }
 };
 
-const CENSUS_REGIONS = {
-  northeast: ['new-york', 'pennsylvania', 'new-jersey', 'massachusetts', 'connecticut', 'maryland', 'maine', 'new-hampshire', 'vermont', 'rhode-island', 'delaware'],
-  midwest: ['illinois', 'ohio', 'michigan', 'wisconsin', 'indiana', 'minnesota', 'missouri', 'iowa', 'kansas', 'nebraska', 'south-dakota', 'north-dakota'],
-  south: ['texas', 'florida', 'georgia', 'north-carolina', 'virginia', 'tennessee', 'alabama', 'kentucky', 'south-carolina', 'louisiana', 'oklahoma', 'mississippi', 'arkansas', 'west-virginia'],
-  west: ['california', 'washington', 'colorado', 'arizona', 'oregon', 'utah', 'nevada', 'new-mexico', 'idaho', 'hawaii', 'montana', 'alaska', 'wyoming']
-};
-
-const STATE_NAME_MAP = {
-  'alabama': 'Alabama', 'alaska': 'Alaska', 'arizona': 'Arizona', 'arkansas': 'Arkansas',
-  'california': 'California', 'colorado': 'Colorado', 'connecticut': 'Connecticut',
-  'delaware': 'Delaware', 'florida': 'Florida', 'georgia': 'Georgia', 'hawaii': 'Hawaii',
-  'idaho': 'Idaho', 'illinois': 'Illinois', 'indiana': 'Indiana', 'iowa': 'Iowa',
-  'kansas': 'Kansas', 'kentucky': 'Kentucky', 'louisiana': 'Louisiana', 'maine': 'Maine',
-  'maryland': 'Maryland', 'massachusetts': 'Massachusetts', 'michigan': 'Michigan',
-  'minnesota': 'Minnesota', 'mississippi': 'Mississippi', 'missouri': 'Missouri',
-  'montana': 'Montana', 'nebraska': 'Nebraska', 'nevada': 'Nevada', 'new-hampshire': 'New Hampshire',
-  'new-jersey': 'New Jersey', 'new-mexico': 'New Mexico', 'new-york': 'New York',
-  'north-carolina': 'North Carolina', 'north-dakota': 'North Dakota', 'ohio': 'Ohio',
-  'oklahoma': 'Oklahoma', 'oregon': 'Oregon', 'pennsylvania': 'Pennsylvania',
-  'rhode-island': 'Rhode Island', 'south-carolina': 'South Carolina', 'south-dakota': 'South Dakota',
-  'tennessee': 'Tennessee', 'texas': 'Texas', 'utah': 'Utah', 'vermont': 'Vermont',
-  'virginia': 'Virginia', 'washington': 'Washington', 'west-virginia': 'West Virginia',
-  'wisconsin': 'Wisconsin', 'wyoming': 'Wyoming'
-};
-
 /** Deterministic hash for templates */
 function getDeterministicIndex(seed, max) {
   let hash = 0;
@@ -115,7 +90,7 @@ export function generateDynamicCategoryStateMetaDescription({ categorySlug, cate
   } else if (templateIdx === 1) {
     desc = `Find top ${cleanCat.toLowerCase()} shops in ${stateName}. Review ${totalCount} suppliers for ${domain.products.split(', ').slice(0, 2).join(' and ')}.`;
   } else {
-    desc = `Source from ${totalCount} ${cleanCat.toLowerCase()} firms in ${stateName}. Compare locations, specialized products, and direct contact details.`;
+    desc = `Source from ${totalCount} ${cleanCat.toLowerCase()} firms in ${stateName}. Compare specialized products, certifications, and local capacities.`;
   }
 
   // Ensure it fits the 120-160 character limit. If over, truncate gracefully.
@@ -141,21 +116,19 @@ export function generateDynamicCategoryStateAboveFoldText({ categorySlug, catego
   } else if (templateIdx === 1) {
     return `Browse ${totalCount} ${cleanCat.toLowerCase()} companies in ${stateName} specialized in ${domain.products.split(', ').slice(0, 2).join(' and ')}.`;
   } else {
-    return `Connect with ${totalCount} local ${cleanCat.toLowerCase()} suppliers across ${stateName}. Compare capabilities, certifications, and locations.`;
+    return `Connect with ${totalCount} local ${cleanCat.toLowerCase()} suppliers across ${stateName}. Compare their capabilities, cities and contact details.`;
   }
 }
 
 /** Generates dynamic bottom-page description: target ~40-60 words (250-350 characters) */
-export function generateDynamicCategoryStateOnPageText({ categorySlug, categoryName, stateSlug, stateName, totalCount, verifiedCount, medianRating, topSpecialties = [], subcategories = [] }) {
+export function generateDynamicCategoryStateOnPageText({ categorySlug, categoryName, stateSlug, stateName, totalCount, topSpecialties = [], subcategories = [] }) {
   const domain = CATEGORY_DOMAINS[categorySlug] || { products: 'manufacturing services', focus: 'high-quality standards', certifications: 'key compliance standards', procurement: 'specifications' };
   const cleanCat = categoryName.replace(' Manufacturers', '').replace(' & Machining', '');
   
   const hashSeed = `${categorySlug}-${stateSlug}-page`;
   const idx = getDeterministicIndex(hashSeed, 4);
 
-  const statsPart = verifiedCount > 0 && medianRating 
-    ? `${verifiedCount} of these firms are marked verified, and rated firms have a median rating of ${medianRating} out of 5 stars.`
-    : `Each listing shows the company's location, specialties, and direct contact details.`;
+  const statsPart = `Listings are compiled from public company information, and manufacturers can claim their profile to confirm and update it.`;
 
   const specPart = topSpecialties.length > 0
     ? ` Local shops frequently hold ${topSpecialties.join(' or ')} certifications to meet strict engineering requirements.`
@@ -168,7 +141,7 @@ export function generateDynamicCategoryStateOnPageText({ categorySlug, categoryN
   const paragraphs = [
     `Sourcing ${domain.products} in ${stateName} requires vetting local partners on their ability to meet ${domain.focus}. ${statsPart}${specPart} Contact listed shops directly for custom ${subList} projects.`,
     `${stateName} supports a strong base of ${totalCount} ${cleanCat.toLowerCase()} suppliers equipped for both custom runs and high-volume delivery. ${statsPart} Sourcing teams prioritize these companies for their focus on ${domain.procurement}.${specPart}`,
-    `For engineering teams procuring ${domain.products} within ${stateName}, finding a supplier certified to ${domain.certifications} is critical. This directory lists ${totalCount} local options. ${statsPart} Compare partners on their ${subList} capacity.`,
+    `For engineering teams procuring ${domain.products} within ${stateName}, finding a supplier certified to ${domain.certifications} is critical. This directory lists ${totalCount} local options. ${statsPart} Select partners based on their ${subList} capacity.`,
     `This directory profiles ${totalCount} ${cleanCat.toLowerCase()} shops in ${stateName} to support local supply chain resilience. Suppliers here excel in ${domain.products}. ${statsPart}${specPart} Compare profiles to find the right partner.`
   ];
 
@@ -176,14 +149,14 @@ export function generateDynamicCategoryStateOnPageText({ categorySlug, categoryN
 }
 
 /** Generates FAQ Q&A content */
-export function generateCategoryStateFAQs({ categorySlug, categoryName, stateSlug, stateName, totalCount, verifiedCount, medianRating, topSpecialties }) {
+export function generateCategoryStateFAQs({ categorySlug, categoryName, stateSlug, stateName, totalCount, topSpecialties }) {
   const domain = CATEGORY_DOMAINS[categorySlug] || { products: 'manufacturing services', focus: 'industry standards', certifications: 'industry standards' };
   const cleanCat = categoryName.replace(' Manufacturers', '').replace(' & Machining', '');
 
   const list = [
     {
       q: `How do I find ${cleanCat.toLowerCase()} manufacturers in ${stateName}?`,
-      a: `FirmsLedger lists ${totalCount} ${cleanCat.toLowerCase()} suppliers headquartered in ${stateName}, each with its location, specialties, and direct contact details. Filter the list above by specialty or company size, then contact suppliers directly for quotes.`
+      a: `FirmsLedger lists ${totalCount} local ${cleanCat.toLowerCase()} suppliers in ${stateName}. Open a profile to see its capabilities, certifications and contact details, then request a quote directly from the manufacturer.`
     },
     {
       q: `What certifications should I look for in ${stateName} ${cleanCat.toLowerCase()} shops?`,
@@ -191,88 +164,5 @@ export function generateCategoryStateFAQs({ categorySlug, categoryName, stateSlu
     }
   ];
 
-  if (verifiedCount > 0 && medianRating) {
-    list.push({
-      q: `What is the average rating of ${cleanCat.toLowerCase()} companies in ${stateName}?`,
-      a: `Rated suppliers in the state have a median rating of ${medianRating} out of 5 stars.`
-    });
-  }
-
   return list;
-}
-
-// States that share a land border. "Related markets" used to be 4 states
-// picked from the same Census region by hash, which linked Montana to Oregon,
-// Nevada and New Mexico: none of which a Montana buyer would source from.
-// Four Corners point contacts are excluded. Alaska and Hawaii have no land
-// border and fall back to their Census region.
-export const STATE_BORDERS = {
-  'alabama': ['florida', 'georgia', 'mississippi', 'tennessee'],
-  'alaska': [],
-  'arizona': ['california', 'nevada', 'new-mexico', 'utah'],
-  'arkansas': ['louisiana', 'mississippi', 'missouri', 'oklahoma', 'tennessee', 'texas'],
-  'california': ['arizona', 'nevada', 'oregon'],
-  'colorado': ['kansas', 'nebraska', 'new-mexico', 'oklahoma', 'utah', 'wyoming'],
-  'connecticut': ['massachusetts', 'new-york', 'rhode-island'],
-  'delaware': ['maryland', 'new-jersey', 'pennsylvania'],
-  'florida': ['alabama', 'georgia'],
-  'georgia': ['alabama', 'florida', 'north-carolina', 'south-carolina', 'tennessee'],
-  'hawaii': [],
-  'idaho': ['montana', 'nevada', 'oregon', 'utah', 'washington', 'wyoming'],
-  'illinois': ['indiana', 'iowa', 'kentucky', 'missouri', 'wisconsin'],
-  'indiana': ['illinois', 'kentucky', 'michigan', 'ohio'],
-  'iowa': ['illinois', 'minnesota', 'missouri', 'nebraska', 'south-dakota', 'wisconsin'],
-  'kansas': ['colorado', 'missouri', 'nebraska', 'oklahoma'],
-  'kentucky': ['illinois', 'indiana', 'missouri', 'ohio', 'tennessee', 'virginia', 'west-virginia'],
-  'louisiana': ['arkansas', 'mississippi', 'texas'],
-  'maine': ['new-hampshire'],
-  'maryland': ['delaware', 'pennsylvania', 'virginia', 'west-virginia'],
-  'massachusetts': ['connecticut', 'new-hampshire', 'new-york', 'rhode-island', 'vermont'],
-  'michigan': ['indiana', 'ohio', 'wisconsin'],
-  'minnesota': ['iowa', 'north-dakota', 'south-dakota', 'wisconsin'],
-  'mississippi': ['alabama', 'arkansas', 'louisiana', 'tennessee'],
-  'missouri': ['arkansas', 'illinois', 'iowa', 'kansas', 'kentucky', 'nebraska', 'oklahoma', 'tennessee'],
-  'montana': ['idaho', 'north-dakota', 'south-dakota', 'wyoming'],
-  'nebraska': ['colorado', 'iowa', 'kansas', 'missouri', 'south-dakota', 'wyoming'],
-  'nevada': ['arizona', 'california', 'idaho', 'oregon', 'utah'],
-  'new-hampshire': ['maine', 'massachusetts', 'vermont'],
-  'new-jersey': ['delaware', 'new-york', 'pennsylvania'],
-  'new-mexico': ['arizona', 'colorado', 'oklahoma', 'texas'],
-  'new-york': ['connecticut', 'massachusetts', 'new-jersey', 'pennsylvania', 'vermont'],
-  'north-carolina': ['georgia', 'south-carolina', 'tennessee', 'virginia'],
-  'north-dakota': ['minnesota', 'montana', 'south-dakota'],
-  'ohio': ['indiana', 'kentucky', 'michigan', 'pennsylvania', 'west-virginia'],
-  'oklahoma': ['arkansas', 'colorado', 'kansas', 'missouri', 'new-mexico', 'texas'],
-  'oregon': ['california', 'idaho', 'nevada', 'washington'],
-  'pennsylvania': ['delaware', 'maryland', 'new-jersey', 'new-york', 'ohio', 'west-virginia'],
-  'rhode-island': ['connecticut', 'massachusetts'],
-  'south-carolina': ['georgia', 'north-carolina'],
-  'south-dakota': ['iowa', 'minnesota', 'montana', 'nebraska', 'north-dakota', 'wyoming'],
-  'tennessee': ['alabama', 'arkansas', 'georgia', 'kentucky', 'mississippi', 'missouri', 'north-carolina', 'virginia'],
-  'texas': ['arkansas', 'louisiana', 'new-mexico', 'oklahoma'],
-  'utah': ['arizona', 'colorado', 'idaho', 'nevada', 'wyoming'],
-  'vermont': ['massachusetts', 'new-hampshire', 'new-york'],
-  'virginia': ['kentucky', 'maryland', 'north-carolina', 'tennessee', 'west-virginia'],
-  'washington': ['idaho', 'oregon'],
-  'west-virginia': ['kentucky', 'maryland', 'ohio', 'pennsylvania', 'virginia'],
-  'wisconsin': ['illinois', 'iowa', 'michigan', 'minnesota'],
-  'wyoming': ['colorado', 'idaho', 'montana', 'nebraska', 'south-dakota', 'utah'],
-};
-
-/** States bordering `stateSlug`; Census-region fallback for Alaska/Hawaii. */
-export function getNeighboringStates(stateSlug) {
-  let neighbors = STATE_BORDERS[stateSlug] || [];
-
-  if (neighbors.length === 0) {
-    const regionStates = Object.values(CENSUS_REGIONS).find((states) => states.includes(stateSlug));
-    if (!regionStates) return [];
-    const listInRegion = regionStates.filter((s) => s !== stateSlug);
-    const startIdx = getDeterministicIndex(stateSlug, Math.max(1, listInRegion.length - 4));
-    neighbors = listInRegion.slice(startIdx, startIdx + 4);
-  }
-
-  return neighbors.map(slug => ({
-    slug,
-    name: STATE_NAME_MAP[slug] || slug.replace('-', ' ')
-  }));
 }

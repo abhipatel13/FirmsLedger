@@ -60,3 +60,8 @@ for (const bad of [null, undefined, 'not-an-array', 42, {}]) {
 assert.deepEqual(cleanFacets([null, undefined, 'Powder Coating']), ['Powder Coating']);
 
 console.log('cleanFacets: all checks passed');
+
+assert.deepEqual(
+  cleanFacets(['Kernell\u00e2\u0080\u0099s automatic Machining', 'Electrical discharge machining (', 'Wire EDM (Electrical Discharge']),
+  ['Kernell\u2019s automatic Machining', 'Electrical discharge machining', 'Wire EDM'],
+);

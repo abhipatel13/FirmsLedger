@@ -13,11 +13,12 @@ export const revalidate = false;
 export const dynamicParams = true;
 
 import { notFound } from 'next/navigation';
-import AgencyProfile from '@/views/AgencyProfile';
+import CompanyProfile from '@/components/profile/CompanyProfile';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SITE_NAME, OG_IMAGE } from '@/lib/seo';
-import { getCompanyDescription, getCategoryHref, buildCompanyTitle } from '@/utils';
+import { BASE_URL, SITE_NAME, OG_IMAGES } from '@/lib/seo';
+import { getCompanyDescription, getCategoryHref, buildCompanyTitle, isProperDescription } from '@/utils';
 import { ALL_US_STATES } from '@/lib/usStates';
+import { companySummary, formatPhone } from '@/lib/listingFacts';
 import {
   fetchCompanyByIdAny,
   fetchCompanyCategories,
@@ -47,9 +48,9 @@ function stripInternalFields(row) {
 
 // Only profiles with real content are indexable. A name-and-address stub adds
 // no value in search results and dilutes site-wide quality signals.
-// Mirrored as a SQL predicate in app/sitemap.js — keep the two in agreement.
+// Mirrored in app/sitemap.js — keep the two in agreement.
 function isIndexable(company) {
-  return Boolean(company?.approved) && typeof company?.description === 'string' && company.description.trim() !== '';
+  return Boolean(company?.approved) && isProperDescription(company?.description);
 }
 
 // During `next build` these resolve from one bulk load instead of two DB
@@ -65,9 +66,9 @@ const getCompanyCategories = async (companyId) =>
 const getCategories = async () =>
   (await buildCategories()) ?? (await fetchCategories().catch(() => []));
 
-const getTopInCategory = async (categorySlug) =>
-  (await buildTopCompaniesInCategory(categorySlug, 30)) ??
-  (await fetchCompaniesByCategoryAndState(categorySlug, null, '-avg_rating', 30).catch(() => []));
+const getTopInCategory = async (categorySlug, stateId, stateSlug) =>
+  (await buildTopCompaniesInCategory(categorySlug, 30, stateId)) ??
+  (await fetchCompaniesByCategoryAndState(categorySlug, stateSlug, '-avg_rating', 30).catch(() => []));
 
 export async function generateStaticParams() {
   const slugs = await approvedCompanySlugs().catch(() => []);
@@ -80,9 +81,11 @@ export async function generateMetadata({ params }) {
 
   const companyName = company?.name || 'Company Profile';
   const location = [company?.hq_city, company?.hq_state_label].filter(Boolean).join(', ');
+  const catIds = company?.id ? (await getCompanyCategories(company.id)).map((cc) => cc.category_id) : [];
+  const primaryCategory = catIds.length ? (await getCategories()).find((c) => catIds.includes(c.id)) : null;
   const description = company
-    ? `${companyName} is a US manufacturer${location ? ` based in ${location}` : ''} listed on FirmsLedger. See its capabilities, location, and direct contact details.`
-    : `View this company profile on FirmsLedger – the US manufacturer directory.`;
+    ? companySummary(company, primaryCategory?.name)
+    : `View this company profile on FirmsLedger, the US manufacturer directory.`;
 
   const canonical = `${_BASE}/company/${slug}`;
   return {
@@ -90,7 +93,8 @@ export async function generateMetadata({ params }) {
     description,
     robots: isIndexable(company) ? undefined : { index: false, follow: true },
     alternates: { canonical },
-    openGraph: { images: [OG_IMAGE],
+    openGraph: {
+      images: OG_IMAGES,
       title: `${companyName} | ${SITE_NAME}`,
       description,
       type: 'profile',
@@ -126,7 +130,8 @@ export default async function CompanyProfilePage({ params }) {
         .map((c) => ({ ...c, parentSlug: c.is_parent ? c.slug : catsById.get(c.parent_id)?.slug || null }));
       const primarySlug = companyCategories[0]?.slug;
       if (primarySlug) {
-        similarCompanies = (await getTopInCategory(primarySlug))
+        const stateSlug = ALL_US_STATES.find((s) => s.name === company.hq_state_label)?.slug ?? null;
+        similarCompanies = (await getTopInCategory(primarySlug, stateSlug && company.hq_state_id, stateSlug))
           .filter((c) => c.id !== company.id)
           .slice(0, 4);
       }
@@ -138,16 +143,19 @@ export default async function CompanyProfilePage({ params }) {
   const localBusinessJsonLd = company
     ? {
         '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
+        '@type': 'Organization',
         name: company.name,
         url: profileUrl,
         ...(company.logo_url && { logo: company.logo_url, image: company.logo_url }),
         description: getCompanyDescription(company),
         ...(company.website && { sameAs: [company.website] }),
         ...(company.employee_count && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.employee_count } }),
+        ...(formatPhone(company.phone) && { telephone: company.phone }),
+        ...(company.founded_year && { foundingDate: String(company.founded_year) }),
         ...((company.hq_city || company.hq_state_label) && {
           address: {
             '@type': 'PostalAddress',
+            ...(company.address && { streetAddress: company.address }),
             ...(company.hq_city && { addressLocality: company.hq_city }),
             ...(company.hq_state_label && { addressRegion: company.hq_state_label }),
             addressCountry: 'US',
@@ -201,15 +209,11 @@ export default async function CompanyProfilePage({ params }) {
     <>
       {localBusinessJsonLd && <JsonLd data={localBusinessJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
-      {/* No <Suspense> here: it existed for AgencyProfile's useSearchParams(),
-          which is gone. With the boundary, the static HTML shipped a
-          "Loading..." fallback and the profile in a hidden streamed block. */}
-      <AgencyProfile
-        companySlug={slug || undefined}
-        initialCompany={stripInternalFields(company)}
-        initialReviews={reviews}
-        initialCategories={companyCategories}
-        initialSimilar={similarCompanies.map(stripInternalFields)}
+      <CompanyProfile
+        company={stripInternalFields(company)}
+        categories={companyCategories}
+        similar={similarCompanies.map(stripInternalFields)}
+        reviews={reviews}
       />
     </>
   );

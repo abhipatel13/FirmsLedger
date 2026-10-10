@@ -1,10 +1,13 @@
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import Link from 'next/link';
+import FilterBar from '@/components/listing/FilterBar';
 import JsonLd from '@/components/JsonLd';
-import CategoryCard from '@/components/CategoryCard';
-import { categoryImageUrl } from '@/lib/capabilities';
-import { BASE_URL, SITE_NAME, OG_IMAGE } from '@/lib/seo';
-import { fetchStateHubStats } from '@/db/neonApi';
+import { BASE_URL, SITE_NAME, OG_IMAGES } from '@/lib/seo';
+import { stateHubSeo } from '@/lib/pageSeo';
+import { companyCity } from '@/lib/listingFacts';
+import { InlineMarkdown, SeoFaqs } from '@/components/seo/SeoBlocks';
+import CtaBand from '@/components/listing/CtaBand';
 import { ArrowRight } from 'lucide-react';
 
 // 50 prebuilt state hubs re-rendering hourly was up to 1,200 revalidations/day,
@@ -97,19 +100,19 @@ export async function generateMetadata({ params }) {
   const state = STATE_MAP[slug];
   if (!state) return { title: 'State' };
 
-  const stats = await fetchStateHubStats(slug);
-  const title = `Manufacturers in ${state.name}`;
-  const description = stats.totalCount > 0
-    ? `Browse ${stats.totalCount} manufacturers in ${state.name}${stats.topCategories[0] ? `, led by ${stats.topCategories[0].name.toLowerCase()}` : ''}. Compare verified suppliers by category, city, and certifications.`
-    : `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`;
+  const { stats, seo } = await stateHubSeo({ stateSlug: slug, stateName: state.name });
+  const title = seo?.title || `Manufacturers in ${state.name}`;
+  const description = seo?.description || (stats.totalCount > 0
+    ? `Browse ${stats.totalCount} manufacturers in ${state.name}${stats.topCategories[0] ? `, led by ${stats.topCategories[0].name.toLowerCase()}` : ''}. Compare suppliers by category, city, and certifications.`
+    : `Find manufacturers in ${state.name}. Browse electrical components, mechanical components, automotive, electronics, and more.`);
   const canonical   = `${_BASE}/states/${slug}`;
 
   return {
     title,
     description,
     alternates: { canonical },
-    openGraph: { images: [OG_IMAGE], title: `${title} | ${SITE_NAME}`, description, type: 'website', url: canonical },
-    twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },
+    openGraph: { images: OG_IMAGES, title: `${title} | ${SITE_NAME}`, description, type: 'website', url: canonical },
+    twitter: { card: 'summary_large_image' },
   };
 }
 
@@ -118,8 +121,7 @@ export default async function StateHubPage({ params }) {
   const state = STATE_MAP[slug];
   if (!state) notFound();
 
-  const stats = await fetchStateHubStats(slug);
-  const topCategories = stats.topCategories.slice(0, 5);
+  const { stats, sections, seo } = await stateHubSeo({ stateSlug: slug, stateName: state.name });
   const topCities = stats.topCities.slice(0, 3);
 
   const jsonLd = {
@@ -160,226 +162,112 @@ export default async function StateHubPage({ params }) {
 
   const otherStates = ALL_STATES.filter((s) => s.slug !== slug).slice(0, 24);
 
+  const cities = stats.topCities.slice(0, 5);
+  const lead = `FirmsLedger lists ${stats.totalCount} manufacturer${stats.totalCount === 1 ? '' : 's'} headquartered in ${state.name} across ${sections.length} industr${sections.length === 1 ? 'y' : 'ies'}. Every profile shows the company's city, website and phone number for free.`;
+  const about = seo?.intro.length ? seo.intro : [`${state.name} is part of the ${state.region} region. Each industry list above shows ${state.name}-based companies with their city, specialties, certifications and website, with no paid placements.`];
+
   return (
     <>
-      <style>{`
-        .state-pill:hover { border-color: #94a3b8 !important; color: #0f172a !important; }
-      `}</style>
       <JsonLd data={jsonLd} />
       <JsonLd data={itemListJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-
-      <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
-
-        {/* ── Header ── */}
-        <div style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '48px 24px 44px' }}>
-          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-
-            {/* Breadcrumb */}
-            <nav className="scrollbar-hide" style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              marginBottom: 20,
-              flexWrap: 'nowrap',
-              overflowX: 'auto',
-              whiteSpace: 'nowrap',
-              WebkitOverflowScrolling: 'touch',
-            }}>
-              <Link href="/" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Home</Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
-              <Link href="/locations" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>Locations</Link>
-              <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
-              <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500, flexShrink: 0 }}>{state.name}</span>
+      <div className="bg-slate-50">
+        <header className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-[var(--max-width)] px-4 py-8 sm:px-6 sm:py-10">
+            <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
+              <Link href="/" className="hover:text-slate-900">Home</Link>
+              <span className="text-slate-300">/</span>
+              <Link href="/locations" className="hover:text-slate-900">Locations</Link>
+              <span className="text-slate-300">/</span>
+              <span className="text-slate-900">{state.name}</span>
             </nav>
-
-            {/* Region badge */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: 9999,
-              padding: '4px 12px',
-              marginBottom: 16,
-            }}>
-              <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
-                {state.region}
-              </span>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <h1 className="text-3xl font-bold tracking-tight text-[#0f172a] sm:text-4xl">{seo?.h1 || `Manufacturers in ${state.name}`}</h1>
+                <p className="mt-2 text-sm text-slate-500">
+                  {[`${stats.totalCount} manufacturers`, `${sections.length} industries`, ...cities.slice(0, 3).map((c) => `${c.city} ${c.count}`)].join(' · ')}
+                </p>
+                <p className="mt-4 text-[15px] leading-relaxed text-slate-600">{lead}</p>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-3">
+                <Link href="/RequestProposal" className="rounded-md bg-[#1A2E4A] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0f172a]">Request quotes</Link>
+                <Link href="/list-your-company" className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-50">List your company</Link>
+              </div>
             </div>
-
-            <h1 style={{
-              fontSize: 'clamp(32px, 4.5vw, 52px)',
-              fontWeight: 700,
-              letterSpacing: '-0.03em',
-              color: '#0f172a',
-              lineHeight: 1.1,
-              marginBottom: 12,
-              marginTop: 0,
-            }}>
-              Manufacturers in {state.name}
-            </h1>
-            <p style={{ fontSize: 16, color: '#475569', lineHeight: 1.6, maxWidth: 640, marginBottom: 0 }}>
-              {stats.totalCount > 0 ? (
-                <>
-                  FirmsLedger lists <strong>{stats.totalCount} verified manufacturer{stats.totalCount === 1 ? '' : 's'}</strong> headquartered
-                  in {state.name}
-                  {topCategories.length > 0 && (
-                    <> across {topCategories.length} categor{topCategories.length === 1 ? 'y' : 'ies'}, led by {topCategories.map((c) => c.name).join(', ')}</>
-                  )}
-                  {topCities.length > 0 && (
-                    <>. Manufacturing activity is concentrated around {topCities.map((c) => c.city).join(', ')}</>
-                  )}
-                  . Our industrial directory helps procurement teams and engineers compare local {state.name} suppliers,
-                  review company capabilities, verify certifications, and request a quote directly from a manufacturer's profile.
-                </>
-              ) : (
-                <>
-                  Browse manufacturers in {state.name} by category. Our industrial directory helps procurement teams and engineers
-                  compare local {state.name} suppliers, review company capabilities, verify certifications,
-                  and request a quote directly from a manufacturer's profile.
-                </>
-              )}
-            </p>
           </div>
-        </div>
+        </header>
 
-        {/* ── Category cards ── */}
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 24px 80px' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 28 }}>
-            Choose a manufacturing category
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {CATEGORIES.map((cat) => (
-              <CategoryCard
-                key={cat.slug}
-                href={`/${cat.slug}/${slug}`}
-                cat={cat}
-                name={cat.name}
-                description={`${cat.shortDesc} in ${state.name}`}
-                imageUrl={categoryImageUrl(cat.slug)}
-              />
-            ))}
+        <div className="mx-auto max-w-[var(--max-width)] px-4 py-8 sm:px-6">
+          <div className="mb-8">
+          <Suspense fallback={null}>
+            <FilterBar showStateFilter currentState={slug} />
+          </Suspense>
           </div>
-
-          <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, maxWidth: 760, marginTop: 40, marginBottom: 0 }}>
-            {state.name} is part of the {state.region} region.{' '}
-            {topCategories.length > 0 ? (
-              <>
-                Among {state.name}-based manufacturers listed here, {topCategories[0].name.toLowerCase()} is the largest category
-                ({topCategories[0].count} compan{topCategories[0].count === 1 ? 'y' : 'ies'}){topCategories[1] && <>, followed by {topCategories[1].name.toLowerCase()} ({topCategories[1].count})</>}.
-              </>
-            ) : (
-              <>Home to industrial facilities spanning {CATEGORIES.map(c => c.name).slice(0, 5).join(', ')}, and more.</>
-            )}
-            {' '}Each category page above lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
-            and ratings where available. Sourcing local production partners in {state.name} helps reduce supply chain
-            transit times and logistics costs.
-          </p>
-
-          {/* Data-driven summary. State hubs were ~175 words of shared template
-              text (Ubersuggest audit, 2026-10-10: low word count on all 51).
-              Everything here is computed from this state's own listings, so
-              no two states read alike. */}
-          {stats.totalCount > 0 && (
-            <section style={{ maxWidth: 760, marginTop: 40 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', margin: '0 0 12px' }}>
-                {state.name} manufacturing at a glance
-              </h2>
-              <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7, margin: '0 0 16px' }}>
-                FirmsLedger lists {stats.totalCount} manufacturer{stats.totalCount === 1 ? '' : 's'} headquartered in {state.name},
-                across {stats.topCategories.length} industr{stats.topCategories.length === 1 ? 'y' : 'ies'}.
-                {stats.topCities.length > 0 && (
-                  <> The largest concentration is in {stats.topCities[0].city} ({stats.topCities[0].count} compan{stats.topCities[0].count === 1 ? 'y' : 'ies'}).</>
-                )}
-              </p>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, marginBottom: 24 }}>
-                <thead>
-                  <tr style={{ textAlign: 'left', color: '#64748b', borderBottom: '1px solid #e2e8f0' }}>
-                    <th style={{ padding: '8px 0', fontWeight: 600 }}>Industry</th>
-                    <th style={{ padding: '8px 0', fontWeight: 600, textAlign: 'right' }}>Manufacturers in {state.name}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.topCategories.map((c) => (
-                    <tr key={c.slug} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '8px 0' }}>
-                        <Link href={`/${c.slug}/${slug}`} style={{ color: '#1A2E4A' }}>
-                          {c.name} in {state.name}
-                        </Link>
-                      </td>
-                      <td style={{ padding: '8px 0', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{c.count}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {stats.topCities.length > 1 && (
-                <>
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: '0 0 8px' }}>
-                    Top manufacturing cities in {state.name}
-                  </h3>
-                  <ol style={{ fontSize: 14, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
-                    {stats.topCities.map((c) => (
-                      <li key={c.city}>{c.city}: {c.count} manufacturer{c.count === 1 ? '' : 's'}</li>
+          <h2 className="mb-4 text-lg font-semibold text-[#1A2E4A]">Browse {state.name} manufacturers by industry</h2>
+          {sections.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {sections.map(({ cat, companies }) => (
+                <section key={cat.slug} className="flex min-w-0 flex-col rounded-lg border border-slate-200 bg-white p-5">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="text-base font-semibold text-[#1A2E4A]">
+                      <Link href={`/${cat.slug}/${slug}`} className="hover:underline">{cat.titleNoun} in {state.name}</Link>
+                    </h3>
+                    <span className="shrink-0 text-xs tabular-nums text-slate-500">{companies.length}</span>
+                  </div>
+                  <ul className="mt-3 flex-1 space-y-1.5 text-sm">
+                    {companies.slice(0, 3).map((c) => (
+                      <li key={c.slug} className="truncate">
+                        <Link href={`/company/${c.slug}`} className="text-slate-800 hover:underline">{c.name}</Link>
+                        {companyCity(c) && <span className="text-slate-500"> · {companyCity(c)}</span>}
+                      </li>
                     ))}
-                  </ol>
-                </>
-              )}
+                  </ul>
+                  <Link href={`/${cat.slug}/${slug}`} className="mt-4 text-sm font-semibold text-[#1A2E4A] hover:underline">
+                    All {companies.length} {cat.noun} →
+                  </Link>
+                </section>
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-600">No manufacturers listed in {state.name} yet.</p>
+          )}
+
+          {cities.length > 0 && (
+            <section className="mt-8">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Top cities in {state.name}</h2>
+              <ul className="flex flex-wrap gap-2">
+                {cities.map((c) => (
+                  <li key={c.city} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700">
+                    {c.city} <span className="text-slate-400">{c.count}</span>
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
-        </div>
 
-        {/* ── Other states ── */}
-        <div style={{ backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '48px 24px' }}>
-          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 20 }}>
-              Other states
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <CtaBand title={`Looking for a manufacturer in ${state.name}?`} text="Tell us what you need. The FirmsLedger team will point you to matching manufacturers, free of charge." />
+
+          <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
+            <h2 className="mb-3 text-lg font-bold text-slate-900">About manufacturing in {state.name}</h2>
+            <div className="space-y-3 text-[15px] leading-relaxed text-slate-600">
+              {about.map((p) => <p key={p}><InlineMarkdown text={p} /></p>)}
+            </div>
+          </section>
+
+          {seo && <div className="mt-8"><SeoFaqs faqs={seo.faqs} /></div>}
+
+          <section className="mt-10">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Other states</h2>
+            <div className="flex flex-wrap gap-2">
               {otherStates.map((s) => (
-                <Link
-                  key={s.slug}
-                  href={`/states/${s.slug}`}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: 9999,
-                    padding: '6px 14px',
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: '#475569',
-                    textDecoration: 'none',
-                    transition: 'all 0.12s',
-                  }}
-                className="state-pill"
-                >
-                  {s.name}
-                </Link>
+                <Link key={s.slug} href={`/states/${s.slug}`} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 hover:border-slate-400">{s.name}</Link>
               ))}
-              <Link
-                href="/locations"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  backgroundColor: '#0f172a',
-                  borderRadius: 9999,
-                  padding: '6px 14px',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: '#ffffff',
-                  textDecoration: 'none',
-                }}
-              >
-                All 50 states <ArrowRight style={{ width: 12, height: 12 }} />
+              <Link href="/locations" className="inline-flex items-center gap-1 rounded-full bg-[#0f172a] px-3 py-1 text-sm font-semibold text-white">
+                All 50 states <ArrowRight className="size-3" />
               </Link>
             </div>
-          </div>
+          </section>
         </div>
-
       </div>
     </>
   );

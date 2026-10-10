@@ -2,20 +2,22 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { notFound, permanentRedirect, redirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SEO_YEAR, OG_IMAGE } from '@/lib/seo';
+import { BASE_URL, SEO_YEAR, OG_IMAGES } from '@/lib/seo';
 import { Shield } from 'lucide-react';
 import CompanyCard from '@/components/listing/CompanyCard';
-import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState, filterCompaniesBySubcategoryKeywords } from '@/db/neonApi';
+import { fetchStateCountsForCategory, countCompaniesByCategoryAndState } from '@/db/neonApi';
+import { stateListingSeo } from '@/lib/pageSeo';
+import ComparisonTable from '@/components/listing/ComparisonTable';
+import { SeoIntro, SeoFaqs, LastUpdated } from '@/components/seo/SeoBlocks';
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import SUBCATEGORY_COMBOS from '@/lib/generated/subcategoryCombos.json';
-import { getCompanyDescription, buildListingTitle, producerNoun, fitTitle } from '@/utils';
+import { buildListingTitle, producerNoun, fitTitle } from '@/utils';
 import FilterBar from '@/components/listing/FilterBar';
 
 export const revalidate = false;
 export const dynamicParams = true;
 
-const PAGE_SIZE = 25;
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -60,45 +62,12 @@ function toTitleCase(slug) {
   return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function buildFilterQueryString(activeEmployeeRanges, page) {
-  const params = new URLSearchParams();
-  if (activeEmployeeRanges.length) params.set('employees', activeEmployeeRanges.join(','));
-  if (page > 1) params.set('page', String(page));
-  const query = params.toString();
-  return query ? `?${query}` : '';
-}
-
-function paginationRange(current, total) {
-  const delta = 3;
-  const range = [];
-  const withDots = [];
-  let prev;
-
-  for (let i = 1; i <= total; i++) {
-    if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
-      range.push(i);
-    }
-  }
-
-  for (const i of range) {
-    if (prev !== undefined) {
-      if (i - prev === 2) withDots.push(prev + 1);
-      else if (i - prev > 2) withDots.push('…');
-    }
-    withDots.push(i);
-    prev = i;
-  }
-
-  return withDots;
-}
-
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }) {
   const { category, state: subcategory, subcategory: state } = await params;
   // Page 1, unfiltered — reading searchParams would force the route dynamic.
   const sParams = {};
-  const pageParam = undefined;
 
   if (
     VALID_STATES.has(category) &&
@@ -132,12 +101,6 @@ export async function generateMetadata({ params }) {
   const count = await countCompaniesByCategoryAndState(subcategory, state);
   const categoryToUse = subcategory;
 
-  const totalPages    = Math.max(1, Math.ceil(count / PAGE_SIZE));
-  const clampedPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
-  
-  const pageSuffix = clampedPage > 1 ? ` — Page ${clampedPage}` : '';
-  const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
-
   // Some subcategory slugs (e.g. wiring-harness) live under more than one parent category —
   // disambiguate the title with the parent name so the two URLs don't produce identical <title>s.
   const parentsWithSub = MANUFACTURING_CATEGORIES.filter((c) => c.subcategories.some((s) => s.slug === subcategory));
@@ -145,20 +108,19 @@ export async function generateMetadata({ params }) {
 
   const subNoun = sub?.titleNoun || producerNoun(subName);
 
-  const title = clampedPage > 1
-    ? buildListingTitle({ noun: subNoun, stateName, parentShortName, pageSuffix })
-    : buildListingTitle({ count, noun: subNoun, stateName, parentShortName });
-
-  const stats = await fetchCategoryStats(category, state);
+  const title = buildListingTitle({ count, noun: subNoun, stateName, parentShortName });
   const description = `Find ${subName.toLowerCase()} manufacturers in ${stateName}. Part of the ${cat.name} directory. No paid placements.`;
-  const canonical = `${_BASE}/${category}/${subcategory}/${state}${pageQuery}`;
+  const canonical = `${_BASE}/${category}/${subcategory}/${state}`;
+  const { seo } = await stateListingSeo({ path: `/${category}/${subcategory}/${state}`, listSlug: subcategory, stateSlug: state, stateName, cat });
+  const metaTitle = seo?.title || title;
+  const metaDescription = seo?.description || description;
 
   return {
-    title: fitTitle(title),
-    description,
+    title: fitTitle(metaTitle),
+    description: metaDescription,
     alternates: { canonical },
-    robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },
-    openGraph: { images: [OG_IMAGE], title, description, type: 'website', url: canonical },
+    robots: count < 5 ? { index: false, follow: true } : { index: true, follow: true },
+    openGraph: { images: OG_IMAGES, title: metaTitle, description: metaDescription, type: 'website', url: canonical },
   };
 }
 
@@ -187,7 +149,6 @@ export default async function SubcategoryStatePage({ params }) {
     permanentRedirect(`/${subcategory}/${state}/${category}`);
   }
 
-  const pageParam = undefined;
   const activeEmployeeRanges = [];
 
   const cat = CATEGORY_MAP[category];
@@ -214,22 +175,14 @@ export default async function SubcategoryStatePage({ params }) {
   });
   const categoryToUse = subcategory;
 
-  const totalPages    = Math.max(1, Math.ceil(count / PAGE_SIZE));
-  const currentPage   = Math.min(Math.max(1, parseInt(pageParam, 10) || 1), totalPages);
-
-  const [pageCompanies, stateCounts, stats] = await Promise.all([
-    fetchCompaniesByCategoryAndState(categoryToUse, state, '-avg_rating', PAGE_SIZE, (currentPage - 1) * PAGE_SIZE, {
-      employeeRanges: activeEmployeeRanges,
-    }),
+  const [listing, stateCounts] = await Promise.all([
+    stateListingSeo({ path: `/${category}/${subcategory}/${state}`, listSlug: categoryToUse, stateSlug: state, stateName, cat }),
     fetchStateCountsForCategory(categoryToUse),
-    fetchCategoryStats(categoryToUse, state),
   ]);
+  const { companies: pageCompanies, seo } = listing;
 
   const subNoun = sub.titleNoun || producerNoun(sub.name);
-  const pageTitle = currentPage === 1
-    ? `Top ${count} ${subNoun} in ${stateName} ${SEO_YEAR}`
-    : `${subNoun} in ${stateName}`;
-  const rankOffset     = (currentPage - 1) * PAGE_SIZE;
+  const pageTitle = `Top ${count} ${subNoun} in ${stateName} ${SEO_YEAR}`;
   const basePath       = `/${category}/${subcategory}/${state}`;
 
   const breadcrumbJsonLd = {
@@ -243,9 +196,26 @@ export default async function SubcategoryStatePage({ params }) {
     ],
   };
 
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: pageTitle,
+    url: `${_BASE}${basePath}`,
+    numberOfItems: pageCompanies.length,
+    itemListElement: pageCompanies.map((company, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: company.name,
+      url: `${_BASE}/company/${company.slug}`,
+    })),
+  };
+
+  const filters = { basePath, activeStates: [], activeEmployeeRanges, stateCounts, showStateFilter: true, subcategories: cat?.subcategories, category, currentSubcategory: subcategory, currentState: state };
+
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={itemListJsonLd} />
 
       <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
@@ -270,7 +240,7 @@ export default async function SubcategoryStatePage({ params }) {
               <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
               <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500, flexShrink: 0 }}>{sub.name}</span>
               <span style={{ color: '#cbd5e1', fontSize: 13, flexShrink: 0 }}>/</span>
-              <Link href={`/${category}/${state}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{stateName}</Link>
+              <Link href={`/${category}/${state}`} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 500, flexShrink: 0 }}>{cat.shortName} in {stateName}</Link>
             </nav>
 
             {/* Category badge */}
@@ -281,11 +251,9 @@ export default async function SubcategoryStatePage({ params }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <h1 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: 10, marginTop: 0 }}>
-                  {pageTitle}
+                  {seo?.h1 || pageTitle}
                 </h1>
-                <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  Grouped by category and location. Updated monthly.
-                </p>
+                <LastUpdated date={listing.facts.lastUpdated} />
               </div>
               <div style={{
                 display: 'inline-flex',
@@ -310,26 +278,16 @@ export default async function SubcategoryStatePage({ params }) {
 
         {/* ── Content ── */}
         <div className="mx-auto max-w-[var(--max-width)] px-4 pt-5 pb-12 sm:px-6 sm:pt-8 sm:pb-16">
-          {/* Suspense: FilterBar calls useSearchParams(), which Next requires
-              to sit behind a boundary once the page is statically prerendered. */}
-          <Suspense fallback={null}>
-            <FilterBar
-              basePath={basePath}
-              activeStates={[]}
-              activeEmployeeRanges={activeEmployeeRanges}
-              stateCounts={stateCounts}
-              showStateFilter={true}
-              subcategories={cat?.subcategories}
-              category={category}
-              currentSubcategory={subcategory}
-              currentState={state}
-            />
-          </Suspense>
+          <div className="lg:hidden">
+            <Suspense fallback={null}><FilterBar {...filters} /></Suspense>
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', gap: 28, marginTop: 24 }} className="listing-layout">
 
             {/* ── Company list ── */}
             <div style={{ flex: 1, minWidth: 0 }}>
+              {seo?.intro.length > 0 && <SeoIntro paragraphs={seo.intro} />}
+              <ComparisonTable companies={pageCompanies} caption={`Compare ${pageCompanies.length} ${subNoun.toLowerCase()} in ${stateName}`} />
               {count === 0 ? (
                 <div style={{ textAlign: 'center', padding: '64px 24px', color: '#64748b' }}>
                   <p style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>No listings yet</p>
@@ -344,70 +302,18 @@ export default async function SubcategoryStatePage({ params }) {
                     <CompanyCard
                       key={company.slug}
                       company={company}
-                     
                     />
                   ))}
                 </div>
               )}
-
-              {totalPages > 1 && (
-                <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 28, flexWrap: 'wrap' }} aria-label="Pagination">
-                  <Link
-                    href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, currentPage - 1)}`}
-                    aria-disabled={currentPage === 1}
-                    style={{
-                      pointerEvents: currentPage === 1 ? 'none' : 'auto',
-                      opacity: currentPage === 1 ? 0.4 : 1,
-                      fontSize: 13, fontWeight: 500, color: '#475569',
-                      padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
-                      textDecoration: 'none', backgroundColor: '#ffffff',
-                    }}
-                  >
-                    ← Prev
-                  </Link>
-
-                  {paginationRange(currentPage, totalPages).map((n, i) =>
-                    n === '…' ? (
-                      <span key={`dots-${i}`} style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>…</span>
-                    ) : (
-                      <Link
-                        key={n}
-                        href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, n)}`}
-                        aria-current={n === currentPage ? 'page' : undefined}
-                        style={{
-                          fontSize: 13, fontWeight: 600,
-                          minWidth: 34, textAlign: 'center',
-                          padding: '8px 10px', borderRadius: 8,
-                          textDecoration: 'none',
-                          color: n === currentPage ? '#ffffff' : '#475569',
-                          backgroundColor: n === currentPage ? '#1A2E4A' : '#ffffff',
-                          border: n === currentPage ? '1px solid #1A2E4A' : '1px solid #e2e8f0',
-                        }}
-                      >
-                        {n}
-                      </Link>
-                    )
-                  )}
-
-                  <Link
-                    href={`${basePath}${buildFilterQueryString(activeEmployeeRanges, currentPage + 1)}`}
-                    aria-disabled={currentPage === totalPages}
-                    style={{
-                      pointerEvents: currentPage === totalPages ? 'none' : 'auto',
-                      opacity: currentPage === totalPages ? 0.4 : 1,
-                      fontSize: 13, fontWeight: 500, color: '#475569',
-                      padding: '8px 14px', borderRadius: 8, border: '1px solid #e2e8f0',
-                      textDecoration: 'none', backgroundColor: '#ffffff',
-                    }}
-                  >
-                    Next →
-                  </Link>
-                </nav>
-              )}
+              {seo && <div style={{ marginTop: 32 }}><SeoFaqs faqs={seo.faqs} /></div>}
             </div>
 
             {/* ── Sidebar ── */}
-            <aside style={{ width: 264, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }} className="listing-sidebar">
+            <aside style={{ width: 264, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }} className="listing-sidebar lg:order-first">
+              <div className="hidden lg:block">
+                <Suspense fallback={null}><FilterBar {...filters} sidebar /></Suspense>
+              </div>
 
               {/* Other subcategories */}
               <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18 }}>

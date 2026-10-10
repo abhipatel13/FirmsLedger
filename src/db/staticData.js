@@ -105,7 +105,7 @@ export async function buildCompanyCategories(companyId) {
  * Ordering matches orderCol() in neonApi.js: avg_rating DESC then id ASC. The
  * id tiebreak is mandatory, not cosmetic — see CLAUDE.md.
  */
-export async function buildTopCompaniesInCategory(categorySlug, limit = 30) {
+export async function buildTopCompaniesInCategory(categorySlug, limit = 30, stateId = null) {
   if (!isBuildPhase()) return undefined;
   const { allCompanies, allCategories, linksByCompanyId, empty } = await getStaticData();
   if (empty) return undefined;
@@ -113,7 +113,7 @@ export async function buildTopCompaniesInCategory(categorySlug, limit = 30) {
   if (!category) return [];
   return allCompanies
     .filter((c) => {
-      if (!c.approved) return false;
+      if (!c.approved || (stateId && c.hq_state_id !== stateId)) return false;
       const links = linksByCompanyId.get(c.id);
       return links ? links.some((l) => l.category_id === category.id) : false;
     })

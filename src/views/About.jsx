@@ -31,7 +31,7 @@ export default function About() {
               Connecting You with America's Leading Manufacturers
             </h1>
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              FirmsLedger is an independent, verified directory built to simplify industrial sourcing, support local commerce, and strengthen domestic supply chains.
+              FirmsLedger is an independent directory built to simplify industrial sourcing, support local commerce, and strengthen domestic supply chains.
             </p>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function About() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Zero Paid Placements</h3>
               <p className="text-sm text-slate-500 leading-relaxed">
-                Unlike directories that rank suppliers based on ad spend, FirmsLedger visibility is strictly merit-based. Rankings are determined by verified capability details, quality certifications, and genuine customer reviews.
+                Unlike directories that rank suppliers based on ad spend, FirmsLedger visibility is strictly merit-based. Rankings are based on capability details and quality certifications, never on payment.
               </p>
             </div>
 
@@ -66,9 +66,9 @@ export default function About() {
               <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6">
                 <Layers className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-3">Verified Domestic Operations</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-3">Domestic Operations</h3>
               <p className="text-sm text-slate-500 leading-relaxed">
-                We manually verify that listed companies operate active manufacturing and production facilities in the United States, helping procurement teams find domestic partners they can rely on.
+                We list companies with manufacturing and production facilities in the United States, and owners can claim their profile to confirm and update it.
               </p>
             </div>
 
@@ -120,7 +120,7 @@ export default function About() {
                     <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#0D1B2A]/5 text-[#0D1B2A] font-bold text-sm flex items-center justify-center mt-0.5">2</span>
                     <div>
                       <h4 className="font-bold text-slate-900 text-sm sm:text-base mb-1">Evaluate Suppliers</h4>
-                      <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">Inspect verified equipment lists, operational parameters, and third-party certifications.</p>
+                      <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">Inspect equipment lists, operational parameters, and third-party certifications.</p>
                     </div>
                   </li>
                   <li className="flex gap-4">
@@ -197,7 +197,7 @@ export default function About() {
             Build a More Resilient Supply Chain Today
           </h2>
           <p className="text-slate-500 text-sm sm:text-base mb-8 max-w-xl mx-auto leading-relaxed">
-            Discover verified USA manufacturers or list your manufacturing business on FirmsLedger completely free.
+            Discover USA manufacturers or list your manufacturing business on FirmsLedger completely free.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link

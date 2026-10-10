@@ -83,11 +83,20 @@ function deShout(label) {
   });
 }
 
+function repairEncoding(text) {
+  if (!/[\u00c2-\u00f4][\u0080-\u00bf]/.test(text) || /[^\u0000-\u00ff]/.test(text)) return text;
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(text, (ch) => ch.charCodeAt(0)));
+  } catch {
+    return text;
+  }
+}
+
 /** One raw entry -> list of candidate labels (pipe-delimited tables are common). */
 function splitEntry(raw) {
-  return String(raw ?? '')
+  return repairEncoding(String(raw ?? ''))
     .split('|')
-    .map((part) => part.replace(/\s+/g, ' ').trim())
+    .map((part) => part.replace(/\s+/g, ' ').replace(/\s*\([^)]*$/, '').trim())
     .filter(Boolean);
 }
 

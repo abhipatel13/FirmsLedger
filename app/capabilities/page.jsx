@@ -1,7 +1,7 @@
 import Capabilities from '@/views/Capabilities';
 import { CAPABILITIES, CAPABILITY_SLUGS, capabilityHref, capabilityImageUrl } from '@/lib/capabilities';
 import { fetchCategoryCounts } from '@/db/neonApi';
-import { SITE_NAME, BASE_URL, OG_IMAGE } from '@/lib/seo';
+import { SITE_NAME, BASE_URL, OG_IMAGES } from '@/lib/seo';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -9,7 +9,8 @@ export const metadata = {
   title: 'Manufacturing Capabilities',
   description: 'Browse US manufacturers by process — wire and cable, solar, injection molding, welding, sheet metal, PCB and more on FirmsLedger.',
   alternates: { canonical: `${_BASE}/capabilities` },
-  openGraph: { images: [OG_IMAGE],
+  openGraph: {
+    images: OG_IMAGES,
     title: `Manufacturing Capabilities | ${SITE_NAME}`,
     description: 'Browse US manufacturers by process — wire and cable, solar, injection molding, welding, sheet metal, PCB and more.',
     type: 'website',

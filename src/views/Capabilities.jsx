@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
+import FilterBar from '@/components/listing/FilterBar';
 import { ArrowRight } from 'lucide-react';
 
 export default function Capabilities({ counts = {}, items = [] }) {
@@ -31,7 +33,7 @@ export default function Capabilities({ counts = {}, items = [] }) {
               Manufacturing Capabilities
             </h1>
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Browse verified US manufacturers by what they actually do — ordered by how many companies we list for each process.
+              Browse US manufacturers by what they actually do — ordered by how many companies we list for each process.
             </p>
           </div>
         </div>
@@ -40,6 +42,11 @@ export default function Capabilities({ counts = {}, items = [] }) {
       {/* ── GRID OF CAPABILITIES ─────────────────────────────────── */}
       <main className="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-7xl mx-auto">
+          <div className="mb-10">
+            <Suspense fallback={null}>
+            <FilterBar showStateFilter />
+          </Suspense>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {items.map((cat) => {
               const imageUrl = cat.imageUrl;
