@@ -9,7 +9,7 @@ import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCat
 import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import SUBCATEGORY_COMBOS from '@/lib/generated/subcategoryCombos.json';
-import { getCompanyDescription, buildListingTitle, producerNoun } from '@/utils';
+import { getCompanyDescription, buildListingTitle, producerNoun, fitTitle } from '@/utils';
 import FilterBar from '@/components/listing/FilterBar';
 
 export const revalidate = false;
@@ -154,7 +154,7 @@ export async function generateMetadata({ params }) {
   const canonical = `${_BASE}/${category}/${subcategory}/${state}${pageQuery}`;
 
   return {
-    title,
+    title: fitTitle(title),
     description,
     alternates: { canonical },
     robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },

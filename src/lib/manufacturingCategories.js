@@ -123,8 +123,15 @@ export const MANUFACTURING_CATEGORIES = [
     shortName: 'Automotive Parts',
     titleNoun: 'Automotive Parts Manufacturers',
     noun: 'automotive parts manufacturers',
+    // National hub only (/automotive-parts). Buyers search "vehicle parts
+    // manufacturers" (6.6k/mo, difficulty 19) and "car parts manufacturers"
+    // (22k/mo) far more than "automotive parts manufacturers"; Ubersuggest
+    // flagged both as keywords with no matching page (2026-10-10).
+    hubTitle: 'Auto & Vehicle Parts Manufacturers in the US',
+    hubH1: 'Automotive & Vehicle Parts Manufacturers in the US',
+    hubNoun: 'car, vehicle, and automotive component manufacturers',
     desc: 'OEM and aftermarket automotive component and assembly makers across the US.',
-    longDescription: "Automotive Parts Manufacturers supply OEM and aftermarket components for vehicles — engine, brake, suspension, steering, and transmission parts, wiring harnesses, EV components, and aftermarket replacement parts. This industry serves vehicle OEMs, Tier 1/2 suppliers, and the aftermarket repair and accessories channel. Buyers typically source against OEM specifications or fit/form/function standards, and increasingly evaluate suppliers on EV-component capability alongside traditional internal-combustion parts.",
+    longDescription: "Automotive and vehicle parts manufacturers (often searched as car parts manufacturers or automotive component manufacturers) supply OEM and aftermarket components for vehicles — engine, brake, suspension, steering, and transmission parts, wiring harnesses, EV components, and aftermarket replacement parts. This industry serves vehicle OEMs, Tier 1/2 suppliers, and the aftermarket repair and accessories channel. Buyers typically source against OEM specifications or fit/form/function standards, and increasingly evaluate suppliers on EV-component capability alongside traditional internal-combustion parts.",
     accent: '#c0563c',
     accentText: '#ffffff',
     subcategories: [

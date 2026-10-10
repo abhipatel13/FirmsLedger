@@ -15,15 +15,53 @@ const ROLES = [
   { value: 'other',      label: 'Other' },
 ];
 
+const HOW_CLAIMING_WORKS = [
+  { title: 'Find your listing', desc: 'Search the directory and select the company that’s yours.' },
+  { title: 'Submit your claim', desc: 'Tell us who you are and how to reach you.' },
+  { title: 'We verify you', desc: 'Our team checks you’re authorised to manage the listing.' },
+  { title: 'Take control', desc: 'Once approved, you can keep your profile accurate and up to date.' },
+];
+
 export default function ClaimListingPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
-      </div>
-    }>
+    <Suspense fallback={<ClaimListingFallback />}>
       <ClaimListingContent />
     </Suspense>
+  );
+}
+
+// ClaimListingContent reads ?agency= with useSearchParams(), so the server
+// HTML is only this fallback. It used to be a bare spinner: no H1 and 36
+// words, flagged by Ubersuggest's audit (2026-10-10). Render the page's
+// heading and explanation here so crawlers and slow connections get them.
+function ClaimListingFallback() {
+  return (
+    <div className="min-h-screen bg-[#F7F8FA]">
+      <div className="text-white" style={{ background: 'linear-gradient(160deg, #0F172A, #070D18)' }}>
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <div className="max-w-2xl">
+            <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">Claim Your Company Listing</h1>
+            <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl">
+              Take ownership of your profile so you control how your company appears to buyers.
+              Manufacturers listed on FirmsLedger can claim their profile for free to correct their
+              details, describe their capabilities and certifications, and make sure procurement teams
+              searching by category and state can reach the right person.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-10 max-w-5xl mx-auto">
+        <h2 className="font-bold text-[#1A2E4A] mb-4">How claiming works</h2>
+        <ol className="space-y-3 mb-8">
+          {HOW_CLAIMING_WORKS.map(({ title, desc }, i) => (
+            <li key={title} className="text-sm text-slate-600">
+              <span className="font-semibold text-slate-800">{i + 1}. {title}.</span> {desc}
+            </li>
+          ))}
+        </ol>
+        <Loader2 className="w-6 h-6 animate-spin text-slate-400" aria-label="Loading the claim form" />
+      </div>
+    </div>
   );
 }
 
@@ -257,12 +295,7 @@ function ClaimListingContent() {
             <div className="bg-white border border-slate-200 rounded-2xl p-6">
               <h3 className="font-bold text-[#1A2E4A] mb-4">How claiming works</h3>
               <div className="space-y-4">
-                {[
-                  { title: 'Find your listing', desc: 'Search the directory and select the company that’s yours.' },
-                  { title: 'Submit your claim', desc: 'Tell us who you are and how to reach you.' },
-                  { title: 'We verify you', desc: 'Our team checks you’re authorised to manage the listing.' },
-                  { title: 'Take control', desc: 'Once approved, you can keep your profile accurate and up to date.' },
-                ].map(({ title, desc }, i) => (
+                {HOW_CLAIMING_WORKS.map(({ title, desc }, i) => (
                   <div key={title} className="flex gap-3">
                     <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                       {i + 1}

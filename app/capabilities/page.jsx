@@ -30,5 +30,30 @@ export default async function CapabilitiesPage() {
     imageUrl: capabilityImageUrl(c),
   }));
 
-  return <Capabilities counts={counts} items={items} />;
+  // The grid is image cards, so the page carried ~66 words (Ubersuggest
+  // audit, 2026-10-10). This server-rendered summary gives each capability
+  // its description and live count in plain text.
+  return (
+    <>
+      <Capabilities counts={counts} items={items} />
+      <section style={{ maxWidth: 960, margin: '0 auto', padding: '8px 24px 56px' }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', margin: '0 0 12px' }}>
+          Find US manufacturers by process
+        </h2>
+        <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7, margin: '0 0 16px' }}>
+          Each capability page lists US companies that perform that process, with their headquarters state,
+          company size and direct contact details. Open a capability to compare suppliers nationwide, then narrow
+          the list to a single state.
+        </p>
+        <ul style={{ fontSize: 14, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
+          {items.map((c) => (
+            <li key={c.slug}>
+              <a href={c.href} style={{ color: '#1A2E4A', fontWeight: 600 }}>{c.name}</a>
+              {counts?.[c.slug] > 0 ? ` (${counts[c.slug]} companies)` : ''}: {c.desc}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
+  );
 }

@@ -17,7 +17,7 @@ const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 export const revalidate = false;
 
 export const metadata = {
-  title: `Top Manufacturers by State — US Manufacturer Directory | ${SITE_NAME}`,
+  title: `US Manufacturer Directory by State & Industry | ${SITE_NAME}`,
   description: 'Find manufacturers in your state. Browse electrical, mechanical, and more by category and location.',
   alternates: { canonical: _BASE },
   openGraph: {

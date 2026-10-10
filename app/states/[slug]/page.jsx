@@ -277,6 +277,57 @@ export default async function StateHubPage({ params }) {
             and ratings where available. Sourcing local production partners in {state.name} helps reduce supply chain
             transit times and logistics costs.
           </p>
+
+          {/* Data-driven summary. State hubs were ~175 words of shared template
+              text (Ubersuggest audit, 2026-10-10: low word count on all 51).
+              Everything here is computed from this state's own listings, so
+              no two states read alike. */}
+          {stats.totalCount > 0 && (
+            <section style={{ maxWidth: 760, marginTop: 40 }}>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', margin: '0 0 12px' }}>
+                {state.name} manufacturing at a glance
+              </h2>
+              <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7, margin: '0 0 16px' }}>
+                FirmsLedger lists {stats.totalCount} manufacturer{stats.totalCount === 1 ? '' : 's'} headquartered in {state.name},
+                across {stats.topCategories.length} industr{stats.topCategories.length === 1 ? 'y' : 'ies'}.
+                {stats.topCities.length > 0 && (
+                  <> The largest concentration is in {stats.topCities[0].city} ({stats.topCities[0].count} compan{stats.topCities[0].count === 1 ? 'y' : 'ies'}).</>
+                )}
+              </p>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, marginBottom: 24 }}>
+                <thead>
+                  <tr style={{ textAlign: 'left', color: '#64748b', borderBottom: '1px solid #e2e8f0' }}>
+                    <th style={{ padding: '8px 0', fontWeight: 600 }}>Industry</th>
+                    <th style={{ padding: '8px 0', fontWeight: 600, textAlign: 'right' }}>Manufacturers in {state.name}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.topCategories.map((c) => (
+                    <tr key={c.slug} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '8px 0' }}>
+                        <Link href={`/${c.slug}/${slug}`} style={{ color: '#1A2E4A' }}>
+                          {c.name} in {state.name}
+                        </Link>
+                      </td>
+                      <td style={{ padding: '8px 0', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{c.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {stats.topCities.length > 1 && (
+                <>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: '0 0 8px' }}>
+                    Top manufacturing cities in {state.name}
+                  </h3>
+                  <ol style={{ fontSize: 14, color: '#475569', lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
+                    {stats.topCities.map((c) => (
+                      <li key={c.city}>{c.city}: {c.count} manufacturer{c.count === 1 ? '' : 's'}</li>
+                    ))}
+                  </ol>
+                </>
+              )}
+            </section>
+          )}
         </div>
 
         {/* ── Other states ── */}

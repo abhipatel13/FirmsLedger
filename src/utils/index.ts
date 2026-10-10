@@ -20,6 +20,19 @@ export function producerNoun(name: string): string {
  * (disambiguates subcategories shared by multiple parents, e.g. wiring-harness under
  * both automotive-parts and electrical-components) -> drop the count -> drop "Manufacturers"/"Companies" -> truncate the noun.
  */
+// The root layout's title.template appends this to every child segment.
+const BRAND_SUFFIX = ' | FirmsLedger';
+
+/**
+ * Listing titles budget 59 characters for the keywords, so with the brand
+ * suffix they reached 69-72 and Ubersuggest's audit flagged 81 of 150 pages
+ * as too long (2026-10-10). Keep the brand only when the whole title still
+ * fits in `max`; otherwise drop it. The keywords outrank the brand.
+ */
+export function fitTitle(title: string, max = 60): string | { absolute: string } {
+  return title.length + BRAND_SUFFIX.length <= max ? title : { absolute: title };
+}
+
 export function buildListingTitle({
   count,
   noun,

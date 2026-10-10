@@ -10,7 +10,7 @@ import { ALL_US_STATES } from '@/lib/usStates';
 import CompanyCard from '@/components/listing/CompanyCard';
 import FilterBar from '@/components/listing/FilterBar';
 import OtherCategoriesCard from '@/components/listing/OtherCategoriesCard';
-import { getCompanyDescription, buildListingTitle } from '@/utils';
+import { getCompanyDescription, buildListingTitle, fitTitle } from '@/utils';
 import {
   generateDynamicCategoryStateMetaDescription,
   generateDynamicCategoryStateAboveFoldText,
@@ -160,7 +160,7 @@ export async function generateMetadata({ params }) {
       : `Find ${subName.toLowerCase()} manufacturers across all 50 US states. Browse by state or compare companies. Part of the ${cat?.name} directory on FirmsLedger.`;
     const canonical = `${_BASE}/${category}/${state}${pageQuery}`;
     return {
-      title,
+      title: fitTitle(title),
       description,
       alternates: { canonical },
       robots: { index: false, follow: true },
@@ -205,7 +205,7 @@ export async function generateMetadata({ params }) {
   const canonical    = `${_BASE}/${category}/${state}${pageQuery}`;
 
   return {
-    title,
+    title: fitTitle(title),
     description,
     alternates: { canonical },
     robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },
@@ -522,7 +522,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
   const pageTitleNoun = categoryTitleNoun(cat) || `${categoryName} Companies`;
   const pageTitle    = stateName
     ? `Top ${Math.min(totalCount, PAGE_SIZE)} ${pageTitleNoun} in ${stateName} ${SEO_YEAR}`
-    : `${pageTitleNoun} in the US`;
+    : cat?.hubH1 || `${pageTitleNoun} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
   const rankOffset    = (currentPage - 1) * PAGE_SIZE;
