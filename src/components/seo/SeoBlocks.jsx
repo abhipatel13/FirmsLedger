@@ -25,7 +25,7 @@ export function InlineMarkdown({ text }) {
 
 export function SeoIntro({ paragraphs }) {
   return (
-    <div className="mb-6 max-w-3xl space-y-3 text-[15px] leading-relaxed text-slate-600">
+    <div className="mb-6 space-y-3 text-[15px] leading-relaxed text-slate-600">
       {paragraphs.map((p) => <p key={p}><InlineMarkdown text={p} /></p>)}
     </div>
   );
@@ -52,5 +52,14 @@ export function SeoFaqs({ faqs }) {
         </div>
       </section>
     </>
+  );
+}
+
+export function LastUpdated({ date }) {
+  if (!date) return null;
+  return (
+    <p className="mt-2 text-xs text-slate-500">
+      Last updated <time dateTime={date.toISOString().slice(0, 10)}>{new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(date)}</time>
+    </p>
   );
 }

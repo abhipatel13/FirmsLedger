@@ -1,7 +1,6 @@
 import SUBCATEGORY_COMBOS from '@/lib/generated/subcategoryCombos.json';
 import { fetchStateListing, fetchStateHubStats } from '@/db/neonApi';
 import { MANUFACTURING_CATEGORIES } from '@/lib/manufacturingCategories';
-import { getBorderingStates } from '@/lib/stateNeighbors';
 import { buildListingFacts } from '@/lib/listingFacts';
 import { SEO_OVERRIDES, resolveOverride, listingVars, stateHubVars } from '@/lib/seoOverrides';
 
@@ -42,19 +41,4 @@ export async function stateHubSeo({ stateSlug, stateName }) {
       }))
     : null;
   return { stats, sections, seo };
-}
-
-export function listingSidebar({ cat, stateSlug, stateName, currentSub = null }) {
-  const subCounts = subCountsFor(cat, stateSlug);
-  return {
-    stateName,
-    stateSlug,
-    categorySlug: cat.slug,
-    categoryLabel: cat.shortName,
-    parent: currentSub ? { href: `/${cat.slug}/${stateSlug}`, label: `All ${cat.shortName} in ${stateName}` } : null,
-    specialties: cat.subcategories
-      .filter((s) => subCounts[s.slug] >= 5 || s.slug === currentSub)
-      .map((s) => ({ href: `/${cat.slug}/${s.slug}/${stateSlug}`, label: s.name, count: subCounts[s.slug], current: s.slug === currentSub })),
-    nearby: getBorderingStates(stateSlug).map((n) => ({ href: `/${cat.slug}/${n.slug}`, label: n.name })),
-  };
 }
