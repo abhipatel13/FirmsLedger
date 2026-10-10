@@ -13,7 +13,7 @@ export const revalidate = false;
 export const dynamicParams = true;
 
 import { notFound } from 'next/navigation';
-import AgencyProfile from '@/views/AgencyProfile';
+import CompanyProfile from '@/components/profile/CompanyProfile';
 import JsonLd from '@/components/JsonLd';
 import { BASE_URL, SITE_NAME } from '@/lib/seo';
 import { getCompanyDescription, getCategoryHref, buildCompanyTitle, isProperDescription } from '@/utils';
@@ -202,12 +202,11 @@ export default async function CompanyProfilePage({ params }) {
     <>
       {localBusinessJsonLd && <JsonLd data={localBusinessJsonLd} />}
       {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
-      <AgencyProfile
-        companySlug={slug || undefined}
-        initialCompany={stripInternalFields(company)}
-        initialReviews={reviews}
-        initialCategories={companyCategories}
-        initialSimilar={similarCompanies.map(stripInternalFields)}
+      <CompanyProfile
+        company={stripInternalFields(company)}
+        categories={companyCategories}
+        similar={similarCompanies.map(stripInternalFields)}
+        reviews={reviews}
       />
     </>
   );
