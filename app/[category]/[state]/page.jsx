@@ -28,8 +28,10 @@ export const dynamicParams = true;
 
 // One indexable page has to satisfy "top 9", "top 10", "top 20", "top 25" — a
 // bigger first page means the larger N subsumes the smaller instead of the
-// remainder landing on a noindexed ?page=2.
-const PAGE_SIZE = 25;
+// remainder landing on a noindexed ?page=2. The page is static and cannot
+// serve ?page=2, so anything past PAGE_SIZE is unreachable: titles and
+// ItemList count only what is rendered (see shownCount below).
+const PAGE_SIZE = 50;
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -183,7 +185,8 @@ export async function generateMetadata({ params }) {
   const pageQuery = clampedPage > 1 ? `?page=${clampedPage}` : '';
 
   const titleNoun = categoryTitleNoun(cat) || `${categoryName} Companies`;
-  const title = buildListingTitle({ count, noun: titleNoun, stateName, pageSuffix });
+  // "Top N" must match the companies the page actually renders.
+  const title = buildListingTitle({ count: Math.min(count, PAGE_SIZE), noun: titleNoun, stateName, pageSuffix });
     
   // Fetch stats using cache
   const stats = await fetchCategoryStats(category, state);
@@ -291,7 +294,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
       '@type': 'ItemList',
       name: pageTitle,
       url: canonical,
-      numberOfItems: totalCount,
+      numberOfItems: pageCompanies.length,
       itemListElement: pageCompanies.map((company, i) => ({
         '@type': 'ListItem',
         position: rankOffset + i + 1,
@@ -518,7 +521,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
 
   const pageTitleNoun = categoryTitleNoun(cat) || `${categoryName} Companies`;
   const pageTitle    = stateName
-    ? `Top ${totalCount} ${pageTitleNoun} in ${stateName} ${SEO_YEAR}`
+    ? `Top ${Math.min(totalCount, PAGE_SIZE)} ${pageTitleNoun} in ${stateName} ${SEO_YEAR}`
     : `${pageTitleNoun} in the US`;
   const basePath     = state ? `/${category}/${state}` : `/${category}`;
 
@@ -529,7 +532,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
     '@type': 'ItemList',
     name: pageTitle,
     url: `${_BASE}${basePath}`,
-    numberOfItems: totalCount,
+    numberOfItems: pageCompanies.length,
     itemListElement: pageCompanies.map((company, i) => ({
       '@type': 'ListItem',
       position: rankOffset + i + 1,
@@ -716,9 +719,8 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
           <div style={{ minWidth: 0, marginTop: 24 }}>
             {stateName && (
               <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.65, margin: '0 0 24px' }}>
-                Comparing {totalCount} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}, ranked by
-                verified customer reviews. Every profile below is manually screened before it goes live — request quotes
-                directly from suppliers, or {' '}
+                Comparing {totalCount} {cat?.noun || categoryName.toLowerCase()} headquartered in {stateName}, sorted by
+                rating. Request quotes directly from suppliers, or {' '}
                 <Link href="/list-your-company" style={{ color: '#1A2E4A', textDecoration: 'underline', textUnderlineOffset: 2 }}>
                   list your own company
                 </Link>{' '}
@@ -775,7 +777,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             {totalCount > PAGE_SIZE && (
               <div style={{ textAlign: 'center', marginTop: 28 }}>
                 <Link
-                  href={`/search?category=${encodeURIComponent(category)}`}
+                  href={`/search?category=${encodeURIComponent(category)}${state ? `&state=${encodeURIComponent(state)}` : ''}`}
                   style={{
                     display: 'inline-block', fontSize: 14, fontWeight: 500,
                     color: '#1A2E4A', padding: '10px 18px', borderRadius: 8,
@@ -987,7 +989,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
                   padding: '24px 32px',
                 }}>
                   <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748b', letterSpacing: '0.05em', textTransform: 'uppercase', margin: '0 0 16px' }}>
-                    Related Markets in the Region
+                    Neighboring States
                   </h3>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {getNeighboringStates(state).map((ns) => (

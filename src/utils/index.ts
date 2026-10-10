@@ -292,15 +292,9 @@ export function getCompanyDescription(company: {
     sentences.push(`They hold the following certifications: ${company.certifications.join(', ')}.`);
   }
 
-  if (locationParts.length > 0) {
-    sentences.push(`Businesses researching ${category} providers${locationStr} can review ${name}'s listing for contact details, service focus, and verified reviews before requesting a quote.`);
-  }
-
   if (allCategoryNames && allCategoryNames.length > 1) {
     sentences.push(`${name} is listed under ${allCategoryNames.join(', ')} on FirmsLedger${locationStr ? `, serving clients${locationStr}` : ''}.`);
   }
-
-  sentences.push('Connect with them through FirmsLedger to learn more about their capabilities, services, and operations.');
 
   return sentences.join(' ');
 }

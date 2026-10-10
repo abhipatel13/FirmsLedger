@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { createPageUrl, getDirectoryUrl, getCategoryHref, getCompanyProfileUrl, getAgencyLogoUrl, getCompanyDescription } from '@/utils';
 import { api } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
@@ -74,12 +73,13 @@ function DonutLabel({ viewBox, total }) {
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
+// Rendered only by app/company/[slug]/page.jsx, which always passes the slug
+// and the prefetched company. This used to call useSearchParams() for a legacy
+// /AgencyProfile?id= route; in a static page that forces the whole tree to
+// bail out to client rendering, so all ~8.5k profiles reached Google as a
+// "Loading..." shell. Keep this component free of request-time hooks.
 export default function AgencyProfile({ companySlug, initialCompany, initialReviews, initialCategories, initialSimilar }) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-  const queryId = searchParams?.get('id') ?? null;
-  const identifier = companySlug || queryId;
+  const identifier = companySlug;
 
   const [expandedReview, setExpandedReview] = useState(null);
   const [activeService, setActiveService] = useState(0);
@@ -87,12 +87,8 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
   const { data: agency, isLoading } = useQuery({
     queryKey: ['agency', identifier],
     queryFn: async () => {
-      if (companySlug) {
-        const bySlug = await api.entities.Company.filter({ slug: companySlug });
-        return bySlug[0] ?? null;
-      }
-      const byId = await api.entities.Company.filter({ id: queryId });
-      return byId[0] ?? null;
+      const bySlug = await api.entities.Company.filter({ slug: companySlug });
+      return bySlug[0] ?? null;
     },
     initialData: initialCompany ?? undefined,
     enabled: !!identifier && !initialCompany,
@@ -135,15 +131,6 @@ export default function AgencyProfile({ companySlug, initialCompany, initialRevi
   });
 
   const primaryCategorySlug = categories[0]?.slug;
-
-  // Canonical redirect
-  React.useEffect(() => {
-    if (!agency?.slug || !pathname?.startsWith('/AgencyProfile')) return;
-    const search = searchParams?.toString() ? `?${searchParams.toString()}` : '';
-    if (search === `?id=${agency.id}` || (searchParams?.get('id') === agency.id && !searchParams.get('slug'))) {
-      router.replace(`/company/${encodeURIComponent(agency.slug)}`);
-    }
-  }, [agency?.id, agency?.slug, pathname, router, searchParams]);
 
   if (isLoading) {
     return (

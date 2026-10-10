@@ -14,6 +14,17 @@ export function middleware(request) {
     return new NextResponse('Gone', { status: 410 });
   }
 
+  // Every indexable URL is lowercase, but /furniture-woodworking/Texas or
+  // /company/PDQ-South 404'd instead of reaching the real page. 301 them so
+  // links typed or pasted with capitals keep their value. RequestProposal and
+  // WriteReview are the only routes whose folder names are mixed-case.
+  const { pathname } = request.nextUrl;
+  if (/[A-Z]/.test(pathname) && !/^\/(requestproposal|writereview)(\/|$)/i.test(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.toLowerCase();
+    return NextResponse.redirect(url, 301);
+  }
+
   const userAgent = request.headers.get('user-agent') || '';
 
   // 1. Block requests with missing or empty User-Agent

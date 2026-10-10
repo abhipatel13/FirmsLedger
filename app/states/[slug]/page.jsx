@@ -274,7 +274,7 @@ export default async function StateHubPage({ params }) {
               <>Home to industrial facilities spanning {CATEGORIES.map(c => c.name).slice(0, 5).join(', ')}, and more.</>
             )}
             {' '}Each category page above lists {state.name}-based companies with their headquarters location, team size, ISO certifications,
-            and verified customer reviews where available. Sourcing local production partners in {state.name} helps reduce supply chain
+            and ratings where available. Sourcing local production partners in {state.name} helps reduce supply chain
             transit times and logistics costs.
           </p>
         </div>

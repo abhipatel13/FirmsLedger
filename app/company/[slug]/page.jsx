@@ -82,7 +82,7 @@ export async function generateMetadata({ params }) {
   const companyName = company?.name || 'Company Profile';
   const location = [company?.hq_city, company?.hq_state_label].filter(Boolean).join(', ');
   const description = company
-    ? `${companyName} is a verified US manufacturer${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their profile, ratings, and reviews.`
+    ? `${companyName} is a US manufacturer${location ? ` based in ${location}` : ''} listed on FirmsLedger. See its capabilities, location, and direct contact details.`
     : `View this company profile on FirmsLedger – the US manufacturer directory.`;
 
   const canonical = `${_BASE}/company/${slug}`;
@@ -146,13 +146,6 @@ export default async function CompanyProfilePage({ params }) {
         description: getCompanyDescription(company),
         ...(company.website && { sameAs: [company.website] }),
         ...(company.employee_count && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.employee_count } }),
-        ...(company.review_count > 0 && Number(company.avg_rating) > 0 && {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: company.avg_rating,
-            reviewCount: company.review_count,
-          },
-        }),
         ...((company.hq_city || company.hq_state_label) && {
           address: {
             '@type': 'PostalAddress',

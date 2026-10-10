@@ -63,10 +63,6 @@ const nextConfig = {
       // ── Legacy route redirects ──────────────────────────────────────────
       { source: '/join',            destination: '/list-your-company', permanent: false },
 
-      // ── Blog URL cleanup ────────────────────────────────────────────────
-      { source: '/Blogs',           destination: '/blog',              permanent: true },
-      { source: '/Blogs/:slug',     destination: '/blog/:slug',        permanent: true },
-
       // ── Legacy /top/:category/:state → /:category/:state ───────────────
       { source: '/top/:category/:state', destination: '/:category/:state', permanent: true },
 
@@ -102,13 +98,6 @@ const nextConfig = {
       { source: '/categories/textile-apparel',                     destination: '/textile-apparel',         permanent: true },
       { source: '/categories/furniture-woodworking',               destination: '/furniture-woodworking',   permanent: true },
       { source: '/categories/medical-devices',                     destination: '/medical-devices',         permanent: true },
-    ];
-  },
-  async rewrites() {
-    return [
-      { source: '/blogs',            destination: '/blog' },
-      { source: '/blogs/:path*',     destination: '/blog/:path*' },
-      { source: '/blog-automation',  destination: '/BlogAutomation' },
     ];
   },
 };

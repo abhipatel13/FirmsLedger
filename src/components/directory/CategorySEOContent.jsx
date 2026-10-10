@@ -147,7 +147,7 @@ export default function CategorySEOContent({ category, agencies = [], allCategor
       },
       {
         q: `What factors should be considered when choosing a ${categoryName.toLowerCase()} agency?`,
-        a: `Evaluate years of experience, client reviews, hourly pricing, team size, industry focus, and case studies. The companies on this page are filtered by location and ranked by verified rating, so you can compare apples to apples.`,
+        a: `Evaluate years of experience, client reviews, hourly pricing, team size, industry focus, and case studies. The companies on this page are filtered by location and sorted by rating, so you can compare apples to apples.`,
       },
       {
         q: `How do ${categoryName.toLowerCase()} firms assess project success?`,

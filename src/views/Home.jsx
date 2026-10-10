@@ -279,7 +279,7 @@ export default function Home() {
                     </div>
 
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                      <span className="text-xs text-slate-400">{agency.review_count || 0} verified reviews</span>
+                      <span className="text-xs text-slate-400">{agency.review_count || 0} reviews</span>
                       <span className="text-xs font-semibold text-orange-500 group-hover:text-orange-600">View →</span>
                     </div>
                   </div>
