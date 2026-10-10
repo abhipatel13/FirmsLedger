@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import FilterBar from '@/components/listing/FilterBar';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL, SITE_NAME, OG_IMAGES } from '@/lib/seo';
 import { stateHubSeo } from '@/lib/pageSeo';
 import { companyCity } from '@/lib/listingFacts';
 import { InlineMarkdown, SeoFaqs } from '@/components/seo/SeoBlocks';
@@ -111,7 +111,7 @@ export async function generateMetadata({ params }) {
     title,
     description,
     alternates: { canonical },
-    openGraph: { title: `${title} | ${SITE_NAME}`, description, type: 'website', url: canonical },
+    openGraph: { images: OG_IMAGES, title: `${title} | ${SITE_NAME}`, description, type: 'website', url: canonical },
     twitter: { card: 'summary_large_image' },
   };
 }

@@ -2,7 +2,7 @@ import Locations from '@/views/Locations';
 import JsonLd from '@/components/JsonLd';
 import { ALL_US_STATES } from '@/lib/usStates';
 import { TIER1_SLUGS, TIER2_SLUGS } from '@/lib/locationTiers';
-import { SITE_NAME, BASE_URL } from '@/lib/seo';
+import { SITE_NAME, BASE_URL, OG_IMAGES } from '@/lib/seo';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -11,6 +11,7 @@ export const metadata = {
   description: 'Browse US manufacturers by state — find shops in top manufacturing hubs like Ohio, Michigan, Texas and California, or search any of the 50 states.',
   alternates: { canonical: `${_BASE}/locations` },
   openGraph: {
+    images: OG_IMAGES,
     title: `Manufacturer Locations | ${SITE_NAME}`,
     description: 'Browse US manufacturers by state — find shops in top manufacturing hubs or search any of the 50 states.',
     type: 'website',

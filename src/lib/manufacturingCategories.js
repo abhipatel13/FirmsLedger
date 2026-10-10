@@ -233,6 +233,8 @@ export const CATEGORY_SLUGS = MANUFACTURING_CATEGORIES.map((c) => c.slug);
 // Single source of truth for the listing/H1 noun ("... Companies" vs
 // "... Manufacturers"). Used by the category listing pages and the homepage
 // state panel so their labels can never drift apart.
+export const SUBCATEGORY_HUB_MIN = 10;
+
 export const categoryTitleNoun = (cat) =>
   cat?.titleNoun || `${cat?.shortName ?? ''} Companies`.trim();
 

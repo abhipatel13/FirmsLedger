@@ -1,5 +1,5 @@
 import Contact from '@/views/Contact';
-import { BASE_URL } from '@/lib/seo';
+import { BASE_URL, OG_IMAGES } from '@/lib/seo';
 
 const _BASE = (BASE_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -8,6 +8,7 @@ export const metadata = {
   description: 'Get in touch with FirmsLedger. Send a message or email us for questions, feedback, or partnership inquiries.',
   alternates: { canonical: `${_BASE}/contact` },
   openGraph: {
+    images: OG_IMAGES,
     title: 'Contact FirmsLedger',
     description: 'Get in touch with FirmsLedger for questions, feedback, or partnership inquiries.',
     type: 'website',

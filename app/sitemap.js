@@ -1,10 +1,11 @@
 import { db } from '@/db/client';
 import { states, categories, companies, company_categories } from '@/db/schema';
 import { eq, and, isNotNull, ne, sql } from 'drizzle-orm';
-import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS } from '@/lib/manufacturingCategories';
+import { MANUFACTURING_CATEGORIES, CATEGORY_SLUGS, SUBCATEGORY_HUB_MIN } from '@/lib/manufacturingCategories';
 import { STATES_BY_COUNTRY } from '@/lib/statesByCountry';
 import { unstable_cache } from 'next/cache';
 import { isProperDescription } from '@/utils';
+
 
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com').replace(/\/$/, '');
 
@@ -31,7 +32,7 @@ const CACHE_TAGS = ['companies'];
 // Below this many approved companies, a /{category}/{state} page is a thin/
 // empty page — a soft-404 risk that wastes crawl budget. Keep it out of the
 // sitemap; it's still reachable via the category hub, just not pushed to Google.
-const MIN_LIVE_COMPANIES = 5;
+const MIN_LIVE_COMPANIES = 10;
 
 function slugifyState(name) {
   return String(name).trim().toLowerCase().replace(/\s+/g, '-');
@@ -163,6 +164,16 @@ export default async function sitemap() {
       const combo = combos?.get(`${slug}|${stateSlug}`);
       if (combos && (combo?.count || 0) < MIN_LIVE_COMPANIES) continue;
       urls.push({ url: `${BASE_URL}/${slug}/${stateSlug}`, lastModified: lastmodOf(combo, now), changeFrequency: 'weekly', priority: 0.8 });
+    }
+  }
+
+  // ── Subcategory hubs: /{category}/{subcategory} ─────────────────────────
+  for (const cat of MANUFACTURING_CATEGORIES) {
+    for (const sub of cat.subcategories) {
+      const inStates = STATE_SLUGS.map((st) => combos?.get(`${sub.slug}|${st}`)).filter(Boolean);
+      if (!combos || inStates.reduce((n, c) => n + (c.count || 0), 0) < SUBCATEGORY_HUB_MIN) continue;
+      const newest = inStates.reduce((a, c) => (c.lastmod && (!a || c.lastmod > a.lastmod) ? c : a), null);
+      urls.push({ url: `${BASE_URL}/${cat.slug}/${sub.slug}`, lastModified: lastmodOf(newest, now), changeFrequency: 'weekly', priority: 0.8 });
     }
   }
 

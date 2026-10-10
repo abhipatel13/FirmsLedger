@@ -20,13 +20,29 @@ export function companyCity(c) {
 
 const nameWord = (c) => String(c?.name || '').toLowerCase().split(/[^a-z0-9]+/).find((w) => w.length > 3) || null;
 
+const STOP = '(to|and|or|of|for|the|a|an|with|in|on|at|from|by|our|your|we|you|is|are|that|than|this)';
+const FRAGMENT = new RegExp(`^${STOP}(\\s|$)|\\s${STOP}$|^[^a-z0-9]|^(click|choose|view|learn|read|see|browse|download)\\b`, 'i');
+
 export function companySpecialties(c, limit = 3) {
   const own = nameWord(c);
   return cleanFacets([...(c?.capabilities || []), ...(c?.products || [])], 50)
+    .flatMap((s) => s.split(/\s*[,;]\s*/))
     .map((s) => s.replace(/[\s,;:.]+$/, ''))
-    .filter((s) => s && !GENERIC.test(s) && s.split(/\s+/).length <= 5 && !(own && s.toLowerCase().includes(own)))
+    .filter((s) => s && !GENERIC.test(s) && !FRAGMENT.test(s) && s.split(/\s+/).length <= 5 && !(own && s.toLowerCase().includes(own)))
     .reduce((kept, s) => (kept.some((k) => s.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(s.toLowerCase())) ? kept : [...kept, s]), [])
     .slice(0, limit);
+}
+
+export function companySummary(company, categoryName) {
+  const place = [companyCity(company), company.hq_state_label].filter(Boolean).join(', ');
+  const facts = [company.founded_year && `founded in ${company.founded_year}`, company.employee_count && `${company.employee_count} employees`].filter(Boolean);
+  const certs = companyCertifications(company).slice(0, 2);
+  return [
+    `${company.name} is a${company.is_verified ? ' verified' : ''} US manufacturer${place ? ` in ${place}` : ''}${facts.length ? `, ${facts.join(', ')}` : ''}.`,
+    categoryName && `Listed under ${categoryName}.`,
+    certs.length > 0 && `Certified ${certs.join(', ')}.`,
+    'See its location and contact details on FirmsLedger.',
+  ].filter(Boolean).join(' ');
 }
 
 export function websiteDomain(website) {

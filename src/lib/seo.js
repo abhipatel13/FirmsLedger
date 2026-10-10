@@ -8,6 +8,7 @@ export const SITE_NAME = 'FirmsLedger';
 export const SEO_YEAR = 2026;
 export const SEO_COUNTRY = process.env.NEXT_PUBLIC_SEO_COUNTRY || 'United States';
 export const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.firmsledger.com';
+export const OG_IMAGES = [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'FirmsLedger, the US manufacturer directory' }];
 
 /** Unique meta descriptions for staffing subcategories (slug → description) */
 export const STAFFING_CATEGORY_DESCRIPTIONS = {

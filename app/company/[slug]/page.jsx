@@ -15,9 +15,10 @@ export const dynamicParams = true;
 import { notFound } from 'next/navigation';
 import CompanyProfile from '@/components/profile/CompanyProfile';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SITE_NAME } from '@/lib/seo';
+import { BASE_URL, SITE_NAME, OG_IMAGES } from '@/lib/seo';
 import { getCompanyDescription, getCategoryHref, buildCompanyTitle, isProperDescription } from '@/utils';
 import { ALL_US_STATES } from '@/lib/usStates';
+import { companySummary, formatPhone } from '@/lib/listingFacts';
 import {
   fetchCompanyByIdAny,
   fetchCompanyCategories,
@@ -80,9 +81,11 @@ export async function generateMetadata({ params }) {
 
   const companyName = company?.name || 'Company Profile';
   const location = [company?.hq_city, company?.hq_state_label].filter(Boolean).join(', ');
+  const catIds = company?.id ? (await getCompanyCategories(company.id)).map((cc) => cc.category_id) : [];
+  const primaryCategory = catIds.length ? (await getCategories()).find((c) => catIds.includes(c.id)) : null;
   const description = company
-    ? `${companyName} is a${company.is_verified ? ' verified' : ''} US manufacturer${location ? ` based in ${location}` : ''} listed on FirmsLedger. View their capabilities, location and contact details.`
-    : `View this company profile on FirmsLedger – the US manufacturer directory.`;
+    ? companySummary(company, primaryCategory?.name)
+    : `View this company profile on FirmsLedger, the US manufacturer directory.`;
 
   const canonical = `${_BASE}/company/${slug}`;
   return {
@@ -91,6 +94,7 @@ export async function generateMetadata({ params }) {
     robots: isIndexable(company) ? undefined : { index: false, follow: true },
     alternates: { canonical },
     openGraph: {
+      images: OG_IMAGES,
       title: `${companyName} | ${SITE_NAME}`,
       description,
       type: 'profile',
@@ -139,16 +143,19 @@ export default async function CompanyProfilePage({ params }) {
   const localBusinessJsonLd = company
     ? {
         '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
+        '@type': 'Organization',
         name: company.name,
         url: profileUrl,
         ...(company.logo_url && { logo: company.logo_url, image: company.logo_url }),
         description: getCompanyDescription(company),
         ...(company.website && { sameAs: [company.website] }),
         ...(company.employee_count && { numberOfEmployees: { '@type': 'QuantitativeValue', value: company.employee_count } }),
+        ...(formatPhone(company.phone) && { telephone: company.phone }),
+        ...(company.founded_year && { foundingDate: String(company.founded_year) }),
         ...((company.hq_city || company.hq_state_label) && {
           address: {
             '@type': 'PostalAddress',
+            ...(company.address && { streetAddress: company.address }),
             ...(company.hq_city && { addressLocality: company.hq_city }),
             ...(company.hq_state_label && { addressRegion: company.hq_state_label }),
             addressCountry: 'US',

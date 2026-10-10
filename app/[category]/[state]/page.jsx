@@ -2,10 +2,10 @@ import { Suspense } from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
-import { BASE_URL, SEO_YEAR } from '@/lib/seo';
+import { BASE_URL, SEO_YEAR, OG_IMAGES } from '@/lib/seo';
 import { Shield, Info } from 'lucide-react';
 import { fetchCompaniesByCategoryAndState, fetchStateCountsForCategory, fetchCategoryStats, countCompaniesByCategoryAndState } from '@/db/neonApi';
-import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS, categoryTitleNoun } from '@/lib/manufacturingCategories';
+import { MANUFACTURING_CATEGORIES, CATEGORY_MAP, CATEGORY_SLUGS, ALL_SUBCATEGORY_SLUGS, categoryTitleNoun, SUBCATEGORY_HUB_MIN } from '@/lib/manufacturingCategories';
 import { ALL_US_STATES } from '@/lib/usStates';
 import CompanyCard from '@/components/listing/CompanyCard';
 import FilterBar from '@/components/listing/FilterBar';
@@ -164,8 +164,8 @@ export async function generateMetadata({ params }) {
       title,
       description,
       alternates: { canonical },
-      robots: { index: false, follow: true },
-      openGraph: { title, description, type: 'website', url: canonical },
+      robots: { index: clampedPage === 1 && count >= SUBCATEGORY_HUB_MIN, follow: true },
+      openGraph: { images: OG_IMAGES, title, description, type: 'website', url: canonical },
     };
   }
 
@@ -212,7 +212,7 @@ export async function generateMetadata({ params }) {
     description: metaDescription,
     alternates: { canonical },
     robots: (clampedPage > 1 || count < 5) ? { index: false, follow: true } : { index: true, follow: true },
-    openGraph: { title: metaTitle, description: metaDescription, type: 'website', url: canonical },
+    openGraph: { images: OG_IMAGES, title: metaTitle, description: metaDescription, type: 'website', url: canonical },
   };
 }
 
@@ -444,7 +444,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
               {totalCount > PAGE_SIZE && (
                 <div style={{ textAlign: 'center', marginTop: 28 }}>
                   <Link
-                    href={`/search?category=${encodeURIComponent(category)}`}
+                    href={`/search?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`}
                     style={{
                       display: 'inline-block', fontSize: 14, fontWeight: 500,
                       color: '#1A2E4A', padding: '10px 18px', borderRadius: 8,
@@ -778,7 +778,7 @@ export async function renderCategoryPage({ category, state, pageParam, searchPar
             {totalCount > pageCompanies.length && (
               <div style={{ textAlign: 'center', marginTop: 28 }}>
                 <Link
-                  href={`/search?category=${encodeURIComponent(category)}`}
+                  href={`/search?category=${encodeURIComponent(category)}${state ? `&state=${state}` : ''}`}
                   style={{
                     display: 'inline-block', fontSize: 14, fontWeight: 500,
                     color: '#1A2E4A', padding: '10px 18px', borderRadius: 8,

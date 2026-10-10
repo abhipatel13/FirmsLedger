@@ -1,6 +1,6 @@
 // Run: node src/lib/listingFacts.test.mjs
 import assert from 'node:assert/strict';
-import { buildListingFacts, companyCity, companyCertifications, companySpecialties, websiteDomain, formatPhone } from './listingFacts.js';
+import { buildListingFacts, companyCity, companyCertifications, companySpecialties, websiteDomain, formatPhone, companySummary } from './listingFacts.js';
 
 const companies = [
   { hq_city: 'HOUSTON', website: 'a.com', capabilities: ['Injection Molding', 'Overmolding'], certifications: ['ISO 9001'], updated_at: '2026-08-05T10:00:00Z' },
@@ -33,3 +33,16 @@ assert.equal(formatPhone('+44 20 7946 0958'), '+44 20 7946 0958');
 assert.equal(formatPhone('(972) 660-XXXX (partial)'), null);
 assert.equal(formatPhone(''), null);
 console.log('ok: listing facts');
+
+{
+  const s = companySummary({ name: 'Acme Fab', hq_city: 'Austin', hq_state_label: 'Texas', founded_year: 1998, employee_count: '11-50', capabilities: ['Laser Cutting', 'Welding'], certifications: ['ISO9001'] }, 'Metal Fabrication');
+  assert.match(s, /^Acme Fab is a US manufacturer in Austin, Texas, founded in 1998, 11-50 employees\./);
+  assert.match(s, /Listed under Metal Fabrication\./);
+  assert.doesNotMatch(s, /verified|review/i);
+  assert.equal(companySummary({ name: 'Bare Co' }), 'Bare Co is a US manufacturer. See its location and contact details on FirmsLedger.');
+}
+
+assert.deepEqual(
+  companySpecialties({ name: 'Aire Plastics', capabilities: ['injection molding,', 'assembly, packaging', 'to product development success'] }, 5),
+  ['injection molding', 'assembly', 'packaging'],
+);
